@@ -1,0 +1,28 @@
+speakeasyVersion: 1.761.1
+sources:
+    Wistia-OAS:
+        sourceNamespace: data-api
+        sourceRevisionDigest: sha256:4b9ac8ff86669cb400ade85e00681ac3edb17659e6d6dd5e85269e5b7c2c2f4b
+        sourceBlobDigest: sha256:371db2753750ef87012f0f9e81bce625ca044f9ff7e62022861e20cc9bea5980
+        tags:
+            - latest
+targets:
+    wistia:
+        source: Wistia-OAS
+        sourceNamespace: data-api
+        sourceRevisionDigest: sha256:4b9ac8ff86669cb400ade85e00681ac3edb17659e6d6dd5e85269e5b7c2c2f4b
+        sourceBlobDigest: sha256:371db2753750ef87012f0f9e81bce625ca044f9ff7e62022861e20cc9bea5980
+workflow:
+    workflowVersion: 1.0.0
+    speakeasyVersion: latest
+    sources:
+        Wistia-OAS:
+            inputs:
+                - location: registry.speakeasyapi.dev/wistia/wistia/data-api:main
+            output: .speakeasy/out.openapi.yaml
+            registry:
+                location: registry.speakeasyapi.dev/wistia/wistia/wistia-oas
+    targets:
+        wistia:
+            target: cli
+            source: Wistia-OAS
