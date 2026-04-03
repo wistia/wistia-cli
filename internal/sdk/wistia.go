@@ -50,19 +50,27 @@ func Pointer[T any](v T) *T { return &v }
 
 // Wistia - Data API: Wistia Data API
 type Wistia struct {
-	SDKVersion           string
-	Media                *Media
-	Projects             *Projects
-	Subfolders           *Subfolders
-	ProjectSharings      *ProjectSharings
-	Account              *Account
-	AllowedDomains       *AllowedDomains
-	BackgroundJobStatus  *BackgroundJobStatus
-	Customizations       *Customizations
-	Captions             *Captions
-	Trims                *Trims
-	Localizations        *Localizations
-	Tags                 *Tags
+	SDKVersion          string
+	Media               *Media
+	Projects            *Projects
+	Subfolders          *Subfolders
+	ProjectSharings     *ProjectSharings
+	Account             *Account
+	AllowedDomains      *AllowedDomains
+	BackgroundJobStatus *BackgroundJobStatus
+	Customizations      *Customizations
+	Captions            *Captions
+	Trims               *Trims
+	Localizations       *Localizations
+	Tags                *Tags
+	// Search
+	// Search across projects, medias, channels, and channel episodes.
+	//
+	// ## Requires api token with one of the following permissions
+	// ```
+	// Read, update & delete anything
+	// ```
+	//
 	Search               *Search
 	Channels             *Channels
 	ChannelEpisodes      *ChannelEpisodes
