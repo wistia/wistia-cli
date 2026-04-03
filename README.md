@@ -50,6 +50,11 @@ curl -fsSL https://raw.githubusercontent.com/wistia/wistia-cli/main/scripts/inst
 ```powershell
 iwr -useb https://raw.githubusercontent.com/wistia/wistia-cli/main/scripts/install.ps1 | iex
 ```
+### Homebrew (macOS/Linux)
+
+```bash
+brew install wistia/wistia-cli/wistia
+```
 
 ### Go Install
 

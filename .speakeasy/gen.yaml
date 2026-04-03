@@ -25,13 +25,14 @@ generation:
     allOfMergeStrategy: shallowMerge
   requestBodyFieldName: body
   versioningStrategy: automatic
-  persistentEdits: {}
+  persistentEdits:
+    enabled: "true"
   tests:
     generateTests: false
     generateNewTests: true
     skipResponseBodyAssertions: false
 cli:
-  version: 0.0.1
+  version: 0.0.2
   additionalDependencies: {}
   cliName: wistia
   distribution:

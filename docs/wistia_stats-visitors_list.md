@@ -1,0 +1,57 @@
+## wistia stats-visitors list
+
+Stats:Visitors List
+
+### Synopsis
+
+This endpoint provides a list of visitors that have watched videos in your account.
+
+## Requires api token with one of the following permissions
+```
+Read, update & delete anything
+Read all data
+Read all folder and media data
+```
+
+```
+wistia stats-visitors list [flags]
+```
+
+### Examples
+
+```
+  wistia stats-visitors list
+```
+
+### Options
+
+```
+  -f, --filter string   Filtering parameter to narrow down the list of visitors. (options: has_name, has_email, identified_by_email_gate)
+  -h, --help            help for list
+      --page int        The page of results based on the per_page parameter.
+      --per-page int    The maximum number of results to return, capped at 100.
+  -s, --search string   Search for visitors based on name or email address.
+```
+
+### Options inherited from parent commands
+
+```
+      --agent-mode             Enable structured errors and default TOON output for AI coding agents. Automatically enabled when a known agent environment is detected (CLAUDE_CODE, CURSOR_AGENT, etc.). Use --agent-mode=false to disable.
+      --bearer-auth string     HTTP Bearer
+      --color string           Control colored output: auto (color when output is a TTY), always, or never. Respects NO_COLOR and FORCE_COLOR env vars. (default "auto")
+  -d, --debug                  Log request and response diagnostics to stderr
+      --dry-run                Preview the request that would be sent without executing it (output to stderr)
+  -H, --header stringArray     Set a custom HTTP request header (format: "Key: Value"). Can be specified multiple times.
+      --include-headers        Include HTTP response headers in the output
+  -q, --jq string              Filter and transform output using a jq expression (e.g., '.name', '.items[] | .id')
+      --no-interactive         Disable all interactive features (auto-prompting, explorer auto-launch, TUI forms)
+  -o, --output-format string   Specify the output format. Options: pretty, json, yaml, table, toon. (default "pretty")
+      --server string          Select a server by index (for indexed servers) or name (for named servers)
+      --server-url string      Override the default server URL
+      --timeout string         HTTP request timeout (e.g., 30s, 5m, 100ms)
+      --usage                  Print the CLI Usage schema in KDL format
+```
+
+### SEE ALSO
+
+* [wistia stats-visitors](wistia_stats-visitors.md)	 - Operations for stats-visitors
