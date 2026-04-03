@@ -36,8 +36,8 @@ cli:
   cliName: wistia
   distribution:
     homebrew:
-      enabled: false
-      tap: ""
+      enabled: true
+      tap: wistia/homebrew-wistia-cli
     nfpm:
       enabled: false
       formats: deb,rpm
