@@ -34,7 +34,7 @@ generation:
 cli:
   version: 0.0.2
   additionalDependencies: {}
-  cliName: wistia
+  cliName: wistia-cli
   distribution:
     homebrew:
       enabled: true

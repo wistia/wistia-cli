@@ -41,7 +41,7 @@ archives:
       - LICENSE*
 
 brews:
-  - name: wistia
+  - name: wistia-cli
     repository:
       owner: wistia
       name: homebrew-wistia-cli
