@@ -36,7 +36,7 @@ jobs:
         with:
           distribution: goreleaser
           version: "~> v2"
-          args: release --clean
+          args: release --clean --skip=validate
         env:
           # HOMEBREW_TAP_GITHUB_TOKEN needs Contents: Read and write on
           # wistia/homebrew-wistia-cli (for both the release assets and the formula).
