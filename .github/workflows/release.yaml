@@ -22,6 +22,15 @@ jobs:
         with:
           go-version-file: "go.mod"
           cache: true
+      - name: Patch goreleaser for public release
+        # Speakeasy regenerates .goreleaser.yaml targeting the private source repo.
+        # Redirect the release to the public homebrew tap repo so assets are
+        # downloadable without auth, and strip the private-repo download strategy.
+        run: |
+          sed -i 's/^    name: wistia-cli$/    name: homebrew-wistia-cli/' .goreleaser.yaml
+          sed -i '/download_strategy:/d' .goreleaser.yaml
+          sed -i '/custom_require:/d' .goreleaser.yaml
+
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v6
         with:
@@ -29,10 +38,9 @@ jobs:
           version: "~> v2"
           args: release --clean
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # Required when Homebrew tap publishing is enabled.
-          # Classic PATs need public_repo (public tap) or repo (private tap).
-          # Fine-grained PATs need Contents: Read and write on wistia/homebrew-wistia-cli.
+          # HOMEBREW_TAP_GITHUB_TOKEN needs Contents: Read and write on
+          # wistia/homebrew-wistia-cli (for both the release assets and the formula).
+          GITHUB_TOKEN: ${{ secrets.HOMEBREW_TAP_GITHUB_TOKEN }}
           HOMEBREW_TAP_GITHUB_TOKEN: ${{ secrets.HOMEBREW_TAP_GITHUB_TOKEN }}
 
       - name: Upload artifacts
