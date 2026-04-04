@@ -46,7 +46,7 @@ brews:
       owner: wistia
       name: homebrew-wistia-cli
       branch: main
-    token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
     homepage: "https://github.com/wistia/wistia-cli"
     description: "Data API: Wistia Data API"
     install: |
@@ -62,14 +62,3 @@ release:
 
 checksum:
   name_template: "checksums.txt"
-
-signs:
-  - artifacts: checksum
-    args:
-      - "--batch"
-      - "--local-user"
-      - "{{ .Env.GPG_FINGERPRINT }}"
-      - "--output"
-      - "${signature}"
-      - "--detach-sign"
-      - "${artifact}"
