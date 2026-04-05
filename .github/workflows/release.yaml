@@ -28,6 +28,7 @@ jobs:
         # downloadable without auth, and strip the private-repo download strategy.
         run: |
           sed -i 's/^    name: wistia-cli$/    name: homebrew-wistia-cli/' .goreleaser.yaml
+          sed -i 's/^  - name: wistia$/  - name: wistia-cli/' .goreleaser.yaml
           sed -i '/download_strategy:/d' .goreleaser.yaml
           sed -i '/custom_require:/d' .goreleaser.yaml
 
