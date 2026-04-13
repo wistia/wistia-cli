@@ -17,6 +17,10 @@ import (
 
 var searchCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "q", FieldPath: "Q", Kind: flagutil.FlagKindString, Required: true, Description: "The search query string [required]"},
+	{FlagName: "tags", Shorthand: "t", FieldPath: "Tags", Kind: flagutil.FlagKindStringArray, Optional: true, Description: "Filter results by one or more tag names. When multiple tags are provided, results matching any of the specified tags are returned (OR logic)."},
+	{FlagName: "resource-type", Shorthand: "r", FieldPath: "ResourceType", Kind: flagutil.FlagKindStringArray, Optional: true, Description: "Filter results by one or more resource types."},
+	{FlagName: "created-after", FieldPath: "CreatedAfter", Kind: flagutil.FlagKindDateTime, Optional: true, Description: "Filter results created on or after this datetime. Must be a valid ISO8601 timestamp in UTC (ending with 'Z')."},
+	{FlagName: "created-before", FieldPath: "CreatedBefore", Kind: flagutil.FlagKindDateTime, Optional: true, Description: "Filter results created on or before this datetime. Must be a valid ISO8601 timestamp in UTC (ending with 'Z')."},
 }
 
 // initSearchCmd initializes the search command.
@@ -24,7 +28,7 @@ func initSearchCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "search",
 		Short:   "Search",
-		Long:    "Search across projects, medias, channels, and channel episodes.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
+		Long:    "Searches across folders, subfolders, medias, channels, channel episodes, and webinars.\nAlso searches through video transcripts, so media results may include transcript matches with\ntimestamps when the query matches spoken content.\n\n## Requires api token with one of the following permissions\n```\nRead all data\n```",
 		Example: "  wistia search search --q screencast",
 		RunE:    runSearchCmd,
 	}

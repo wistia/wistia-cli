@@ -1,10 +1,10 @@
 ## wistia media copy
 
-Media Copy
+Copy Media
 
 ### Synopsis
 
-Copy a media.
+This endpoint copies a media and its assets to a destination folder (defaults to source media).
 
 ## Requires api token with one of the following permissions
 ```
@@ -25,10 +25,10 @@ wistia media copy [flags]
 
 ```
       --body string              Request body as JSON (alternative to individual flags). Can also be provided via stdin.
+  -f, --folder-id int            The ID of the folder where you want the new copy placed. Defaults to the source media’s current folder if omitted or invalid.
   -h, --help                     help for copy
   -m, --media-hashed-id string   The hashed ID of the media. [required]
       --owner string             An email address specifying the owner of the new media. Defaults to the source media’s current owner if omitted or invalid.
-  -p, --project-id int           The ID of the project where you want the new copy placed. Defaults to the source media’s current project if omitted or invalid.
 ```
 
 ### Options inherited from parent commands

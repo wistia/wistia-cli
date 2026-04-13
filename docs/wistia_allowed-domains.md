@@ -38,7 +38,7 @@ wistia allowed-domains [flags]
 ### SEE ALSO
 
 * [wistia](wistia.md)	 - Data API: Wistia Data API
-* [wistia allowed-domains create](wistia_allowed-domains_create.md)	 - Allowed Domain Create
-* [wistia allowed-domains delete](wistia_allowed-domains_delete.md)	 - Allowed Domain Delete
-* [wistia allowed-domains get](wistia_allowed-domains_get.md)	 - Allowed Domain Show
-* [wistia allowed-domains list](wistia_allowed-domains_list.md)	 - Allowed Domains List
+* [wistia allowed-domains create](wistia_allowed-domains_create.md)	 - Create Allowed Domain
+* [wistia allowed-domains delete](wistia_allowed-domains_delete.md)	 - Delete Allowed Domain
+* [wistia allowed-domains get](wistia_allowed-domains_get.md)	 - Show Allowed Domain
+* [wistia allowed-domains list](wistia_allowed-domains_list.md)	 - List Allowed Domains

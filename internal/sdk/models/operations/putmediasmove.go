@@ -11,9 +11,9 @@ import (
 type PutMediasMoveRequest struct {
 	// An array of the media hashed IDs to be moved.
 	HashedIds []string `json:"hashed_ids"`
-	// The hashed ID of the project where you want the media moved.
-	ProjectID string `json:"project_id"`
-	// Optional. The hashed ID of the subfolder where you want the media moved. If not provided, media will be moved to the project's default subfolder. The subfolder must belong to the specified project.
+	// The hashed ID of the folder where you want the media moved.
+	FolderID string `json:"folder_id"`
+	// Optional. The hashed ID of the subfolder where you want the media moved. If not provided, media will be moved to the folder's default subfolder. The subfolder must belong to the specified folder.
 	SubfolderID *string `json:"subfolder_id,omitzero"`
 }
 
@@ -24,11 +24,11 @@ func (p *PutMediasMoveRequest) GetHashedIds() []string {
 	return p.HashedIds
 }
 
-func (p *PutMediasMoveRequest) GetProjectID() string {
+func (p *PutMediasMoveRequest) GetFolderID() string {
 	if p == nil {
 		return ""
 	}
-	return p.ProjectID
+	return p.FolderID
 }
 
 func (p *PutMediasMoveRequest) GetSubfolderID() *string {
@@ -63,7 +63,8 @@ func (e *PutMediasMoveStatus2) IsExact() bool {
 	return false
 }
 
-// PutMediasMoveBackgroundJobStatus2 - Status of the background job.
+// PutMediasMoveBackgroundJobStatus2 - A background job keeps track of the progress of an asynchronous task, e.g
+// bulk archiving media, translating media, etc.
 type PutMediasMoveBackgroundJobStatus2 struct {
 	// The ID of the background job that's been queued for the request.
 	ID int64 `json:"id"`
@@ -110,7 +111,9 @@ func (p *PartialError) GetError() *string {
 // PutMediasMoveResponseBody2 - Successfully queued move of at least one media. Other provided hashed_ids failed.
 type PutMediasMoveResponseBody2 struct {
 	Message *string `json:"message,omitzero"`
-	// Status of the background job.
+	// A background job keeps track of the progress of an asynchronous task, e.g
+	// bulk archiving media, translating media, etc.
+	//
 	BackgroundJobStatus *PutMediasMoveBackgroundJobStatus2 `json:"background_job_status,omitzero"`
 	PartialErrors       []PartialError                     `json:"partial_errors,omitzero"`
 }
@@ -175,7 +178,8 @@ func (e *PutMediasMoveStatus1) IsExact() bool {
 	return false
 }
 
-// PutMediasMoveBackgroundJobStatus1 - Status of the background job.
+// PutMediasMoveBackgroundJobStatus1 - A background job keeps track of the progress of an asynchronous task, e.g
+// bulk archiving media, translating media, etc.
 type PutMediasMoveBackgroundJobStatus1 struct {
 	// The ID of the background job that's been queued for the request.
 	ID int64 `json:"id"`
@@ -203,7 +207,9 @@ func (p *PutMediasMoveBackgroundJobStatus1) GetStatus() PutMediasMoveStatus1 {
 // PutMediasMoveResponseBody1 - Successfully queued move of all the media.
 type PutMediasMoveResponseBody1 struct {
 	Message *string `json:"message,omitzero"`
-	// Status of the background job.
+	// A background job keeps track of the progress of an asynchronous task, e.g
+	// bulk archiving media, translating media, etc.
+	//
 	BackgroundJobStatus *PutMediasMoveBackgroundJobStatus1 `json:"background_job_status,omitzero"`
 }
 

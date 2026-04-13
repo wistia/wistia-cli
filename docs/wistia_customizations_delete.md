@@ -1,6 +1,6 @@
 ## wistia customizations delete
 
-Customizations Delete
+Delete Customizations
 
 ### Synopsis
 

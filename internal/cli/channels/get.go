@@ -23,8 +23,8 @@ var getCmdMeta = []flagutil.FlagMeta{
 func initGetCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "get",
-		Short:   "Channels Show",
-		Long:    "Returns the Channel associated with the hashedId.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\nRead all data\nRead all folder and media data\n```",
+		Short:   "Show Channel",
+		Long:    "Returns the Channel associated with the hashedId.\n\n## Requires api token with one of the following permissions\n```\nRead all folder and media data\n```",
 		Example: "  wistia channels get --channel-hashed-id <id>",
 		RunE:    runGetCmd,
 	}

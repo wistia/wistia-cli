@@ -25,8 +25,8 @@ var translateCmdMeta = []flagutil.FlagMeta{
 func initTranslateCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "translate",
-		Short:   "Media Translate",
-		Long:    "Translate the transcript for a media.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
+		Short:   "Translate Media",
+		Long:    "Translates the transcript for a media.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
 		Example: "  wistia media translate --media-hashed-id <id> --target-language <value>",
 		RunE:    runTranslateCmd,
 	}

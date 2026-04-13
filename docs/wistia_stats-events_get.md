@@ -1,18 +1,18 @@
 ## wistia stats-events get
 
-Stats:Events Show
+Show Event
 
 ### Synopsis
 
 Retrieve information for a single event. Please note that due to our data retention policy,
 only events from the last 2 years are available.
 
+<!--- HIDE-MCP -->
 ## Requires api token with one of the following permissions
 ```
-Read, update & delete anything
-Read all data
-Read all folder and media data
+Read detailed stats
 ```
+<!--- /HIDE-MCP -->
 
 ```
 wistia stats-events get [flags]

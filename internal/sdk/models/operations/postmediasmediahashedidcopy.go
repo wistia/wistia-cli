@@ -11,17 +11,17 @@ import (
 )
 
 type PostMediasMediaHashedIDCopyRequestBody struct {
-	// The ID of the project where you want the new copy placed. Defaults to the source media’s current project if omitted or invalid.
-	ProjectID *int64 `json:"project_id,omitzero"`
+	// The ID of the folder where you want the new copy placed. Defaults to the source media’s current folder if omitted or invalid.
+	FolderID *int64 `json:"folder_id,omitzero"`
 	// An email address specifying the owner of the new media. Defaults to the source media’s current owner if omitted or invalid.
 	Owner *string `json:"owner,omitzero"`
 }
 
-func (p *PostMediasMediaHashedIDCopyRequestBody) GetProjectID() *int64 {
+func (p *PostMediasMediaHashedIDCopyRequestBody) GetFolderID() *int64 {
 	if p == nil {
 		return nil
 	}
-	return p.ProjectID
+	return p.FolderID
 }
 
 func (p *PostMediasMediaHashedIDCopyRequestBody) GetOwner() *string {
@@ -142,37 +142,40 @@ func (p *PostMediasMediaHashedIDCopyThumbnail) GetHeight() *int64 {
 	return p.Height
 }
 
-type PostMediasMediaHashedIDCopyProject struct {
-	// A unique numeric identifier for the project within the system.
+type PostMediasMediaHashedIDCopyFolder struct {
+	// A unique numeric identifier for the folder within the system.
 	ID *int64 `json:"id,omitzero"`
-	// The project’s display name.
+	// The folder’s display name.
 	Name *string `json:"name,omitzero"`
-	// A private hashed id, uniquely identifying the project within the system.
+	// A private hashed id, uniquely identifying the folder within the system.
 	HashedID *string `json:"hashedId,omitzero"`
 }
 
-func (p *PostMediasMediaHashedIDCopyProject) GetID() *int64 {
+func (p *PostMediasMediaHashedIDCopyFolder) GetID() *int64 {
 	if p == nil {
 		return nil
 	}
 	return p.ID
 }
 
-func (p *PostMediasMediaHashedIDCopyProject) GetName() *string {
+func (p *PostMediasMediaHashedIDCopyFolder) GetName() *string {
 	if p == nil {
 		return nil
 	}
 	return p.Name
 }
 
-func (p *PostMediasMediaHashedIDCopyProject) GetHashedID() *string {
+func (p *PostMediasMediaHashedIDCopyFolder) GetHashedID() *string {
 	if p == nil {
 		return nil
 	}
 	return p.HashedID
 }
 
-// PostMediasMediaHashedIDCopyResponseBody - Successful creation of the media copy.
+// PostMediasMediaHashedIDCopyResponseBody - A media generally represents a video or an audio which can be embedded into your website.
+//
+// CDN-backed medias are accessible using this url structure: https://fast.wistia.com/embed/medias/{hashed_id}.m3u8.
+// For more information, see https://docs.wistia.com/docs/asset-urls#getting-hls-assets.
 type PostMediasMediaHashedIDCopyResponseBody struct {
 	// A unique numeric identifier for the media within the system.
 	ID *int64 `json:"id,omitzero"`
@@ -203,9 +206,9 @@ type PostMediasMediaHashedIDCopyResponseBody struct {
 	//
 	Status *PostMediasMediaHashedIDCopyStatus `json:"status,omitzero"`
 	// The title of the section in which the media appears. This attribute is omitted if the media is not in a section (default).
-	Section   optionalnullable.OptionalNullable[string]                             `json:"section,omitzero"`
-	Thumbnail *PostMediasMediaHashedIDCopyThumbnail                                 `json:"thumbnail,omitzero"`
-	Project   optionalnullable.OptionalNullable[PostMediasMediaHashedIDCopyProject] `json:"project,omitzero"`
+	Section   optionalnullable.OptionalNullable[string] `json:"section,omitzero"`
+	Thumbnail *PostMediasMediaHashedIDCopyThumbnail     `json:"thumbnail,omitzero"`
+	Folder    *PostMediasMediaHashedIDCopyFolder        `json:"folder"`
 }
 
 func (p PostMediasMediaHashedIDCopyResponseBody) MarshalJSON() ([]byte, error) {
@@ -317,11 +320,11 @@ func (p *PostMediasMediaHashedIDCopyResponseBody) GetThumbnail() *PostMediasMedi
 	return p.Thumbnail
 }
 
-func (p *PostMediasMediaHashedIDCopyResponseBody) GetProject() optionalnullable.OptionalNullable[PostMediasMediaHashedIDCopyProject] {
+func (p *PostMediasMediaHashedIDCopyResponseBody) GetFolder() *PostMediasMediaHashedIDCopyFolder {
 	if p == nil {
 		return nil
 	}
-	return p.Project
+	return p.Folder
 }
 
 type PostMediasMediaHashedIDCopyResponse struct {

@@ -1,17 +1,17 @@
 ## wistia stats-account get
 
-Stats:Account Show
+Show Current Account Stats
 
 ### Synopsis
 
 Retrieve account-wide video stats. Get statistics like the number of video loads, plays, and hours watched for the entire account.
 
+<!--- HIDE-MCP -->
 ## Requires api token with one of the following permissions
 ```
-Read, update & delete anything
-Read all data
-Read all folder and media data
+Read detailed stats
 ```
+<!--- /HIDE-MCP -->
 
 ```
 wistia stats-account get [flags]

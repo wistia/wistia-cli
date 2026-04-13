@@ -33,3 +33,17 @@ func (e *GetTagsUnauthorizedError) Error() string {
 	data, _ := json.Marshal(e)
 	return string(data)
 }
+
+// GetTagsBadRequestError - Bad request
+type GetTagsBadRequestError struct {
+	// Error message detailing the reason for the bad request.
+	Error_   *string                 `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata `json:"-"`
+}
+
+var _ error = &GetTagsBadRequestError{}
+
+func (e *GetTagsBadRequestError) Error() string {
+	data, _ := json.Marshal(e)
+	return string(data)
+}

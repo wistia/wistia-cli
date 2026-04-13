@@ -23,8 +23,8 @@ var getCmdMeta = []flagutil.FlagMeta{
 func initGetCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "get",
-		Short:   "Media Show",
-		Long:    "Fetch detailed information about a media you’ve uploaded to your account using its hashed_id.\n\nCDN-backed medias are accessible using this url structure: https://fast.wistia.com/embed/medias/{hashed_id}.m3u8.\nFor more information, see https://docs.wistia.com/docs/asset-urls#getting-hls-assets.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\nRead all data\nRead all folder and media data\n```",
+		Short:   "Show Media",
+		Long:    "Fetches a single media by its hashed id.\n\n## Requires api token with one of the following permissions\n```\nRead all folder and media data\n```",
 		Example: "  wistia media get --media-hashed-id <id>",
 		RunE:    runGetCmd,
 	}

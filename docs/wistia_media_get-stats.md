@@ -1,6 +1,6 @@
 ## wistia media get-stats
 
-Media Stats
+Show Media Aggregated Stats
 
 ### Synopsis
 
@@ -8,8 +8,6 @@ Aggregated tracking statistics for a video embedded on your site.
 
 ## Requires api token with one of the following permissions
 ```
-Read, update & delete anything
-Read all data
 Read all folder and media data
 ```
 

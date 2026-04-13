@@ -7,11 +7,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
+	"github.com/wistia/wistia-cli/internal/sdk/optionalnullable"
 	"github.com/wistia/wistia-cli/internal/sdk/sdkinternal/utils"
 	"time"
 )
 
-// GetChannelsChannelHashedIDChannelEpisodesSortBy - Ordering. Default is ID ASC.
+// GetChannelsChannelHashedIDChannelEpisodesSortBy - Ordering. Default is ID ASC. When using cursor pagination (see cursor param),
+// only `id` and `created` are supported. All other sort_by options (`position`, `title`, `updated`)
+// require offset pagination.
 type GetChannelsChannelHashedIDChannelEpisodesSortBy string
 
 const (
@@ -74,21 +77,114 @@ func (e *GetChannelsChannelHashedIDChannelEpisodesSortDirection) UnmarshalJSON(d
 	}
 }
 
+// GetChannelsChannelHashedIDChannelEpisodesEnabled - If `cursor[enabled]` is set to 1, the first result set will be fetched with cursor pagination enabled. This
+// values is ignored if `cursor[before]` or `cursor[after]` are set.
+type GetChannelsChannelHashedIDChannelEpisodesEnabled int64
+
+const (
+	GetChannelsChannelHashedIDChannelEpisodesEnabledZero GetChannelsChannelHashedIDChannelEpisodesEnabled = 0
+	GetChannelsChannelHashedIDChannelEpisodesEnabledOne  GetChannelsChannelHashedIDChannelEpisodesEnabled = 1
+)
+
+func (e GetChannelsChannelHashedIDChannelEpisodesEnabled) ToPointer() *GetChannelsChannelHashedIDChannelEpisodesEnabled {
+	return &e
+}
+func (e *GetChannelsChannelHashedIDChannelEpisodesEnabled) UnmarshalJSON(data []byte) error {
+	var v int64
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case 0:
+		fallthrough
+	case 1:
+		*e = GetChannelsChannelHashedIDChannelEpisodesEnabled(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for GetChannelsChannelHashedIDChannelEpisodesEnabled: %v", v)
+	}
+}
+
+// GetChannelsChannelHashedIDChannelEpisodesCursor - If `cursor[enabled]` is set to 1 than cursor pagination is enabled and the
+// first set of records are fetched up to the `per_page`. Cursor
+// pagination will also be turned on if `cursor[before]` or `cursor[after]`
+// are set. Records returned will have a `cursor` property set which can be used to fetch more records in the same `sort_by` ordering.
+// The cursor value of the last record can be used to fetch records after the current result set and
+// the cursor of the first record can be used to fetch records before the result set.
+//
+// NOTE: a cursor value is only valid if the `sort_by` value hasn't changed from the
+// last fetch. For example, you cannot fetch using `sort_by` id and than pass that
+// cursor value to a `sort_by` name.
+type GetChannelsChannelHashedIDChannelEpisodesCursor struct {
+	// If `cursor[enabled]` is set to 1, the first result set will be fetched with cursor pagination enabled. This
+	// values is ignored if `cursor[before]` or `cursor[after]` are set.
+	//
+	Enabled *GetChannelsChannelHashedIDChannelEpisodesEnabled `queryParam:"name=enabled"`
+	// If `cursor[before]` is set than cursor pagination is enabled and all records
+	// before the cursor up to the `per_page` are returned. This feature is useful for
+	// fetching "new records", for example, in a "pull to refersh" feature when showing records in a descending
+	// order.
+	//
+	Before *string `queryParam:"name=before"`
+	// If `cursor[after]` is set than cursor pagination is enabled and all records
+	// after the cursor up to the `per_page` are returned.
+	//
+	After *string `queryParam:"name=after"`
+}
+
+func (g *GetChannelsChannelHashedIDChannelEpisodesCursor) GetEnabled() *GetChannelsChannelHashedIDChannelEpisodesEnabled {
+	if g == nil {
+		return nil
+	}
+	return g.Enabled
+}
+
+func (g *GetChannelsChannelHashedIDChannelEpisodesCursor) GetBefore() *string {
+	if g == nil {
+		return nil
+	}
+	return g.Before
+}
+
+func (g *GetChannelsChannelHashedIDChannelEpisodesCursor) GetAfter() *string {
+	if g == nil {
+		return nil
+	}
+	return g.After
+}
+
 type GetChannelsChannelHashedIDChannelEpisodesRequest struct {
 	// The hashed ID of the channel to grab channel episodes from.
 	ChannelHashedID string `pathParam:"style=simple,explode=false,name=channelHashedId"`
-	// Ordering. Default is ID ASC.
+	// Ordering. Default is ID ASC. When using cursor pagination (see cursor param),
+	// only `id` and `created` are supported. All other sort_by options (`position`, `title`, `updated`)
+	// require offset pagination.
+	//
 	SortBy *GetChannelsChannelHashedIDChannelEpisodesSortBy `queryParam:"style=form,explode=true,name=sort_by"`
 	// Ordering Sort Direction (0 = desc, 1 = asc; default is 1)
 	SortDirection *GetChannelsChannelHashedIDChannelEpisodesSortDirection `queryParam:"style=form,explode=true,name=sort_direction"`
-	// Page number to retrieve
+	// The page number to retrieve. This cannot be combined with `cursor`,
+	// pagination.
+	//
 	Page *int64 `queryParam:"style=form,explode=true,name=page"`
-	// Number of channels per page
+	// The number of medias per page. Use this for both offset pagination and cursor pagination.
 	PerPage *int64 `queryParam:"style=form,explode=true,name=per_page"`
+	// If `cursor[enabled]` is set to 1 than cursor pagination is enabled and the
+	// first set of records are fetched up to the `per_page`. Cursor
+	// pagination will also be turned on if `cursor[before]` or `cursor[after]`
+	// are set. Records returned will have a `cursor` property set which can be used to fetch more records in the same `sort_by` ordering.
+	// The cursor value of the last record can be used to fetch records after the current result set and
+	// the cursor of the first record can be used to fetch records before the result set.
+	//
+	// NOTE: a cursor value is only valid if the `sort_by` value hasn't changed from the
+	// last fetch. For example, you cannot fetch using `sort_by` id and than pass that
+	// cursor value to a `sort_by` name.
+	//
+	Cursor *GetChannelsChannelHashedIDChannelEpisodesCursor `queryParam:"style=deepObject,explode=true,name=cursor"`
 	// Filter by media id
 	MediaID []string `queryParam:"style=form,explode=true,name=media_id[]"`
 	// Filter by hashed id
-	HashedID []string `queryParam:"style=form,explode=true,name=hashed_id[]"`
+	HashedIds []string `queryParam:"style=form,explode=true,name=hashed_ids[]"`
 	// Filter by published status.
 	Published *bool `queryParam:"style=form,explode=true,name=published"`
 	// Filter by channel episode name/title.
@@ -141,6 +237,13 @@ func (g *GetChannelsChannelHashedIDChannelEpisodesRequest) GetPerPage() *int64 {
 	return g.PerPage
 }
 
+func (g *GetChannelsChannelHashedIDChannelEpisodesRequest) GetCursor() *GetChannelsChannelHashedIDChannelEpisodesCursor {
+	if g == nil {
+		return nil
+	}
+	return g.Cursor
+}
+
 func (g *GetChannelsChannelHashedIDChannelEpisodesRequest) GetMediaID() []string {
 	if g == nil {
 		return nil
@@ -148,11 +251,11 @@ func (g *GetChannelsChannelHashedIDChannelEpisodesRequest) GetMediaID() []string
 	return g.MediaID
 }
 
-func (g *GetChannelsChannelHashedIDChannelEpisodesRequest) GetHashedID() []string {
+func (g *GetChannelsChannelHashedIDChannelEpisodesRequest) GetHashedIds() []string {
 	if g == nil {
 		return nil
 	}
-	return g.HashedID
+	return g.HashedIds
 }
 
 func (g *GetChannelsChannelHashedIDChannelEpisodesRequest) GetPublished() *bool {
@@ -169,19 +272,23 @@ func (g *GetChannelsChannelHashedIDChannelEpisodesRequest) GetTitle() *string {
 	return g.Title
 }
 
+// GetChannelsChannelHashedIDChannelEpisodesResponseBody - A channel episode represents a media that has been added to a channel. Only published
+// episodes are displayed in a channel.
 type GetChannelsChannelHashedIDChannelEpisodesResponseBody struct {
 	// A unique alphanumeric identifier for the channel episode's channel.
-	ChannelHashedID string `json:"channelHashedId"`
+	ChannelHashedID string `json:"channel_hashed_id"`
 	// The date when the channel episode was originally created.
 	Created time.Time `json:"created"`
+	// A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+	Cursor optionalnullable.OptionalNullable[string] `json:"cursor,omitzero"`
 	// The channel episode's description or episode notes.
 	Description string `json:"description"`
 	// A short summary of the episode that is displayed when space is limited.
 	Summary string `json:"summary"`
 	// A unique alphanumeric identifier for the channel episode.
-	HashedID string `json:"hashedId"`
+	HashedID string `json:"hashed_id"`
 	// A unique alphanumeric identifier for the channel episode's media.
-	MediaHashedID string `json:"mediaHashedId"`
+	MediaHashedID string `json:"media_hashed_id"`
 	// Whether the channel episode has been published or is still in draft form.
 	Published bool `json:"published"`
 	// The date and time when the episode is scheduled to be published in UTC timezone (only present when publish_status is 'scheduled').
@@ -215,6 +322,13 @@ func (g *GetChannelsChannelHashedIDChannelEpisodesResponseBody) GetCreated() tim
 		return time.Time{}
 	}
 	return g.Created
+}
+
+func (g *GetChannelsChannelHashedIDChannelEpisodesResponseBody) GetCursor() optionalnullable.OptionalNullable[string] {
+	if g == nil {
+		return nil
+	}
+	return g.Cursor
 }
 
 func (g *GetChannelsChannelHashedIDChannelEpisodesResponseBody) GetDescription() string {

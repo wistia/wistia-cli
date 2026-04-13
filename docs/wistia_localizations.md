@@ -38,7 +38,7 @@ wistia localizations [flags]
 ### SEE ALSO
 
 * [wistia](wistia.md)	 - Data API: Wistia Data API
-* [wistia localizations create](wistia_localizations_create.md)	 - Localizations Create
-* [wistia localizations delete](wistia_localizations_delete.md)	 - Localizations Delete
-* [wistia localizations get](wistia_localizations_get.md)	 - Localizations Show
-* [wistia localizations list](wistia_localizations_list.md)	 - Localizations List
+* [wistia localizations create](wistia_localizations_create.md)	 - Create Localization
+* [wistia localizations delete](wistia_localizations_delete.md)	 - Delete Localization
+* [wistia localizations get](wistia_localizations_get.md)	 - Show Localization
+* [wistia localizations list](wistia_localizations_list.md)	 - List Localizations

@@ -34,6 +34,19 @@ func (e *PutMediasMoveNotFoundError) Error() string {
 	return string(data)
 }
 
+// PutMediasMoveForbiddenError - Forbidden, token is valid but account does not have access to feature
+type PutMediasMoveForbiddenError struct {
+	Error_   *string                 `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata `json:"-"`
+}
+
+var _ error = &PutMediasMoveForbiddenError{}
+
+func (e *PutMediasMoveForbiddenError) Error() string {
+	data, _ := json.Marshal(e)
+	return string(data)
+}
+
 // PutMediasMoveUnauthorizedError - Unauthorized, invalid or missing token
 type PutMediasMoveUnauthorizedError struct {
 	Error_   *string                 `json:"error,omitzero"`

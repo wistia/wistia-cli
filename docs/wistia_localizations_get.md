@@ -1,6 +1,6 @@
 ## wistia localizations get
 
-Localizations Show
+Show Localization
 
 ### Synopsis
 
@@ -8,9 +8,7 @@ Obtain detailed information about a localization.
 
 ## Requires api token with one of the following permissions
 ```
-Read, update & delete anything
 Read all data
-Read all folder and media data
 ```
 
 ```

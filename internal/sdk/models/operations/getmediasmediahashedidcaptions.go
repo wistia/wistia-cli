@@ -5,6 +5,7 @@ package operations
 
 import (
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
+	"github.com/wistia/wistia-cli/internal/sdk/optionalnullable"
 	"github.com/wistia/wistia-cli/internal/sdk/sdkinternal/utils"
 )
 
@@ -28,10 +29,12 @@ type GetMediasMediaHashedIDCaptionsResponseBody struct {
 	// A 3 character language code as specified by ISO-639–2.
 	Language string `json:"language"`
 	// The text of the captions for the specified language in SRT format.
-	Text    *string `json:"text,omitzero"`
-	IsDraft bool    `json:"is_draft"`
+	Text    optionalnullable.OptionalNullable[string] `json:"text,omitzero"`
+	IsDraft bool                                      `json:"is_draft"`
 	// The unique hashed identifier of the time-coded transcript.
 	ID string `json:"id"`
+	// A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+	Cursor optionalnullable.OptionalNullable[string] `json:"cursor,omitzero"`
 }
 
 func (g *GetMediasMediaHashedIDCaptionsResponseBody) GetEnglishName() *string {
@@ -55,7 +58,7 @@ func (g *GetMediasMediaHashedIDCaptionsResponseBody) GetLanguage() string {
 	return g.Language
 }
 
-func (g *GetMediasMediaHashedIDCaptionsResponseBody) GetText() *string {
+func (g *GetMediasMediaHashedIDCaptionsResponseBody) GetText() optionalnullable.OptionalNullable[string] {
 	if g == nil {
 		return nil
 	}
@@ -74,6 +77,13 @@ func (g *GetMediasMediaHashedIDCaptionsResponseBody) GetID() string {
 		return ""
 	}
 	return g.ID
+}
+
+func (g *GetMediasMediaHashedIDCaptionsResponseBody) GetCursor() optionalnullable.OptionalNullable[string] {
+	if g == nil {
+		return nil
+	}
+	return g.Cursor
 }
 
 type GetMediasMediaHashedIDCaptionsResponse struct {

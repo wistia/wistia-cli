@@ -30,13 +30,11 @@ func newChannelsChannelEpisodes(rootSDK *Wistia, sdkConfig config.SDKConfigurati
 	}
 }
 
-// List - Channel Episodes List filtered by channel
-// Returns all the Channel Episodes belonging the channel passed in the path.
+// List Channel Episodes by Channel
+// Lists Channel Episodes belonging to the channel passed in the path.
 //
 // ## Requires api token with one of the following permissions
 // ```
-// Read, update & delete anything
-// Read all data
 // Read all folder and media data
 // ```
 func (s *ChannelsChannelEpisodes) List(ctx context.Context, request operations.GetChannelsChannelHashedIDChannelEpisodesRequest, opts ...operations.Option) (*operations.GetChannelsChannelHashedIDChannelEpisodesResponse, error) {
@@ -118,7 +116,7 @@ func (s *ChannelsChannelEpisodes) List(ctx context.Context, request operations.G
 
 		_, err = s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
 		return nil, err
-	} else if utils.MatchStatusCodes([]string{"401", "4XX", "500", "5XX"}, httpRes.StatusCode) {
+	} else if utils.MatchStatusCodes([]string{"400", "401", "4XX", "500", "5XX"}, httpRes.StatusCode) {
 		_httpRes, err := s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
 		if err != nil {
 			return nil, err
@@ -156,6 +154,31 @@ func (s *ChannelsChannelEpisodes) List(ctx context.Context, request operations.G
 
 				res.ResponseBodies = out
 			}
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
+	case httpRes.StatusCode == 400:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out sdkerrors.GetChannelsChannelHashedIDChannelEpisodesBadRequestError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, err
+			}
+
+			out.HTTPMeta = components.HTTPMetadata{
+				Request:  req,
+				Response: httpRes,
+			}
+			return nil, &out
 		default:
 			rawBody, err := utils.ConsumeRawBody(httpRes)
 			if err != nil {

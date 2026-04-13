@@ -38,11 +38,12 @@ wistia captions [flags]
 ### SEE ALSO
 
 * [wistia](wistia.md)	 - Data API: Wistia Data API
-* [wistia captions create](wistia_captions_create.md)	 - Captions Create
-* [wistia captions create-multipart](wistia_captions_create-multipart.md)	 - Captions Create
-* [wistia captions delete](wistia_captions_delete.md)	 - Captions Delete
-* [wistia captions get](wistia_captions_get.md)	 - Captions Show
-* [wistia captions list](wistia_captions_list.md)	 - Captions List
-* [wistia captions purchase](wistia_captions_purchase.md)	 - Captions Purchase
-* [wistia captions update](wistia_captions_update.md)	 - Captions Update
-* [wistia captions update-multipart](wistia_captions_update-multipart.md)	 - Captions Update
+* [wistia captions create](wistia_captions_create.md)	 - Create Captions
+* [wistia captions create-multipart](wistia_captions_create-multipart.md)	 - Create Captions
+* [wistia captions delete](wistia_captions_delete.md)	 - Delete Captions
+* [wistia captions get](wistia_captions_get.md)	 - List Captions
+* [wistia captions get](wistia_captions_get.md)	 - Show Captions
+* [wistia captions list](wistia_captions_list.md)	 - List Captions by Media
+* [wistia captions purchase](wistia_captions_purchase.md)	 - Purchase Captions
+* [wistia captions update](wistia_captions_update.md)	 - Update Captions
+* [wistia captions update-multipart](wistia_captions_update-multipart.md)	 - Update Captions

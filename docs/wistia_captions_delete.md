@@ -1,10 +1,10 @@
 ## wistia captions delete
 
-Captions Delete
+Delete Captions
 
 ### Synopsis
 
-This method is for removing the captions file from a video for the specified language.
+Removes the captions file from a media for the specified language.
 
 ## Requires api token with one of the following permissions
 ```

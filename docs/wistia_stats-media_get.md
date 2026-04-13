@@ -1,17 +1,17 @@
 ## wistia stats-media get
 
-Stats:Media Show
+Show Media Stats
 
 ### Synopsis
 
 Retrieve stats for a video. This endpoint provides statistics for a specific video identified by its media-id.
 
+<!--- HIDE-MCP -->
 ## Requires api token with one of the following permissions
 ```
-Read, update & delete anything
-Read all data
-Read all folder and media data
+Read detailed stats
 ```
+<!--- /HIDE-MCP -->
 
 ```
 wistia stats-media get [flags]

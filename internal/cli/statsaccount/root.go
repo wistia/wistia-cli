@@ -26,6 +26,10 @@ func InitStatsAccountRoot(parent *cobra.Command) error {
 		return err
 	}
 
+	if err := initGetStatsAccountByDateCmd(StatsAccountCmd); err != nil {
+		return err
+	}
+
 	parent.AddCommand(StatsAccountCmd)
 	return nil
 }

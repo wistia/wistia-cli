@@ -38,7 +38,7 @@ wistia customizations [flags]
 ### SEE ALSO
 
 * [wistia](wistia.md)	 - Data API: Wistia Data API
-* [wistia customizations create](wistia_customizations_create.md)	 - Customizations Create
-* [wistia customizations delete](wistia_customizations_delete.md)	 - Customizations Delete
-* [wistia customizations get](wistia_customizations_get.md)	 - Customizations Show
-* [wistia customizations update](wistia_customizations_update.md)	 - Customizations Update
+* [wistia customizations create](wistia_customizations_create.md)	 - Create Customizations
+* [wistia customizations delete](wistia_customizations_delete.md)	 - Delete Customizations
+* [wistia customizations get](wistia_customizations_get.md)	 - Show Customizations
+* [wistia customizations update](wistia_customizations_update.md)	 - Update Customizations

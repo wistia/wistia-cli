@@ -45,7 +45,8 @@ func (e *GetBackgroundJobStatusBackgroundJobStatusIDStatus) IsExact() bool {
 	return false
 }
 
-// GetBackgroundJobStatusBackgroundJobStatusIDBackgroundJobStatus - Status of the background job.
+// GetBackgroundJobStatusBackgroundJobStatusIDBackgroundJobStatus - A background job keeps track of the progress of an asynchronous task, e.g
+// bulk archiving media, translating media, etc.
 type GetBackgroundJobStatusBackgroundJobStatusIDBackgroundJobStatus struct {
 	// The ID of the background job that's been queued for the request.
 	ID int64 `json:"id"`
@@ -69,7 +70,9 @@ func (g *GetBackgroundJobStatusBackgroundJobStatusIDBackgroundJobStatus) GetStat
 
 // GetBackgroundJobStatusBackgroundJobStatusIDResponseBody - OK
 type GetBackgroundJobStatusBackgroundJobStatusIDResponseBody struct {
-	// Status of the background job.
+	// A background job keeps track of the progress of an asynchronous task, e.g
+	// bulk archiving media, translating media, etc.
+	//
 	BackgroundJobStatus GetBackgroundJobStatusBackgroundJobStatusIDBackgroundJobStatus `json:"background_job_status"`
 }
 

@@ -27,8 +27,8 @@ var updateCmdMeta = []flagutil.FlagMeta{
 func initUpdateCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "update",
-		Short:   "Media Update",
-		Long:    "Update attributes on a media.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
+		Short:   "Update Media",
+		Long:    "Updates the attributes on a media.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
 		Example: "  wistia media update --media-hashed-id <id>",
 		RunE:    runUpdateCmd,
 	}

@@ -1,17 +1,17 @@
 ## wistia stats-visitors get
 
-Stats:Visitors Show
+Show Visitor
 
 ### Synopsis
 
 This endpoint provides detailed information about a specific visitor.
 
+<!--- HIDE-MCP -->
 ## Requires api token with one of the following permissions
 ```
-Read, update & delete anything
-Read all data
-Read all folder and media data
+Read detailed stats
 ```
+<!--- /HIDE-MCP -->
 
 ```
 wistia stats-visitors get [flags]

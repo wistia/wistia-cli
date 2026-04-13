@@ -34,6 +34,19 @@ func (e *PutMediasMediaHashedIDSwapNotFoundError) Error() string {
 	return string(data)
 }
 
+// PutMediasMediaHashedIDSwapForbiddenError - Forbidden, token is valid but account does not have access to feature
+type PutMediasMediaHashedIDSwapForbiddenError struct {
+	Error_   *string                 `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata `json:"-"`
+}
+
+var _ error = &PutMediasMediaHashedIDSwapForbiddenError{}
+
+func (e *PutMediasMediaHashedIDSwapForbiddenError) Error() string {
+	data, _ := json.Marshal(e)
+	return string(data)
+}
+
 // PutMediasMediaHashedIDSwapUnauthorizedError - Unauthorized, invalid or missing token
 type PutMediasMediaHashedIDSwapUnauthorizedError struct {
 	Error_   *string                 `json:"error,omitzero"`

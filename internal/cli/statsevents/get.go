@@ -23,8 +23,8 @@ var getCmdMeta = []flagutil.FlagMeta{
 func initGetCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "get",
-		Short:   "Stats:Events Show",
-		Long:    "Retrieve information for a single event. Please note that due to our data retention policy,\nonly events from the last 2 years are available.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\nRead all data\nRead all folder and media data\n```",
+		Short:   "Show Event",
+		Long:    "Retrieve information for a single event. Please note that due to our data retention policy,\nonly events from the last 2 years are available.\n\n<!--- HIDE-MCP -->\n## Requires api token with one of the following permissions\n```\nRead detailed stats\n```\n<!--- /HIDE-MCP -->",
 		Example: "  wistia stats-events get --event-key <value>",
 		RunE:    runGetCmd,
 	}

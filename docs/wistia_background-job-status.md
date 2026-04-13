@@ -38,4 +38,4 @@ wistia background-job-status [flags]
 ### SEE ALSO
 
 * [wistia](wistia.md)	 - Data API: Wistia Data API
-* [wistia background-job-status get](wistia_background-job-status_get.md)	 - Background Job Status Show
+* [wistia background-job-status get](wistia_background-job-status_get.md)	 - Show Background Job Status

@@ -45,7 +45,8 @@ func (e *PutMediasArchiveStatus) IsExact() bool {
 	return false
 }
 
-// PutMediasArchiveBackgroundJobStatus - Status of the background job.
+// PutMediasArchiveBackgroundJobStatus - A background job keeps track of the progress of an asynchronous task, e.g
+// bulk archiving media, translating media, etc.
 type PutMediasArchiveBackgroundJobStatus struct {
 	// The ID of the background job that's been queued for the request.
 	ID int64 `json:"id"`
@@ -71,7 +72,9 @@ func (p *PutMediasArchiveBackgroundJobStatus) GetStatus() PutMediasArchiveStatus
 type PutMediasArchiveResponseBody struct {
 	// A confirmation message that the background job has been queued.
 	Message *string `json:"message,omitzero"`
-	// Status of the background job.
+	// A background job keeps track of the progress of an asynchronous task, e.g
+	// bulk archiving media, translating media, etc.
+	//
 	BackgroundJobStatus *PutMediasArchiveBackgroundJobStatus `json:"background_job_status,omitzero"`
 }
 

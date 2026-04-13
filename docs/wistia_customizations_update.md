@@ -1,6 +1,6 @@
 ## wistia customizations update
 
-Customizations Update
+Update Customizations
 
 ### Synopsis
 

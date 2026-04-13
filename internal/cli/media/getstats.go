@@ -23,8 +23,8 @@ var getStatsCmdMeta = []flagutil.FlagMeta{
 func initGetStatsCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "get-stats",
-		Short:   "Media Stats",
-		Long:    "Aggregated tracking statistics for a video embedded on your site.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\nRead all data\nRead all folder and media data\n```",
+		Short:   "Show Media Aggregated Stats",
+		Long:    "Aggregated tracking statistics for a video embedded on your site.\n\n## Requires api token with one of the following permissions\n```\nRead all folder and media data\n```",
 		Example: "  wistia media get-stats --media-hashed-id <id>",
 		RunE:    runGetStatsCmd,
 		Aliases: []string{"gs"},

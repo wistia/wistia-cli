@@ -1,10 +1,10 @@
 ## wistia media update
 
-Media Update
+Update Media
 
 ### Synopsis
 
-Update attributes on a media.
+Updates the attributes on a media.
 
 ## Requires api token with one of the following permissions
 ```

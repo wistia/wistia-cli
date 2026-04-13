@@ -1,6 +1,6 @@
 ## wistia captions update
 
-Captions Update
+Update Captions
 
 ### Synopsis
 

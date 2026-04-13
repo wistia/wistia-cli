@@ -102,7 +102,10 @@ func (d *DeleteMediasMediaHashedIDThumbnail) GetHeight() *int64 {
 	return d.Height
 }
 
-// DeleteMediasMediaHashedIDResponseBody - Successful deletion of the media.
+// DeleteMediasMediaHashedIDResponseBody - A media generally represents a video or an audio which can be embedded into your website.
+//
+// CDN-backed medias are accessible using this url structure: https://fast.wistia.com/embed/medias/{hashed_id}.m3u8.
+// For more information, see https://docs.wistia.com/docs/asset-urls#getting-hls-assets.
 type DeleteMediasMediaHashedIDResponseBody struct {
 	// A unique numeric identifier for the media within the system.
 	ID *int64 `json:"id,omitzero"`

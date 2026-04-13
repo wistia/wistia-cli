@@ -1,10 +1,10 @@
 ## wistia tags delete
 
-Tags Delete
+Delete Tag
 
 ### Synopsis
 
-Delete a tag
+Deletes a tag
 
 ## Requires api token with one of the following permissions
 ```

@@ -7,23 +7,24 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
+	"github.com/wistia/wistia-cli/internal/sdk/optionalnullable"
 	"github.com/wistia/wistia-cli/internal/sdk/sdkinternal/utils"
 	"time"
 )
 
-// PublishStatus - The status of whether or not the episode has been published to your channel.
-type PublishStatus string
+// PostChannelsChannelHashedIDChannelEpisodesPublishStatus - The status of whether or not the episode has been published to your channel.
+type PostChannelsChannelHashedIDChannelEpisodesPublishStatus string
 
 const (
-	PublishStatusDraft     PublishStatus = "draft"
-	PublishStatusPublished PublishStatus = "published"
-	PublishStatusScheduled PublishStatus = "scheduled"
+	PostChannelsChannelHashedIDChannelEpisodesPublishStatusDraft     PostChannelsChannelHashedIDChannelEpisodesPublishStatus = "draft"
+	PostChannelsChannelHashedIDChannelEpisodesPublishStatusPublished PostChannelsChannelHashedIDChannelEpisodesPublishStatus = "published"
+	PostChannelsChannelHashedIDChannelEpisodesPublishStatusScheduled PostChannelsChannelHashedIDChannelEpisodesPublishStatus = "scheduled"
 )
 
-func (e PublishStatus) ToPointer() *PublishStatus {
+func (e PostChannelsChannelHashedIDChannelEpisodesPublishStatus) ToPointer() *PostChannelsChannelHashedIDChannelEpisodesPublishStatus {
 	return &e
 }
-func (e *PublishStatus) UnmarshalJSON(data []byte) error {
+func (e *PostChannelsChannelHashedIDChannelEpisodesPublishStatus) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
 		return err
@@ -34,26 +35,26 @@ func (e *PublishStatus) UnmarshalJSON(data []byte) error {
 	case "published":
 		fallthrough
 	case "scheduled":
-		*e = PublishStatus(v)
+		*e = PostChannelsChannelHashedIDChannelEpisodesPublishStatus(v)
 		return nil
 	default:
-		return fmt.Errorf("invalid value for PublishStatus: %v", v)
+		return fmt.Errorf("invalid value for PostChannelsChannelHashedIDChannelEpisodesPublishStatus: %v", v)
 	}
 }
 
-// EpisodeType - The episode type for your podcast.  This parameter only takes effect if podcasting is enabled for the channel.
-type EpisodeType string
+// PostChannelsChannelHashedIDChannelEpisodesEpisodeType - The episode type for your podcast.  This parameter only takes effect if podcasting is enabled for the channel.
+type PostChannelsChannelHashedIDChannelEpisodesEpisodeType string
 
 const (
-	EpisodeTypeFull    EpisodeType = "full"
-	EpisodeTypeTrailer EpisodeType = "trailer"
-	EpisodeTypeBonus   EpisodeType = "bonus"
+	PostChannelsChannelHashedIDChannelEpisodesEpisodeTypeFull    PostChannelsChannelHashedIDChannelEpisodesEpisodeType = "full"
+	PostChannelsChannelHashedIDChannelEpisodesEpisodeTypeTrailer PostChannelsChannelHashedIDChannelEpisodesEpisodeType = "trailer"
+	PostChannelsChannelHashedIDChannelEpisodesEpisodeTypeBonus   PostChannelsChannelHashedIDChannelEpisodesEpisodeType = "bonus"
 )
 
-func (e EpisodeType) ToPointer() *EpisodeType {
+func (e PostChannelsChannelHashedIDChannelEpisodesEpisodeType) ToPointer() *PostChannelsChannelHashedIDChannelEpisodesEpisodeType {
 	return &e
 }
-func (e *EpisodeType) UnmarshalJSON(data []byte) error {
+func (e *PostChannelsChannelHashedIDChannelEpisodesEpisodeType) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
 		return err
@@ -64,10 +65,10 @@ func (e *EpisodeType) UnmarshalJSON(data []byte) error {
 	case "trailer":
 		fallthrough
 	case "bonus":
-		*e = EpisodeType(v)
+		*e = PostChannelsChannelHashedIDChannelEpisodesEpisodeType(v)
 		return nil
 	default:
-		return fmt.Errorf("invalid value for EpisodeType: %v", v)
+		return fmt.Errorf("invalid value for PostChannelsChannelHashedIDChannelEpisodesEpisodeType: %v", v)
 	}
 }
 
@@ -81,11 +82,11 @@ type PostChannelsChannelHashedIDChannelEpisodesRequestBody struct {
 	// A short summary of the episode that is displayed when space is limited.
 	Summary *string `json:"summary,omitzero"`
 	// The status of whether or not the episode has been published to your channel.
-	PublishStatus *PublishStatus `json:"publish_status,omitzero"`
+	PublishStatus *PostChannelsChannelHashedIDChannelEpisodesPublishStatus `json:"publish_status,omitzero"`
 	// The date and time when the episode should be published in UTC timezone. Required when publish_status is 'scheduled'. Must be a valid ISO8601 timestamp in UTC (ending with 'Z').  Can only be provided when publish_status is 'scheduled.'
 	PublishAt *time.Time `json:"publish_at,omitzero"`
 	// The episode type for your podcast.  This parameter only takes effect if podcasting is enabled for the channel.
-	EpisodeType *EpisodeType `json:"episode_type,omitzero"`
+	EpisodeType *PostChannelsChannelHashedIDChannelEpisodesEpisodeType `json:"episode_type,omitzero"`
 	// The episode number for this episode in your podcast.  This parameter only takes effect if podcasting is enabled for the channel.
 	EpisodeNumber *int64 `json:"episode_number,omitzero"`
 	// Whether this episode contains explicit content.  This parameter only takes effect if podcasting is enabled for the channel.
@@ -133,7 +134,7 @@ func (p *PostChannelsChannelHashedIDChannelEpisodesRequestBody) GetSummary() *st
 	return p.Summary
 }
 
-func (p *PostChannelsChannelHashedIDChannelEpisodesRequestBody) GetPublishStatus() *PublishStatus {
+func (p *PostChannelsChannelHashedIDChannelEpisodesRequestBody) GetPublishStatus() *PostChannelsChannelHashedIDChannelEpisodesPublishStatus {
 	if p == nil {
 		return nil
 	}
@@ -147,7 +148,7 @@ func (p *PostChannelsChannelHashedIDChannelEpisodesRequestBody) GetPublishAt() *
 	return p.PublishAt
 }
 
-func (p *PostChannelsChannelHashedIDChannelEpisodesRequestBody) GetEpisodeType() *EpisodeType {
+func (p *PostChannelsChannelHashedIDChannelEpisodesRequestBody) GetEpisodeType() *PostChannelsChannelHashedIDChannelEpisodesEpisodeType {
 	if p == nil {
 		return nil
 	}
@@ -195,20 +196,23 @@ func (p *PostChannelsChannelHashedIDChannelEpisodesRequest) GetBody() PostChanne
 	return p.Body
 }
 
-// PostChannelsChannelHashedIDChannelEpisodesResponseBody - Channel Episode creation successful
+// PostChannelsChannelHashedIDChannelEpisodesResponseBody - A channel episode represents a media that has been added to a channel. Only published
+// episodes are displayed in a channel.
 type PostChannelsChannelHashedIDChannelEpisodesResponseBody struct {
 	// A unique alphanumeric identifier for the channel episode's channel.
-	ChannelHashedID string `json:"channelHashedId"`
+	ChannelHashedID string `json:"channel_hashed_id"`
 	// The date when the channel episode was originally created.
 	Created time.Time `json:"created"`
+	// A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+	Cursor optionalnullable.OptionalNullable[string] `json:"cursor,omitzero"`
 	// The channel episode's description or episode notes.
 	Description string `json:"description"`
 	// A short summary of the episode that is displayed when space is limited.
 	Summary string `json:"summary"`
 	// A unique alphanumeric identifier for the channel episode.
-	HashedID string `json:"hashedId"`
+	HashedID string `json:"hashed_id"`
 	// A unique alphanumeric identifier for the channel episode's media.
-	MediaHashedID string `json:"mediaHashedId"`
+	MediaHashedID string `json:"media_hashed_id"`
 	// Whether the channel episode has been published or is still in draft form.
 	Published bool `json:"published"`
 	// The date and time when the episode is scheduled to be published in UTC timezone (only present when publish_status is 'scheduled').
@@ -242,6 +246,13 @@ func (p *PostChannelsChannelHashedIDChannelEpisodesResponseBody) GetCreated() ti
 		return time.Time{}
 	}
 	return p.Created
+}
+
+func (p *PostChannelsChannelHashedIDChannelEpisodesResponseBody) GetCursor() optionalnullable.OptionalNullable[string] {
+	if p == nil {
+		return nil
+	}
+	return p.Cursor
 }
 
 func (p *PostChannelsChannelHashedIDChannelEpisodesResponseBody) GetDescription() string {

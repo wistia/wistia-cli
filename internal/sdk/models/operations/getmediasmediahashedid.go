@@ -121,30 +121,30 @@ func (g *GetMediasMediaHashedIDThumbnail) GetHeight() *int64 {
 	return g.Height
 }
 
-type GetMediasMediaHashedIDProject struct {
-	// A unique numeric identifier for the project within the system.
+type GetMediasMediaHashedIDFolder struct {
+	// A unique numeric identifier for the folder within the system.
 	ID *int64 `json:"id,omitzero"`
-	// The project’s display name.
+	// The folder’s display name.
 	Name *string `json:"name,omitzero"`
-	// A private hashed id, uniquely identifying the project within the system.
+	// A private hashed id, uniquely identifying the folder within the system.
 	HashedID *string `json:"hashedId,omitzero"`
 }
 
-func (g *GetMediasMediaHashedIDProject) GetID() *int64 {
+func (g *GetMediasMediaHashedIDFolder) GetID() *int64 {
 	if g == nil {
 		return nil
 	}
 	return g.ID
 }
 
-func (g *GetMediasMediaHashedIDProject) GetName() *string {
+func (g *GetMediasMediaHashedIDFolder) GetName() *string {
 	if g == nil {
 		return nil
 	}
 	return g.Name
 }
 
-func (g *GetMediasMediaHashedIDProject) GetHashedID() *string {
+func (g *GetMediasMediaHashedIDFolder) GetHashedID() *string {
 	if g == nil {
 		return nil
 	}
@@ -159,9 +159,9 @@ type GetMediasMediaHashedIDAsset struct {
 	// The height of this specific asset, if applicable.
 	Height optionalnullable.OptionalNullable[int64] `json:"height,omitzero"`
 	// The size of the asset file that’s referenced by url, measured in bytes.
-	FileSize optionalnullable.OptionalNullable[int64] `json:"fileSize,omitzero"`
+	FileSize optionalnullable.OptionalNullable[int64] `json:"file_size,omitzero"`
 	// The asset’s content type.
-	ContentType optionalnullable.OptionalNullable[string] `json:"contentType,omitzero"`
+	ContentType optionalnullable.OptionalNullable[string] `json:"content_type,omitzero"`
 	// The internal type of the asset, describing how the asset should be used. Values can include OriginalFile, FlashVideoFile, MdFlashVideoFile, HdFlashVideoFile, Mp4VideoFile, MdMp4VideoFile, HdMp4VideoFile, IPhoneVideoFile, StillImageFile, SwfFile, Mp3AudioFile, and LargeImageFile.
 	//
 	Type *string `json:"type,omitzero"`
@@ -209,7 +209,7 @@ func (g *GetMediasMediaHashedIDAsset) GetType() *string {
 	return g.Type
 }
 
-// GetMediasMediaHashedIDSubfolder - A subfolder within a project that contains media files.
+// GetMediasMediaHashedIDSubfolder - A subfolder within a folder that contains media.
 type GetMediasMediaHashedIDSubfolder struct {
 	// A unique alphanumeric identifier for this subfolder.
 	HashedID string `json:"hashed_id"`
@@ -217,12 +217,14 @@ type GetMediasMediaHashedIDSubfolder struct {
 	Name optionalnullable.OptionalNullable[string] `json:"name,omitzero"`
 	// A description for the subfolder.
 	Description optionalnullable.OptionalNullable[string] `json:"description,omitzero"`
-	// The position of this subfolder within its project, used for ordering.
+	// The position of this subfolder within its folder, used for ordering.
 	Position *int64 `json:"position"`
 	// The date when the subfolder was created.
 	Created *time.Time `json:"created"`
 	// The date when the subfolder was last modified.
 	Updated *time.Time `json:"updated"`
+	// A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+	Cursor optionalnullable.OptionalNullable[string] `json:"cursor,omitzero"`
 }
 
 func (g GetMediasMediaHashedIDSubfolder) MarshalJSON() ([]byte, error) {
@@ -278,6 +280,13 @@ func (g *GetMediasMediaHashedIDSubfolder) GetUpdated() *time.Time {
 	return g.Updated
 }
 
+func (g *GetMediasMediaHashedIDSubfolder) GetCursor() optionalnullable.OptionalNullable[string] {
+	if g == nil {
+		return nil
+	}
+	return g.Cursor
+}
+
 type GetMediasMediaHashedIDTag struct {
 	// The display name of the tag.
 	Name *string `json:"name,omitzero"`
@@ -290,7 +299,10 @@ func (g *GetMediasMediaHashedIDTag) GetName() *string {
 	return g.Name
 }
 
-// GetMediasMediaHashedIDResponseBody - Successful response
+// GetMediasMediaHashedIDResponseBody - A media generally represents a video or an audio which can be embedded into your website.
+//
+// CDN-backed medias are accessible using this url structure: https://fast.wistia.com/embed/medias/{hashed_id}.m3u8.
+// For more information, see https://docs.wistia.com/docs/asset-urls#getting-hls-assets.
 type GetMediasMediaHashedIDResponseBody struct {
 	// A unique numeric identifier for the media within the system.
 	ID *int64 `json:"id,omitzero"`
@@ -321,9 +333,9 @@ type GetMediasMediaHashedIDResponseBody struct {
 	//
 	Status *GetMediasMediaHashedIDStatus `json:"status,omitzero"`
 	// The title of the section in which the media appears. This attribute is omitted if the media is not in a section (default).
-	Section   optionalnullable.OptionalNullable[string]                        `json:"section,omitzero"`
-	Thumbnail *GetMediasMediaHashedIDThumbnail                                 `json:"thumbnail,omitzero"`
-	Project   optionalnullable.OptionalNullable[GetMediasMediaHashedIDProject] `json:"project,omitzero"`
+	Section   optionalnullable.OptionalNullable[string] `json:"section,omitzero"`
+	Thumbnail *GetMediasMediaHashedIDThumbnail          `json:"thumbnail,omitzero"`
+	Folder    *GetMediasMediaHashedIDFolder             `json:"folder"`
 	// An array of the assets available for this media.
 	Assets []GetMediasMediaHashedIDAsset `json:"assets,omitzero"`
 	// The subfolder (media group) in which the media appears. Null if the media is not in a subfolder.
@@ -441,11 +453,11 @@ func (g *GetMediasMediaHashedIDResponseBody) GetThumbnail() *GetMediasMediaHashe
 	return g.Thumbnail
 }
 
-func (g *GetMediasMediaHashedIDResponseBody) GetProject() optionalnullable.OptionalNullable[GetMediasMediaHashedIDProject] {
+func (g *GetMediasMediaHashedIDResponseBody) GetFolder() *GetMediasMediaHashedIDFolder {
 	if g == nil {
 		return nil
 	}
-	return g.Project
+	return g.Folder
 }
 
 func (g *GetMediasMediaHashedIDResponseBody) GetAssets() []GetMediasMediaHashedIDAsset {

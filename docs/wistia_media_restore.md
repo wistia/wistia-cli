@@ -1,10 +1,10 @@
 ## wistia media restore
 
-Media Restore
+Restore Media
 
 ### Synopsis
 
-Restore archived medias to your account. This method accepts a list of up to 100 medias to restore per request. It processes requests asynchronously and will return a background_job_status object rather than the typical Media response object. Your account must have access to the Archiving feature to use this method.
+Restores archived medias to your account. This method accepts a list of up to 100 medias to restore per request. It processes requests asynchronously and will return a background_job_status object rather than the typical Media response object. Your account must have access to the Archiving feature to use this method.
 
 ## Requires api token with one of the following permissions
 ```
@@ -18,16 +18,16 @@ wistia media restore [flags]
 ### Examples
 
 ```
-  wistia media restore --hashed-ids '[]' --project-id <id>
+  wistia media restore --hashed-ids '[]' --folder-id <id>
 ```
 
 ### Options
 
 ```
       --body string              Request body as JSON (alternative to individual flags). Can also be provided via stdin.
+  -f, --folder-id string         The hashed ID of the folder to restore the medias to. [required]
       --hashed-ids stringArray   An array of the media hashed IDs to be restored. [required]
   -h, --help                     help for restore
-  -p, --project-id string        The hashed ID of the project to restore the medias to. [required]
 ```
 
 ### Options inherited from parent commands

@@ -30,16 +30,14 @@ func newSubfolders(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks *ho
 	}
 }
 
-// Subfolder List
-// Use this endpoint to request a list of subfolders in a specific project. This request supports paging and sorting.
+// GetFoldersFolderIDSubfolders - List Subfolders
+// Lists subfolders in a specific folder.
 //
 // ## Requires api token with one of the following permissions
 // ```
-// Read, update & delete anything
-// Read all data
 // Read all folder and media data
 // ```
-func (s *Subfolders) List(ctx context.Context, request operations.GetProjectsProjectIDSubfoldersRequest, opts ...operations.Option) (*operations.GetProjectsProjectIDSubfoldersResponse, error) {
+func (s *Subfolders) GetFoldersFolderIDSubfolders(ctx context.Context, request operations.GetFoldersFolderIDSubfoldersRequest, opts ...operations.Option) (*operations.GetFoldersFolderIDSubfoldersResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,
@@ -58,7 +56,7 @@ func (s *Subfolders) List(ctx context.Context, request operations.GetProjectsPro
 	} else {
 		baseURL = *o.ServerURL
 	}
-	opURL, err := utils.GenerateURL(ctx, baseURL, "/projects/{projectId}/subfolders", request, nil)
+	opURL, err := utils.GenerateURL(ctx, baseURL, "/folders/{folderId}/subfolders", request, nil)
 	if err != nil {
 		return nil, fmt.Errorf("error generating URL: %w", err)
 	}
@@ -68,7 +66,7 @@ func (s *Subfolders) List(ctx context.Context, request operations.GetProjectsPro
 		SDKConfiguration: s.sdkConfiguration,
 		BaseURL:          baseURL,
 		Context:          ctx,
-		OperationID:      "get_/projects/{projectId}/subfolders",
+		OperationID:      "get_/folders/{folderId}/subfolders",
 		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
@@ -118,7 +116,7 @@ func (s *Subfolders) List(ctx context.Context, request operations.GetProjectsPro
 
 		_, err = s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
 		return nil, err
-	} else if utils.MatchStatusCodes([]string{"401", "404", "4XX", "500", "5XX"}, httpRes.StatusCode) {
+	} else if utils.MatchStatusCodes([]string{"400", "401", "404", "4XX", "500", "5XX"}, httpRes.StatusCode) {
 		_httpRes, err := s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
 		if err != nil {
 			return nil, err
@@ -132,7 +130,7 @@ func (s *Subfolders) List(ctx context.Context, request operations.GetProjectsPro
 		}
 	}
 
-	res := &operations.GetProjectsProjectIDSubfoldersResponse{
+	res := &operations.GetFoldersFolderIDSubfoldersResponse{
 		HTTPMeta: components.HTTPMetadata{
 			Request:  req,
 			Response: httpRes,
@@ -149,13 +147,38 @@ func (s *Subfolders) List(ctx context.Context, request operations.GetProjectsPro
 					return nil, err
 				}
 
-				var out []operations.GetProjectsProjectIDSubfoldersResponseBody
+				var out []operations.GetFoldersFolderIDSubfoldersResponseBody
 				if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 					return nil, err
 				}
 
 				res.ResponseBodies = out
 			}
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
+	case httpRes.StatusCode == 400:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out sdkerrors.GetFoldersFolderIDSubfoldersBadRequestError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, err
+			}
+
+			out.HTTPMeta = components.HTTPMetadata{
+				Request:  req,
+				Response: httpRes,
+			}
+			return nil, &out
 		default:
 			rawBody, err := utils.ConsumeRawBody(httpRes)
 			if err != nil {
@@ -171,7 +194,7 @@ func (s *Subfolders) List(ctx context.Context, request operations.GetProjectsPro
 				return nil, err
 			}
 
-			var out sdkerrors.GetProjectsProjectIDSubfoldersUnauthorizedError
+			var out sdkerrors.GetFoldersFolderIDSubfoldersUnauthorizedError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
@@ -196,7 +219,7 @@ func (s *Subfolders) List(ctx context.Context, request operations.GetProjectsPro
 				return nil, err
 			}
 
-			var out sdkerrors.GetProjectsProjectIDSubfoldersNotFoundError
+			var out sdkerrors.GetFoldersFolderIDSubfoldersNotFoundError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
@@ -221,7 +244,7 @@ func (s *Subfolders) List(ctx context.Context, request operations.GetProjectsPro
 				return nil, err
 			}
 
-			var out sdkerrors.GetProjectsProjectIDSubfoldersInternalServerError
+			var out sdkerrors.GetFoldersFolderIDSubfoldersInternalServerError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
@@ -262,14 +285,14 @@ func (s *Subfolders) List(ctx context.Context, request operations.GetProjectsPro
 
 }
 
-// Create Subfolder
-// Create a new subfolder within a project. The subfolder will be created with the next available position.
+// PostFoldersFolderIDSubfolders - Create Subfolder
+// Creates a new subfolder within a folder. The subfolder will be created with the next available position.
 //
 // ## Requires api token with one of the following permissions
 // ```
 // Read, update & delete anything
 // ```
-func (s *Subfolders) Create(ctx context.Context, request operations.PostProjectsProjectIDSubfoldersRequest, opts ...operations.Option) (*operations.PostProjectsProjectIDSubfoldersResponse, error) {
+func (s *Subfolders) PostFoldersFolderIDSubfolders(ctx context.Context, request operations.PostFoldersFolderIDSubfoldersRequest, opts ...operations.Option) (*operations.PostFoldersFolderIDSubfoldersResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,
@@ -288,7 +311,7 @@ func (s *Subfolders) Create(ctx context.Context, request operations.PostProjects
 	} else {
 		baseURL = *o.ServerURL
 	}
-	opURL, err := utils.GenerateURL(ctx, baseURL, "/projects/{projectId}/subfolders", request, nil)
+	opURL, err := utils.GenerateURL(ctx, baseURL, "/folders/{folderId}/subfolders", request, nil)
 	if err != nil {
 		return nil, fmt.Errorf("error generating URL: %w", err)
 	}
@@ -298,7 +321,7 @@ func (s *Subfolders) Create(ctx context.Context, request operations.PostProjects
 		SDKConfiguration: s.sdkConfiguration,
 		BaseURL:          baseURL,
 		Context:          ctx,
-		OperationID:      "post_/projects/{projectId}/subfolders",
+		OperationID:      "post_/folders/{folderId}/subfolders",
 		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
@@ -351,7 +374,7 @@ func (s *Subfolders) Create(ctx context.Context, request operations.PostProjects
 
 		_, err = s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
 		return nil, err
-	} else if utils.MatchStatusCodes([]string{"401", "404", "4XX", "500", "5XX"}, httpRes.StatusCode) {
+	} else if utils.MatchStatusCodes([]string{"401", "403", "404", "4XX", "500", "5XX"}, httpRes.StatusCode) {
 		_httpRes, err := s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
 		if err != nil {
 			return nil, err
@@ -365,7 +388,7 @@ func (s *Subfolders) Create(ctx context.Context, request operations.PostProjects
 		}
 	}
 
-	res := &operations.PostProjectsProjectIDSubfoldersResponse{
+	res := &operations.PostFoldersFolderIDSubfoldersResponse{
 		HTTPMeta: components.HTTPMetadata{
 			Request:  req,
 			Response: httpRes,
@@ -382,7 +405,7 @@ func (s *Subfolders) Create(ctx context.Context, request operations.PostProjects
 					return nil, err
 				}
 
-				var out operations.PostProjectsProjectIDSubfoldersResponseBody
+				var out operations.PostFoldersFolderIDSubfoldersResponseBody
 				if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 					return nil, err
 				}
@@ -404,7 +427,32 @@ func (s *Subfolders) Create(ctx context.Context, request operations.PostProjects
 				return nil, err
 			}
 
-			var out sdkerrors.PostProjectsProjectIDSubfoldersUnauthorizedError
+			var out sdkerrors.PostFoldersFolderIDSubfoldersUnauthorizedError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, err
+			}
+
+			out.HTTPMeta = components.HTTPMetadata{
+				Request:  req,
+				Response: httpRes,
+			}
+			return nil, &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
+	case httpRes.StatusCode == 403:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out sdkerrors.PostFoldersFolderIDSubfoldersForbiddenError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
@@ -429,7 +477,7 @@ func (s *Subfolders) Create(ctx context.Context, request operations.PostProjects
 				return nil, err
 			}
 
-			var out sdkerrors.PostProjectsProjectIDSubfoldersNotFoundError
+			var out sdkerrors.PostFoldersFolderIDSubfoldersNotFoundError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
@@ -454,7 +502,7 @@ func (s *Subfolders) Create(ctx context.Context, request operations.PostProjects
 				return nil, err
 			}
 
-			var out sdkerrors.PostProjectsProjectIDSubfoldersInternalServerError
+			var out sdkerrors.PostFoldersFolderIDSubfoldersInternalServerError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
@@ -495,16 +543,14 @@ func (s *Subfolders) Create(ctx context.Context, request operations.PostProjects
 
 }
 
-// Get - Show Subfolder
-// Retrieve detailed information about a specific subfolder, including all media files contained within it.
+// GetFoldersFolderIDSubfoldersSubfolderID - Show Subfolder
+// Retrieves detailed information about a specific subfolder, including all media contained within it.
 //
 // ## Requires api token with one of the following permissions
 // ```
-// Read, update & delete anything
-// Read all data
 // Read all folder and media data
 // ```
-func (s *Subfolders) Get(ctx context.Context, request operations.GetProjectsProjectIDSubfoldersSubfolderIDRequest, opts ...operations.Option) (*operations.GetProjectsProjectIDSubfoldersSubfolderIDResponse, error) {
+func (s *Subfolders) GetFoldersFolderIDSubfoldersSubfolderID(ctx context.Context, request operations.GetFoldersFolderIDSubfoldersSubfolderIDRequest, opts ...operations.Option) (*operations.GetFoldersFolderIDSubfoldersSubfolderIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,
@@ -523,7 +569,7 @@ func (s *Subfolders) Get(ctx context.Context, request operations.GetProjectsProj
 	} else {
 		baseURL = *o.ServerURL
 	}
-	opURL, err := utils.GenerateURL(ctx, baseURL, "/projects/{projectId}/subfolders/{subfolderId}", request, nil)
+	opURL, err := utils.GenerateURL(ctx, baseURL, "/folders/{folderId}/subfolders/{subfolderId}", request, nil)
 	if err != nil {
 		return nil, fmt.Errorf("error generating URL: %w", err)
 	}
@@ -533,7 +579,7 @@ func (s *Subfolders) Get(ctx context.Context, request operations.GetProjectsProj
 		SDKConfiguration: s.sdkConfiguration,
 		BaseURL:          baseURL,
 		Context:          ctx,
-		OperationID:      "get_/projects/{projectId}/subfolders/{subfolderId}",
+		OperationID:      "get_/folders/{folderId}/subfolders/{subfolderId}",
 		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
@@ -597,7 +643,7 @@ func (s *Subfolders) Get(ctx context.Context, request operations.GetProjectsProj
 		}
 	}
 
-	res := &operations.GetProjectsProjectIDSubfoldersSubfolderIDResponse{
+	res := &operations.GetFoldersFolderIDSubfoldersSubfolderIDResponse{
 		HTTPMeta: components.HTTPMetadata{
 			Request:  req,
 			Response: httpRes,
@@ -614,7 +660,7 @@ func (s *Subfolders) Get(ctx context.Context, request operations.GetProjectsProj
 					return nil, err
 				}
 
-				var out operations.GetProjectsProjectIDSubfoldersSubfolderIDResponseBody
+				var out operations.GetFoldersFolderIDSubfoldersSubfolderIDResponseBody
 				if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 					return nil, err
 				}
@@ -636,7 +682,7 @@ func (s *Subfolders) Get(ctx context.Context, request operations.GetProjectsProj
 				return nil, err
 			}
 
-			var out sdkerrors.GetProjectsProjectIDSubfoldersSubfolderIDUnauthorizedError
+			var out sdkerrors.GetFoldersFolderIDSubfoldersSubfolderIDUnauthorizedError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
@@ -661,7 +707,7 @@ func (s *Subfolders) Get(ctx context.Context, request operations.GetProjectsProj
 				return nil, err
 			}
 
-			var out sdkerrors.GetProjectsProjectIDSubfoldersSubfolderIDNotFoundError
+			var out sdkerrors.GetFoldersFolderIDSubfoldersSubfolderIDNotFoundError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
@@ -686,7 +732,7 @@ func (s *Subfolders) Get(ctx context.Context, request operations.GetProjectsProj
 				return nil, err
 			}
 
-			var out sdkerrors.GetProjectsProjectIDSubfoldersSubfolderIDInternalServerError
+			var out sdkerrors.GetFoldersFolderIDSubfoldersSubfolderIDInternalServerError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
@@ -727,14 +773,14 @@ func (s *Subfolders) Get(ctx context.Context, request operations.GetProjectsProj
 
 }
 
-// Update Subfolder
-// Update a subfolder's name and/or description.
+// PutFoldersFolderIDSubfoldersSubfolderID - Update Subfolder
+// Updates a subfolder's name and/or description.
 //
 // ## Requires api token with one of the following permissions
 // ```
 // Read, update & delete anything
 // ```
-func (s *Subfolders) Update(ctx context.Context, request operations.PutProjectsProjectIDSubfoldersSubfolderIDRequest, opts ...operations.Option) (*operations.PutProjectsProjectIDSubfoldersSubfolderIDResponse, error) {
+func (s *Subfolders) PutFoldersFolderIDSubfoldersSubfolderID(ctx context.Context, request operations.PutFoldersFolderIDSubfoldersSubfolderIDRequest, opts ...operations.Option) (*operations.PutFoldersFolderIDSubfoldersSubfolderIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,
@@ -753,7 +799,7 @@ func (s *Subfolders) Update(ctx context.Context, request operations.PutProjectsP
 	} else {
 		baseURL = *o.ServerURL
 	}
-	opURL, err := utils.GenerateURL(ctx, baseURL, "/projects/{projectId}/subfolders/{subfolderId}", request, nil)
+	opURL, err := utils.GenerateURL(ctx, baseURL, "/folders/{folderId}/subfolders/{subfolderId}", request, nil)
 	if err != nil {
 		return nil, fmt.Errorf("error generating URL: %w", err)
 	}
@@ -763,7 +809,7 @@ func (s *Subfolders) Update(ctx context.Context, request operations.PutProjectsP
 		SDKConfiguration: s.sdkConfiguration,
 		BaseURL:          baseURL,
 		Context:          ctx,
-		OperationID:      "put_/projects/{projectId}/subfolders/{subfolderId}",
+		OperationID:      "put_/folders/{folderId}/subfolders/{subfolderId}",
 		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
@@ -830,7 +876,7 @@ func (s *Subfolders) Update(ctx context.Context, request operations.PutProjectsP
 		}
 	}
 
-	res := &operations.PutProjectsProjectIDSubfoldersSubfolderIDResponse{
+	res := &operations.PutFoldersFolderIDSubfoldersSubfolderIDResponse{
 		HTTPMeta: components.HTTPMetadata{
 			Request:  req,
 			Response: httpRes,
@@ -847,7 +893,7 @@ func (s *Subfolders) Update(ctx context.Context, request operations.PutProjectsP
 					return nil, err
 				}
 
-				var out operations.PutProjectsProjectIDSubfoldersSubfolderIDResponseBody
+				var out operations.PutFoldersFolderIDSubfoldersSubfolderIDResponseBody
 				if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 					return nil, err
 				}
@@ -869,7 +915,7 @@ func (s *Subfolders) Update(ctx context.Context, request operations.PutProjectsP
 				return nil, err
 			}
 
-			var out sdkerrors.PutProjectsProjectIDSubfoldersSubfolderIDUnauthorizedError
+			var out sdkerrors.PutFoldersFolderIDSubfoldersSubfolderIDUnauthorizedError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
@@ -894,7 +940,7 @@ func (s *Subfolders) Update(ctx context.Context, request operations.PutProjectsP
 				return nil, err
 			}
 
-			var out sdkerrors.PutProjectsProjectIDSubfoldersSubfolderIDNotFoundError
+			var out sdkerrors.PutFoldersFolderIDSubfoldersSubfolderIDNotFoundError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
@@ -919,7 +965,7 @@ func (s *Subfolders) Update(ctx context.Context, request operations.PutProjectsP
 				return nil, err
 			}
 
-			var out sdkerrors.PutProjectsProjectIDSubfoldersSubfolderIDInternalServerError
+			var out sdkerrors.PutFoldersFolderIDSubfoldersSubfolderIDInternalServerError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
@@ -960,8 +1006,8 @@ func (s *Subfolders) Update(ctx context.Context, request operations.PutProjectsP
 
 }
 
-// DeleteSubfolder - Delete Subfolder
-// Delete a subfolder from a project. All media files in the subfolder will be moved to the project's root level.
+// DeleteFoldersFolderIDSubfoldersSubfolderID - Delete Subfolder
+// Deletes a subfolder from a folder. All media files in the subfolder will be moved to the folder's root level.
 //
 // The subfolder is soft-deleted and may be recoverable through other means, but is no longer accessible via the API.
 //
@@ -969,7 +1015,7 @@ func (s *Subfolders) Update(ctx context.Context, request operations.PutProjectsP
 // ```
 // Read, update & delete anything
 // ```
-func (s *Subfolders) DeleteSubfolder(ctx context.Context, request operations.DeleteProjectsProjectIDSubfoldersSubfolderIDRequest, opts ...operations.Option) (*operations.DeleteProjectsProjectIDSubfoldersSubfolderIDResponse, error) {
+func (s *Subfolders) DeleteFoldersFolderIDSubfoldersSubfolderID(ctx context.Context, request operations.DeleteFoldersFolderIDSubfoldersSubfolderIDRequest, opts ...operations.Option) (*operations.DeleteFoldersFolderIDSubfoldersSubfolderIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,
@@ -988,7 +1034,7 @@ func (s *Subfolders) DeleteSubfolder(ctx context.Context, request operations.Del
 	} else {
 		baseURL = *o.ServerURL
 	}
-	opURL, err := utils.GenerateURL(ctx, baseURL, "/projects/{projectId}/subfolders/{subfolderId}", request, nil)
+	opURL, err := utils.GenerateURL(ctx, baseURL, "/folders/{folderId}/subfolders/{subfolderId}", request, nil)
 	if err != nil {
 		return nil, fmt.Errorf("error generating URL: %w", err)
 	}
@@ -998,7 +1044,7 @@ func (s *Subfolders) DeleteSubfolder(ctx context.Context, request operations.Del
 		SDKConfiguration: s.sdkConfiguration,
 		BaseURL:          baseURL,
 		Context:          ctx,
-		OperationID:      "delete_/projects/{projectId}/subfolders/{subfolderId}",
+		OperationID:      "delete_/folders/{folderId}/subfolders/{subfolderId}",
 		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
@@ -1058,7 +1104,7 @@ func (s *Subfolders) DeleteSubfolder(ctx context.Context, request operations.Del
 		}
 	}
 
-	res := &operations.DeleteProjectsProjectIDSubfoldersSubfolderIDResponse{
+	res := &operations.DeleteFoldersFolderIDSubfoldersSubfolderIDResponse{
 		HTTPMeta: components.HTTPMetadata{
 			Request:  req,
 			Response: httpRes,
@@ -1075,7 +1121,7 @@ func (s *Subfolders) DeleteSubfolder(ctx context.Context, request operations.Del
 					return nil, err
 				}
 
-				var out operations.DeleteProjectsProjectIDSubfoldersSubfolderIDResponseBody
+				var out operations.DeleteFoldersFolderIDSubfoldersSubfolderIDResponseBody
 				if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 					return nil, err
 				}
@@ -1097,7 +1143,7 @@ func (s *Subfolders) DeleteSubfolder(ctx context.Context, request operations.Del
 				return nil, err
 			}
 
-			var out sdkerrors.DeleteProjectsProjectIDSubfoldersSubfolderIDUnauthorizedError
+			var out sdkerrors.DeleteFoldersFolderIDSubfoldersSubfolderIDUnauthorizedError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
@@ -1122,7 +1168,7 @@ func (s *Subfolders) DeleteSubfolder(ctx context.Context, request operations.Del
 				return nil, err
 			}
 
-			var out sdkerrors.DeleteProjectsProjectIDSubfoldersSubfolderIDNotFoundError
+			var out sdkerrors.DeleteFoldersFolderIDSubfoldersSubfolderIDNotFoundError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
@@ -1147,7 +1193,265 @@ func (s *Subfolders) DeleteSubfolder(ctx context.Context, request operations.Del
 				return nil, err
 			}
 
-			var out sdkerrors.DeleteProjectsProjectIDSubfoldersSubfolderIDInternalServerError
+			var out sdkerrors.DeleteFoldersFolderIDSubfoldersSubfolderIDInternalServerError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, err
+			}
+
+			out.HTTPMeta = components.HTTPMetadata{
+				Request:  req,
+				Response: httpRes,
+			}
+			return nil, &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
+	case httpRes.StatusCode >= 400 && httpRes.StatusCode < 500:
+		rawBody, err := utils.ConsumeRawBody(httpRes)
+		if err != nil {
+			return nil, err
+		}
+		return nil, sdkerrors.NewSDKDefaultError("API error occurred", httpRes.StatusCode, string(rawBody), httpRes)
+	case httpRes.StatusCode >= 500 && httpRes.StatusCode < 600:
+		rawBody, err := utils.ConsumeRawBody(httpRes)
+		if err != nil {
+			return nil, err
+		}
+		return nil, sdkerrors.NewSDKDefaultError("API error occurred", httpRes.StatusCode, string(rawBody), httpRes)
+	default:
+		rawBody, err := utils.ConsumeRawBody(httpRes)
+		if err != nil {
+			return nil, err
+		}
+		return nil, sdkerrors.NewSDKDefaultError("unknown status code returned", httpRes.StatusCode, string(rawBody), httpRes)
+	}
+
+	return res, nil
+
+}
+
+// DeleteFoldersFolderIDSubfoldersBulkDelete - Bulk Delete Subfolders
+// This method accepts a list of subfolders to delete. It processes requests asynchronously and will return a background_job_status object. All media files in each deleted subfolder will be moved to the folder's root level.
+//
+// ## Requires api token with one of the following permissions
+// ```
+// Read, update & delete anything
+// ```
+func (s *Subfolders) DeleteFoldersFolderIDSubfoldersBulkDelete(ctx context.Context, request operations.DeleteFoldersFolderIDSubfoldersBulkDeleteRequest, opts ...operations.Option) (*operations.DeleteFoldersFolderIDSubfoldersBulkDeleteResponse, error) {
+	o := operations.Options{}
+	supportedOptions := []string{
+		operations.SupportedOptionTimeout,
+		operations.SupportedOptionSkipDeserialization,
+	}
+
+	for _, opt := range opts {
+		if err := opt(&o, supportedOptions...); err != nil {
+			return nil, fmt.Errorf("error applying option: %w", err)
+		}
+	}
+
+	var baseURL string
+	if o.ServerURL == nil {
+		baseURL = utils.ReplaceParameters(s.sdkConfiguration.GetServerDetails())
+	} else {
+		baseURL = *o.ServerURL
+	}
+	opURL, err := utils.GenerateURL(ctx, baseURL, "/folders/{folderId}/subfolders/bulk_delete", request, nil)
+	if err != nil {
+		return nil, fmt.Errorf("error generating URL: %w", err)
+	}
+
+	hookCtx := hooks.HookContext{
+		SDK:              s.rootSDK,
+		SDKConfiguration: s.sdkConfiguration,
+		BaseURL:          baseURL,
+		Context:          ctx,
+		OperationID:      "delete_/folders/{folderId}/subfolders/bulk_delete",
+		OAuth2Scopes:     nil,
+		SecuritySource:   s.sdkConfiguration.Security,
+	}
+	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "Body", "json", `request:"mediaType=application/json"`)
+	if err != nil {
+		return nil, err
+	}
+
+	timeout := o.Timeout
+	if timeout == nil {
+		timeout = s.sdkConfiguration.Timeout
+	}
+
+	if timeout != nil {
+		var cancel context.CancelFunc
+		ctx, cancel = context.WithTimeout(ctx, *timeout)
+		defer cancel()
+	}
+
+	req, err := http.NewRequestWithContext(ctx, "DELETE", opURL, bodyReader)
+	if err != nil {
+		return nil, fmt.Errorf("error creating request: %w", err)
+	}
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
+	if reqContentType != "" {
+		req.Header.Set("Content-Type", reqContentType)
+	}
+
+	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
+		return nil, err
+	}
+
+	for k, v := range o.SetHeaders {
+		req.Header.Set(k, v)
+	}
+
+	req, err = s.hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
+	if err != nil {
+		return nil, err
+	}
+
+	httpRes, err := s.sdkConfiguration.Client.Do(req)
+	if err != nil || httpRes == nil {
+		if err != nil {
+			err = fmt.Errorf("error sending request: %w", err)
+		} else {
+			err = fmt.Errorf("error sending request: no response")
+		}
+
+		_, err = s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
+		return nil, err
+	} else if utils.MatchStatusCodes([]string{"401", "404", "422", "4XX", "500", "5XX"}, httpRes.StatusCode) {
+		_httpRes, err := s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
+		if err != nil {
+			return nil, err
+		} else if _httpRes != nil {
+			httpRes = _httpRes
+		}
+	} else {
+		httpRes, err = s.hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	res := &operations.DeleteFoldersFolderIDSubfoldersBulkDeleteResponse{
+		HTTPMeta: components.HTTPMetadata{
+			Request:  req,
+			Response: httpRes,
+		},
+	}
+
+	switch {
+	case httpRes.StatusCode == 200:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			if o.SkipDeserialization == nil || !*o.SkipDeserialization {
+				rawBody, err := utils.ConsumeRawBody(httpRes)
+				if err != nil {
+					return nil, err
+				}
+
+				var out operations.DeleteFoldersFolderIDSubfoldersBulkDeleteResponseBody
+				if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+					return nil, err
+				}
+
+				res.Object = &out
+			}
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
+	case httpRes.StatusCode == 401:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out sdkerrors.DeleteFoldersFolderIDSubfoldersBulkDeleteUnauthorizedError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, err
+			}
+
+			out.HTTPMeta = components.HTTPMetadata{
+				Request:  req,
+				Response: httpRes,
+			}
+			return nil, &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
+	case httpRes.StatusCode == 404:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out sdkerrors.DeleteFoldersFolderIDSubfoldersBulkDeleteNotFoundError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, err
+			}
+
+			out.HTTPMeta = components.HTTPMetadata{
+				Request:  req,
+				Response: httpRes,
+			}
+			return nil, &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
+	case httpRes.StatusCode == 422:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out sdkerrors.DeleteFoldersFolderIDSubfoldersBulkDeleteUnprocessableEntityError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, err
+			}
+
+			out.HTTPMeta = components.HTTPMetadata{
+				Request:  req,
+				Response: httpRes,
+			}
+			return nil, &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
+	case httpRes.StatusCode == 500:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out sdkerrors.DeleteFoldersFolderIDSubfoldersBulkDeleteInternalServerError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}

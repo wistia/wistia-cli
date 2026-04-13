@@ -61,7 +61,7 @@ var updateCmdMeta = []flagutil.FlagMeta{
 func initUpdateCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "update",
-		Short:   "Customizations Update",
+		Short:   "Update Customizations",
 		Long:    "Allows for partial updates on a video’s customizations. If a value is null, then that key will be deleted from the saved customizations. If it is not null, that value will be set.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
 		Example: "  wistia customizations update --media-id <id>",
 		RunE:    runUpdateCmd,

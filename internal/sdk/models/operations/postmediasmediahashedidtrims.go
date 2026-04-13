@@ -9,8 +9,21 @@ import (
 )
 
 type PostMediasMediaHashedIDTrimsRequestBody struct {
-	// An array of strings matching the format of HH:MM:SS.mmm-HH:MM:SS.mmm where HH is hours, MM is minutes, SS is seconds and mmm is milliseconds. The ranges should contain the earliest point of the trim first and the later point of the trim second.
+	// An array of strings matching the format of HH:MM:SS.mmm-HH:MM:SS.mmm where HH is hours, MM is minutes, SS is seconds and mmm is milliseconds. When keep_trims is false (default), the ranges specify parts of the media to remove. When keep_trims is true, the ranges specify parts of the media to keep.
 	Trims []string `json:"trims"`
+	// When set to true, the trims parameter is treated as ranges to keep rather than ranges to remove. Defaults to false.
+	KeepTrims *bool `default:"false" json:"keep_trims"`
+}
+
+func (p PostMediasMediaHashedIDTrimsRequestBody) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(p, "", false)
+}
+
+func (p *PostMediasMediaHashedIDTrimsRequestBody) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &p, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (p *PostMediasMediaHashedIDTrimsRequestBody) GetTrims() []string {
@@ -18,6 +31,13 @@ func (p *PostMediasMediaHashedIDTrimsRequestBody) GetTrims() []string {
 		return []string{}
 	}
 	return p.Trims
+}
+
+func (p *PostMediasMediaHashedIDTrimsRequestBody) GetKeepTrims() *bool {
+	if p == nil {
+		return nil
+	}
+	return p.KeepTrims
 }
 
 type PostMediasMediaHashedIDTrimsRequest struct {
@@ -38,10 +58,6 @@ func (p *PostMediasMediaHashedIDTrimsRequest) GetBody() PostMediasMediaHashedIDT
 		return PostMediasMediaHashedIDTrimsRequestBody{}
 	}
 	return p.Body
-}
-
-// PostMediasMediaHashedIDTrimsErrors - Contains a summary of what fields had errors and the errors they had.
-type PostMediasMediaHashedIDTrimsErrors struct {
 }
 
 // PostMediasMediaHashedIDTrimsStatus - The status of the background job that's been queued for the request.
@@ -69,7 +85,8 @@ func (e *PostMediasMediaHashedIDTrimsStatus) IsExact() bool {
 	return false
 }
 
-// PostMediasMediaHashedIDTrimsBackgroundJobStatus - Status of the background job.
+// PostMediasMediaHashedIDTrimsBackgroundJobStatus - A background job keeps track of the progress of an asynchronous task, e.g
+// bulk archiving media, translating media, etc.
 type PostMediasMediaHashedIDTrimsBackgroundJobStatus struct {
 	// The ID of the background job that's been queued for the request.
 	ID int64 `json:"id"`
@@ -93,7 +110,9 @@ func (p *PostMediasMediaHashedIDTrimsBackgroundJobStatus) GetStatus() PostMedias
 
 // PostMediasMediaHashedIDTrimsResponseBody - Successful queueing of trims worker.
 type PostMediasMediaHashedIDTrimsResponseBody struct {
-	// Status of the background job.
+	// A background job keeps track of the progress of an asynchronous task, e.g
+	// bulk archiving media, translating media, etc.
+	//
 	BackgroundJobStatus *PostMediasMediaHashedIDTrimsBackgroundJobStatus `json:"background_job_status,omitzero"`
 }
 

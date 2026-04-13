@@ -6,7 +6,6 @@ package sdkerrors
 import (
 	"encoding/json"
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
-	"github.com/wistia/wistia-cli/internal/sdk/models/operations"
 )
 
 // PostMediasMediaHashedIDTrimsInternalServerError - Internal server error
@@ -22,16 +21,29 @@ func (e *PostMediasMediaHashedIDTrimsInternalServerError) Error() string {
 	return string(data)
 }
 
-// PostMediasMediaHashedIDTrimsUnprocessableEntityError - Unprocessible entity, parameters provided were invalid.
+// PostMediasMediaHashedIDTrimsUnprocessableEntityError - Unprocessable entity, the request parameters were invalid.
 type PostMediasMediaHashedIDTrimsUnprocessableEntityError struct {
-	// Contains a summary of what fields had errors and the errors they had.
-	Errors   *operations.PostMediasMediaHashedIDTrimsErrors `json:"errors,omitzero"`
-	HTTPMeta components.HTTPMetadata                        `json:"-"`
+	// Object containing validation errors grouped by field name. Each field contains an array of error messages.
+	Errors   map[string][]string     `json:"errors,omitzero"`
+	HTTPMeta components.HTTPMetadata `json:"-"`
 }
 
 var _ error = &PostMediasMediaHashedIDTrimsUnprocessableEntityError{}
 
 func (e *PostMediasMediaHashedIDTrimsUnprocessableEntityError) Error() string {
+	data, _ := json.Marshal(e)
+	return string(data)
+}
+
+// PostMediasMediaHashedIDTrimsForbiddenError - Forbidden, token is valid but account does not have access to feature
+type PostMediasMediaHashedIDTrimsForbiddenError struct {
+	Error_   *string                 `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata `json:"-"`
+}
+
+var _ error = &PostMediasMediaHashedIDTrimsForbiddenError{}
+
+func (e *PostMediasMediaHashedIDTrimsForbiddenError) Error() string {
 	data, _ := json.Marshal(e)
 	return string(data)
 }

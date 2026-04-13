@@ -21,6 +21,19 @@ func (e *PostChannelsChannelHashedIDChannelEpisodesInternalServerError) Error() 
 	return string(data)
 }
 
+// PostChannelsChannelHashedIDChannelEpisodesForbiddenError - Forbidden, token is valid but account does not have access to feature
+type PostChannelsChannelHashedIDChannelEpisodesForbiddenError struct {
+	Error_   *string                 `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata `json:"-"`
+}
+
+var _ error = &PostChannelsChannelHashedIDChannelEpisodesForbiddenError{}
+
+func (e *PostChannelsChannelHashedIDChannelEpisodesForbiddenError) Error() string {
+	data, _ := json.Marshal(e)
+	return string(data)
+}
+
 // PostChannelsChannelHashedIDChannelEpisodesUnauthorizedError - Unauthorized, invalid or missing token
 type PostChannelsChannelHashedIDChannelEpisodesUnauthorizedError struct {
 	Error_   *string                 `json:"error,omitzero"`

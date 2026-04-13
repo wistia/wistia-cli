@@ -61,7 +61,7 @@ var createCmdMeta = []flagutil.FlagMeta{
 func initCreateCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "create",
-		Short:   "Customizations Create",
+		Short:   "Create Customizations",
 		Long:    "Set customizations for a video. Replaces the customizations explicitly set for this video.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
 		Example: "  wistia customizations create --media-id <id>",
 		RunE:    runCreateCmd,

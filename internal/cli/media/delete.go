@@ -23,8 +23,8 @@ var deleteCmdMeta = []flagutil.FlagMeta{
 func initDeleteCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "delete",
-		Short:   "Media Delete",
-		Long:    "Delete a media.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
+		Short:   "Delete Media",
+		Long:    "Deletes a media.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
 		Example: "  wistia media delete --media-hashed-id <id>",
 		RunE:    runDeleteCmd,
 	}

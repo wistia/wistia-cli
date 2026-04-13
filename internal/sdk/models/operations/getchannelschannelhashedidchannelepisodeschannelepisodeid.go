@@ -5,6 +5,7 @@ package operations
 
 import (
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
+	"github.com/wistia/wistia-cli/internal/sdk/optionalnullable"
 	"github.com/wistia/wistia-cli/internal/sdk/sdkinternal/utils"
 	"time"
 )
@@ -30,20 +31,23 @@ func (g *GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDRequest) GetCh
 	return g.ChannelEpisodeID
 }
 
-// GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDResponseBody - Channel Episode retrieval successful
+// GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDResponseBody - A channel episode represents a media that has been added to a channel. Only published
+// episodes are displayed in a channel.
 type GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDResponseBody struct {
 	// A unique alphanumeric identifier for the channel episode's channel.
-	ChannelHashedID string `json:"channelHashedId"`
+	ChannelHashedID string `json:"channel_hashed_id"`
 	// The date when the channel episode was originally created.
 	Created time.Time `json:"created"`
+	// A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+	Cursor optionalnullable.OptionalNullable[string] `json:"cursor,omitzero"`
 	// The channel episode's description or episode notes.
 	Description string `json:"description"`
 	// A short summary of the episode that is displayed when space is limited.
 	Summary string `json:"summary"`
 	// A unique alphanumeric identifier for the channel episode.
-	HashedID string `json:"hashedId"`
+	HashedID string `json:"hashed_id"`
 	// A unique alphanumeric identifier for the channel episode's media.
-	MediaHashedID string `json:"mediaHashedId"`
+	MediaHashedID string `json:"media_hashed_id"`
 	// Whether the channel episode has been published or is still in draft form.
 	Published bool `json:"published"`
 	// The date and time when the episode is scheduled to be published in UTC timezone (only present when publish_status is 'scheduled').
@@ -77,6 +81,13 @@ func (g *GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDResponseBody) 
 		return time.Time{}
 	}
 	return g.Created
+}
+
+func (g *GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDResponseBody) GetCursor() optionalnullable.OptionalNullable[string] {
+	if g == nil {
+		return nil
+	}
+	return g.Cursor
 }
 
 func (g *GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDResponseBody) GetDescription() string {

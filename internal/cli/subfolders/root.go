@@ -21,23 +21,27 @@ func InitSubfoldersRoot(parent *cobra.Command) error {
 		},
 	}
 
-	if err := initListCmd(SubfoldersCmd); err != nil {
+	if err := initGetFoldersFolderIdSubfoldersCmd(SubfoldersCmd); err != nil {
 		return err
 	}
 
-	if err := initCreateCmd(SubfoldersCmd); err != nil {
+	if err := initPostFoldersFolderIdSubfoldersCmd(SubfoldersCmd); err != nil {
 		return err
 	}
 
-	if err := initGetCmd(SubfoldersCmd); err != nil {
+	if err := initGetFoldersFolderIdSubfoldersSubfolderIdCmd(SubfoldersCmd); err != nil {
 		return err
 	}
 
-	if err := initUpdateCmd(SubfoldersCmd); err != nil {
+	if err := initPutFoldersFolderIdSubfoldersSubfolderIdCmd(SubfoldersCmd); err != nil {
 		return err
 	}
 
-	if err := initDeleteSubfolderCmd(SubfoldersCmd); err != nil {
+	if err := initDeleteFoldersFolderIdSubfoldersSubfolderIdCmd(SubfoldersCmd); err != nil {
+		return err
+	}
+
+	if err := initDeleteFoldersFolderIdSubfoldersBulkDeleteCmd(SubfoldersCmd); err != nil {
 		return err
 	}
 

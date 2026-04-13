@@ -38,4 +38,4 @@ wistia expiring-access-tokens [flags]
 ### SEE ALSO
 
 * [wistia](wistia.md)	 - Data API: Wistia Data API
-* [wistia expiring-access-tokens create](wistia_expiring-access-tokens_create.md)	 - Create an expiring access token
+* [wistia expiring-access-tokens create](wistia_expiring-access-tokens_create.md)	 - Create Expiring Access Token

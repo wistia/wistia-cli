@@ -21,6 +21,33 @@ func (e *GetStatsEventsInternalServerError) Error() string {
 	return string(data)
 }
 
+// GetStatsEventsUnprocessableEntityError - Unprocessable entity, the request parameters were invalid.
+type GetStatsEventsUnprocessableEntityError struct {
+	// Error message describing why the request could not be processed.
+	Error_   *string                 `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata `json:"-"`
+}
+
+var _ error = &GetStatsEventsUnprocessableEntityError{}
+
+func (e *GetStatsEventsUnprocessableEntityError) Error() string {
+	data, _ := json.Marshal(e)
+	return string(data)
+}
+
+// GetStatsEventsForbiddenError - Forbidden, token is valid but account does not have access to feature
+type GetStatsEventsForbiddenError struct {
+	Error_   *string                 `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata `json:"-"`
+}
+
+var _ error = &GetStatsEventsForbiddenError{}
+
+func (e *GetStatsEventsForbiddenError) Error() string {
+	data, _ := json.Marshal(e)
+	return string(data)
+}
+
 // GetStatsEventsUnauthorizedError - Unauthorized, invalid or missing token
 type GetStatsEventsUnauthorizedError struct {
 	Error_   *string                 `json:"error,omitzero"`

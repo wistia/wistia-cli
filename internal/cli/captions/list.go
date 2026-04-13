@@ -23,8 +23,8 @@ var listCmdMeta = []flagutil.FlagMeta{
 func initListCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "list",
-		Short:   "Captions List",
-		Long:    "Returns all the captions associated with a specified video.\nIf captions do not exist for this video, the response will be an empty JSON array.\nIf this video does not exist, the response will be an empty HTTP 404 Not Found.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\nRead all data\nRead all folder and media data\n```",
+		Short:   "List Captions by Media",
+		Long:    "Lists captions belonging to a specific media.\n\n## Requires api token with one of the following permissions\n```\nRead all folder and media data\n```",
 		Example: "  wistia captions list --media-hashed-id <id>",
 		RunE:    runListCmd,
 	}

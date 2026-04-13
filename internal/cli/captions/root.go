@@ -33,6 +33,10 @@ func InitCaptionsRoot(parent *cobra.Command) error {
 		return err
 	}
 
+	if err := initGetCaptionsCmd(CaptionsCmd); err != nil {
+		return err
+	}
+
 	if err := initPurchaseCmd(CaptionsCmd); err != nil {
 		return err
 	}

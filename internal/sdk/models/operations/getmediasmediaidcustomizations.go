@@ -104,10 +104,56 @@ func (g *GetMediasMediaIDCustomizationsSocialbarV1) GetHeight() *string {
 // #region class-body-getmediasmediaidcustomizationssocialbarv1
 // #endregion class-body-getmediasmediaidcustomizationssocialbarv1
 
+type GetMediasMediaIDCustomizationsChapterList struct {
+	ID      *string `json:"id,omitzero"`
+	Title   *string `json:"title,omitzero"`
+	Time    *string `json:"time,omitzero"`
+	Deleted *string `json:"deleted,omitzero"`
+}
+
+func (g *GetMediasMediaIDCustomizationsChapterList) GetID() *string {
+	if g == nil {
+		return nil
+	}
+	return g.ID
+}
+
+func (g *GetMediasMediaIDCustomizationsChapterList) GetTitle() *string {
+	if g == nil {
+		return nil
+	}
+	return g.Title
+}
+
+func (g *GetMediasMediaIDCustomizationsChapterList) GetTime() *string {
+	if g == nil {
+		return nil
+	}
+	return g.Time
+}
+
+func (g *GetMediasMediaIDCustomizationsChapterList) GetDeleted() *string {
+	if g == nil {
+		return nil
+	}
+	return g.Deleted
+}
+
 type GetMediasMediaIDCustomizationsChapters struct {
-	VisibleOnLoad *string `json:"visibleOnLoad,omitzero"`
-	ChapterList   *string `json:"chapterList,omitzero"`
-	On            *string `json:"on,omitzero"`
+	VisibleOnLoad *string                                     `json:"visibleOnLoad,omitzero"`
+	ChapterList   []GetMediasMediaIDCustomizationsChapterList `json:"chapterList,omitzero"`
+	On            *string                                     `json:"on,omitzero"`
+}
+
+func (g GetMediasMediaIDCustomizationsChapters) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(g, "", false)
+}
+
+func (g *GetMediasMediaIDCustomizationsChapters) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &g, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (g *GetMediasMediaIDCustomizationsChapters) GetVisibleOnLoad() *string {
@@ -117,7 +163,7 @@ func (g *GetMediasMediaIDCustomizationsChapters) GetVisibleOnLoad() *string {
 	return g.VisibleOnLoad
 }
 
-func (g *GetMediasMediaIDCustomizationsChapters) GetChapterList() *string {
+func (g *GetMediasMediaIDCustomizationsChapters) GetChapterList() []GetMediasMediaIDCustomizationsChapterList {
 	if g == nil {
 		return nil
 	}

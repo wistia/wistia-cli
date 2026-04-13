@@ -1,17 +1,17 @@
 ## wistia stats-visitors list
 
-Stats:Visitors List
+List Visitors
 
 ### Synopsis
 
 This endpoint provides a list of visitors that have watched videos in your account.
 
+<!--- HIDE-MCP -->
 ## Requires api token with one of the following permissions
 ```
-Read, update & delete anything
-Read all data
-Read all folder and media data
+Read detailed stats
 ```
+<!--- /HIDE-MCP -->
 
 ```
 wistia stats-visitors list [flags]

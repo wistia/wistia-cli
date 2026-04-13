@@ -24,8 +24,8 @@ var listCmdMeta = []flagutil.FlagMeta{
 func initListCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "list",
-		Short:   "Localizations List",
-		Long:    "Obtain a list of all the localizations for a media.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\nRead all data\nRead all folder and media data\n```",
+		Short:   "List Localizations",
+		Long:    "Lists all the localizations for a media.\n\n## Requires api token with one of the following permissions\n```\nRead all data\n```",
 		Example: "  wistia localizations list --media-hashed-id <id>",
 		RunE:    runListCmd,
 	}

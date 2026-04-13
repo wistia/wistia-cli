@@ -17,17 +17,17 @@ import (
 
 var moveCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "hashed-ids", FieldPath: "HashedIds", Kind: flagutil.FlagKindStringArray, Required: true, Description: "An array of the media hashed IDs to be moved. [required]"},
-	{FlagName: "project-id", Shorthand: "p", FieldPath: "ProjectID", Kind: flagutil.FlagKindString, Required: true, Description: "The hashed ID of the project where you want the media moved. [required]"},
-	{FlagName: "subfolder-id", Shorthand: "s", FieldPath: "SubfolderID", Kind: flagutil.FlagKindString, Optional: true, Description: "Optional. The hashed ID of the subfolder where you want the media moved. If not provided, media will be moved to the project's default subfolder. The subfolder must belong to the specified project."},
+	{FlagName: "folder-id", Shorthand: "f", FieldPath: "FolderID", Kind: flagutil.FlagKindString, Required: true, Description: "The hashed ID of the folder where you want the media moved. [required]"},
+	{FlagName: "subfolder-id", Shorthand: "s", FieldPath: "SubfolderID", Kind: flagutil.FlagKindString, Optional: true, Description: "Optional. The hashed ID of the subfolder where you want the media moved. If not provided, media will be moved to the folder's default subfolder. The subfolder must belong to the specified folder."},
 }
 
 // initMoveCmd initializes the move command.
 func initMoveCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "move",
-		Short:   "Media Move",
-		Long:    "Move one or many media to a different project and optionally to a specific subfolder.\nMax 100 media per request, and max 10 requests in 5 minutes.\nNote: this is a different rate limit than applies to the rest of the api!\n\nIf a subfolder_id is provided, media will be moved to that subfolder. The subfolder\nmust belong to the specified project.\n\nReturns a Background Job as the move is async.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
-		Example: "  wistia media move --hashed-ids '[\"<value 1>\",\"<value 2>\"]' --project-id <id>",
+		Short:   "Move Media",
+		Long:    "Move one or many media to a different folder and optionally to a specific subfolder.\nMax 100 media per request, and max 10 requests in 5 minutes.\nNote: this is a different rate limit than applies to the rest of the api!\n\nIf a subfolder_id is provided, media will be moved to that subfolder. The subfolder\nmust belong to the specified folder.\n\nReturns a Background Job as the move is async.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
+		Example: "  wistia media move --hashed-ids '[\"<value 1>\",\"<value 2>\"]' --folder-id <id>",
 		RunE:    runMoveCmd,
 	}
 	flagutil.RegisterFlags(cmd, moveCmdMeta)

@@ -23,8 +23,8 @@ var deleteCmdMeta = []flagutil.FlagMeta{
 func initDeleteCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "delete",
-		Short:   "Allowed Domain Delete",
-		Long:    "Delete an allowed domain from the account.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
+		Short:   "Delete Allowed Domain",
+		Long:    "Deletes an allowed domain from the account.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
 		Example: "  wistia allowed-domains delete --domain example.com",
 		RunE:    runDeleteCmd,
 	}

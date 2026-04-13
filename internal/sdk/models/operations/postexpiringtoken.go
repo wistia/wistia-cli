@@ -92,10 +92,6 @@ func (p *PostExpiringTokenRequest) GetExpiringAccessToken() *ExpiringAccessToken
 	return p.ExpiringAccessToken
 }
 
-// PostExpiringTokenErrors - Contains a summary of what fields had errors and the errors they had.
-type PostExpiringTokenErrors struct {
-}
-
 // PostExpiringTokenResponseBody - Successful response
 type PostExpiringTokenResponseBody struct {
 	// A token which can be used to authorize requests to Wistia. Currently only for doing transcript embeds.

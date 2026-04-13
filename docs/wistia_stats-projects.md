@@ -38,4 +38,4 @@ wistia stats-projects [flags]
 ### SEE ALSO
 
 * [wistia](wistia.md)	 - Data API: Wistia Data API
-* [wistia stats-projects get](wistia_stats-projects_get.md)	 - Stats:Projects Show
+* [wistia stats-projects get](wistia_stats-projects_get.md)	 - Show Project Stats

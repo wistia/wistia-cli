@@ -23,8 +23,8 @@ var getCmdMeta = []flagutil.FlagMeta{
 func initGetCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "get",
-		Short:   "Allowed Domain Show",
-		Long:    "Get details for a specific allowed domain.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
+		Short:   "Show Allowed Domain",
+		Long:    "Returns the details of an allowed domain.\n\n## Requires api token with one of the following permissions\n```\nRead all data\n```",
 		Example: "  wistia allowed-domains get --domain example.com",
 		RunE:    runGetCmd,
 	}

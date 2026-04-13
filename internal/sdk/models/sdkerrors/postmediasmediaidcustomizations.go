@@ -21,6 +21,19 @@ func (e *PostMediasMediaIDCustomizationsInternalServerError) Error() string {
 	return string(data)
 }
 
+// PostMediasMediaIDCustomizationsForbiddenError - Forbidden, token is valid but account does not have access to feature
+type PostMediasMediaIDCustomizationsForbiddenError struct {
+	Error_   *string                 `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata `json:"-"`
+}
+
+var _ error = &PostMediasMediaIDCustomizationsForbiddenError{}
+
+func (e *PostMediasMediaIDCustomizationsForbiddenError) Error() string {
+	data, _ := json.Marshal(e)
+	return string(data)
+}
+
 // PostMediasMediaIDCustomizationsUnauthorizedError - Unauthorized, invalid or missing token
 type PostMediasMediaIDCustomizationsUnauthorizedError struct {
 	Error_   *string                 `json:"error,omitzero"`

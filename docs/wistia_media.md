@@ -38,16 +38,18 @@ wistia media [flags]
 ### SEE ALSO
 
 * [wistia](wistia.md)	 - Data API: Wistia Data API
-* [wistia media archive](wistia_media_archive.md)	 - Medias Archive
-* [wistia media copy](wistia_media_copy.md)	 - Media Copy
-* [wistia media delete](wistia_media_delete.md)	 - Media Delete
-* [wistia media get](wistia_media_get.md)	 - Media Show
-* [wistia media get-stats](wistia_media_get-stats.md)	 - Media Stats
-* [wistia media list](wistia_media_list.md)	 - Media List
-* [wistia media move](wistia_media_move.md)	 - Media Move
-* [wistia media restore](wistia_media_restore.md)	 - Media Restore
-* [wistia media swap](wistia_media_swap.md)	 - Media Swap
-* [wistia media translate](wistia_media_translate.md)	 - Media Translate
-* [wistia media update](wistia_media_update.md)	 - Media Update
+* [wistia media archive](wistia_media_archive.md)	 - Archive Media
+* [wistia media copy](wistia_media_copy.md)	 - Copy Media
+* [wistia media delete](wistia_media_delete.md)	 - Delete Media
+* [wistia media get](wistia_media_get.md)	 - Show Media
+* [wistia media get-stats](wistia_media_get-stats.md)	 - Show Media Aggregated Stats
+* [wistia media list](wistia_media_list.md)	 - List Media
+* [wistia media move](wistia_media_move.md)	 - Move Media
+* [wistia media post-medias-import-url](wistia_media_post-medias-import-url.md)	 - Import Media from URL
+* [wistia media put-medias-copy](wistia_media_put-medias-copy.md)	 - Bulk Copy Media
+* [wistia media restore](wistia_media_restore.md)	 - Restore Media
+* [wistia media swap](wistia_media_swap.md)	 - Swap Media
+* [wistia media translate](wistia_media_translate.md)	 - Translate Media
+* [wistia media update](wistia_media_update.md)	 - Update Media
 * [wistia media upload-form](wistia_media_upload-form.md)	 - Upload or Import Media
 * [wistia media upload-multipart](wistia_media_upload-multipart.md)	 - Upload or Import Media

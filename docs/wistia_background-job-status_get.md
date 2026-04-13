@@ -1,13 +1,13 @@
 ## wistia background-job-status get
 
-Background Job Status Show
+Show Background Job Status
 
 ### Synopsis
 
-Retrieve the status of a background job.
+Retrieves the status of a background job.
+
 ## Requires api token with one of the following permissions
 ```
-Read, update & delete anything
 Read all data
 ```
 

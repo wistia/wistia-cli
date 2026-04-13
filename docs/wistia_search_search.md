@@ -4,11 +4,13 @@ Search
 
 ### Synopsis
 
-Search across projects, medias, channels, and channel episodes.
+Searches across folders, subfolders, medias, channels, channel episodes, and webinars.
+Also searches through video transcripts, so media results may include transcript matches with
+timestamps when the query matches spoken content.
 
 ## Requires api token with one of the following permissions
 ```
-Read, update & delete anything
+Read all data
 ```
 
 ```
@@ -24,8 +26,12 @@ wistia search search [flags]
 ### Options
 
 ```
-  -h, --help       help for search
-      --q string   The search query string [required]
+      --created-after string        Filter results created on or after this datetime. Must be a valid ISO8601 timestamp in UTC (ending with 'Z').
+      --created-before string       Filter results created on or before this datetime. Must be a valid ISO8601 timestamp in UTC (ending with 'Z').
+  -h, --help                        help for search
+      --q string                    The search query string [required]
+  -r, --resource-type stringArray   Filter results by one or more resource types.
+  -t, --tags stringArray            Filter results by one or more tag names. When multiple tags are provided, results matching any of the specified tags are returned (OR logic).
 ```
 
 ### Options inherited from parent commands

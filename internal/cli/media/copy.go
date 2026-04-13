@@ -17,7 +17,7 @@ import (
 
 var copyCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "media-hashed-id", Shorthand: "m", FieldPath: "MediaHashedID", Kind: flagutil.FlagKindString, Required: true, Description: "The hashed ID of the media. [required]"},
-	{FlagName: "project-id", Shorthand: "p", FieldPath: "Body.ProjectID", Kind: flagutil.FlagKindInt64, Optional: true, Description: "The ID of the project where you want the new copy placed. Defaults to the source media’s current project if omitted or invalid."},
+	{FlagName: "folder-id", Shorthand: "f", FieldPath: "Body.FolderID", Kind: flagutil.FlagKindInt64, Optional: true, Description: "The ID of the folder where you want the new copy placed. Defaults to the source media’s current folder if omitted or invalid."},
 	{FlagName: "owner", FieldPath: "Body.Owner", Kind: flagutil.FlagKindString, Optional: true, Description: "An email address specifying the owner of the new media. Defaults to the source media’s current owner if omitted or invalid."},
 }
 
@@ -25,8 +25,8 @@ var copyCmdMeta = []flagutil.FlagMeta{
 func initCopyCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "copy",
-		Short:   "Media Copy",
-		Long:    "Copy a media.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
+		Short:   "Copy Media",
+		Long:    "This endpoint copies a media and its assets to a destination folder (defaults to source media).\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
 		Example: "  wistia media copy --media-hashed-id <id>",
 		RunE:    runCopyCmd,
 	}

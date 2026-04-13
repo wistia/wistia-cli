@@ -24,8 +24,8 @@ var deleteCmdMeta = []flagutil.FlagMeta{
 func initDeleteCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "delete",
-		Short:   "Captions Delete",
-		Long:    "This method is for removing the captions file from a video for the specified language.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
+		Short:   "Delete Captions",
+		Long:    "Removes the captions file from a media for the specified language.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
 		Example: "  wistia captions delete --media-hashed-id <id> --language-code <value>",
 		RunE:    runDeleteCmd,
 	}

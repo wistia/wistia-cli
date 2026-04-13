@@ -38,4 +38,4 @@ wistia channels channel-episodes [flags]
 ### SEE ALSO
 
 * [wistia channels](wistia_channels.md)	 - Operations for channels
-* [wistia channels channel-episodes list](wistia_channels_channel-episodes_list.md)	 - Channel Episodes List filtered by channel
+* [wistia channels channel-episodes list](wistia_channels_channel-episodes_list.md)	 - List Channel Episodes by Channel

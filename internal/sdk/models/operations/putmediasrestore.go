@@ -11,8 +11,8 @@ import (
 type PutMediasRestoreRequest struct {
 	// An array of the media hashed IDs to be restored.
 	HashedIds []string `json:"hashed_ids"`
-	// The hashed ID of the project to restore the medias to.
-	ProjectID string `json:"project_id"`
+	// The hashed ID of the folder to restore the medias to.
+	FolderID string `json:"folder_id"`
 }
 
 func (p *PutMediasRestoreRequest) GetHashedIds() []string {
@@ -22,11 +22,11 @@ func (p *PutMediasRestoreRequest) GetHashedIds() []string {
 	return p.HashedIds
 }
 
-func (p *PutMediasRestoreRequest) GetProjectID() string {
+func (p *PutMediasRestoreRequest) GetFolderID() string {
 	if p == nil {
 		return ""
 	}
-	return p.ProjectID
+	return p.FolderID
 }
 
 type Container struct {
@@ -84,7 +84,8 @@ func (e *PutMediasRestoreStatus) IsExact() bool {
 	return false
 }
 
-// PutMediasRestoreBackgroundJobStatus - Status of the background job.
+// PutMediasRestoreBackgroundJobStatus - A background job keeps track of the progress of an asynchronous task, e.g
+// bulk archiving media, translating media, etc.
 type PutMediasRestoreBackgroundJobStatus struct {
 	// The ID of the background job that's been queued for the request.
 	ID int64 `json:"id"`
@@ -111,7 +112,9 @@ type PutMediasRestoreResponseBody struct {
 	// A confirmation message that the background job has been queued.
 	Message   *string    `json:"message,omitzero"`
 	Container *Container `json:"container,omitzero"`
-	// Status of the background job.
+	// A background job keeps track of the progress of an asynchronous task, e.g
+	// bulk archiving media, translating media, etc.
+	//
 	BackgroundJobStatus *PutMediasRestoreBackgroundJobStatus `json:"background_job_status,omitzero"`
 }
 

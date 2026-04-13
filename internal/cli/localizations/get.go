@@ -25,8 +25,8 @@ var getCmdMeta = []flagutil.FlagMeta{
 func initGetCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "get",
-		Short:   "Localizations Show",
-		Long:    "Obtain detailed information about a localization.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\nRead all data\nRead all folder and media data\n```",
+		Short:   "Show Localization",
+		Long:    "Obtain detailed information about a localization.\n\n## Requires api token with one of the following permissions\n```\nRead all data\n```",
 		Example: "  wistia localizations get --media-hashed-id <id> --localization-hashed-id <id>",
 		RunE:    runGetCmd,
 	}

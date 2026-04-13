@@ -21,6 +21,19 @@ func (e *PostMediasMediaHashedIDCaptionsInternalServerError) Error() string {
 	return string(data)
 }
 
+// PostMediasMediaHashedIDCaptionsForbiddenError - Forbidden, token is valid but account does not have access to feature
+type PostMediasMediaHashedIDCaptionsForbiddenError struct {
+	Error_   *string                 `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata `json:"-"`
+}
+
+var _ error = &PostMediasMediaHashedIDCaptionsForbiddenError{}
+
+func (e *PostMediasMediaHashedIDCaptionsForbiddenError) Error() string {
+	data, _ := json.Marshal(e)
+	return string(data)
+}
+
 // PostMediasMediaHashedIDCaptionsUnauthorizedError - Unauthorized, invalid or missing token
 type PostMediasMediaHashedIDCaptionsUnauthorizedError struct {
 	Error_   *string                 `json:"error,omitzero"`

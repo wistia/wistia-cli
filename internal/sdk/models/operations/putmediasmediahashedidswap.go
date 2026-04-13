@@ -133,6 +133,10 @@ func (p *PutMediasMediaHashedIDSwapThumbnail) GetHeight() *int64 {
 	return p.Height
 }
 
+// PutMediasMediaHashedIDSwapMedia - A media generally represents a video or an audio which can be embedded into your website.
+//
+// CDN-backed medias are accessible using this url structure: https://fast.wistia.com/embed/medias/{hashed_id}.m3u8.
+// For more information, see https://docs.wistia.com/docs/asset-urls#getting-hls-assets.
 type PutMediasMediaHashedIDSwapMedia struct {
 	// A unique numeric identifier for the media within the system.
 	ID *int64 `json:"id,omitzero"`
@@ -301,7 +305,8 @@ func (e *PutMediasMediaHashedIDSwapBackgroundJobStatusStatus) IsExact() bool {
 	return false
 }
 
-// PutMediasMediaHashedIDSwapBackgroundJobStatus - Status of the background job.
+// PutMediasMediaHashedIDSwapBackgroundJobStatus - A background job keeps track of the progress of an asynchronous task, e.g
+// bulk archiving media, translating media, etc.
 type PutMediasMediaHashedIDSwapBackgroundJobStatus struct {
 	// The ID of the background job that's been queued for the request.
 	ID int64 `json:"id"`
@@ -325,9 +330,16 @@ func (p *PutMediasMediaHashedIDSwapBackgroundJobStatus) GetStatus() PutMediasMed
 
 // PutMediasMediaHashedIDSwapResponseBody - Successfully queued background job for media swap.
 type PutMediasMediaHashedIDSwapResponseBody struct {
-	Message *string                          `json:"message,omitzero"`
-	Media   *PutMediasMediaHashedIDSwapMedia `json:"media,omitzero"`
-	// Status of the background job.
+	Message *string `json:"message,omitzero"`
+	// A media generally represents a video or an audio which can be embedded into your website.
+	//
+	// CDN-backed medias are accessible using this url structure: https://fast.wistia.com/embed/medias/{hashed_id}.m3u8.
+	// For more information, see https://docs.wistia.com/docs/asset-urls#getting-hls-assets.
+	//
+	Media *PutMediasMediaHashedIDSwapMedia `json:"media,omitzero"`
+	// A background job keeps track of the progress of an asynchronous task, e.g
+	// bulk archiving media, translating media, etc.
+	//
 	BackgroundJobStatus *PutMediasMediaHashedIDSwapBackgroundJobStatus `json:"background_job_status,omitzero"`
 }
 

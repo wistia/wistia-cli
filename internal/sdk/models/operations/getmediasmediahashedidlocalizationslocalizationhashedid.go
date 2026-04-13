@@ -180,7 +180,7 @@ func (g *GetMediasMediaHashedIDLocalizationsLocalizationHashedIDTranscript) GetU
 	return g.UpdatedAt
 }
 
-// GetMediasMediaHashedIDLocalizationsLocalizationHashedIDResponseBody - Successful response
+// GetMediasMediaHashedIDLocalizationsLocalizationHashedIDResponseBody - A localization is a translation of a media into another language.
 type GetMediasMediaHashedIDLocalizationsLocalizationHashedIDResponseBody struct {
 	// A unique alphanumeric identifier for this localization.
 	HashedID string `json:"hashed_id"`

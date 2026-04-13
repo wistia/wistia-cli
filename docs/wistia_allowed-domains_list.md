@@ -1,14 +1,14 @@
 ## wistia allowed-domains list
 
-Allowed Domains List
+List Allowed Domains
 
 ### Synopsis
 
-List all allowed domains for the account.
+Lists allowed domains belonging to the account.
 
 ## Requires api token with one of the following permissions
 ```
-Read, update & delete anything
+Read all data
 ```
 
 ```
@@ -24,9 +24,26 @@ wistia allowed-domains list [flags]
 ### Options
 
 ```
-  -h, --help           help for list
-      --page int       Page number for pagination (default 1)
-      --per-page int   Number of items per page (default 100)
+  -c, --cursor cursor[enabled]   If cursor[enabled] is set to 1 than cursor pagination is enabled and the
+                                 first set of records are fetched up to the `per_page`. Cursor
+                                 pagination will also be turned on if `cursor[before]` or `cursor[after]`
+                                 are set. Records returned will have a `cursor` property set which can be used to fetch more records in the same `sort_by` ordering.
+                                 The cursor value of the last record can be used to fetch records after the current result set and
+                                 the cursor of the first record can be used to fetch records before the result set.
+                                 
+                                 NOTE: a cursor value is only valid if the `sort_by` value hasn't changed from the
+                                 last fetch. For example, you cannot fetch using `sort_by` id and than pass that
+                                 cursor value to a `sort_by` name.
+                                 
+  -h, --help                     help for list
+      --page cursor              The page number to retrieve. This cannot be combined with cursor,
+                                 pagination.
+                                 
+      --per-page int             The number of medias per page. Use this for both offset pagination and cursor pagination.
+      --sort-by id               Ordering. When using cursor pagination (see cursor param),
+                                 only id and `domain` are supported.
+                                  (options: id, domain) (default "id")
+      --sort-direction string    Ordering Sort Direction (0 = desc, 1 = asc; default is 1) (options: 0, 1) (default "1")
 ```
 
 ### Options inherited from parent commands

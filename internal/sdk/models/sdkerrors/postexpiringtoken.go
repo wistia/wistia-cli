@@ -6,7 +6,6 @@ package sdkerrors
 import (
 	"encoding/json"
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
-	"github.com/wistia/wistia-cli/internal/sdk/models/operations"
 )
 
 // NotImplementedError - Not implemented - expiring tokens cannot be created from other expiring tokens
@@ -35,11 +34,11 @@ func (e *PostExpiringTokenInternalServerError) Error() string {
 	return string(data)
 }
 
-// PostExpiringTokenUnprocessableEntityError - Unprocessible entity, parameters provided were invalid.
+// PostExpiringTokenUnprocessableEntityError - Unprocessable entity, the request parameters were invalid.
 type PostExpiringTokenUnprocessableEntityError struct {
-	// Contains a summary of what fields had errors and the errors they had.
-	Errors   *operations.PostExpiringTokenErrors `json:"errors,omitzero"`
-	HTTPMeta components.HTTPMetadata             `json:"-"`
+	// Array of error messages describing what went wrong.
+	Errors   []string                `json:"errors,omitzero"`
+	HTTPMeta components.HTTPMetadata `json:"-"`
 }
 
 var _ error = &PostExpiringTokenUnprocessableEntityError{}
