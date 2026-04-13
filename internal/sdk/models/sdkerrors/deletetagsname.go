@@ -21,6 +21,19 @@ func (e *DeleteTagsNameInternalServerError) Error() string {
 	return string(data)
 }
 
+// DeleteTagsNameForbiddenError - Forbidden, token is valid but account does not have access to feature
+type DeleteTagsNameForbiddenError struct {
+	Error_   *string                 `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata `json:"-"`
+}
+
+var _ error = &DeleteTagsNameForbiddenError{}
+
+func (e *DeleteTagsNameForbiddenError) Error() string {
+	data, _ := json.Marshal(e)
+	return string(data)
+}
+
 // DeleteTagsNameUnauthorizedError - Unauthorized, invalid or missing token
 type DeleteTagsNameUnauthorizedError struct {
 	Error_   *string                 `json:"error,omitzero"`

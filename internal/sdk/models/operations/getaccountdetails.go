@@ -8,7 +8,8 @@ import (
 	"github.com/wistia/wistia-cli/internal/sdk/sdkinternal/utils"
 )
 
-// GetAccountDetailsResponseBody - Successful response
+// GetAccountDetailsResponseBody - An account represents a customer at Wistia. Each account can own media, folders
+// channels, etc.
 type GetAccountDetailsResponseBody struct {
 	// Numeric id of the account
 	ID int64 `json:"id"`
@@ -17,13 +18,13 @@ type GetAccountDetailsResponseBody struct {
 	// Account’s main Wistia URL (e.g. http://brendan.wistia.com)
 	URL string `json:"url"`
 	// The total number of medias in this account
-	MediaCount int64 `json:"mediaCount"`
+	MediaCount int64 `json:"media_count"`
 	// The account's video limit
-	VideoLimit int64 `json:"videoLimit"`
-	// The total number of projects in this account
-	ProjectCount int64 `json:"projectCount"`
+	VideoLimit *int64 `json:"video_limit"`
+	// The total number of folders in this account
+	FolderCount int64 `json:"folder_count"`
 	// The total number of channels in this account
-	ChannelCount int64 `json:"channelCount"`
+	ChannelCount int64 `json:"channel_count"`
 }
 
 func (g *GetAccountDetailsResponseBody) GetID() int64 {
@@ -54,18 +55,18 @@ func (g *GetAccountDetailsResponseBody) GetMediaCount() int64 {
 	return g.MediaCount
 }
 
-func (g *GetAccountDetailsResponseBody) GetVideoLimit() int64 {
+func (g *GetAccountDetailsResponseBody) GetVideoLimit() *int64 {
 	if g == nil {
-		return 0
+		return nil
 	}
 	return g.VideoLimit
 }
 
-func (g *GetAccountDetailsResponseBody) GetProjectCount() int64 {
+func (g *GetAccountDetailsResponseBody) GetFolderCount() int64 {
 	if g == nil {
 		return 0
 	}
-	return g.ProjectCount
+	return g.FolderCount
 }
 
 func (g *GetAccountDetailsResponseBody) GetChannelCount() int64 {

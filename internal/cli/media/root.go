@@ -61,6 +61,10 @@ func InitMediaRoot(parent *cobra.Command) error {
 		return err
 	}
 
+	if err := initPostMediasImportUrlCmd(MediaCmd); err != nil {
+		return err
+	}
+
 	if err := initArchiveCmd(MediaCmd); err != nil {
 		return err
 	}
@@ -70,6 +74,10 @@ func InitMediaRoot(parent *cobra.Command) error {
 	}
 
 	if err := initRestoreCmd(MediaCmd); err != nil {
+		return err
+	}
+
+	if err := initPutMediasCopyCmd(MediaCmd); err != nil {
 		return err
 	}
 

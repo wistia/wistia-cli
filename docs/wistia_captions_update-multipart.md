@@ -1,6 +1,6 @@
 ## wistia captions update-multipart
 
-Captions Update
+Update Captions
 
 ### Synopsis
 

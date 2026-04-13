@@ -34,8 +34,9 @@ func (e *GetSearchUnauthorizedError) Error() string {
 	return string(data)
 }
 
-// GetSearchBadRequestError - Bad request - missing query parameter
+// GetSearchBadRequestError - Bad request
 type GetSearchBadRequestError struct {
+	// Error message detailing the reason for the bad request.
 	Error_   *string                 `json:"error,omitzero"`
 	HTTPMeta components.HTTPMetadata `json:"-"`
 }

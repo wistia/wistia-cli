@@ -33,3 +33,17 @@ func (e *GetChannelsChannelHashedIDChannelEpisodesUnauthorizedError) Error() str
 	data, _ := json.Marshal(e)
 	return string(data)
 }
+
+// GetChannelsChannelHashedIDChannelEpisodesBadRequestError - Bad request
+type GetChannelsChannelHashedIDChannelEpisodesBadRequestError struct {
+	// Error message detailing the reason for the bad request.
+	Error_   *string                 `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata `json:"-"`
+}
+
+var _ error = &GetChannelsChannelHashedIDChannelEpisodesBadRequestError{}
+
+func (e *GetChannelsChannelHashedIDChannelEpisodesBadRequestError) Error() string {
+	data, _ := json.Marshal(e)
+	return string(data)
+}

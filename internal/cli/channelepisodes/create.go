@@ -33,7 +33,7 @@ var createCmdMeta = []flagutil.FlagMeta{
 func initCreateCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "create",
-		Short:   "Channel Episode Create",
+		Short:   "Create Channel Episode",
 		Long:    "Creates a new channel episode in a channel.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
 		Example: "  wistia channel-episodes create --channel-hashed-id <id>",
 		RunE:    runCreateCmd,

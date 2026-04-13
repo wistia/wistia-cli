@@ -23,8 +23,8 @@ var getEngagementCmdMeta = []flagutil.FlagMeta{
 func initGetEngagementCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "get-engagement",
-		Short:   "Stats:Media Engagement",
-		Long:    "Retrieve engagement data for a video. This endpoint provides engagement data for a specific video identified by its media-id.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\nRead all data\nRead all folder and media data\n```",
+		Short:   "Show Media Engagement",
+		Long:    "Retrieve engagement data for a video. This endpoint provides engagement data for a specific video identified by its media-id.\n\n<!--- HIDE-MCP -->\n## Requires api token with one of the following permissions\n```\nRead detailed stats\n```\n<!--- /HIDE-MCP -->",
 		Example: "  wistia stats-media get-engagement --media-id <id>",
 		RunE:    runGetEngagementCmd,
 		Aliases: []string{"ge"},

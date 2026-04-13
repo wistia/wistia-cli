@@ -38,5 +38,5 @@ wistia stats-visitors [flags]
 ### SEE ALSO
 
 * [wistia](wistia.md)	 - Data API: Wistia Data API
-* [wistia stats-visitors get](wistia_stats-visitors_get.md)	 - Stats:Visitors Show
-* [wistia stats-visitors list](wistia_stats-visitors_list.md)	 - Stats:Visitors List
+* [wistia stats-visitors get](wistia_stats-visitors_get.md)	 - Show Visitor
+* [wistia stats-visitors list](wistia_stats-visitors_list.md)	 - List Visitors

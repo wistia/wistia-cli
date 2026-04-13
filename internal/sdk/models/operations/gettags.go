@@ -7,11 +7,90 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
+	"github.com/wistia/wistia-cli/internal/sdk/optionalnullable"
 	"github.com/wistia/wistia-cli/internal/sdk/sdkinternal/utils"
 	"time"
 )
 
-// GetTagsSortBy - Ordering
+// GetTagsEnabled - If `cursor[enabled]` is set to 1, the first result set will be fetched with cursor pagination enabled. This
+// values is ignored if `cursor[before]` or `cursor[after]` are set.
+type GetTagsEnabled int64
+
+const (
+	GetTagsEnabledZero GetTagsEnabled = 0
+	GetTagsEnabledOne  GetTagsEnabled = 1
+)
+
+func (e GetTagsEnabled) ToPointer() *GetTagsEnabled {
+	return &e
+}
+func (e *GetTagsEnabled) UnmarshalJSON(data []byte) error {
+	var v int64
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case 0:
+		fallthrough
+	case 1:
+		*e = GetTagsEnabled(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for GetTagsEnabled: %v", v)
+	}
+}
+
+// GetTagsCursor - If `cursor[enabled]` is set to 1 than cursor pagination is enabled and the
+// first set of records are fetched up to the `per_page`. Cursor
+// pagination will also be turned on if `cursor[before]` or `cursor[after]`
+// are set. Records returned will have a `cursor` property set which can be used to fetch more records in the same `sort_by` ordering.
+// The cursor value of the last record can be used to fetch records after the current result set and
+// the cursor of the first record can be used to fetch records before the result set.
+//
+// NOTE: a cursor value is only valid if the `sort_by` value hasn't changed from the
+// last fetch. For example, you cannot fetch using `sort_by` id and than pass that
+// cursor value to a `sort_by` name.
+type GetTagsCursor struct {
+	// If `cursor[enabled]` is set to 1, the first result set will be fetched with cursor pagination enabled. This
+	// values is ignored if `cursor[before]` or `cursor[after]` are set.
+	//
+	Enabled *GetTagsEnabled `queryParam:"name=enabled"`
+	// If `cursor[before]` is set than cursor pagination is enabled and all records
+	// before the cursor up to the `per_page` are returned. This feature is useful for
+	// fetching "new records", for example, in a "pull to refersh" feature when showing records in a descending
+	// order.
+	//
+	Before *string `queryParam:"name=before"`
+	// If `cursor[after]` is set than cursor pagination is enabled and all records
+	// after the cursor up to the `per_page` are returned.
+	//
+	After *string `queryParam:"name=after"`
+}
+
+func (g *GetTagsCursor) GetEnabled() *GetTagsEnabled {
+	if g == nil {
+		return nil
+	}
+	return g.Enabled
+}
+
+func (g *GetTagsCursor) GetBefore() *string {
+	if g == nil {
+		return nil
+	}
+	return g.Before
+}
+
+func (g *GetTagsCursor) GetAfter() *string {
+	if g == nil {
+		return nil
+	}
+	return g.After
+}
+
+// GetTagsSortBy - Ordering. When using cursor pagination (see cursor param),
+// only `id`, `updated` and `created` are supported. All other sort_by options
+// require offset pagination.
 type GetTagsSortBy string
 
 const (
@@ -72,14 +151,42 @@ func (e *GetTagsSortDirection) UnmarshalJSON(data []byte) error {
 }
 
 type GetTagsRequest struct {
-	// Page number to retrieve
+	// The page number to retrieve. This cannot be combined with `cursor`,
+	// pagination.
+	//
 	Page *int64 `queryParam:"style=form,explode=true,name=page"`
-	// Number of tags per page
+	// The number of medias per page. Use this for both offset pagination and cursor pagination.
 	PerPage *int64 `queryParam:"style=form,explode=true,name=per_page"`
-	// Ordering
+	// If `cursor[enabled]` is set to 1 than cursor pagination is enabled and the
+	// first set of records are fetched up to the `per_page`. Cursor
+	// pagination will also be turned on if `cursor[before]` or `cursor[after]`
+	// are set. Records returned will have a `cursor` property set which can be used to fetch more records in the same `sort_by` ordering.
+	// The cursor value of the last record can be used to fetch records after the current result set and
+	// the cursor of the first record can be used to fetch records before the result set.
+	//
+	// NOTE: a cursor value is only valid if the `sort_by` value hasn't changed from the
+	// last fetch. For example, you cannot fetch using `sort_by` id and than pass that
+	// cursor value to a `sort_by` name.
+	//
+	Cursor *GetTagsCursor `queryParam:"style=deepObject,explode=true,name=cursor"`
+	// Ordering. When using cursor pagination (see cursor param),
+	// only `id`, `updated` and `created` are supported. All other sort_by options
+	// require offset pagination.
+	//
 	SortBy *GetTagsSortBy `queryParam:"style=form,explode=true,name=sort_by"`
 	// Ordering Sort Direction (0 = desc, 1 = asc)
 	SortDirection *GetTagsSortDirection `queryParam:"style=form,explode=true,name=sort_direction"`
+}
+
+func (g GetTagsRequest) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(g, "", false)
+}
+
+func (g *GetTagsRequest) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &g, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (g *GetTagsRequest) GetPage() *int64 {
@@ -96,6 +203,13 @@ func (g *GetTagsRequest) GetPerPage() *int64 {
 	return g.PerPage
 }
 
+func (g *GetTagsRequest) GetCursor() *GetTagsCursor {
+	if g == nil {
+		return nil
+	}
+	return g.Cursor
+}
+
 func (g *GetTagsRequest) GetSortBy() *GetTagsSortBy {
 	if g == nil {
 		return nil
@@ -110,8 +224,10 @@ func (g *GetTagsRequest) GetSortDirection() *GetTagsSortDirection {
 	return g.SortDirection
 }
 
+// GetTagsResponseBody - A tag is used to tag related media. You can then filter media
+// by a specific tag.
 type GetTagsResponseBody struct {
-	// The tag’s display name.
+	// The tag's display name.
 	Name *string `json:"name,omitzero"`
 	// The number of different medias that have been associated with this tag.
 	TaggingsCount *int64 `json:"taggingsCount,omitzero"`
@@ -119,6 +235,8 @@ type GetTagsResponseBody struct {
 	Created *time.Time `json:"created,omitzero"`
 	// The date that the tag was last updated.
 	Updated *time.Time `json:"updated,omitzero"`
+	// A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+	Cursor optionalnullable.OptionalNullable[string] `json:"cursor,omitzero"`
 }
 
 func (g GetTagsResponseBody) MarshalJSON() ([]byte, error) {
@@ -158,6 +276,13 @@ func (g *GetTagsResponseBody) GetUpdated() *time.Time {
 		return nil
 	}
 	return g.Updated
+}
+
+func (g *GetTagsResponseBody) GetCursor() optionalnullable.OptionalNullable[string] {
+	if g == nil {
+		return nil
+	}
+	return g.Cursor
 }
 
 type GetTagsResponse struct {

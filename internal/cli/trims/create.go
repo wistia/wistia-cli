@@ -17,15 +17,16 @@ import (
 
 var createCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "media-hashed-id", Shorthand: "m", FieldPath: "MediaHashedID", Kind: flagutil.FlagKindString, Required: true, Description: "The hashed ID of the media. [required]"},
-	{FlagName: "trims", Shorthand: "t", FieldPath: "Body.Trims", Kind: flagutil.FlagKindStringArray, Required: true, Description: "An array of strings matching the format of HH:MM:SS.mmm-HH:MM:SS.mmm where HH is hours, MM is minutes, SS is seconds and mmm is milliseconds. The ranges should contain the earliest point of the trim first and the later point of the trim second. [required]"},
+	{FlagName: "trims", Shorthand: "t", FieldPath: "Body.Trims", Kind: flagutil.FlagKindStringArray, Required: true, Description: "An array of strings matching the format of HH:MM:SS.mmm-HH:MM:SS.mmm where HH is hours, MM is minutes, SS is seconds and mmm is milliseconds. When keep_trims is false (default), the ranges specify parts of the media to remove. When keep_trims is true, the ranges specify parts of the media to keep. [required]"},
+	{FlagName: "keep-trims", Shorthand: "k", FieldPath: "Body.KeepTrims", Kind: flagutil.FlagKindBool, Optional: true, HasDefault: true, Description: "When set to true, the trims parameter is treated as ranges to keep rather than ranges to remove. Defaults to false."},
 }
 
 // initCreateCmd initializes the create command.
 func initCreateCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "create",
-		Short:   "Trims Create",
-		Long:    "Creates a new media that trims off parts of an existing media\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
+		Short:   "Create Media from Trims",
+		Long:    "Creates a new media that trims off parts of an existing media.\n\nBy default, the `trims` parameter specifies time ranges to **remove** from the media. When `keep_trims` is set to `true`, the `trims` parameter instead specifies time ranges to **keep** in the media.\n\n**NOTE:** currently this endpoint only supports trimming video files.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
 		Example: "  wistia trims create --media-hashed-id <id> --trims '[]'",
 		RunE:    runCreateCmd,
 	}

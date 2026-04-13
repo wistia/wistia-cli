@@ -31,12 +31,12 @@ func newAllowedDomains(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks
 	}
 }
 
-// List - Allowed Domains List
-// List all allowed domains for the account.
+// List Allowed Domains
+// Lists allowed domains belonging to the account.
 //
 // ## Requires api token with one of the following permissions
 // ```
-// Read, update & delete anything
+// Read all data
 // ```
 func (s *AllowedDomains) List(ctx context.Context, request *operations.GetAllowedDomainsRequest, opts ...operations.Option) (*operations.GetAllowedDomainsResponse, error) {
 	o := operations.Options{}
@@ -236,8 +236,8 @@ func (s *AllowedDomains) List(ctx context.Context, request *operations.GetAllowe
 
 }
 
-// Create - Allowed Domain Create
-// Create a new allowed domain for the account.
+// Create Allowed Domain
+// Creates an allowed domain for the account.
 //
 // ## Requires api token with one of the following permissions
 // ```
@@ -325,7 +325,7 @@ func (s *AllowedDomains) Create(ctx context.Context, request operations.PostAllo
 
 		_, err = s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
 		return nil, err
-	} else if utils.MatchStatusCodes([]string{"400", "401", "4XX", "500", "5XX"}, httpRes.StatusCode) {
+	} else if utils.MatchStatusCodes([]string{"400", "401", "403", "4XX", "500", "5XX"}, httpRes.StatusCode) {
 		_httpRes, err := s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
 		if err != nil {
 			return nil, err
@@ -420,6 +420,31 @@ func (s *AllowedDomains) Create(ctx context.Context, request operations.PostAllo
 			}
 			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
+	case httpRes.StatusCode == 403:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out sdkerrors.PostAllowedDomainsForbiddenError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, err
+			}
+
+			out.HTTPMeta = components.HTTPMetadata{
+				Request:  req,
+				Response: httpRes,
+			}
+			return nil, &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
 	case httpRes.StatusCode == 500:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
@@ -469,12 +494,12 @@ func (s *AllowedDomains) Create(ctx context.Context, request operations.PostAllo
 
 }
 
-// Get - Allowed Domain Show
-// Get details for a specific allowed domain.
+// Get - Show Allowed Domain
+// Returns the details of an allowed domain.
 //
 // ## Requires api token with one of the following permissions
 // ```
-// Read, update & delete anything
+// Read all data
 // ```
 func (s *AllowedDomains) Get(ctx context.Context, request operations.GetAllowedDomainsDomainRequest, opts ...operations.Option) (*operations.GetAllowedDomainsDomainResponse, error) {
 	o := operations.Options{}
@@ -695,8 +720,8 @@ func (s *AllowedDomains) Get(ctx context.Context, request operations.GetAllowedD
 
 }
 
-// Delete - Allowed Domain Delete
-// Delete an allowed domain from the account.
+// Delete Allowed Domain
+// Deletes an allowed domain from the account.
 //
 // ## Requires api token with one of the following permissions
 // ```
@@ -777,7 +802,7 @@ func (s *AllowedDomains) Delete(ctx context.Context, request operations.DeleteAl
 
 		_, err = s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
 		return nil, err
-	} else if utils.MatchStatusCodes([]string{"401", "404", "4XX", "500", "5XX"}, httpRes.StatusCode) {
+	} else if utils.MatchStatusCodes([]string{"401", "403", "404", "4XX", "500", "5XX"}, httpRes.StatusCode) {
 		_httpRes, err := s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
 		if err != nil {
 			return nil, err
@@ -831,6 +856,31 @@ func (s *AllowedDomains) Delete(ctx context.Context, request operations.DeleteAl
 			}
 
 			var out sdkerrors.DeleteAllowedDomainsDomainUnauthorizedError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, err
+			}
+
+			out.HTTPMeta = components.HTTPMetadata{
+				Request:  req,
+				Response: httpRes,
+			}
+			return nil, &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
+	case httpRes.StatusCode == 403:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out sdkerrors.DeleteAllowedDomainsDomainForbiddenError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}

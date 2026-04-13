@@ -1,14 +1,13 @@
 ## wistia tags list
 
-Tags List
+List Tags
 
 ### Synopsis
 
-Use this endpoint to request a list of Tags in your Wistia account. This request supports paging and sorting.
+Lists tags belonging to the account.
 
 ## Requires api token with one of the following permissions
 ```
-Read, update & delete anything
 Read all data
 ```
 
@@ -25,11 +24,27 @@ wistia tags list [flags]
 ### Options
 
 ```
-  -h, --help                    help for list
-      --page int                Page number to retrieve
-      --per-page int            Number of tags per page
-      --sort-by string          Ordering (options: name, created, updated, taggingsCount)
-      --sort-direction string   Ordering Sort Direction (0 = desc, 1 = asc) (options: 0, 1)
+  -c, --cursor cursor[enabled]   If cursor[enabled] is set to 1 than cursor pagination is enabled and the
+                                 first set of records are fetched up to the `per_page`. Cursor
+                                 pagination will also be turned on if `cursor[before]` or `cursor[after]`
+                                 are set. Records returned will have a `cursor` property set which can be used to fetch more records in the same `sort_by` ordering.
+                                 The cursor value of the last record can be used to fetch records after the current result set and
+                                 the cursor of the first record can be used to fetch records before the result set.
+                                 
+                                 NOTE: a cursor value is only valid if the `sort_by` value hasn't changed from the
+                                 last fetch. For example, you cannot fetch using `sort_by` id and than pass that
+                                 cursor value to a `sort_by` name.
+                                 
+  -h, --help                     help for list
+      --page cursor              The page number to retrieve. This cannot be combined with cursor,
+                                 pagination.
+                                 
+      --per-page int             The number of medias per page. Use this for both offset pagination and cursor pagination.
+      --sort-by id               Ordering. When using cursor pagination (see cursor param),
+                                 only id, `updated` and `created` are supported. All other sort_by options
+                                 require offset pagination.
+                                  (options: name, created, updated, taggingsCount)
+      --sort-direction string    Ordering Sort Direction (0 = desc, 1 = asc) (options: 0, 1)
 ```
 
 ### Options inherited from parent commands

@@ -5,6 +5,7 @@ package operations
 
 import (
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
+	"github.com/wistia/wistia-cli/internal/sdk/optionalnullable"
 	"github.com/wistia/wistia-cli/internal/sdk/sdkinternal/utils"
 	"time"
 )
@@ -21,12 +22,17 @@ func (g *GetAllowedDomainsDomainRequest) GetDomain() string {
 	return g.Domain
 }
 
-// GetAllowedDomainsDomainResponseBody - Allowed domain details
+// GetAllowedDomainsDomainResponseBody - An allowed domain represents a domain where a Wistia video can be embedded. Account
+// restrictions need to be enabled for an allowed domain to have an effect. See
+// our [Domain Restrictions](https://support.wistia.com/en/articles/9691672-domain-restrictions)
+// guide for more details.
 type GetAllowedDomainsDomainResponseBody struct {
 	// The allowed domain name.
 	Domain string `json:"domain"`
 	// The date that the allowed domain was originally created.
 	CreatedAt time.Time `json:"created_at"`
+	// A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+	Cursor optionalnullable.OptionalNullable[string] `json:"cursor,omitzero"`
 }
 
 func (g GetAllowedDomainsDomainResponseBody) MarshalJSON() ([]byte, error) {
@@ -52,6 +58,13 @@ func (g *GetAllowedDomainsDomainResponseBody) GetCreatedAt() time.Time {
 		return time.Time{}
 	}
 	return g.CreatedAt
+}
+
+func (g *GetAllowedDomainsDomainResponseBody) GetCursor() optionalnullable.OptionalNullable[string] {
+	if g == nil {
+		return nil
+	}
+	return g.Cursor
 }
 
 type GetAllowedDomainsDomainResponse struct {

@@ -30,13 +30,11 @@ func newCustomizations(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks
 	}
 }
 
-// Get - Customizations Show
+// Get - Show Customizations
 // Fetches explicitly defined customizations for the video.
 //
 // ## Requires api token with one of the following permissions
 // ```
-// Read, update & delete anything
-// Read all data
 // Read all folder and media data
 // ```
 func (s *Customizations) Get(ctx context.Context, request operations.GetMediasMediaIDCustomizationsRequest, opts ...operations.Option) (*operations.GetMediasMediaIDCustomizationsResponse, error) {
@@ -258,7 +256,7 @@ func (s *Customizations) Get(ctx context.Context, request operations.GetMediasMe
 
 }
 
-// Customizations Create
+// Create Customizations
 // Set customizations for a video. Replaces the customizations explicitly set for this video.
 //
 // ## Requires api token with one of the following permissions
@@ -347,7 +345,7 @@ func (s *Customizations) Create(ctx context.Context, request operations.PostMedi
 
 		_, err = s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
 		return nil, err
-	} else if utils.MatchStatusCodes([]string{"401", "4XX", "500", "5XX"}, httpRes.StatusCode) {
+	} else if utils.MatchStatusCodes([]string{"401", "403", "4XX", "500", "5XX"}, httpRes.StatusCode) {
 		_httpRes, err := s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
 		if err != nil {
 			return nil, err
@@ -417,6 +415,31 @@ func (s *Customizations) Create(ctx context.Context, request operations.PostMedi
 			}
 			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
+	case httpRes.StatusCode == 403:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out sdkerrors.PostMediasMediaIDCustomizationsForbiddenError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, err
+			}
+
+			out.HTTPMeta = components.HTTPMetadata{
+				Request:  req,
+				Response: httpRes,
+			}
+			return nil, &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
 	case httpRes.StatusCode == 500:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
@@ -466,7 +489,7 @@ func (s *Customizations) Create(ctx context.Context, request operations.PostMedi
 
 }
 
-// Customizations Update
+// Update Customizations
 // Allows for partial updates on a video’s customizations. If a value is null, then that key will be deleted from the saved customizations. If it is not null, that value will be set.
 //
 // ## Requires api token with one of the following permissions
@@ -699,7 +722,7 @@ func (s *Customizations) Update(ctx context.Context, request operations.PutMedia
 
 }
 
-// Customizations Delete
+// Delete Customizations
 // Deletes all explicit customizations for a video, making it act as if it has never been customized.
 //
 // ## Requires api token with one of the following permissions

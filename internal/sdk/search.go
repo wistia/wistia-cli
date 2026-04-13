@@ -32,11 +32,13 @@ func newSearch(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks *hooks.
 }
 
 // Search
-// Search across projects, medias, channels, and channel episodes.
+// Searches across folders, subfolders, medias, channels, channel episodes, and webinars.
+// Also searches through video transcripts, so media results may include transcript matches with
+// timestamps when the query matches spoken content.
 //
 // ## Requires api token with one of the following permissions
 // ```
-// Read, update & delete anything
+// Read all data
 // ```
 func (s *Search) Search(ctx context.Context, request operations.GetSearchRequest, opts ...operations.Option) (*operations.GetSearchResponse, error) {
 	o := operations.Options{}

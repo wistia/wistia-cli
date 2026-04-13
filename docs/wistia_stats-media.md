@@ -38,6 +38,6 @@ wistia stats-media [flags]
 ### SEE ALSO
 
 * [wistia](wistia.md)	 - Data API: Wistia Data API
-* [wistia stats-media get](wistia_stats-media_get.md)	 - Stats:Media Show
-* [wistia stats-media get-by-date](wistia_stats-media_get-by-date.md)	 - Stats:Media By Date
-* [wistia stats-media get-engagement](wistia_stats-media_get-engagement.md)	 - Stats:Media Engagement
+* [wistia stats-media get](wistia_stats-media_get.md)	 - Show Media Stats
+* [wistia stats-media get-by-date](wistia_stats-media_get-by-date.md)	 - Show Media Stats by Date
+* [wistia stats-media get-engagement](wistia_stats-media_get-engagement.md)	 - Show Media Engagement

@@ -34,6 +34,8 @@ wistia [flags]
 
 * [wistia account](wistia_account.md)	 - Operations for account
 * [wistia allowed-domains](wistia_allowed-domains.md)	 - Operations for allowed-domains
+* [wistia analytics-media](wistia_analytics-media.md)	 - Operations for analytics-media
+* [wistia analytics-webinar](wistia_analytics-webinar.md)	 - Operations for analytics-webinar
 * [wistia auth](wistia_auth.md)	 - Manage authentication credentials
 * [wistia background-job-status](wistia_background-job-status.md)	 - Operations for background-job-status
 * [wistia captions](wistia_captions.md)	 - Operations for captions
@@ -43,11 +45,11 @@ wistia [flags]
 * [wistia customizations](wistia_customizations.md)	 - Operations for customizations
 * [wistia expiring-access-tokens](wistia_expiring-access-tokens.md)	 - Operations for expiring-access-tokens
 * [wistia explore](wistia_explore.md)	 - Interactively browse and run commands
-* [wistia live-stream-events](wistia_live-stream-events.md)	 - Operations for live-stream-events
+* [wistia folder-sharings](wistia_folder-sharings.md)	 - Operations for folder-sharings
+* [wistia folders](wistia_folders.md)	 - Operations for folders
 * [wistia localizations](wistia_localizations.md)	 - Operations for localizations
 * [wistia media](wistia_media.md)	 - Operations for media
-* [wistia project-sharings](wistia_project-sharings.md)	 - Operations for project-sharings
-* [wistia projects](wistia_projects.md)	 - Operations for projects
+* [wistia media-extended-audio-descriptions](wistia_media-extended-audio-descriptions.md)	 - Operations for media-extended-audio-descriptions
 * [wistia search](wistia_search.md)	 - Operations for search
 * [wistia stats-account](wistia_stats-account.md)	 - Operations for stats-account
 * [wistia stats-events](wistia_stats-events.md)	 - Operations for stats-events
@@ -55,7 +57,10 @@ wistia [flags]
 * [wistia stats-projects](wistia_stats-projects.md)	 - Operations for stats-projects
 * [wistia stats-visitors](wistia_stats-visitors.md)	 - Operations for stats-visitors
 * [wistia subfolders](wistia_subfolders.md)	 - Operations for subfolders
+* [wistia taggings](wistia_taggings.md)	 - Operations for taggings
 * [wistia tags](wistia_tags.md)	 - Operations for tags
 * [wistia trims](wistia_trims.md)	 - Operations for trims
 * [wistia version](wistia_version.md)	 - Print the CLI version
+* [wistia webinar-registrations](wistia_webinar-registrations.md)	 - Operations for webinar-registrations
+* [wistia webinars](wistia_webinars.md)	 - Operations for webinars
 * [wistia whoami](wistia_whoami.md)	 - Display current authentication configuration

@@ -23,8 +23,8 @@ var getCmdMeta = []flagutil.FlagMeta{
 func initGetCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "get",
-		Short:   "Stats:Visitors Show",
-		Long:    "This endpoint provides detailed information about a specific visitor.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\nRead all data\nRead all folder and media data\n```",
+		Short:   "Show Visitor",
+		Long:    "This endpoint provides detailed information about a specific visitor.\n\n<!--- HIDE-MCP -->\n## Requires api token with one of the following permissions\n```\nRead detailed stats\n```\n<!--- /HIDE-MCP -->",
 		Example: "  wistia stats-visitors get --visitor-key <value>",
 		RunE:    runGetCmd,
 	}

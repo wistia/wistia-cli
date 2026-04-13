@@ -38,6 +38,6 @@ wistia tags [flags]
 ### SEE ALSO
 
 * [wistia](wistia.md)	 - Data API: Wistia Data API
-* [wistia tags create](wistia_tags_create.md)	 - Tags Create
-* [wistia tags delete](wistia_tags_delete.md)	 - Tags Delete
-* [wistia tags list](wistia_tags_list.md)	 - Tags List
+* [wistia tags create](wistia_tags_create.md)	 - Create Tags
+* [wistia tags delete](wistia_tags_delete.md)	 - Delete Tag
+* [wistia tags list](wistia_tags_list.md)	 - List Tags

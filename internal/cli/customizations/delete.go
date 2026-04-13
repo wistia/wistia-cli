@@ -23,7 +23,7 @@ var deleteCmdMeta = []flagutil.FlagMeta{
 func initDeleteCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "delete",
-		Short:   "Customizations Delete",
+		Short:   "Delete Customizations",
 		Long:    "Deletes all explicit customizations for a video, making it act as if it has never been customized.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
 		Example: "  wistia customizations delete --media-id <id>",
 		RunE:    runDeleteCmd,

@@ -26,8 +26,8 @@ var purchaseCmdMeta = []flagutil.FlagMeta{
 func initPurchaseCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "purchase",
-		Short:   "Captions Purchase",
-		Long:    "This method is for purchasing English captions for a video. The request will charge the credit card on the account if successful. A saved credit card is required to use this endpoint.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
+		Short:   "Purchase Captions",
+		Long:    "This method is for purchasing English captions for a media. The request will charge the credit card on the account if successful. A saved credit card is required to use this endpoint.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
 		Example: "  wistia captions purchase --media-hashed-id <id>",
 		RunE:    runPurchaseCmd,
 	}

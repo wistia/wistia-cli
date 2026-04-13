@@ -9,17 +9,19 @@ import (
 	"github.com/spf13/pflag"
 	"github.com/wistia/wistia-cli/internal/cli/account"
 	"github.com/wistia/wistia-cli/internal/cli/alloweddomains"
+	"github.com/wistia/wistia-cli/internal/cli/analyticsmedia"
+	"github.com/wistia/wistia-cli/internal/cli/analyticswebinar"
 	"github.com/wistia/wistia-cli/internal/cli/backgroundjobstatus"
 	"github.com/wistia/wistia-cli/internal/cli/captions"
 	"github.com/wistia/wistia-cli/internal/cli/channelepisodes"
 	"github.com/wistia/wistia-cli/internal/cli/channels"
 	"github.com/wistia/wistia-cli/internal/cli/customizations"
 	"github.com/wistia/wistia-cli/internal/cli/expiringaccesstokens"
-	"github.com/wistia/wistia-cli/internal/cli/livestreamevents"
+	"github.com/wistia/wistia-cli/internal/cli/folders"
+	"github.com/wistia/wistia-cli/internal/cli/foldersharings"
 	"github.com/wistia/wistia-cli/internal/cli/localizations"
 	"github.com/wistia/wistia-cli/internal/cli/media"
-	"github.com/wistia/wistia-cli/internal/cli/projects"
-	"github.com/wistia/wistia-cli/internal/cli/projectsharings"
+	"github.com/wistia/wistia-cli/internal/cli/mediaextendedaudiodescriptions"
 	"github.com/wistia/wistia-cli/internal/cli/search"
 	"github.com/wistia/wistia-cli/internal/cli/statsaccount"
 	"github.com/wistia/wistia-cli/internal/cli/statsevents"
@@ -27,8 +29,11 @@ import (
 	"github.com/wistia/wistia-cli/internal/cli/statsprojects"
 	"github.com/wistia/wistia-cli/internal/cli/statsvisitors"
 	"github.com/wistia/wistia-cli/internal/cli/subfolders"
+	"github.com/wistia/wistia-cli/internal/cli/taggings"
 	"github.com/wistia/wistia-cli/internal/cli/tags"
 	"github.com/wistia/wistia-cli/internal/cli/trims"
+	"github.com/wistia/wistia-cli/internal/cli/webinarregistrations"
+	"github.com/wistia/wistia-cli/internal/cli/webinars"
 	"github.com/wistia/wistia-cli/internal/config"
 	"github.com/wistia/wistia-cli/internal/explorer"
 	"github.com/wistia/wistia-cli/internal/output"
@@ -71,14 +76,20 @@ func NewRootCommand() (*cobra.Command, error) {
 	if err := media.InitMediaRoot(rootCmd); err != nil {
 		return nil, fmt.Errorf("init media: %w", err)
 	}
-	if err := projects.InitProjectsRoot(rootCmd); err != nil {
-		return nil, fmt.Errorf("init projects: %w", err)
+	if err := mediaextendedaudiodescriptions.InitMediaExtendedAudioDescriptionsRoot(rootCmd); err != nil {
+		return nil, fmt.Errorf("init media-extended-audio-descriptions: %w", err)
+	}
+	if err := folders.InitFoldersRoot(rootCmd); err != nil {
+		return nil, fmt.Errorf("init folders: %w", err)
 	}
 	if err := subfolders.InitSubfoldersRoot(rootCmd); err != nil {
 		return nil, fmt.Errorf("init subfolders: %w", err)
 	}
-	if err := projectsharings.InitProjectSharingsRoot(rootCmd); err != nil {
-		return nil, fmt.Errorf("init project-sharings: %w", err)
+	if err := foldersharings.InitFolderSharingsRoot(rootCmd); err != nil {
+		return nil, fmt.Errorf("init folder-sharings: %w", err)
+	}
+	if err := taggings.InitTaggingsRoot(rootCmd); err != nil {
+		return nil, fmt.Errorf("init taggings: %w", err)
 	}
 	if err := account.InitAccountRoot(rootCmd); err != nil {
 		return nil, fmt.Errorf("init account: %w", err)
@@ -116,8 +127,11 @@ func NewRootCommand() (*cobra.Command, error) {
 	if err := expiringaccesstokens.InitExpiringAccessTokensRoot(rootCmd); err != nil {
 		return nil, fmt.Errorf("init expiring-access-tokens: %w", err)
 	}
-	if err := livestreamevents.InitLiveStreamEventsRoot(rootCmd); err != nil {
-		return nil, fmt.Errorf("init live-stream-events: %w", err)
+	if err := webinars.InitWebinarsRoot(rootCmd); err != nil {
+		return nil, fmt.Errorf("init webinars: %w", err)
+	}
+	if err := webinarregistrations.InitWebinarRegistrationsRoot(rootCmd); err != nil {
+		return nil, fmt.Errorf("init webinar-registrations: %w", err)
 	}
 	if err := statsaccount.InitStatsAccountRoot(rootCmd); err != nil {
 		return nil, fmt.Errorf("init stats-account: %w", err)
@@ -133,6 +147,12 @@ func NewRootCommand() (*cobra.Command, error) {
 	}
 	if err := statsevents.InitStatsEventsRoot(rootCmd); err != nil {
 		return nil, fmt.Errorf("init stats-events: %w", err)
+	}
+	if err := analyticsmedia.InitAnalyticsMediaRoot(rootCmd); err != nil {
+		return nil, fmt.Errorf("init analytics-media: %w", err)
+	}
+	if err := analyticswebinar.InitAnalyticsWebinarRoot(rootCmd); err != nil {
+		return nil, fmt.Errorf("init analytics-webinar: %w", err)
 	}
 	if err := initConfigureCmd(rootCmd); err != nil {
 		return nil, fmt.Errorf("init configure: %w", err)

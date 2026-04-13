@@ -32,7 +32,7 @@ generation:
     generateNewTests: true
     skipResponseBodyAssertions: false
 cli:
-  version: 0.0.2
+  version: 0.1.0
   additionalDependencies: {}
   cliName: wistia
   distribution:

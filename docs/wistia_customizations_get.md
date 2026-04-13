@@ -1,6 +1,6 @@
 ## wistia customizations get
 
-Customizations Show
+Show Customizations
 
 ### Synopsis
 
@@ -8,8 +8,6 @@ Fetches explicitly defined customizations for the video.
 
 ## Requires api token with one of the following permissions
 ```
-Read, update & delete anything
-Read all data
 Read all folder and media data
 ```
 

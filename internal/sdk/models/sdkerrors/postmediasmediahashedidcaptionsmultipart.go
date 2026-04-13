@@ -21,6 +21,19 @@ func (e *PostMediasMediaHashedIDCaptionsMultipartInternalServerError) Error() st
 	return string(data)
 }
 
+// PostMediasMediaHashedIDCaptionsMultipartForbiddenError - Forbidden, token is valid but account does not have access to feature
+type PostMediasMediaHashedIDCaptionsMultipartForbiddenError struct {
+	Error_   *string                 `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata `json:"-"`
+}
+
+var _ error = &PostMediasMediaHashedIDCaptionsMultipartForbiddenError{}
+
+func (e *PostMediasMediaHashedIDCaptionsMultipartForbiddenError) Error() string {
+	data, _ := json.Marshal(e)
+	return string(data)
+}
+
 // PostMediasMediaHashedIDCaptionsMultipartUnauthorizedError - Unauthorized, invalid or missing token
 type PostMediasMediaHashedIDCaptionsMultipartUnauthorizedError struct {
 	Error_   *string                 `json:"error,omitzero"`

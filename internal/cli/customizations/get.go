@@ -23,8 +23,8 @@ var getCmdMeta = []flagutil.FlagMeta{
 func initGetCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "get",
-		Short:   "Customizations Show",
-		Long:    "Fetches explicitly defined customizations for the video.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\nRead all data\nRead all folder and media data\n```",
+		Short:   "Show Customizations",
+		Long:    "Fetches explicitly defined customizations for the video.\n\n## Requires api token with one of the following permissions\n```\nRead all folder and media data\n```",
 		Example: "  wistia customizations get --media-id <id>",
 		RunE:    runGetCmd,
 	}

@@ -21,6 +21,19 @@ func (e *PostAllowedDomainsInternalServerError) Error() string {
 	return string(data)
 }
 
+// PostAllowedDomainsForbiddenError - Forbidden, token is valid but account does not have access to feature
+type PostAllowedDomainsForbiddenError struct {
+	Error_   *string                 `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata `json:"-"`
+}
+
+var _ error = &PostAllowedDomainsForbiddenError{}
+
+func (e *PostAllowedDomainsForbiddenError) Error() string {
+	data, _ := json.Marshal(e)
+	return string(data)
+}
+
 // PostAllowedDomainsUnauthorizedError - Unauthorized, invalid or missing token
 type PostAllowedDomainsUnauthorizedError struct {
 	Error_   *string                 `json:"error,omitzero"`

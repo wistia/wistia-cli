@@ -1,10 +1,10 @@
 ## wistia media translate
 
-Media Translate
+Translate Media
 
 ### Synopsis
 
-Translate the transcript for a media.
+Translates the transcript for a media.
 
 ## Requires api token with one of the following permissions
 ```

@@ -1,10 +1,10 @@
 ## wistia media delete
 
-Media Delete
+Delete Media
 
 ### Synopsis
 
-Delete a media.
+Deletes a media.
 
 ## Requires api token with one of the following permissions
 ```

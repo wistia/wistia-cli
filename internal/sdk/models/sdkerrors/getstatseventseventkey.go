@@ -21,6 +21,19 @@ func (e *GetStatsEventsEventKeyInternalServerError) Error() string {
 	return string(data)
 }
 
+// GetStatsEventsEventKeyForbiddenError - Forbidden, token is valid but account does not have access to feature
+type GetStatsEventsEventKeyForbiddenError struct {
+	Error_   *string                 `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata `json:"-"`
+}
+
+var _ error = &GetStatsEventsEventKeyForbiddenError{}
+
+func (e *GetStatsEventsEventKeyForbiddenError) Error() string {
+	data, _ := json.Marshal(e)
+	return string(data)
+}
+
 // GetStatsEventsEventKeyUnauthorizedError - Unauthorized, invalid or missing token
 type GetStatsEventsEventKeyUnauthorizedError struct {
 	Error_   *string                 `json:"error,omitzero"`

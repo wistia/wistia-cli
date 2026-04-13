@@ -31,16 +31,16 @@ func newStatsEvents(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks *h
 	}
 }
 
-// Stats:Events List
+// List Events
 // Retrieve a list of events. Please note that due to our data retention policy,
 // only events from the last 2 years are available.
 //
+// <!--- HIDE-MCP -->
 // ## Requires api token with one of the following permissions
 // ```
-// Read, update & delete anything
-// Read all data
-// Read all folder and media data
+// Read detailed stats
 // ```
+// <!--- /HIDE-MCP -->
 func (s *StatsEvents) List(ctx context.Context, request *operations.GetStatsEventsRequest, opts ...operations.Option) (*operations.GetStatsEventsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -120,7 +120,7 @@ func (s *StatsEvents) List(ctx context.Context, request *operations.GetStatsEven
 
 		_, err = s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
 		return nil, err
-	} else if utils.MatchStatusCodes([]string{"401", "4XX", "500", "5XX"}, httpRes.StatusCode) {
+	} else if utils.MatchStatusCodes([]string{"401", "403", "422", "4XX", "500", "5XX"}, httpRes.StatusCode) {
 		_httpRes, err := s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
 		if err != nil {
 			return nil, err
@@ -190,6 +190,56 @@ func (s *StatsEvents) List(ctx context.Context, request *operations.GetStatsEven
 			}
 			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
+	case httpRes.StatusCode == 403:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out sdkerrors.GetStatsEventsForbiddenError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, err
+			}
+
+			out.HTTPMeta = components.HTTPMetadata{
+				Request:  req,
+				Response: httpRes,
+			}
+			return nil, &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
+	case httpRes.StatusCode == 422:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out sdkerrors.GetStatsEventsUnprocessableEntityError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, err
+			}
+
+			out.HTTPMeta = components.HTTPMetadata{
+				Request:  req,
+				Response: httpRes,
+			}
+			return nil, &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
 	case httpRes.StatusCode == 500:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
@@ -239,16 +289,16 @@ func (s *StatsEvents) List(ctx context.Context, request *operations.GetStatsEven
 
 }
 
-// Get - Stats:Events Show
+// Get - Show Event
 // Retrieve information for a single event. Please note that due to our data retention policy,
 // only events from the last 2 years are available.
 //
+// <!--- HIDE-MCP -->
 // ## Requires api token with one of the following permissions
 // ```
-// Read, update & delete anything
-// Read all data
-// Read all folder and media data
+// Read detailed stats
 // ```
+// <!--- /HIDE-MCP -->
 func (s *StatsEvents) Get(ctx context.Context, request operations.GetStatsEventsEventKeyRequest, opts ...operations.Option) (*operations.GetStatsEventsEventKeyResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -324,7 +374,7 @@ func (s *StatsEvents) Get(ctx context.Context, request operations.GetStatsEvents
 
 		_, err = s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
 		return nil, err
-	} else if utils.MatchStatusCodes([]string{"401", "404", "4XX", "500", "5XX"}, httpRes.StatusCode) {
+	} else if utils.MatchStatusCodes([]string{"401", "403", "404", "4XX", "500", "5XX"}, httpRes.StatusCode) {
 		_httpRes, err := s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
 		if err != nil {
 			return nil, err
@@ -378,6 +428,31 @@ func (s *StatsEvents) Get(ctx context.Context, request operations.GetStatsEvents
 			}
 
 			var out sdkerrors.GetStatsEventsEventKeyUnauthorizedError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, err
+			}
+
+			out.HTTPMeta = components.HTTPMetadata{
+				Request:  req,
+				Response: httpRes,
+			}
+			return nil, &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
+	case httpRes.StatusCode == 403:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out sdkerrors.GetStatsEventsEventKeyForbiddenError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}

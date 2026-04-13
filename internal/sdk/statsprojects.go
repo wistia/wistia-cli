@@ -30,15 +30,15 @@ func newStatsProjects(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks 
 	}
 }
 
-// Get - Stats:Projects Show
+// Get - Show Project Stats
 // Retrieve stats for a project. This endpoint provides statistics for a specific project identified by its project-id.
 //
+// <!--- HIDE-MCP -->
 // ## Requires api token with one of the following permissions
 // ```
-// Read, update & delete anything
-// Read all data
-// Read all folder and media data
+// Read detailed stats
 // ```
+// <!--- /HIDE-MCP -->
 func (s *StatsProjects) Get(ctx context.Context, request operations.GetStatsProjectsProjectIDRequest, opts ...operations.Option) (*operations.GetStatsProjectsProjectIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -114,7 +114,7 @@ func (s *StatsProjects) Get(ctx context.Context, request operations.GetStatsProj
 
 		_, err = s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
 		return nil, err
-	} else if utils.MatchStatusCodes([]string{"401", "404", "4XX", "500", "5XX"}, httpRes.StatusCode) {
+	} else if utils.MatchStatusCodes([]string{"401", "403", "404", "4XX", "500", "5XX"}, httpRes.StatusCode) {
 		_httpRes, err := s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
 		if err != nil {
 			return nil, err
@@ -168,6 +168,31 @@ func (s *StatsProjects) Get(ctx context.Context, request operations.GetStatsProj
 			}
 
 			var out sdkerrors.GetStatsProjectsProjectIDUnauthorizedError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, err
+			}
+
+			out.HTTPMeta = components.HTTPMetadata{
+				Request:  req,
+				Response: httpRes,
+			}
+			return nil, &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
+	case httpRes.StatusCode == 403:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out sdkerrors.GetStatsProjectsProjectIDForbiddenError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}

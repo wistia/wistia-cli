@@ -60,35 +60,35 @@ func (p *PutMediasMediaIDCustomizationsSocialbarV1Request) GetHeight() *int64 {
 // #region class-body-putmediasmediaidcustomizationssocialbarv1request
 // #endregion class-body-putmediasmediaidcustomizationssocialbarv1request
 
-type PutMediasMediaIDCustomizationsChapterList struct {
-	ID      *int64   `json:"id,omitzero"`
-	Title   *string  `json:"title,omitzero"`
-	Time    *float64 `json:"time,omitzero"`
-	Deleted *bool    `json:"deleted,omitzero"`
+type PutMediasMediaIDCustomizationsChapterListRequest struct {
+	ID      *string `json:"id,omitzero"`
+	Title   *string `json:"title,omitzero"`
+	Time    *string `json:"time,omitzero"`
+	Deleted *string `json:"deleted,omitzero"`
 }
 
-func (p *PutMediasMediaIDCustomizationsChapterList) GetID() *int64 {
+func (p *PutMediasMediaIDCustomizationsChapterListRequest) GetID() *string {
 	if p == nil {
 		return nil
 	}
 	return p.ID
 }
 
-func (p *PutMediasMediaIDCustomizationsChapterList) GetTitle() *string {
+func (p *PutMediasMediaIDCustomizationsChapterListRequest) GetTitle() *string {
 	if p == nil {
 		return nil
 	}
 	return p.Title
 }
 
-func (p *PutMediasMediaIDCustomizationsChapterList) GetTime() *float64 {
+func (p *PutMediasMediaIDCustomizationsChapterListRequest) GetTime() *string {
 	if p == nil {
 		return nil
 	}
 	return p.Time
 }
 
-func (p *PutMediasMediaIDCustomizationsChapterList) GetDeleted() *bool {
+func (p *PutMediasMediaIDCustomizationsChapterListRequest) GetDeleted() *string {
 	if p == nil {
 		return nil
 	}
@@ -96,9 +96,9 @@ func (p *PutMediasMediaIDCustomizationsChapterList) GetDeleted() *bool {
 }
 
 type PutMediasMediaIDCustomizationsChaptersRequest struct {
-	VisibleOnLoad *bool                                       `json:"visibleOnLoad,omitzero"`
-	ChapterList   []PutMediasMediaIDCustomizationsChapterList `json:"chapterList,omitzero"`
-	On            *bool                                       `json:"on,omitzero"`
+	VisibleOnLoad *bool                                              `json:"visibleOnLoad,omitzero"`
+	ChapterList   []PutMediasMediaIDCustomizationsChapterListRequest `json:"chapterList,omitzero"`
+	On            *bool                                              `json:"on,omitzero"`
 }
 
 func (p PutMediasMediaIDCustomizationsChaptersRequest) MarshalJSON() ([]byte, error) {
@@ -119,7 +119,7 @@ func (p *PutMediasMediaIDCustomizationsChaptersRequest) GetVisibleOnLoad() *bool
 	return p.VisibleOnLoad
 }
 
-func (p *PutMediasMediaIDCustomizationsChaptersRequest) GetChapterList() []PutMediasMediaIDCustomizationsChapterList {
+func (p *PutMediasMediaIDCustomizationsChaptersRequest) GetChapterList() []PutMediasMediaIDCustomizationsChapterListRequest {
 	if p == nil {
 		return nil
 	}
@@ -571,6 +571,8 @@ func (u PutMediasMediaIDCustomizationsVideoFoamUnion) MarshalJSON() ([]byte, err
 	return nil, errors.New("could not marshal union type PutMediasMediaIDCustomizationsVideoFoamUnion: all fields are null")
 }
 
+// PutMediasMediaIDCustomizationsRequestBody - A collection of settings you can apply to a video to change its appearance and
+// behavior.
 type PutMediasMediaIDCustomizationsRequestBody struct {
 	// If set to true, the video will play as soon as it’s ready. Note that autoplay might not work on some devices and browsers.
 	AutoPlay *bool `json:"autoPlay,omitzero"`
@@ -1029,10 +1031,56 @@ func (p *PutMediasMediaIDCustomizationsSocialbarV1Response) GetHeight() *string 
 // #region class-body-putmediasmediaidcustomizationssocialbarv1response
 // #endregion class-body-putmediasmediaidcustomizationssocialbarv1response
 
+type PutMediasMediaIDCustomizationsChapterListResponse struct {
+	ID      *string `json:"id,omitzero"`
+	Title   *string `json:"title,omitzero"`
+	Time    *string `json:"time,omitzero"`
+	Deleted *string `json:"deleted,omitzero"`
+}
+
+func (p *PutMediasMediaIDCustomizationsChapterListResponse) GetID() *string {
+	if p == nil {
+		return nil
+	}
+	return p.ID
+}
+
+func (p *PutMediasMediaIDCustomizationsChapterListResponse) GetTitle() *string {
+	if p == nil {
+		return nil
+	}
+	return p.Title
+}
+
+func (p *PutMediasMediaIDCustomizationsChapterListResponse) GetTime() *string {
+	if p == nil {
+		return nil
+	}
+	return p.Time
+}
+
+func (p *PutMediasMediaIDCustomizationsChapterListResponse) GetDeleted() *string {
+	if p == nil {
+		return nil
+	}
+	return p.Deleted
+}
+
 type PutMediasMediaIDCustomizationsChaptersResponse struct {
-	VisibleOnLoad *string `json:"visibleOnLoad,omitzero"`
-	ChapterList   *string `json:"chapterList,omitzero"`
-	On            *string `json:"on,omitzero"`
+	VisibleOnLoad *string                                             `json:"visibleOnLoad,omitzero"`
+	ChapterList   []PutMediasMediaIDCustomizationsChapterListResponse `json:"chapterList,omitzero"`
+	On            *string                                             `json:"on,omitzero"`
+}
+
+func (p PutMediasMediaIDCustomizationsChaptersResponse) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(p, "", false)
+}
+
+func (p *PutMediasMediaIDCustomizationsChaptersResponse) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &p, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (p *PutMediasMediaIDCustomizationsChaptersResponse) GetVisibleOnLoad() *string {
@@ -1042,7 +1090,7 @@ func (p *PutMediasMediaIDCustomizationsChaptersResponse) GetVisibleOnLoad() *str
 	return p.VisibleOnLoad
 }
 
-func (p *PutMediasMediaIDCustomizationsChaptersResponse) GetChapterList() *string {
+func (p *PutMediasMediaIDCustomizationsChaptersResponse) GetChapterList() []PutMediasMediaIDCustomizationsChapterListResponse {
 	if p == nil {
 		return nil
 	}

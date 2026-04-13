@@ -48,6 +48,19 @@ func (e *PostMediasMediaHashedIDTranslateNotFoundError) Error() string {
 	return string(data)
 }
 
+// PostMediasMediaHashedIDTranslateForbiddenError - Forbidden, token is valid but account does not have access to feature
+type PostMediasMediaHashedIDTranslateForbiddenError struct {
+	Error_   *string                 `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata `json:"-"`
+}
+
+var _ error = &PostMediasMediaHashedIDTranslateForbiddenError{}
+
+func (e *PostMediasMediaHashedIDTranslateForbiddenError) Error() string {
+	data, _ := json.Marshal(e)
+	return string(data)
+}
+
 // PostMediasMediaHashedIDTranslateUnauthorizedError - Unauthorized, invalid or missing token
 type PostMediasMediaHashedIDTranslateUnauthorizedError struct {
 	Error_   *string                 `json:"error,omitzero"`

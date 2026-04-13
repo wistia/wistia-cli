@@ -31,15 +31,15 @@ func newStatsVisitors(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks 
 	}
 }
 
-// Stats:Visitors List
+// List Visitors
 // This endpoint provides a list of visitors that have watched videos in your account.
 //
+// <!--- HIDE-MCP -->
 // ## Requires api token with one of the following permissions
 // ```
-// Read, update & delete anything
-// Read all data
-// Read all folder and media data
+// Read detailed stats
 // ```
+// <!--- /HIDE-MCP -->
 func (s *StatsVisitors) List(ctx context.Context, request *operations.GetStatsVisitorsRequest, opts ...operations.Option) (*operations.GetStatsVisitorsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -119,7 +119,7 @@ func (s *StatsVisitors) List(ctx context.Context, request *operations.GetStatsVi
 
 		_, err = s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
 		return nil, err
-	} else if utils.MatchStatusCodes([]string{"401", "4XX", "500", "5XX"}, httpRes.StatusCode) {
+	} else if utils.MatchStatusCodes([]string{"401", "403", "4XX", "500", "5XX"}, httpRes.StatusCode) {
 		_httpRes, err := s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
 		if err != nil {
 			return nil, err
@@ -189,6 +189,31 @@ func (s *StatsVisitors) List(ctx context.Context, request *operations.GetStatsVi
 			}
 			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
+	case httpRes.StatusCode == 403:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out sdkerrors.GetStatsVisitorsForbiddenError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, err
+			}
+
+			out.HTTPMeta = components.HTTPMetadata{
+				Request:  req,
+				Response: httpRes,
+			}
+			return nil, &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
 	case httpRes.StatusCode == 500:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
@@ -238,15 +263,15 @@ func (s *StatsVisitors) List(ctx context.Context, request *operations.GetStatsVi
 
 }
 
-// Get - Stats:Visitors Show
+// Get - Show Visitor
 // This endpoint provides detailed information about a specific visitor.
 //
+// <!--- HIDE-MCP -->
 // ## Requires api token with one of the following permissions
 // ```
-// Read, update & delete anything
-// Read all data
-// Read all folder and media data
+// Read detailed stats
 // ```
+// <!--- /HIDE-MCP -->
 func (s *StatsVisitors) Get(ctx context.Context, request operations.GetStatsVisitorsVisitorKeyRequest, opts ...operations.Option) (*operations.GetStatsVisitorsVisitorKeyResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -322,7 +347,7 @@ func (s *StatsVisitors) Get(ctx context.Context, request operations.GetStatsVisi
 
 		_, err = s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
 		return nil, err
-	} else if utils.MatchStatusCodes([]string{"401", "404", "4XX", "500", "5XX"}, httpRes.StatusCode) {
+	} else if utils.MatchStatusCodes([]string{"401", "403", "404", "4XX", "500", "5XX"}, httpRes.StatusCode) {
 		_httpRes, err := s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
 		if err != nil {
 			return nil, err
@@ -376,6 +401,31 @@ func (s *StatsVisitors) Get(ctx context.Context, request operations.GetStatsVisi
 			}
 
 			var out sdkerrors.GetStatsVisitorsVisitorKeyUnauthorizedError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, err
+			}
+
+			out.HTTPMeta = components.HTTPMetadata{
+				Request:  req,
+				Response: httpRes,
+			}
+			return nil, &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
+	case httpRes.StatusCode == 403:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out sdkerrors.GetStatsVisitorsVisitorKeyForbiddenError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}

@@ -1,6 +1,6 @@
 ## wistia channels get
 
-Channels Show
+Show Channel
 
 ### Synopsis
 
@@ -8,8 +8,6 @@ Returns the Channel associated with the hashedId.
 
 ## Requires api token with one of the following permissions
 ```
-Read, update & delete anything
-Read all data
 Read all folder and media data
 ```
 

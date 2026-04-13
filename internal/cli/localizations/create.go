@@ -25,8 +25,8 @@ var createCmdMeta = []flagutil.FlagMeta{
 func initCreateCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "create",
-		Short:   "Localizations Create",
-		Long:    "Create a new localization.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
+		Short:   "Create Localization",
+		Long:    "Creates a new localization.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
 		Example: "  wistia localizations create --media-hashed-id <id> --output-language <value>",
 		RunE:    runCreateCmd,
 	}

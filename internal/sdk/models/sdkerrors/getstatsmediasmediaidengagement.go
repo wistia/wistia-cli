@@ -21,6 +21,19 @@ func (e *GetStatsMediasMediaIDEngagementInternalServerError) Error() string {
 	return string(data)
 }
 
+// GetStatsMediasMediaIDEngagementForbiddenError - Forbidden, token is valid but account does not have access to feature
+type GetStatsMediasMediaIDEngagementForbiddenError struct {
+	Error_   *string                 `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata `json:"-"`
+}
+
+var _ error = &GetStatsMediasMediaIDEngagementForbiddenError{}
+
+func (e *GetStatsMediasMediaIDEngagementForbiddenError) Error() string {
+	data, _ := json.Marshal(e)
+	return string(data)
+}
+
 // GetStatsMediasMediaIDEngagementUnauthorizedError - Unauthorized, invalid or missing token
 type GetStatsMediasMediaIDEngagementUnauthorizedError struct {
 	Error_   *string                 `json:"error,omitzero"`

@@ -1,10 +1,10 @@
 ## wistia localizations create
 
-Localizations Create
+Create Localization
 
 ### Synopsis
 
-Create a new localization.
+Creates a new localization.
 
 ## Requires api token with one of the following permissions
 ```

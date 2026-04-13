@@ -1,17 +1,17 @@
 ## wistia stats-media get-by-date
 
-Stats:Media By Date
+Show Media Stats by Date
 
 ### Synopsis
 
 Retrieve stats for a media organized by day, between a start and end date paramater (inclusive). If start and end date are not provided, defaults to yesterday and today.
 
+<!--- HIDE-MCP -->
 ## Requires api token with one of the following permissions
 ```
-Read, update & delete anything
-Read all data
-Read all folder and media data
+Read detailed stats
 ```
+<!--- /HIDE-MCP -->
 
 ```
 wistia stats-media get-by-date [flags]

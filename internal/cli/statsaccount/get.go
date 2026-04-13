@@ -16,8 +16,8 @@ import (
 func initGetCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "get",
-		Short:   "Stats:Account Show",
-		Long:    "Retrieve account-wide video stats. Get statistics like the number of video loads, plays, and hours watched for the entire account.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\nRead all data\nRead all folder and media data\n```",
+		Short:   "Show Current Account Stats",
+		Long:    "Retrieve account-wide video stats. Get statistics like the number of video loads, plays, and hours watched for the entire account.\n\n<!--- HIDE-MCP -->\n## Requires api token with one of the following permissions\n```\nRead detailed stats\n```\n<!--- /HIDE-MCP -->",
 		Example: "  wistia stats-account get",
 		RunE:    runGetCmd,
 	}

@@ -5,6 +5,7 @@ package operations
 
 import (
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
+	"github.com/wistia/wistia-cli/internal/sdk/optionalnullable"
 	"github.com/wistia/wistia-cli/internal/sdk/sdkinternal/utils"
 	"time"
 )
@@ -20,9 +21,10 @@ func (p *PostTagsRequest) GetName() string {
 	return p.Name
 }
 
-// PostTagsResponseBody - Tag created successfully
+// PostTagsResponseBody - A tag is used to tag related media. You can then filter media
+// by a specific tag.
 type PostTagsResponseBody struct {
-	// The tag’s display name.
+	// The tag's display name.
 	Name *string `json:"name,omitzero"`
 	// The number of different medias that have been associated with this tag.
 	TaggingsCount *int64 `json:"taggingsCount,omitzero"`
@@ -30,6 +32,8 @@ type PostTagsResponseBody struct {
 	Created *time.Time `json:"created,omitzero"`
 	// The date that the tag was last updated.
 	Updated *time.Time `json:"updated,omitzero"`
+	// A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+	Cursor optionalnullable.OptionalNullable[string] `json:"cursor,omitzero"`
 }
 
 func (p PostTagsResponseBody) MarshalJSON() ([]byte, error) {
@@ -69,6 +73,13 @@ func (p *PostTagsResponseBody) GetUpdated() *time.Time {
 		return nil
 	}
 	return p.Updated
+}
+
+func (p *PostTagsResponseBody) GetCursor() optionalnullable.OptionalNullable[string] {
+	if p == nil {
+		return nil
+	}
+	return p.Cursor
 }
 
 type PostTagsResponse struct {

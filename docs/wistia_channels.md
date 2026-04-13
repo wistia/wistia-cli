@@ -39,5 +39,8 @@ wistia channels [flags]
 
 * [wistia](wistia.md)	 - Data API: Wistia Data API
 * [wistia channels channel-episodes](wistia_channels_channel-episodes.md)	 - Operations for channels-channel-episodes
-* [wistia channels get](wistia_channels_get.md)	 - Channels Show
-* [wistia channels list](wistia_channels_list.md)	 - Channels List
+* [wistia channels delete-channels-channel-hashed-id](wistia_channels_delete-channels-channel-hashed-id.md)	 - Delete Channel
+* [wistia channels get](wistia_channels_get.md)	 - Show Channel
+* [wistia channels list](wistia_channels_list.md)	 - List Channels
+* [wistia channels post](wistia_channels_post.md)	 - Create Channel
+* [wistia channels put-channels-channel-hashed-id](wistia_channels_put-channels-channel-hashed-id.md)	 - Update Channel

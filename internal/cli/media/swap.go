@@ -24,7 +24,7 @@ var swapCmdMeta = []flagutil.FlagMeta{
 func initSwapCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "swap",
-		Short:   "Media Swap",
+		Short:   "Swap Media",
 		Long:    "Swap one media with another media. This operation queues a background job to replace the original media with the replacement media while preserving the original media's hashed ID and URLs.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
 		Example: "  wistia media swap --media-hashed-id <id> --replacement-media-id <value>",
 		RunE:    runSwapCmd,

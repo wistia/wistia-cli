@@ -38,4 +38,5 @@ wistia stats-account [flags]
 ### SEE ALSO
 
 * [wistia](wistia.md)	 - Data API: Wistia Data API
-* [wistia stats-account get](wistia_stats-account_get.md)	 - Stats:Account Show
+* [wistia stats-account get](wistia_stats-account_get.md)	 - Show Current Account Stats
+* [wistia stats-account get-stats-account-by-date](wistia_stats-account_get-stats-account-by-date.md)	 - Show Account Stats by Date

@@ -48,6 +48,19 @@ func (e *PostMediasMediaHashedIDLocalizationsNotFoundError) Error() string {
 	return string(data)
 }
 
+// PostMediasMediaHashedIDLocalizationsForbiddenError - Forbidden, token is valid but account does not have access to feature
+type PostMediasMediaHashedIDLocalizationsForbiddenError struct {
+	Error_   *string                 `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata `json:"-"`
+}
+
+var _ error = &PostMediasMediaHashedIDLocalizationsForbiddenError{}
+
+func (e *PostMediasMediaHashedIDLocalizationsForbiddenError) Error() string {
+	data, _ := json.Marshal(e)
+	return string(data)
+}
+
 // PostMediasMediaHashedIDLocalizationsUnauthorizedError - Unauthorized, invalid or missing token
 type PostMediasMediaHashedIDLocalizationsUnauthorizedError struct {
 	Error_   *string                 `json:"error,omitzero"`

@@ -23,8 +23,8 @@ var getCmdMeta = []flagutil.FlagMeta{
 func initGetCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "get",
-		Short:   "Background Job Status Show",
-		Long:    "Retrieve the status of a background job.\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\nRead all data\n```",
+		Short:   "Show Background Job Status",
+		Long:    "Retrieves the status of a background job.\n\n## Requires api token with one of the following permissions\n```\nRead all data\n```",
 		Example: "  wistia background-job-status get --background-job-status-id 108030",
 		RunE:    runGetCmd,
 	}

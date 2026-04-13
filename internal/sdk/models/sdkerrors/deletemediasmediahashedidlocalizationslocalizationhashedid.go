@@ -34,6 +34,19 @@ func (e *DeleteMediasMediaHashedIDLocalizationsLocalizationHashedIDNotFoundError
 	return string(data)
 }
 
+// DeleteMediasMediaHashedIDLocalizationsLocalizationHashedIDForbiddenError - Forbidden, token is valid but account does not have access to feature
+type DeleteMediasMediaHashedIDLocalizationsLocalizationHashedIDForbiddenError struct {
+	Error_   *string                 `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata `json:"-"`
+}
+
+var _ error = &DeleteMediasMediaHashedIDLocalizationsLocalizationHashedIDForbiddenError{}
+
+func (e *DeleteMediasMediaHashedIDLocalizationsLocalizationHashedIDForbiddenError) Error() string {
+	data, _ := json.Marshal(e)
+	return string(data)
+}
+
 // DeleteMediasMediaHashedIDLocalizationsLocalizationHashedIDUnauthorizedError - Unauthorized, invalid or missing token
 type DeleteMediasMediaHashedIDLocalizationsLocalizationHashedIDUnauthorizedError struct {
 	Error_   *string                 `json:"error,omitzero"`

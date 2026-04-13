@@ -1,14 +1,14 @@
 ## wistia allowed-domains get
 
-Allowed Domain Show
+Show Allowed Domain
 
 ### Synopsis
 
-Get details for a specific allowed domain.
+Returns the details of an allowed domain.
 
 ## Requires api token with one of the following permissions
 ```
-Read, update & delete anything
+Read all data
 ```
 
 ```

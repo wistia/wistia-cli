@@ -21,19 +21,6 @@ func (e *GetBackgroundJobStatusBackgroundJobStatusIDInternalServerError) Error()
 	return string(data)
 }
 
-// GetBackgroundJobStatusBackgroundJobStatusIDForbiddenError - Background Job Status Not Associated with An Authorized Object
-type GetBackgroundJobStatusBackgroundJobStatusIDForbiddenError struct {
-	Error_   *string                 `json:"error,omitzero"`
-	HTTPMeta components.HTTPMetadata `json:"-"`
-}
-
-var _ error = &GetBackgroundJobStatusBackgroundJobStatusIDForbiddenError{}
-
-func (e *GetBackgroundJobStatusBackgroundJobStatusIDForbiddenError) Error() string {
-	data, _ := json.Marshal(e)
-	return string(data)
-}
-
 // GetBackgroundJobStatusBackgroundJobStatusIDUnauthorizedError - Unauthorized, invalid or missing token
 type GetBackgroundJobStatusBackgroundJobStatusIDUnauthorizedError struct {
 	Error_   *string                 `json:"error,omitzero"`

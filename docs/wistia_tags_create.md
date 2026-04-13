@@ -1,10 +1,10 @@
 ## wistia tags create
 
-Tags Create
+Create Tags
 
 ### Synopsis
 
-Create a new tag.
+Creates a new tag.
 
 ## Requires api token with one of the following permissions
 ```

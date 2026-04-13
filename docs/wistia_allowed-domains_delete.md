@@ -1,10 +1,10 @@
 ## wistia allowed-domains delete
 
-Allowed Domain Delete
+Delete Allowed Domain
 
 ### Synopsis
 
-Delete an allowed domain from the account.
+Deletes an allowed domain from the account.
 
 ## Requires api token with one of the following permissions
 ```

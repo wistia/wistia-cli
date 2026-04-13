@@ -5,6 +5,7 @@ package operations
 
 import (
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
+	"github.com/wistia/wistia-cli/internal/sdk/optionalnullable"
 	"github.com/wistia/wistia-cli/internal/sdk/sdkinternal/utils"
 	"time"
 )
@@ -21,22 +22,25 @@ func (g *GetChannelsChannelHashedIDRequest) GetChannelHashedID() string {
 	return g.ChannelHashedID
 }
 
-// GetChannelsChannelHashedIDResponseBody - Channel retrieval successful
+// GetChannelsChannelHashedIDResponseBody - A Channel lets you take a collection of video (or audio) and embed them
+// on your site, as well as distribute through podcasting.
 type GetChannelsChannelHashedIDResponseBody struct {
-	// The numeri d of the channel.
+	// The numeric id of the channel.
 	ID int64 `json:"id"`
 	// The date when the channel was originally created.
 	Created time.Time `json:"created"`
 	// The channel's description.
 	Description string `json:"description"`
 	// A unique alphanumeric identifier for this channel.
-	HashedID string `json:"hashedId"`
+	HashedID string `json:"hashed_id"`
 	// The number of medias in the channel.
-	MediaCount int64 `json:"mediaCount"`
+	MediaCount int64 `json:"media_count"`
 	// The display name for the channel
 	Name string `json:"name"`
 	// The date when the channel was last updated.
 	Updated time.Time `json:"updated"`
+	// A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+	Cursor optionalnullable.OptionalNullable[string] `json:"cursor,omitzero"`
 }
 
 func (g GetChannelsChannelHashedIDResponseBody) MarshalJSON() ([]byte, error) {
@@ -97,6 +101,13 @@ func (g *GetChannelsChannelHashedIDResponseBody) GetUpdated() time.Time {
 		return time.Time{}
 	}
 	return g.Updated
+}
+
+func (g *GetChannelsChannelHashedIDResponseBody) GetCursor() optionalnullable.OptionalNullable[string] {
+	if g == nil {
+		return nil
+	}
+	return g.Cursor
 }
 
 type GetChannelsChannelHashedIDResponse struct {

@@ -85,7 +85,8 @@ func (e *PostMediasMediaHashedIDTranslateStatus) IsExact() bool {
 	return false
 }
 
-// PostMediasMediaHashedIDTranslateBackgroundJobStatus - Status of the background job.
+// PostMediasMediaHashedIDTranslateBackgroundJobStatus - A background job keeps track of the progress of an asynchronous task, e.g
+// bulk archiving media, translating media, etc.
 type PostMediasMediaHashedIDTranslateBackgroundJobStatus struct {
 	// The ID of the background job that's been queued for the request.
 	ID int64 `json:"id"`
@@ -110,7 +111,9 @@ func (p *PostMediasMediaHashedIDTranslateBackgroundJobStatus) GetStatus() PostMe
 // PostMediasMediaHashedIDTranslateResponseBody - Successfully queued background job for translation of the transcript.
 type PostMediasMediaHashedIDTranslateResponseBody struct {
 	Message *string `json:"message,omitzero"`
-	// Status of the background job.
+	// A background job keeps track of the progress of an asynchronous task, e.g
+	// bulk archiving media, translating media, etc.
+	//
 	BackgroundJobStatus *PostMediasMediaHashedIDTranslateBackgroundJobStatus `json:"background_job_status,omitzero"`
 }
 

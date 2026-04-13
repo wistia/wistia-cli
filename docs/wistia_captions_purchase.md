@@ -1,10 +1,10 @@
 ## wistia captions purchase
 
-Captions Purchase
+Purchase Captions
 
 ### Synopsis
 
-This method is for purchasing English captions for a video. The request will charge the credit card on the account if successful. A saved credit card is required to use this endpoint.
+This method is for purchasing English captions for a media. The request will charge the credit card on the account if successful. A saved credit card is required to use this endpoint.
 
 ## Requires api token with one of the following permissions
 ```

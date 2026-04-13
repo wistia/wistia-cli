@@ -18,13 +18,12 @@ import (
 var listCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "page", FieldPath: "Page", Kind: flagutil.FlagKindInt64, Optional: true, Description: "The page number to retrieve. This cannot be combined with `cursor`,\npagination.\n"},
 	{FlagName: "per-page", FieldPath: "PerPage", Kind: flagutil.FlagKindInt64, Optional: true, Description: "The number of medias per page. Use this for both offset pagination and cursor pagination."},
-	{FlagName: "cursor", Shorthand: "c", FieldPath: "Cursor", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `queryParam:"style=deepObject,explode=true,name=cursor"`, Description: "If `cursor` is set to 1 than cursor pagination is enabled and the\nfirst set of records are fetched up to the `per_page`. Cursor\npagination will also be turned on if `cursor[before]` or `cursor[after]`\nare set. Records returned will have a `cursor` property set which can be used to fetch more records in the same `sort_by` ordering.\nThe cursor value of the last record can be used to fetch records after the current result set and\nthe cursor of the first record can be used to fetch records before the result set.\n\nNOTE: a cursor value is only valid if the `sort_by` value hasn't changed from the\nlast fetch. For example, you cannot fetch using `sort_by` id and than pass that\ncursor value to a `sort_by` name.\n"},
+	{FlagName: "cursor", Shorthand: "c", FieldPath: "Cursor", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `queryParam:"style=deepObject,explode=true,name=cursor"`, Description: "If `cursor[enabled]` is set to 1 than cursor pagination is enabled and the\nfirst set of records are fetched up to the `per_page`. Cursor\npagination will also be turned on if `cursor[before]` or `cursor[after]`\nare set. Records returned will have a `cursor` property set which can be used to fetch more records in the same `sort_by` ordering.\nThe cursor value of the last record can be used to fetch records after the current result set and\nthe cursor of the first record can be used to fetch records before the result set.\n\nNOTE: a cursor value is only valid if the `sort_by` value hasn't changed from the\nlast fetch. For example, you cannot fetch using `sort_by` id and than pass that\ncursor value to a `sort_by` name.\n"},
 	{FlagName: "sort-by", FieldPath: "SortBy", Kind: flagutil.FlagKindEnum, Optional: true, EnumValues: []string{"name", "created", "updated", "position"}, Description: "Ordering. When using cursor pagination (see cursor param),\nonly `id` and `created` are supported. All other sort_by options (`name`, `updated`, `position`)\nrequire offset pagination.\n (options: name, created, updated, position)"},
 	{FlagName: "sort-direction", FieldPath: "SortDirection", Kind: flagutil.FlagKindIntEnum, Optional: true, EnumValues: []string{"0", "1"}, Description: "Ordering Sort Direction (0 = desc, 1 = asc; default is 1) (options: 0, 1)"},
-	{FlagName: "project-id", FieldPath: "ProjectID", Kind: flagutil.FlagKindString, Optional: true, Description: "A hashed ID specifying the project from which you would like to get results."},
+	{FlagName: "folder-id", Shorthand: "f", FieldPath: "FolderID", Kind: flagutil.FlagKindString, Optional: true, Description: "A hashed ID specifying the folder from which you would like to get results."},
 	{FlagName: "name", Shorthand: "n", FieldPath: "Name", Kind: flagutil.FlagKindString, Optional: true, Description: "Find a media or medias whose name exactly matches this parameter."},
 	{FlagName: "type", FieldPath: "Type", Kind: flagutil.FlagKindEnum, Optional: true, EnumValues: []string{"Video", "Audio", "Image", "PdfDocument", "MicrosoftOfficeDocument", "Swf", "UnknownType"}, Description: "A string specifying which type of media you would like to get. (options: Video, Audio, Image, PdfDocument, MicrosoftOfficeDocument, Swf, UnknownType)"},
-	{FlagName: "hashed-id", FieldPath: "HashedID", Kind: flagutil.FlagKindString, Optional: true, Description: "Find the media by hashed_id."},
 	{FlagName: "hashed-ids", FieldPath: "HashedIds", Kind: flagutil.FlagKindStringArray, Optional: true, Description: "Find all of the medias by these hashed_ids."},
 	{FlagName: "tags", FieldPath: "Tags", Kind: flagutil.FlagKindStringArray, Optional: true, Description: "Find all of the medias that match all of these tag names."},
 	{FlagName: "archived", Shorthand: "a", FieldPath: "Archived", Kind: flagutil.FlagKindBool, Optional: true, Description: "Filter by archived status. True will return only archived medias, while false will return only active medias."},
@@ -34,8 +33,8 @@ var listCmdMeta = []flagutil.FlagMeta{
 func initListCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "list",
-		Short:   "Media List",
-		Long:    "Obtain a list of all the media in your account. For accounts with more than 100 media, you’ll want to page and sort the returned list.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\nRead all data\nRead all folder and media data\n```",
+		Short:   "List Media",
+		Long:    "Lists the media belonging to the account. This endpoint can also be used to\ndo a batch fetch based off of the hashed id.\n\n## Requires api token with one of the following permissions\n```\nRead all folder and media data\n```",
 		Example: "  wistia media list",
 		RunE:    runListCmd,
 	}

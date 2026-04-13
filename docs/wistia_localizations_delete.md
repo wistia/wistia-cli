@@ -1,10 +1,10 @@
 ## wistia localizations delete
 
-Localizations Delete
+Delete Localization
 
 ### Synopsis
 
-Delete a localization.
+Deletes a localization.
 
 ## Requires api token with one of the following permissions
 ```

@@ -160,7 +160,7 @@ func (d *DeleteMediasMediaHashedIDLocalizationsLocalizationHashedIDTranscript) G
 	return d.UpdatedAt
 }
 
-// DeleteMediasMediaHashedIDLocalizationsLocalizationHashedIDResponseBody - Successful deletion of the localization.
+// DeleteMediasMediaHashedIDLocalizationsLocalizationHashedIDResponseBody - A localization is a translation of a media into another language.
 type DeleteMediasMediaHashedIDLocalizationsLocalizationHashedIDResponseBody struct {
 	// A unique alphanumeric identifier for this localization.
 	HashedID string `json:"hashed_id"`

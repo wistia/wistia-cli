@@ -1,6 +1,6 @@
 ## wistia captions get
 
-Captions Show
+Show Captions
 
 ### Synopsis
 
@@ -10,8 +10,6 @@ Use file extensions (.srt, .vtt, .txt) or Accept headers to specify format.
 
 ## Requires api token with one of the following permissions
 ```
-Read, update & delete anything
-Read all data
 Read all folder and media data
 ```
 

@@ -1,18 +1,13 @@
 ## wistia media get
 
-Media Show
+Show Media
 
 ### Synopsis
 
-Fetch detailed information about a media you’ve uploaded to your account using its hashed_id.
-
-CDN-backed medias are accessible using this url structure: https://fast.wistia.com/embed/medias/{hashed_id}.m3u8.
-For more information, see https://docs.wistia.com/docs/asset-urls#getting-hls-assets.
+Fetches a single media by its hashed id.
 
 ## Requires api token with one of the following permissions
 ```
-Read, update & delete anything
-Read all data
 Read all folder and media data
 ```
 

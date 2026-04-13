@@ -23,8 +23,8 @@ var getCmdMeta = []flagutil.FlagMeta{
 func initGetCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "get",
-		Short:   "Stats:Projects Show",
-		Long:    "Retrieve stats for a project. This endpoint provides statistics for a specific project identified by its project-id.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\nRead all data\nRead all folder and media data\n```",
+		Short:   "Show Project Stats",
+		Long:    "Retrieve stats for a project. This endpoint provides statistics for a specific project identified by its project-id.\n\n<!--- HIDE-MCP -->\n## Requires api token with one of the following permissions\n```\nRead detailed stats\n```\n<!--- /HIDE-MCP -->",
 		Example: "  wistia stats-projects get --project-id <id>",
 		RunE:    runGetCmd,
 	}

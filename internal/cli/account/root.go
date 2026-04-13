@@ -25,6 +25,10 @@ func InitAccountRoot(parent *cobra.Command) error {
 		return err
 	}
 
+	if err := initGetTokenDetailsCmd(AccountCmd); err != nil {
+		return err
+	}
+
 	parent.AddCommand(AccountCmd)
 	return nil
 }

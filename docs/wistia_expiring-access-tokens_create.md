@@ -1,12 +1,11 @@
 ## wistia expiring-access-tokens create
 
-Create an expiring access token
+Create Expiring Access Token
 
 ### Synopsis
 
 ```
 🚫 Alert
-
 This API is still under development and can change at any time.
 ```
 

@@ -25,8 +25,8 @@ var createCmdMeta = []flagutil.FlagMeta{
 func initCreateCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "create",
-		Short:   "Captions Create",
-		Long:    "Adds captions to a specified video by providing an SRT file or its contents directly.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
+		Short:   "Create Captions",
+		Long:    "Adds captions to a specified media by providing an SRT file or its contents directly.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
 		Example: "  wistia captions create --media-hashed-id <id> --caption-file <value>",
 		RunE:    runCreateCmd,
 	}

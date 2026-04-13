@@ -34,6 +34,19 @@ func (e *PostTagsUnprocessableEntityError) Error() string {
 	return string(data)
 }
 
+// PostTagsForbiddenError - Forbidden, token is valid but account does not have access to feature
+type PostTagsForbiddenError struct {
+	Error_   *string                 `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata `json:"-"`
+}
+
+var _ error = &PostTagsForbiddenError{}
+
+func (e *PostTagsForbiddenError) Error() string {
+	data, _ := json.Marshal(e)
+	return string(data)
+}
+
 // PostTagsUnauthorizedError - Unauthorized, invalid or missing token
 type PostTagsUnauthorizedError struct {
 	Error_   *string                 `json:"error,omitzero"`

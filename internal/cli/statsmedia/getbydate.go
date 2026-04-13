@@ -25,8 +25,8 @@ var getByDateCmdMeta = []flagutil.FlagMeta{
 func initGetByDateCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "get-by-date",
-		Short:   "Stats:Media By Date",
-		Long:    "Retrieve stats for a media organized by day, between a start and end date paramater (inclusive). If start and end date are not provided, defaults to yesterday and today.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\nRead all data\nRead all folder and media data\n```",
+		Short:   "Show Media Stats by Date",
+		Long:    "Retrieve stats for a media organized by day, between a start and end date paramater (inclusive). If start and end date are not provided, defaults to yesterday and today.\n\n<!--- HIDE-MCP -->\n## Requires api token with one of the following permissions\n```\nRead detailed stats\n```\n<!--- /HIDE-MCP -->",
 		Example: "  wistia stats-media get-by-date --media-id <id>",
 		RunE:    runGetByDateCmd,
 		Aliases: []string{"gbd"},

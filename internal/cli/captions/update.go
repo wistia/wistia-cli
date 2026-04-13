@@ -25,7 +25,7 @@ var updateCmdMeta = []flagutil.FlagMeta{
 func initUpdateCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "update",
-		Short:   "Captions Update",
+		Short:   "Update Captions",
 		Long:    "This method is for replacing the captions on a video for the specified language.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
 		Example: "  wistia captions update --media-hashed-id <id> --language-code <value> --caption-file <value>",
 		RunE:    runUpdateCmd,

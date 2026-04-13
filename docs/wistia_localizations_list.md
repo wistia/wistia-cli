@@ -1,16 +1,14 @@
 ## wistia localizations list
 
-Localizations List
+List Localizations
 
 ### Synopsis
 
-Obtain a list of all the localizations for a media.
+Lists all the localizations for a media.
 
 ## Requires api token with one of the following permissions
 ```
-Read, update & delete anything
 Read all data
-Read all folder and media data
 ```
 
 ```

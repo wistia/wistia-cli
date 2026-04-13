@@ -1,15 +1,14 @@
 ## wistia channel-episodes list
 
-Channel Episodes List
+List Channel Episodes
 
 ### Synopsis
 
-Returns all the Channel Episodes associated with the account, and allows for filtering by a particular channel.
+Lists Channel Episodes belonging to an account. This endpoint can also be used to
+do a batch fetch based off of the hashed id.
 
 ## Requires api token with one of the following permissions
 ```
-Read, update & delete anything
-Read all data
 Read all folder and media data
 ```
 
@@ -26,16 +25,32 @@ wistia channel-episodes list [flags]
 ### Options
 
 ```
-  -c, --channel-id string       Find episodes for a particular channel by providing the channel hashed ID
-      --hashed-id stringArray   Filter by hashed id
-  -h, --help                    help for list
-  -m, --media-id stringArray    Filter by media id
-      --page int                Page number to retrieve
-      --per-page int            Number of channels per page
-      --published               Filter by published status.
-      --sort-by string          Ordering. Default is ID ASC. (options: position, title, created, updated, id)
-      --sort-direction string   Ordering Sort Direction (0 = desc, 1 = asc; default is 1) (options: 0, 1)
-  -t, --title string            Filter by channel episode name/title.
+      --channel-id string        The hashed ID of the channel to grab channel episodes from.
+      --cursor cursor[enabled]   If cursor[enabled] is set to 1 than cursor pagination is enabled and the
+                                 first set of records are fetched up to the `per_page`. Cursor
+                                 pagination will also be turned on if `cursor[before]` or `cursor[after]`
+                                 are set. Records returned will have a `cursor` property set which can be used to fetch more records in the same `sort_by` ordering.
+                                 The cursor value of the last record can be used to fetch records after the current result set and
+                                 the cursor of the first record can be used to fetch records before the result set.
+                                 
+                                 NOTE: a cursor value is only valid if the `sort_by` value hasn't changed from the
+                                 last fetch. For example, you cannot fetch using `sort_by` id and than pass that
+                                 cursor value to a `sort_by` name.
+                                 
+      --hashed-ids stringArray   Filter by hashed id
+  -h, --help                     help for list
+  -m, --media-id stringArray     Filter by media id
+      --page cursor              The page number to retrieve. This cannot be combined with cursor,
+                                 pagination.
+                                 
+      --per-page int             The number of medias per page. Use this for both offset pagination and cursor pagination.
+      --published                Filter by published status.
+      --sort-by id               Ordering. Default is ID ASC. When using cursor pagination (see cursor param),
+                                 only id and `created` are supported. All other sort_by options (`position`, `title`, `updated`)
+                                 require offset pagination.
+                                  (options: position, title, created, updated, id)
+      --sort-direction string    Ordering Sort Direction (0 = desc, 1 = asc; default is 1) (options: 0, 1)
+  -t, --title string             Filter by channel episode name/title.
 ```
 
 ### Options inherited from parent commands

@@ -1,10 +1,10 @@
 ## wistia allowed-domains create
 
-Allowed Domain Create
+Create Allowed Domain
 
 ### Synopsis
 
-Create a new allowed domain for the account.
+Creates an allowed domain for the account.
 
 ## Requires api token with one of the following permissions
 ```

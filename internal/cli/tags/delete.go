@@ -23,8 +23,8 @@ var deleteCmdMeta = []flagutil.FlagMeta{
 func initDeleteCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "delete",
-		Short:   "Tags Delete",
-		Long:    "Delete a tag\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
+		Short:   "Delete Tag",
+		Long:    "Deletes a tag\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
 		Example: "  wistia tags delete --name <value>",
 		RunE:    runDeleteCmd,
 	}

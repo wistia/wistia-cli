@@ -23,8 +23,8 @@ var createCmdMeta = []flagutil.FlagMeta{
 func initCreateCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "create",
-		Short:   "Create an expiring access token",
-		Long:    "```\n🚫 Alert\n\nThis API is still under development and can change at any time.\n```\n\nThis endpoint is for creating expiring access tokens which can be used for some iframe embeds.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
+		Short:   "Create Expiring Access Token",
+		Long:    "```\n🚫 Alert\nThis API is still under development and can change at any time.\n```\n\nThis endpoint is for creating expiring access tokens which can be used for some iframe embeds.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
 		Example: "  wistia expiring-access-tokens create",
 		RunE:    runCreateCmd,
 	}

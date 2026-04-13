@@ -1,15 +1,14 @@
 ## wistia media list
 
-Media List
+List Media
 
 ### Synopsis
 
-Obtain a list of all the media in your account. For accounts with more than 100 media, you’ll want to page and sort the returned list.
+Lists the media belonging to the account. This endpoint can also be used to
+do a batch fetch based off of the hashed id.
 
 ## Requires api token with one of the following permissions
 ```
-Read, update & delete anything
-Read all data
 Read all folder and media data
 ```
 
@@ -27,7 +26,7 @@ wistia media list [flags]
 
 ```
   -a, --archived                 Filter by archived status. True will return only archived medias, while false will return only active medias.
-  -c, --cursor cursor            If cursor is set to 1 than cursor pagination is enabled and the
+  -c, --cursor cursor[enabled]   If cursor[enabled] is set to 1 than cursor pagination is enabled and the
                                  first set of records are fetched up to the `per_page`. Cursor
                                  pagination will also be turned on if `cursor[before]` or `cursor[after]`
                                  are set. Records returned will have a `cursor` property set which can be used to fetch more records in the same `sort_by` ordering.
@@ -38,7 +37,7 @@ wistia media list [flags]
                                  last fetch. For example, you cannot fetch using `sort_by` id and than pass that
                                  cursor value to a `sort_by` name.
                                  
-      --hashed-id string         Find the media by hashed_id.
+  -f, --folder-id string         A hashed ID specifying the folder from which you would like to get results.
       --hashed-ids stringArray   Find all of the medias by these hashed_ids.
   -h, --help                     help for list
   -n, --name string              Find a media or medias whose name exactly matches this parameter.
@@ -46,7 +45,6 @@ wistia media list [flags]
                                  pagination.
                                  
       --per-page int             The number of medias per page. Use this for both offset pagination and cursor pagination.
-      --project-id string        A hashed ID specifying the project from which you would like to get results.
       --sort-by id               Ordering. When using cursor pagination (see cursor param),
                                  only id and `created` are supported. All other sort_by options (`name`, `updated`, `position`)
                                  require offset pagination.

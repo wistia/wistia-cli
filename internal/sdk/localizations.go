@@ -30,14 +30,12 @@ func newLocalizations(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks 
 	}
 }
 
-// Localizations List
-// Obtain a list of all the localizations for a media.
+// List Localizations
+// Lists all the localizations for a media.
 //
 // ## Requires api token with one of the following permissions
 // ```
-// Read, update & delete anything
 // Read all data
-// Read all folder and media data
 // ```
 func (s *Localizations) List(ctx context.Context, request operations.GetMediasMediaHashedIDLocalizationsRequest, opts ...operations.Option) (*operations.GetMediasMediaHashedIDLocalizationsResponse, error) {
 	o := operations.Options{}
@@ -262,8 +260,8 @@ func (s *Localizations) List(ctx context.Context, request operations.GetMediasMe
 
 }
 
-// Localizations Create
-// Create a new localization.
+// Create Localization
+// Creates a new localization.
 //
 // ## Requires api token with one of the following permissions
 // ```
@@ -351,7 +349,7 @@ func (s *Localizations) Create(ctx context.Context, request operations.PostMedia
 
 		_, err = s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
 		return nil, err
-	} else if utils.MatchStatusCodes([]string{"400", "401", "404", "422", "4XX", "500", "5XX"}, httpRes.StatusCode) {
+	} else if utils.MatchStatusCodes([]string{"400", "401", "403", "404", "422", "4XX", "500", "5XX"}, httpRes.StatusCode) {
 		_httpRes, err := s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
 		if err != nil {
 			return nil, err
@@ -430,6 +428,31 @@ func (s *Localizations) Create(ctx context.Context, request operations.PostMedia
 			}
 
 			var out sdkerrors.PostMediasMediaHashedIDLocalizationsUnauthorizedError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, err
+			}
+
+			out.HTTPMeta = components.HTTPMetadata{
+				Request:  req,
+				Response: httpRes,
+			}
+			return nil, &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
+	case httpRes.StatusCode == 403:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out sdkerrors.PostMediasMediaHashedIDLocalizationsForbiddenError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
@@ -545,14 +568,12 @@ func (s *Localizations) Create(ctx context.Context, request operations.PostMedia
 
 }
 
-// Get - Localizations Show
+// Get - Show Localization
 // Obtain detailed information about a localization.
 //
 // ## Requires api token with one of the following permissions
 // ```
-// Read, update & delete anything
 // Read all data
-// Read all folder and media data
 // ```
 func (s *Localizations) Get(ctx context.Context, request operations.GetMediasMediaHashedIDLocalizationsLocalizationHashedIDRequest, opts ...operations.Option) (*operations.GetMediasMediaHashedIDLocalizationsLocalizationHashedIDResponse, error) {
 	o := operations.Options{}
@@ -777,8 +798,8 @@ func (s *Localizations) Get(ctx context.Context, request operations.GetMediasMed
 
 }
 
-// Localizations Delete
-// Delete a localization.
+// Delete Localization
+// Deletes a localization.
 //
 // ## Requires api token with one of the following permissions
 // ```
@@ -859,7 +880,7 @@ func (s *Localizations) Delete(ctx context.Context, request operations.DeleteMed
 
 		_, err = s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
 		return nil, err
-	} else if utils.MatchStatusCodes([]string{"401", "404", "4XX", "500", "5XX"}, httpRes.StatusCode) {
+	} else if utils.MatchStatusCodes([]string{"401", "403", "404", "4XX", "500", "5XX"}, httpRes.StatusCode) {
 		_httpRes, err := s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
 		if err != nil {
 			return nil, err
@@ -913,6 +934,31 @@ func (s *Localizations) Delete(ctx context.Context, request operations.DeleteMed
 			}
 
 			var out sdkerrors.DeleteMediasMediaHashedIDLocalizationsLocalizationHashedIDUnauthorizedError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, err
+			}
+
+			out.HTTPMeta = components.HTTPMetadata{
+				Request:  req,
+				Response: httpRes,
+			}
+			return nil, &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
+	case httpRes.StatusCode == 403:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out sdkerrors.DeleteMediasMediaHashedIDLocalizationsLocalizationHashedIDForbiddenError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}

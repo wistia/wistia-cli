@@ -1,10 +1,10 @@
 ## wistia account get
 
-Account Show
+Get Current Account
 
 ### Synopsis
 
-Retrieve account details.
+Retrieves a summary of the Wistia account including account name, description, URL and counts of records.
 
 ## Requires api token with one of the following permissions
 ```

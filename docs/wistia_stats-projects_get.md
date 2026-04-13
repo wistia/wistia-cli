@@ -1,17 +1,17 @@
 ## wistia stats-projects get
 
-Stats:Projects Show
+Show Project Stats
 
 ### Synopsis
 
 Retrieve stats for a project. This endpoint provides statistics for a specific project identified by its project-id.
 
+<!--- HIDE-MCP -->
 ## Requires api token with one of the following permissions
 ```
-Read, update & delete anything
-Read all data
-Read all folder and media data
+Read detailed stats
 ```
+<!--- /HIDE-MCP -->
 
 ```
 wistia stats-projects get [flags]

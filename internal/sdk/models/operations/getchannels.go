@@ -7,11 +7,89 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
+	"github.com/wistia/wistia-cli/internal/sdk/optionalnullable"
 	"github.com/wistia/wistia-cli/internal/sdk/sdkinternal/utils"
 	"time"
 )
 
+// GetChannelsEnabled - If `cursor[enabled]` is set to 1, the first result set will be fetched with cursor pagination enabled. This
+// values is ignored if `cursor[before]` or `cursor[after]` are set.
+type GetChannelsEnabled int64
+
+const (
+	GetChannelsEnabledZero GetChannelsEnabled = 0
+	GetChannelsEnabledOne  GetChannelsEnabled = 1
+)
+
+func (e GetChannelsEnabled) ToPointer() *GetChannelsEnabled {
+	return &e
+}
+func (e *GetChannelsEnabled) UnmarshalJSON(data []byte) error {
+	var v int64
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case 0:
+		fallthrough
+	case 1:
+		*e = GetChannelsEnabled(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for GetChannelsEnabled: %v", v)
+	}
+}
+
+// GetChannelsCursor - If `cursor[enabled]` is set to 1 than cursor pagination is enabled and the
+// first set of records are fetched up to the `per_page`. Cursor
+// pagination will also be turned on if `cursor[before]` or `cursor[after]`
+// are set. Records returned will have a `cursor` property set which can be used to fetch more records in the same `sort_by` ordering.
+// The cursor value of the last record can be used to fetch records after the current result set and
+// the cursor of the first record can be used to fetch records before the result set.
+//
+// NOTE: a cursor value is only valid if the `sort_by` value hasn't changed from the
+// last fetch. For example, you cannot fetch using `sort_by` id and than pass that
+// cursor value to a `sort_by` name.
+type GetChannelsCursor struct {
+	// If `cursor[enabled]` is set to 1, the first result set will be fetched with cursor pagination enabled. This
+	// values is ignored if `cursor[before]` or `cursor[after]` are set.
+	//
+	Enabled *GetChannelsEnabled `queryParam:"name=enabled"`
+	// If `cursor[before]` is set than cursor pagination is enabled and all records
+	// before the cursor up to the `per_page` are returned. This feature is useful for
+	// fetching "new records", for example, in a "pull to refersh" feature when showing records in a descending
+	// order.
+	//
+	Before *string `queryParam:"name=before"`
+	// If `cursor[after]` is set than cursor pagination is enabled and all records
+	// after the cursor up to the `per_page` are returned.
+	//
+	After *string `queryParam:"name=after"`
+}
+
+func (g *GetChannelsCursor) GetEnabled() *GetChannelsEnabled {
+	if g == nil {
+		return nil
+	}
+	return g.Enabled
+}
+
+func (g *GetChannelsCursor) GetBefore() *string {
+	if g == nil {
+		return nil
+	}
+	return g.Before
+}
+
+func (g *GetChannelsCursor) GetAfter() *string {
+	if g == nil {
+		return nil
+	}
+	return g.After
+}
+
 // GetChannelsSortBy - Ordering. Default is ID ASC.
+// Note: Only 'id' and 'created' are supported when using cursor pagination.
 type GetChannelsSortBy string
 
 const (
@@ -72,11 +150,25 @@ func (e *GetChannelsSortDirection) UnmarshalJSON(data []byte) error {
 }
 
 type GetChannelsRequest struct {
+	// If `cursor[enabled]` is set to 1 than cursor pagination is enabled and the
+	// first set of records are fetched up to the `per_page`. Cursor
+	// pagination will also be turned on if `cursor[before]` or `cursor[after]`
+	// are set. Records returned will have a `cursor` property set which can be used to fetch more records in the same `sort_by` ordering.
+	// The cursor value of the last record can be used to fetch records after the current result set and
+	// the cursor of the first record can be used to fetch records before the result set.
+	//
+	// NOTE: a cursor value is only valid if the `sort_by` value hasn't changed from the
+	// last fetch. For example, you cannot fetch using `sort_by` id and than pass that
+	// cursor value to a `sort_by` name.
+	//
+	Cursor *GetChannelsCursor `queryParam:"style=deepObject,explode=true,name=cursor"`
 	// Page number to retrieve
 	Page *int64 `queryParam:"style=form,explode=true,name=page"`
 	// Number of channels per page
 	PerPage *int64 `queryParam:"style=form,explode=true,name=per_page"`
 	// Ordering. Default is ID ASC.
+	// Note: Only 'id' and 'created' are supported when using cursor pagination.
+	//
 	SortBy *GetChannelsSortBy `queryParam:"style=form,explode=true,name=sort_by"`
 	// Ordering Sort Direction (0 = desc, 1 = asc; default is 1)
 	SortDirection *GetChannelsSortDirection `queryParam:"style=form,explode=true,name=sort_direction"`
@@ -93,6 +185,13 @@ func (g *GetChannelsRequest) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	return nil
+}
+
+func (g *GetChannelsRequest) GetCursor() *GetChannelsCursor {
+	if g == nil {
+		return nil
+	}
+	return g.Cursor
 }
 
 func (g *GetChannelsRequest) GetPage() *int64 {
@@ -130,21 +229,25 @@ func (g *GetChannelsRequest) GetHashedIds() []string {
 	return g.HashedIds
 }
 
+// GetChannelsResponseBody - A Channel lets you take a collection of video (or audio) and embed them
+// on your site, as well as distribute through podcasting.
 type GetChannelsResponseBody struct {
-	// The numeri d of the channel.
+	// The numeric id of the channel.
 	ID int64 `json:"id"`
 	// The date when the channel was originally created.
 	Created time.Time `json:"created"`
 	// The channel's description.
 	Description string `json:"description"`
 	// A unique alphanumeric identifier for this channel.
-	HashedID string `json:"hashedId"`
+	HashedID string `json:"hashed_id"`
 	// The number of medias in the channel.
-	MediaCount int64 `json:"mediaCount"`
+	MediaCount int64 `json:"media_count"`
 	// The display name for the channel
 	Name string `json:"name"`
 	// The date when the channel was last updated.
 	Updated time.Time `json:"updated"`
+	// A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+	Cursor optionalnullable.OptionalNullable[string] `json:"cursor,omitzero"`
 }
 
 func (g GetChannelsResponseBody) MarshalJSON() ([]byte, error) {
@@ -205,6 +308,13 @@ func (g *GetChannelsResponseBody) GetUpdated() time.Time {
 		return time.Time{}
 	}
 	return g.Updated
+}
+
+func (g *GetChannelsResponseBody) GetCursor() optionalnullable.OptionalNullable[string] {
+	if g == nil {
+		return nil
+	}
+	return g.Cursor
 }
 
 type GetChannelsResponse struct {

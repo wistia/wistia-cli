@@ -16,8 +16,8 @@ import (
 func initGetCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "get",
-		Short:   "Account Show",
-		Long:    "Retrieve account details.\n\n## Requires api token with one of the following permissions\n```\n(any scope allowed)\n```",
+		Short:   "Get Current Account",
+		Long:    "Retrieves a summary of the Wistia account including account name, description, URL and counts of records.\n\n## Requires api token with one of the following permissions\n```\n(any scope allowed)\n```",
 		Example: "  wistia account get",
 		RunE:    runGetCmd,
 	}

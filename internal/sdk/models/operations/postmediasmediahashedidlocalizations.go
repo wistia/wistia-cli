@@ -202,7 +202,7 @@ func (p *PostMediasMediaHashedIDLocalizationsTranscript) GetUpdatedAt() time.Tim
 	return p.UpdatedAt
 }
 
-// PostMediasMediaHashedIDLocalizationsResponseBody - Successful creation of the localization.
+// PostMediasMediaHashedIDLocalizationsResponseBody - A localization is a translation of a media into another language.
 type PostMediasMediaHashedIDLocalizationsResponseBody struct {
 	// A unique alphanumeric identifier for this localization.
 	HashedID string `json:"hashed_id"`

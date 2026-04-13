@@ -21,6 +21,19 @@ func (e *GetStatsProjectsProjectIDInternalServerError) Error() string {
 	return string(data)
 }
 
+// GetStatsProjectsProjectIDForbiddenError - Forbidden, token is valid but account does not have access to feature
+type GetStatsProjectsProjectIDForbiddenError struct {
+	Error_   *string                 `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata `json:"-"`
+}
+
+var _ error = &GetStatsProjectsProjectIDForbiddenError{}
+
+func (e *GetStatsProjectsProjectIDForbiddenError) Error() string {
+	data, _ := json.Marshal(e)
+	return string(data)
+}
+
 // GetStatsProjectsProjectIDUnauthorizedError - Unauthorized, invalid or missing token
 type GetStatsProjectsProjectIDUnauthorizedError struct {
 	Error_   *string                 `json:"error,omitzero"`

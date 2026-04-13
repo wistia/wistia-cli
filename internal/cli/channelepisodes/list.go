@@ -16,13 +16,14 @@ import (
 )
 
 var listCmdMeta = []flagutil.FlagMeta{
-	{FlagName: "channel-id", Shorthand: "c", FieldPath: "ChannelID", Kind: flagutil.FlagKindString, Optional: true, Description: "Find episodes for a particular channel by providing the channel hashed ID"},
-	{FlagName: "sort-by", FieldPath: "SortBy", Kind: flagutil.FlagKindEnum, Optional: true, EnumValues: []string{"position", "title", "created", "updated", "id"}, Description: "Ordering. Default is ID ASC. (options: position, title, created, updated, id)"},
+	{FlagName: "channel-id", FieldPath: "ChannelID", Kind: flagutil.FlagKindString, Optional: true, Description: "The hashed ID of the channel to grab channel episodes from."},
+	{FlagName: "sort-by", FieldPath: "SortBy", Kind: flagutil.FlagKindEnum, Optional: true, EnumValues: []string{"position", "title", "created", "updated", "id"}, Description: "Ordering. Default is ID ASC. When using cursor pagination (see cursor param),\nonly `id` and `created` are supported. All other sort_by options (`position`, `title`, `updated`)\nrequire offset pagination.\n (options: position, title, created, updated, id)"},
 	{FlagName: "sort-direction", FieldPath: "SortDirection", Kind: flagutil.FlagKindIntEnum, Optional: true, EnumValues: []string{"0", "1"}, Description: "Ordering Sort Direction (0 = desc, 1 = asc; default is 1) (options: 0, 1)"},
-	{FlagName: "page", FieldPath: "Page", Kind: flagutil.FlagKindInt64, Optional: true, Description: "Page number to retrieve"},
-	{FlagName: "per-page", FieldPath: "PerPage", Kind: flagutil.FlagKindInt64, Optional: true, Description: "Number of channels per page"},
+	{FlagName: "page", FieldPath: "Page", Kind: flagutil.FlagKindInt64, Optional: true, Description: "The page number to retrieve. This cannot be combined with `cursor`,\npagination.\n"},
+	{FlagName: "per-page", FieldPath: "PerPage", Kind: flagutil.FlagKindInt64, Optional: true, Description: "The number of medias per page. Use this for both offset pagination and cursor pagination."},
+	{FlagName: "cursor", FieldPath: "Cursor", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `queryParam:"style=deepObject,explode=true,name=cursor"`, Description: "If `cursor[enabled]` is set to 1 than cursor pagination is enabled and the\nfirst set of records are fetched up to the `per_page`. Cursor\npagination will also be turned on if `cursor[before]` or `cursor[after]`\nare set. Records returned will have a `cursor` property set which can be used to fetch more records in the same `sort_by` ordering.\nThe cursor value of the last record can be used to fetch records after the current result set and\nthe cursor of the first record can be used to fetch records before the result set.\n\nNOTE: a cursor value is only valid if the `sort_by` value hasn't changed from the\nlast fetch. For example, you cannot fetch using `sort_by` id and than pass that\ncursor value to a `sort_by` name.\n"},
 	{FlagName: "media-id", Shorthand: "m", FieldPath: "MediaID", Kind: flagutil.FlagKindStringArray, Optional: true, Description: "Filter by media id"},
-	{FlagName: "hashed-id", FieldPath: "HashedID", Kind: flagutil.FlagKindStringArray, Optional: true, Description: "Filter by hashed id"},
+	{FlagName: "hashed-ids", FieldPath: "HashedIds", Kind: flagutil.FlagKindStringArray, Optional: true, Description: "Filter by hashed id"},
 	{FlagName: "published", FieldPath: "Published", Kind: flagutil.FlagKindBool, Optional: true, Description: "Filter by published status."},
 	{FlagName: "title", Shorthand: "t", FieldPath: "Title", Kind: flagutil.FlagKindString, Optional: true, Description: "Filter by channel episode name/title."},
 }
@@ -31,8 +32,8 @@ var listCmdMeta = []flagutil.FlagMeta{
 func initListCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "list",
-		Short:   "Channel Episodes List",
-		Long:    "Returns all the Channel Episodes associated with the account, and allows for filtering by a particular channel.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\nRead all data\nRead all folder and media data\n```",
+		Short:   "List Channel Episodes",
+		Long:    "Lists Channel Episodes belonging to an account. This endpoint can also be used to\ndo a batch fetch based off of the hashed id.\n\n## Requires api token with one of the following permissions\n```\nRead all folder and media data\n```",
 		Example: "  wistia channel-episodes list",
 		RunE:    runListCmd,
 	}

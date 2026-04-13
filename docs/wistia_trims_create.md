@@ -1,10 +1,14 @@
 ## wistia trims create
 
-Trims Create
+Create Media from Trims
 
 ### Synopsis
 
-Creates a new media that trims off parts of an existing media
+Creates a new media that trims off parts of an existing media.
+
+By default, the `trims` parameter specifies time ranges to **remove** from the media. When `keep_trims` is set to `true`, the `trims` parameter instead specifies time ranges to **keep** in the media.
+
+**NOTE:** currently this endpoint only supports trimming video files.
 
 ## Requires api token with one of the following permissions
 ```
@@ -26,8 +30,9 @@ wistia trims create [flags]
 ```
       --body string              Request body as JSON (alternative to individual flags). Can also be provided via stdin.
   -h, --help                     help for create
+  -k, --keep-trims               When set to true, the trims parameter is treated as ranges to keep rather than ranges to remove. Defaults to false.
   -m, --media-hashed-id string   The hashed ID of the media. [required]
-  -t, --trims stringArray        An array of strings matching the format of HH:MM:SS.mmm-HH:MM:SS.mmm where HH is hours, MM is minutes, SS is seconds and mmm is milliseconds. The ranges should contain the earliest point of the trim first and the later point of the trim second. [required]
+  -t, --trims stringArray        An array of strings matching the format of HH:MM:SS.mmm-HH:MM:SS.mmm where HH is hours, MM is minutes, SS is seconds and mmm is milliseconds. When keep_trims is false (default), the ranges specify parts of the media to remove. When keep_trims is true, the ranges specify parts of the media to keep. [required]
 ```
 
 ### Options inherited from parent commands

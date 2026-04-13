@@ -1,6 +1,6 @@
 ## wistia channel-episodes create
 
-Channel Episode Create
+Create Channel Episode
 
 ### Synopsis
 

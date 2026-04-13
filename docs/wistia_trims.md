@@ -38,4 +38,4 @@ wistia trims [flags]
 ### SEE ALSO
 
 * [wistia](wistia.md)	 - Data API: Wistia Data API
-* [wistia trims create](wistia_trims_create.md)	 - Trims Create
+* [wistia trims create](wistia_trims_create.md)	 - Create Media from Trims

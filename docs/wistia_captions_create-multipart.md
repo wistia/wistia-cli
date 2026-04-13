@@ -1,10 +1,10 @@
 ## wistia captions create-multipart
 
-Captions Create
+Create Captions
 
 ### Synopsis
 
-Adds captions to a specified video by providing an SRT file or its contents directly.
+Adds captions to a specified media by providing an SRT file or its contents directly.
 
 ## Requires api token with one of the following permissions
 ```

@@ -47,6 +47,19 @@ func (e *PostMediasMediaHashedIDCopyNotFoundError) Error() string {
 	return string(data)
 }
 
+// PostMediasMediaHashedIDCopyForbiddenError - Forbidden, token is valid but account does not have access to feature
+type PostMediasMediaHashedIDCopyForbiddenError struct {
+	Error_   *string                 `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata `json:"-"`
+}
+
+var _ error = &PostMediasMediaHashedIDCopyForbiddenError{}
+
+func (e *PostMediasMediaHashedIDCopyForbiddenError) Error() string {
+	data, _ := json.Marshal(e)
+	return string(data)
+}
+
 // PostMediasMediaHashedIDCopyUnauthorizedError - Unauthorized, invalid or missing token
 type PostMediasMediaHashedIDCopyUnauthorizedError struct {
 	Error_   *string                 `json:"error,omitzero"`

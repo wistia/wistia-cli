@@ -31,10 +31,9 @@ func newExpiringAccessTokens(rootSDK *Wistia, sdkConfig config.SDKConfiguration,
 	}
 }
 
-// Create an expiring access token
+// Create Expiring Access Token
 // ```
 // 🚫 Alert
-//
 // This API is still under development and can change at any time.
 // ```
 //

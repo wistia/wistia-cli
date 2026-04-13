@@ -23,8 +23,8 @@ var createCmdMeta = []flagutil.FlagMeta{
 func initCreateCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "create",
-		Short:   "Tags Create",
-		Long:    "Create a new tag.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
+		Short:   "Create Tags",
+		Long:    "Creates a new tag.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
 		Example: "  wistia tags create --name <value>",
 		RunE:    runCreateCmd,
 	}

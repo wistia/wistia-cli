@@ -24,8 +24,8 @@ var deleteCmdMeta = []flagutil.FlagMeta{
 func initDeleteCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "delete",
-		Short:   "Localizations Delete",
-		Long:    "Delete a localization.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
+		Short:   "Delete Localization",
+		Long:    "Deletes a localization.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
 		Example: "  wistia localizations delete --media-hashed-id <id> --localization-hashed-id <id>",
 		RunE:    runDeleteCmd,
 	}

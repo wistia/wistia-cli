@@ -21,6 +21,19 @@ func (e *GetStatsVisitorsInternalServerError) Error() string {
 	return string(data)
 }
 
+// GetStatsVisitorsForbiddenError - Forbidden, token is valid but account does not have access to feature
+type GetStatsVisitorsForbiddenError struct {
+	Error_   *string                 `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata `json:"-"`
+}
+
+var _ error = &GetStatsVisitorsForbiddenError{}
+
+func (e *GetStatsVisitorsForbiddenError) Error() string {
+	data, _ := json.Marshal(e)
+	return string(data)
+}
+
 // GetStatsVisitorsUnauthorizedError - Unauthorized, invalid or missing token
 type GetStatsVisitorsUnauthorizedError struct {
 	Error_   *string                 `json:"error,omitzero"`

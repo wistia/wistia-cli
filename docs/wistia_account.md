@@ -38,4 +38,5 @@ wistia account [flags]
 ### SEE ALSO
 
 * [wistia](wistia.md)	 - Data API: Wistia Data API
-* [wistia account get](wistia_account_get.md)	 - Account Show
+* [wistia account get](wistia_account_get.md)	 - Get Current Account
+* [wistia account get-token-details](wistia_account_get-token-details.md)	 - Get Current Token

@@ -4,16 +4,170 @@
 package operations
 
 import (
+	"encoding/json"
+	"fmt"
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
+	"github.com/wistia/wistia-cli/internal/sdk/optionalnullable"
 	"github.com/wistia/wistia-cli/internal/sdk/sdkinternal/utils"
 	"time"
 )
 
+// GetAllowedDomainsEnabled - If `cursor[enabled]` is set to 1, the first result set will be fetched with cursor pagination enabled. This
+// values is ignored if `cursor[before]` or `cursor[after]` are set.
+type GetAllowedDomainsEnabled int64
+
+const (
+	GetAllowedDomainsEnabledZero GetAllowedDomainsEnabled = 0
+	GetAllowedDomainsEnabledOne  GetAllowedDomainsEnabled = 1
+)
+
+func (e GetAllowedDomainsEnabled) ToPointer() *GetAllowedDomainsEnabled {
+	return &e
+}
+func (e *GetAllowedDomainsEnabled) UnmarshalJSON(data []byte) error {
+	var v int64
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case 0:
+		fallthrough
+	case 1:
+		*e = GetAllowedDomainsEnabled(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for GetAllowedDomainsEnabled: %v", v)
+	}
+}
+
+// GetAllowedDomainsCursor - If `cursor[enabled]` is set to 1 than cursor pagination is enabled and the
+// first set of records are fetched up to the `per_page`. Cursor
+// pagination will also be turned on if `cursor[before]` or `cursor[after]`
+// are set. Records returned will have a `cursor` property set which can be used to fetch more records in the same `sort_by` ordering.
+// The cursor value of the last record can be used to fetch records after the current result set and
+// the cursor of the first record can be used to fetch records before the result set.
+//
+// NOTE: a cursor value is only valid if the `sort_by` value hasn't changed from the
+// last fetch. For example, you cannot fetch using `sort_by` id and than pass that
+// cursor value to a `sort_by` name.
+type GetAllowedDomainsCursor struct {
+	// If `cursor[enabled]` is set to 1, the first result set will be fetched with cursor pagination enabled. This
+	// values is ignored if `cursor[before]` or `cursor[after]` are set.
+	//
+	Enabled *GetAllowedDomainsEnabled `queryParam:"name=enabled"`
+	// If `cursor[before]` is set than cursor pagination is enabled and all records
+	// before the cursor up to the `per_page` are returned. This feature is useful for
+	// fetching "new records", for example, in a "pull to refersh" feature when showing records in a descending
+	// order.
+	//
+	Before *string `queryParam:"name=before"`
+	// If `cursor[after]` is set than cursor pagination is enabled and all records
+	// after the cursor up to the `per_page` are returned.
+	//
+	After *string `queryParam:"name=after"`
+}
+
+func (g *GetAllowedDomainsCursor) GetEnabled() *GetAllowedDomainsEnabled {
+	if g == nil {
+		return nil
+	}
+	return g.Enabled
+}
+
+func (g *GetAllowedDomainsCursor) GetBefore() *string {
+	if g == nil {
+		return nil
+	}
+	return g.Before
+}
+
+func (g *GetAllowedDomainsCursor) GetAfter() *string {
+	if g == nil {
+		return nil
+	}
+	return g.After
+}
+
+// GetAllowedDomainsSortBy - Ordering. When using cursor pagination (see cursor param),
+// only `id` and `domain` are supported.
+type GetAllowedDomainsSortBy string
+
+const (
+	GetAllowedDomainsSortByID     GetAllowedDomainsSortBy = "id"
+	GetAllowedDomainsSortByDomain GetAllowedDomainsSortBy = "domain"
+)
+
+func (e GetAllowedDomainsSortBy) ToPointer() *GetAllowedDomainsSortBy {
+	return &e
+}
+func (e *GetAllowedDomainsSortBy) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "id":
+		fallthrough
+	case "domain":
+		*e = GetAllowedDomainsSortBy(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for GetAllowedDomainsSortBy: %v", v)
+	}
+}
+
+// GetAllowedDomainsSortDirection - Ordering Sort Direction (0 = desc, 1 = asc; default is 1)
+type GetAllowedDomainsSortDirection int64
+
+const (
+	GetAllowedDomainsSortDirectionZero GetAllowedDomainsSortDirection = 0
+	GetAllowedDomainsSortDirectionOne  GetAllowedDomainsSortDirection = 1
+)
+
+func (e GetAllowedDomainsSortDirection) ToPointer() *GetAllowedDomainsSortDirection {
+	return &e
+}
+func (e *GetAllowedDomainsSortDirection) UnmarshalJSON(data []byte) error {
+	var v int64
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case 0:
+		fallthrough
+	case 1:
+		*e = GetAllowedDomainsSortDirection(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for GetAllowedDomainsSortDirection: %v", v)
+	}
+}
+
 type GetAllowedDomainsRequest struct {
-	// Page number for pagination
-	Page *int64 `default:"1" queryParam:"style=form,explode=true,name=page"`
-	// Number of items per page
-	PerPage *int64 `default:"100" queryParam:"style=form,explode=true,name=per_page"`
+	// The page number to retrieve. This cannot be combined with `cursor`,
+	// pagination.
+	//
+	Page *int64 `queryParam:"style=form,explode=true,name=page"`
+	// The number of medias per page. Use this for both offset pagination and cursor pagination.
+	PerPage *int64 `queryParam:"style=form,explode=true,name=per_page"`
+	// If `cursor[enabled]` is set to 1 than cursor pagination is enabled and the
+	// first set of records are fetched up to the `per_page`. Cursor
+	// pagination will also be turned on if `cursor[before]` or `cursor[after]`
+	// are set. Records returned will have a `cursor` property set which can be used to fetch more records in the same `sort_by` ordering.
+	// The cursor value of the last record can be used to fetch records after the current result set and
+	// the cursor of the first record can be used to fetch records before the result set.
+	//
+	// NOTE: a cursor value is only valid if the `sort_by` value hasn't changed from the
+	// last fetch. For example, you cannot fetch using `sort_by` id and than pass that
+	// cursor value to a `sort_by` name.
+	//
+	Cursor *GetAllowedDomainsCursor `queryParam:"style=deepObject,explode=true,name=cursor"`
+	// Ordering. When using cursor pagination (see cursor param),
+	// only `id` and `domain` are supported.
+	//
+	SortBy *GetAllowedDomainsSortBy `default:"id" queryParam:"style=form,explode=true,name=sort_by"`
+	// Ordering Sort Direction (0 = desc, 1 = asc; default is 1)
+	SortDirection *GetAllowedDomainsSortDirection `default:"1" queryParam:"style=form,explode=true,name=sort_direction"`
 }
 
 func (g GetAllowedDomainsRequest) MarshalJSON() ([]byte, error) {
@@ -41,11 +195,38 @@ func (g *GetAllowedDomainsRequest) GetPerPage() *int64 {
 	return g.PerPage
 }
 
+func (g *GetAllowedDomainsRequest) GetCursor() *GetAllowedDomainsCursor {
+	if g == nil {
+		return nil
+	}
+	return g.Cursor
+}
+
+func (g *GetAllowedDomainsRequest) GetSortBy() *GetAllowedDomainsSortBy {
+	if g == nil {
+		return nil
+	}
+	return g.SortBy
+}
+
+func (g *GetAllowedDomainsRequest) GetSortDirection() *GetAllowedDomainsSortDirection {
+	if g == nil {
+		return nil
+	}
+	return g.SortDirection
+}
+
+// GetAllowedDomainsResponseBody - An allowed domain represents a domain where a Wistia video can be embedded. Account
+// restrictions need to be enabled for an allowed domain to have an effect. See
+// our [Domain Restrictions](https://support.wistia.com/en/articles/9691672-domain-restrictions)
+// guide for more details.
 type GetAllowedDomainsResponseBody struct {
 	// The allowed domain name.
 	Domain string `json:"domain"`
 	// The date that the allowed domain was originally created.
 	CreatedAt time.Time `json:"created_at"`
+	// A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+	Cursor optionalnullable.OptionalNullable[string] `json:"cursor,omitzero"`
 }
 
 func (g GetAllowedDomainsResponseBody) MarshalJSON() ([]byte, error) {
@@ -71,6 +252,13 @@ func (g *GetAllowedDomainsResponseBody) GetCreatedAt() time.Time {
 		return time.Time{}
 	}
 	return g.CreatedAt
+}
+
+func (g *GetAllowedDomainsResponseBody) GetCursor() optionalnullable.OptionalNullable[string] {
+	if g == nil {
+		return nil
+	}
+	return g.Cursor
 }
 
 type GetAllowedDomainsResponse struct {

@@ -3,7 +3,7 @@
 
 package sdk
 
-// Generated from OpenAPI doc version 2025.11.0 and generator version 2.879.6
+// Generated from OpenAPI doc version 2026.03.0 and generator version 2.879.13
 
 import (
 	"context"
@@ -50,37 +50,34 @@ func Pointer[T any](v T) *T { return &v }
 
 // Wistia - Data API: Wistia Data API
 type Wistia struct {
-	SDKVersion          string
-	Media               *Media
-	Projects            *Projects
-	Subfolders          *Subfolders
-	ProjectSharings     *ProjectSharings
-	Account             *Account
-	AllowedDomains      *AllowedDomains
-	BackgroundJobStatus *BackgroundJobStatus
-	Customizations      *Customizations
-	Captions            *Captions
-	Trims               *Trims
-	Localizations       *Localizations
-	Tags                *Tags
-	// Search
-	// Search across projects, medias, channels, and channel episodes.
-	//
-	// ## Requires api token with one of the following permissions
-	// ```
-	// Read, update & delete anything
-	// ```
-	//
-	Search               *Search
-	Channels             *Channels
-	ChannelEpisodes      *ChannelEpisodes
-	ExpiringAccessTokens *ExpiringAccessTokens
-	LiveStreamEvents     *LiveStreamEvents
-	StatsAccount         *StatsAccount
-	StatsProjects        *StatsProjects
-	StatsMedia           *StatsMedia
-	StatsVisitors        *StatsVisitors
-	StatsEvents          *StatsEvents
+	SDKVersion                     string
+	Media                          *Media
+	MediaExtendedAudioDescriptions *MediaExtendedAudioDescriptions
+	Folders                        *Folders
+	Subfolders                     *Subfolders
+	FolderSharings                 *FolderSharings
+	Taggings                       *Taggings
+	Account                        *Account
+	AllowedDomains                 *AllowedDomains
+	BackgroundJobStatus            *BackgroundJobStatus
+	Customizations                 *Customizations
+	Captions                       *Captions
+	Trims                          *Trims
+	Localizations                  *Localizations
+	Tags                           *Tags
+	Search                         *Search
+	Channels                       *Channels
+	ChannelEpisodes                *ChannelEpisodes
+	ExpiringAccessTokens           *ExpiringAccessTokens
+	Webinars                       *Webinars
+	WebinarRegistrations           *WebinarRegistrations
+	StatsAccount                   *StatsAccount
+	StatsProjects                  *StatsProjects
+	StatsMedia                     *StatsMedia
+	StatsVisitors                  *StatsVisitors
+	StatsEvents                    *StatsEvents
+	AnalyticsMedia                 *AnalyticsMedia
+	AnalyticsWebinar               *AnalyticsWebinar
 
 	sdkConfiguration config.SDKConfiguration
 	hooks            *hooks.Hooks
@@ -158,7 +155,7 @@ func New(opts ...SDKOption) *Wistia {
 	sdk := &Wistia{
 		SDKVersion: "0.0.1",
 		sdkConfiguration: config.SDKConfiguration{
-			UserAgent:  "speakeasy-sdk/go 0.0.1 2.879.6 2025.11.0 github.com/wistia/wistia-cli/internal/sdk",
+			UserAgent:  "speakeasy-sdk/go 0.0.1 2.879.13 2026.03.0 github.com/wistia/wistia-cli/internal/sdk",
 			ServerList: ServerList,
 		},
 		hooks: hooks.New(),
@@ -175,9 +172,11 @@ func New(opts ...SDKOption) *Wistia {
 	sdk.sdkConfiguration = sdk.hooks.SDKInit(sdk.sdkConfiguration)
 
 	sdk.Media = newMedia(sdk, sdk.sdkConfiguration, sdk.hooks)
-	sdk.Projects = newProjects(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.MediaExtendedAudioDescriptions = newMediaExtendedAudioDescriptions(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.Folders = newFolders(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Subfolders = newSubfolders(sdk, sdk.sdkConfiguration, sdk.hooks)
-	sdk.ProjectSharings = newProjectSharings(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.FolderSharings = newFolderSharings(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.Taggings = newTaggings(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Account = newAccount(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.AllowedDomains = newAllowedDomains(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.BackgroundJobStatus = newBackgroundJobStatus(sdk, sdk.sdkConfiguration, sdk.hooks)
@@ -190,12 +189,15 @@ func New(opts ...SDKOption) *Wistia {
 	sdk.Channels = newChannels(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.ChannelEpisodes = newChannelEpisodes(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.ExpiringAccessTokens = newExpiringAccessTokens(sdk, sdk.sdkConfiguration, sdk.hooks)
-	sdk.LiveStreamEvents = newLiveStreamEvents(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.Webinars = newWebinars(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.WebinarRegistrations = newWebinarRegistrations(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.StatsAccount = newStatsAccount(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.StatsProjects = newStatsProjects(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.StatsMedia = newStatsMedia(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.StatsVisitors = newStatsVisitors(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.StatsEvents = newStatsEvents(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.AnalyticsMedia = newAnalyticsMedia(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.AnalyticsWebinar = newAnalyticsWebinar(sdk, sdk.sdkConfiguration, sdk.hooks)
 
 	return sdk
 }

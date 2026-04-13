@@ -24,8 +24,8 @@ var getCmdMeta = []flagutil.FlagMeta{
 func initGetCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "get",
-		Short:   "Captions Show",
-		Long:    "Returns a video's captions in the specified language.\nSupports multiple formats: JSON (default), SRT, VTT, and TXT.\nUse file extensions (.srt, .vtt, .txt) or Accept headers to specify format.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\nRead all data\nRead all folder and media data\n```",
+		Short:   "Show Captions",
+		Long:    "Returns a video's captions in the specified language.\nSupports multiple formats: JSON (default), SRT, VTT, and TXT.\nUse file extensions (.srt, .vtt, .txt) or Accept headers to specify format.\n\n## Requires api token with one of the following permissions\n```\nRead all folder and media data\n```",
 		Example: "  wistia captions get --media-hashed-id <id> --language-code <value>",
 		RunE:    runGetCmd,
 	}

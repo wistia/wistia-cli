@@ -30,15 +30,15 @@ func newStatsMedia(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks *ho
 	}
 }
 
-// Get - Stats:Media Show
+// Get - Show Media Stats
 // Retrieve stats for a video. This endpoint provides statistics for a specific video identified by its media-id.
 //
+// <!--- HIDE-MCP -->
 // ## Requires api token with one of the following permissions
 // ```
-// Read, update & delete anything
-// Read all data
-// Read all folder and media data
+// Read detailed stats
 // ```
+// <!--- /HIDE-MCP -->
 func (s *StatsMedia) Get(ctx context.Context, request operations.GetStatsMediasMediaIDRequest, opts ...operations.Option) (*operations.GetStatsMediasMediaIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -114,7 +114,7 @@ func (s *StatsMedia) Get(ctx context.Context, request operations.GetStatsMediasM
 
 		_, err = s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
 		return nil, err
-	} else if utils.MatchStatusCodes([]string{"401", "404", "4XX", "500", "5XX"}, httpRes.StatusCode) {
+	} else if utils.MatchStatusCodes([]string{"401", "403", "404", "4XX", "500", "5XX"}, httpRes.StatusCode) {
 		_httpRes, err := s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
 		if err != nil {
 			return nil, err
@@ -184,6 +184,31 @@ func (s *StatsMedia) Get(ctx context.Context, request operations.GetStatsMediasM
 			}
 			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
+	case httpRes.StatusCode == 403:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out sdkerrors.GetStatsMediasMediaIDForbiddenError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, err
+			}
+
+			out.HTTPMeta = components.HTTPMetadata{
+				Request:  req,
+				Response: httpRes,
+			}
+			return nil, &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
 	case httpRes.StatusCode == 500:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
@@ -235,15 +260,15 @@ func (s *StatsMedia) Get(ctx context.Context, request operations.GetStatsMediasM
 
 }
 
-// GetByDate - Stats:Media By Date
+// GetByDate - Show Media Stats by Date
 // Retrieve stats for a media organized by day, between a start and end date paramater (inclusive). If start and end date are not provided, defaults to yesterday and today.
 //
+// <!--- HIDE-MCP -->
 // ## Requires api token with one of the following permissions
 // ```
-// Read, update & delete anything
-// Read all data
-// Read all folder and media data
+// Read detailed stats
 // ```
+// <!--- /HIDE-MCP -->
 func (s *StatsMedia) GetByDate(ctx context.Context, request operations.GetStatsMediasMediaIDByDateRequest, opts ...operations.Option) (*operations.GetStatsMediasMediaIDByDateResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -323,7 +348,7 @@ func (s *StatsMedia) GetByDate(ctx context.Context, request operations.GetStatsM
 
 		_, err = s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
 		return nil, err
-	} else if utils.MatchStatusCodes([]string{"401", "404", "4XX", "500", "5XX"}, httpRes.StatusCode) {
+	} else if utils.MatchStatusCodes([]string{"401", "403", "404", "4XX", "500", "5XX"}, httpRes.StatusCode) {
 		_httpRes, err := s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
 		if err != nil {
 			return nil, err
@@ -393,6 +418,31 @@ func (s *StatsMedia) GetByDate(ctx context.Context, request operations.GetStatsM
 			}
 			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
+	case httpRes.StatusCode == 403:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out sdkerrors.GetStatsMediasMediaIDByDateForbiddenError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, err
+			}
+
+			out.HTTPMeta = components.HTTPMetadata{
+				Request:  req,
+				Response: httpRes,
+			}
+			return nil, &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
 	case httpRes.StatusCode == 500:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
@@ -444,15 +494,15 @@ func (s *StatsMedia) GetByDate(ctx context.Context, request operations.GetStatsM
 
 }
 
-// GetEngagement - Stats:Media Engagement
+// GetEngagement - Show Media Engagement
 // Retrieve engagement data for a video. This endpoint provides engagement data for a specific video identified by its media-id.
 //
+// <!--- HIDE-MCP -->
 // ## Requires api token with one of the following permissions
 // ```
-// Read, update & delete anything
-// Read all data
-// Read all folder and media data
+// Read detailed stats
 // ```
+// <!--- /HIDE-MCP -->
 func (s *StatsMedia) GetEngagement(ctx context.Context, request operations.GetStatsMediasMediaIDEngagementRequest, opts ...operations.Option) (*operations.GetStatsMediasMediaIDEngagementResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -528,7 +578,7 @@ func (s *StatsMedia) GetEngagement(ctx context.Context, request operations.GetSt
 
 		_, err = s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
 		return nil, err
-	} else if utils.MatchStatusCodes([]string{"401", "404", "4XX", "500", "5XX"}, httpRes.StatusCode) {
+	} else if utils.MatchStatusCodes([]string{"401", "403", "404", "4XX", "500", "5XX"}, httpRes.StatusCode) {
 		_httpRes, err := s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
 		if err != nil {
 			return nil, err
@@ -582,6 +632,31 @@ func (s *StatsMedia) GetEngagement(ctx context.Context, request operations.GetSt
 			}
 
 			var out sdkerrors.GetStatsMediasMediaIDEngagementUnauthorizedError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, err
+			}
+
+			out.HTTPMeta = components.HTTPMetadata{
+				Request:  req,
+				Response: httpRes,
+			}
+			return nil, &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
+	case httpRes.StatusCode == 403:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out sdkerrors.GetStatsMediasMediaIDEngagementForbiddenError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}

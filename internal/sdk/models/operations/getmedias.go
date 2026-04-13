@@ -13,19 +13,19 @@ import (
 	"time"
 )
 
-// Enabled - If `cursor[enabled]` is set to 1, the first result set will be fetched with cursor pagination enabled. This
+// GetMediasEnabled - If `cursor[enabled]` is set to 1, the first result set will be fetched with cursor pagination enabled. This
 // values is ignored if `cursor[before]` or `cursor[after]` are set.
-type Enabled int64
+type GetMediasEnabled int64
 
 const (
-	EnabledZero Enabled = 0
-	EnabledOne  Enabled = 1
+	GetMediasEnabledZero GetMediasEnabled = 0
+	GetMediasEnabledOne  GetMediasEnabled = 1
 )
 
-func (e Enabled) ToPointer() *Enabled {
+func (e GetMediasEnabled) ToPointer() *GetMediasEnabled {
 	return &e
 }
-func (e *Enabled) UnmarshalJSON(data []byte) error {
+func (e *GetMediasEnabled) UnmarshalJSON(data []byte) error {
 	var v int64
 	if err := json.Unmarshal(data, &v); err != nil {
 		return err
@@ -34,14 +34,14 @@ func (e *Enabled) UnmarshalJSON(data []byte) error {
 	case 0:
 		fallthrough
 	case 1:
-		*e = Enabled(v)
+		*e = GetMediasEnabled(v)
 		return nil
 	default:
-		return fmt.Errorf("invalid value for Enabled: %v", v)
+		return fmt.Errorf("invalid value for GetMediasEnabled: %v", v)
 	}
 }
 
-// Cursor - If `cursor` is set to 1 than cursor pagination is enabled and the
+// GetMediasCursor - If `cursor[enabled]` is set to 1 than cursor pagination is enabled and the
 // first set of records are fetched up to the `per_page`. Cursor
 // pagination will also be turned on if `cursor[before]` or `cursor[after]`
 // are set. Records returned will have a `cursor` property set which can be used to fetch more records in the same `sort_by` ordering.
@@ -51,11 +51,11 @@ func (e *Enabled) UnmarshalJSON(data []byte) error {
 // NOTE: a cursor value is only valid if the `sort_by` value hasn't changed from the
 // last fetch. For example, you cannot fetch using `sort_by` id and than pass that
 // cursor value to a `sort_by` name.
-type Cursor struct {
+type GetMediasCursor struct {
 	// If `cursor[enabled]` is set to 1, the first result set will be fetched with cursor pagination enabled. This
 	// values is ignored if `cursor[before]` or `cursor[after]` are set.
 	//
-	Enabled *Enabled `queryParam:"name=enabled"`
+	Enabled *GetMediasEnabled `queryParam:"name=enabled"`
 	// If `cursor[before]` is set than cursor pagination is enabled and all records
 	// before the cursor up to the `per_page` are returned. This feature is useful for
 	// fetching "new records", for example, in a "pull to refersh" feature when showing records in a descending
@@ -68,25 +68,25 @@ type Cursor struct {
 	After *string `queryParam:"name=after"`
 }
 
-func (c *Cursor) GetEnabled() *Enabled {
-	if c == nil {
+func (g *GetMediasCursor) GetEnabled() *GetMediasEnabled {
+	if g == nil {
 		return nil
 	}
-	return c.Enabled
+	return g.Enabled
 }
 
-func (c *Cursor) GetBefore() *string {
-	if c == nil {
+func (g *GetMediasCursor) GetBefore() *string {
+	if g == nil {
 		return nil
 	}
-	return c.Before
+	return g.Before
 }
 
-func (c *Cursor) GetAfter() *string {
-	if c == nil {
+func (g *GetMediasCursor) GetAfter() *string {
+	if g == nil {
 		return nil
 	}
-	return c.After
+	return g.After
 }
 
 // GetMediasSortBy - Ordering. When using cursor pagination (see cursor param),
@@ -200,7 +200,7 @@ type GetMediasRequest struct {
 	Page *int64 `queryParam:"style=form,explode=true,name=page"`
 	// The number of medias per page. Use this for both offset pagination and cursor pagination.
 	PerPage *int64 `queryParam:"style=form,explode=true,name=per_page"`
-	// If `cursor` is set to 1 than cursor pagination is enabled and the
+	// If `cursor[enabled]` is set to 1 than cursor pagination is enabled and the
 	// first set of records are fetched up to the `per_page`. Cursor
 	// pagination will also be turned on if `cursor[before]` or `cursor[after]`
 	// are set. Records returned will have a `cursor` property set which can be used to fetch more records in the same `sort_by` ordering.
@@ -211,7 +211,7 @@ type GetMediasRequest struct {
 	// last fetch. For example, you cannot fetch using `sort_by` id and than pass that
 	// cursor value to a `sort_by` name.
 	//
-	Cursor *Cursor `queryParam:"style=deepObject,explode=true,name=cursor"`
+	Cursor *GetMediasCursor `queryParam:"style=deepObject,explode=true,name=cursor"`
 	// Ordering. When using cursor pagination (see cursor param),
 	// only `id` and `created` are supported. All other sort_by options (`name`, `updated`, `position`)
 	// require offset pagination.
@@ -219,8 +219,8 @@ type GetMediasRequest struct {
 	SortBy *GetMediasSortBy `queryParam:"style=form,explode=true,name=sort_by"`
 	// Ordering Sort Direction (0 = desc, 1 = asc; default is 1)
 	SortDirection *GetMediasSortDirection `queryParam:"style=form,explode=true,name=sort_direction"`
-	// A hashed ID specifying the project from which you would like to get results.
-	ProjectID *string `queryParam:"style=form,explode=true,name=project_id"`
+	// A hashed ID specifying the folder from which you would like to get results.
+	FolderID *string `queryParam:"style=form,explode=true,name=folder_id"`
 	// Find a media or medias whose name exactly matches this parameter.
 	Name *string `queryParam:"style=form,explode=true,name=name"`
 	// Format for media descriptions
@@ -228,8 +228,6 @@ type GetMediasRequest struct {
 	descriptionFormat *string `const:"markdown" queryParam:"style=form,explode=true,name=description_format"`
 	// A string specifying which type of media you would like to get.
 	Type *QueryParamType `queryParam:"style=form,explode=true,name=type"`
-	// Find the media by hashed_id.
-	HashedID *string `queryParam:"style=form,explode=true,name=hashed_id"`
 	// Find all of the medias by these hashed_ids.
 	HashedIds []string `queryParam:"style=form,explode=true,name=hashed_ids[]"`
 	// Find all of the medias that match all of these tag names.
@@ -263,7 +261,7 @@ func (g *GetMediasRequest) GetPerPage() *int64 {
 	return g.PerPage
 }
 
-func (g *GetMediasRequest) GetCursor() *Cursor {
+func (g *GetMediasRequest) GetCursor() *GetMediasCursor {
 	if g == nil {
 		return nil
 	}
@@ -284,11 +282,11 @@ func (g *GetMediasRequest) GetSortDirection() *GetMediasSortDirection {
 	return g.SortDirection
 }
 
-func (g *GetMediasRequest) GetProjectID() *string {
+func (g *GetMediasRequest) GetFolderID() *string {
 	if g == nil {
 		return nil
 	}
-	return g.ProjectID
+	return g.FolderID
 }
 
 func (g *GetMediasRequest) GetName() *string {
@@ -307,13 +305,6 @@ func (g *GetMediasRequest) GetType() *QueryParamType {
 		return nil
 	}
 	return g.Type
-}
-
-func (g *GetMediasRequest) GetHashedID() *string {
-	if g == nil {
-		return nil
-	}
-	return g.HashedID
 }
 
 func (g *GetMediasRequest) GetHashedIds() []string {
@@ -417,30 +408,30 @@ func (g *GetMediasThumbnail) GetHeight() *int64 {
 	return g.Height
 }
 
-type GetMediasProject struct {
-	// A unique numeric identifier for the project within the system.
+type GetMediasFolder struct {
+	// A unique numeric identifier for the folder within the system.
 	ID *int64 `json:"id,omitzero"`
-	// The project’s display name.
+	// The folder’s display name.
 	Name *string `json:"name,omitzero"`
-	// A private hashed id, uniquely identifying the project within the system.
+	// A private hashed id, uniquely identifying the folder within the system.
 	HashedID *string `json:"hashedId,omitzero"`
 }
 
-func (g *GetMediasProject) GetID() *int64 {
+func (g *GetMediasFolder) GetID() *int64 {
 	if g == nil {
 		return nil
 	}
 	return g.ID
 }
 
-func (g *GetMediasProject) GetName() *string {
+func (g *GetMediasFolder) GetName() *string {
 	if g == nil {
 		return nil
 	}
 	return g.Name
 }
 
-func (g *GetMediasProject) GetHashedID() *string {
+func (g *GetMediasFolder) GetHashedID() *string {
 	if g == nil {
 		return nil
 	}
@@ -455,9 +446,9 @@ type GetMediasAsset struct {
 	// The height of this specific asset, if applicable.
 	Height optionalnullable.OptionalNullable[int64] `json:"height,omitzero"`
 	// The size of the asset file that’s referenced by url, measured in bytes.
-	FileSize optionalnullable.OptionalNullable[int64] `json:"fileSize,omitzero"`
+	FileSize optionalnullable.OptionalNullable[int64] `json:"file_size,omitzero"`
 	// The asset’s content type.
-	ContentType optionalnullable.OptionalNullable[string] `json:"contentType,omitzero"`
+	ContentType optionalnullable.OptionalNullable[string] `json:"content_type,omitzero"`
 	// The internal type of the asset, describing how the asset should be used. Values can include OriginalFile, FlashVideoFile, MdFlashVideoFile, HdFlashVideoFile, Mp4VideoFile, MdMp4VideoFile, HdMp4VideoFile, IPhoneVideoFile, StillImageFile, SwfFile, Mp3AudioFile, and LargeImageFile.
 	//
 	Type *string `json:"type,omitzero"`
@@ -505,7 +496,7 @@ func (g *GetMediasAsset) GetType() *string {
 	return g.Type
 }
 
-// GetMediasSubfolder - A subfolder within a project that contains media files.
+// GetMediasSubfolder - A subfolder within a folder that contains media.
 type GetMediasSubfolder struct {
 	// A unique alphanumeric identifier for this subfolder.
 	HashedID string `json:"hashed_id"`
@@ -513,12 +504,14 @@ type GetMediasSubfolder struct {
 	Name optionalnullable.OptionalNullable[string] `json:"name,omitzero"`
 	// A description for the subfolder.
 	Description optionalnullable.OptionalNullable[string] `json:"description,omitzero"`
-	// The position of this subfolder within its project, used for ordering.
+	// The position of this subfolder within its folder, used for ordering.
 	Position *int64 `json:"position"`
 	// The date when the subfolder was created.
 	Created *time.Time `json:"created"`
 	// The date when the subfolder was last modified.
 	Updated *time.Time `json:"updated"`
+	// A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+	Cursor optionalnullable.OptionalNullable[string] `json:"cursor,omitzero"`
 }
 
 func (g GetMediasSubfolder) MarshalJSON() ([]byte, error) {
@@ -574,6 +567,13 @@ func (g *GetMediasSubfolder) GetUpdated() *time.Time {
 	return g.Updated
 }
 
+func (g *GetMediasSubfolder) GetCursor() optionalnullable.OptionalNullable[string] {
+	if g == nil {
+		return nil
+	}
+	return g.Cursor
+}
+
 type GetMediasTag struct {
 	// The display name of the tag.
 	Name *string `json:"name,omitzero"`
@@ -586,6 +586,10 @@ func (g *GetMediasTag) GetName() *string {
 	return g.Name
 }
 
+// GetMediasResponseBody - A media generally represents a video or an audio which can be embedded into your website.
+//
+// CDN-backed medias are accessible using this url structure: https://fast.wistia.com/embed/medias/{hashed_id}.m3u8.
+// For more information, see https://docs.wistia.com/docs/asset-urls#getting-hls-assets.
 type GetMediasResponseBody struct {
 	// A unique numeric identifier for the media within the system.
 	ID *int64 `json:"id,omitzero"`
@@ -616,16 +620,16 @@ type GetMediasResponseBody struct {
 	//
 	Status *GetMediasStatus `json:"status,omitzero"`
 	// The title of the section in which the media appears. This attribute is omitted if the media is not in a section (default).
-	Section   optionalnullable.OptionalNullable[string]           `json:"section,omitzero"`
-	Thumbnail *GetMediasThumbnail                                 `json:"thumbnail,omitzero"`
-	Project   optionalnullable.OptionalNullable[GetMediasProject] `json:"project,omitzero"`
+	Section   optionalnullable.OptionalNullable[string] `json:"section,omitzero"`
+	Thumbnail *GetMediasThumbnail                       `json:"thumbnail,omitzero"`
+	Folder    *GetMediasFolder                          `json:"folder"`
 	// An array of the assets available for this media.
 	Assets []GetMediasAsset `json:"assets,omitzero"`
 	// The subfolder (media group) in which the media appears. Null if the media is not in a subfolder.
 	Subfolder *GetMediasSubfolder `json:"subfolder,omitzero"`
 	// Tags associated with this media.
 	Tags []GetMediasTag `json:"tags,omitzero"`
-	// A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor_before` or `cursor_after` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if medias were fetched with `use_cursor`, or `cursor_before` or `cursor_after`.
+	// A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
 	Cursor optionalnullable.OptionalNullable[string] `json:"cursor,omitzero"`
 }
 
@@ -738,11 +742,11 @@ func (g *GetMediasResponseBody) GetThumbnail() *GetMediasThumbnail {
 	return g.Thumbnail
 }
 
-func (g *GetMediasResponseBody) GetProject() optionalnullable.OptionalNullable[GetMediasProject] {
+func (g *GetMediasResponseBody) GetFolder() *GetMediasFolder {
 	if g == nil {
 		return nil
 	}
-	return g.Project
+	return g.Folder
 }
 
 func (g *GetMediasResponseBody) GetAssets() []GetMediasAsset {

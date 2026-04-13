@@ -23,8 +23,8 @@ var createCmdMeta = []flagutil.FlagMeta{
 func initCreateCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "create",
-		Short:   "Allowed Domain Create",
-		Long:    "Create a new allowed domain for the account.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
+		Short:   "Create Allowed Domain",
+		Long:    "Creates an allowed domain for the account.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
 		Example: "  wistia allowed-domains create --domain example.com",
 		RunE:    runCreateCmd,
 	}

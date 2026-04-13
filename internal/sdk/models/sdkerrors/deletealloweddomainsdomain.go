@@ -34,6 +34,19 @@ func (e *DeleteAllowedDomainsDomainNotFoundError) Error() string {
 	return string(data)
 }
 
+// DeleteAllowedDomainsDomainForbiddenError - Forbidden, token is valid but account does not have access to feature
+type DeleteAllowedDomainsDomainForbiddenError struct {
+	Error_   *string                 `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata `json:"-"`
+}
+
+var _ error = &DeleteAllowedDomainsDomainForbiddenError{}
+
+func (e *DeleteAllowedDomainsDomainForbiddenError) Error() string {
+	data, _ := json.Marshal(e)
+	return string(data)
+}
+
 // DeleteAllowedDomainsDomainUnauthorizedError - Unauthorized, invalid or missing token
 type DeleteAllowedDomainsDomainUnauthorizedError struct {
 	Error_   *string                 `json:"error,omitzero"`

@@ -38,5 +38,5 @@ wistia stats-events [flags]
 ### SEE ALSO
 
 * [wistia](wistia.md)	 - Data API: Wistia Data API
-* [wistia stats-events get](wistia_stats-events_get.md)	 - Stats:Events Show
-* [wistia stats-events list](wistia_stats-events_list.md)	 - Stats:Events List
+* [wistia stats-events get](wistia_stats-events_get.md)	 - Show Event
+* [wistia stats-events list](wistia_stats-events_list.md)	 - List Events

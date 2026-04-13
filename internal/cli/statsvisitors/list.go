@@ -26,8 +26,8 @@ var listCmdMeta = []flagutil.FlagMeta{
 func initListCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "list",
-		Short:   "Stats:Visitors List",
-		Long:    "This endpoint provides a list of visitors that have watched videos in your account.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\nRead all data\nRead all folder and media data\n```",
+		Short:   "List Visitors",
+		Long:    "This endpoint provides a list of visitors that have watched videos in your account.\n\n<!--- HIDE-MCP -->\n## Requires api token with one of the following permissions\n```\nRead detailed stats\n```\n<!--- /HIDE-MCP -->",
 		Example: "  wistia stats-visitors list",
 		RunE:    runListCmd,
 	}

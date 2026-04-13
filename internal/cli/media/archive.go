@@ -23,8 +23,8 @@ var archiveCmdMeta = []flagutil.FlagMeta{
 func initArchiveCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "archive",
-		Short:   "Medias Archive",
-		Long:    "This method accepts a list of up to 100 medias to archive per request. It processes requests asynchronously and will return a background_job_status object rather than the typical Media response object. Note that Livestream medias and Soapbox videos imported to Wistia before September 1, 2023 cannot be archived.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
+		Short:   "Archive Media",
+		Long:    "This method accepts a list of up to 100 medias to archive per request. It processes requests asynchronously and will return a background_job_status object rather than the typical Media response object. Note that webinar medias and Soapbox videos imported to Wistia before September 1, 2023 cannot be archived.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
 		Example: "  wistia media archive --hashed-ids '[]'",
 		RunE:    runArchiveCmd,
 	}

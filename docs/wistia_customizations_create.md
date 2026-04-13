@@ -1,6 +1,6 @@
 ## wistia customizations create
 
-Customizations Create
+Create Customizations
 
 ### Synopsis
 

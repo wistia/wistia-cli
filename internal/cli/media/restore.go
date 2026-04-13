@@ -17,16 +17,16 @@ import (
 
 var restoreCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "hashed-ids", FieldPath: "HashedIds", Kind: flagutil.FlagKindStringArray, Required: true, Description: "An array of the media hashed IDs to be restored. [required]"},
-	{FlagName: "project-id", Shorthand: "p", FieldPath: "ProjectID", Kind: flagutil.FlagKindString, Required: true, Description: "The hashed ID of the project to restore the medias to. [required]"},
+	{FlagName: "folder-id", Shorthand: "f", FieldPath: "FolderID", Kind: flagutil.FlagKindString, Required: true, Description: "The hashed ID of the folder to restore the medias to. [required]"},
 }
 
 // initRestoreCmd initializes the restore command.
 func initRestoreCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "restore",
-		Short:   "Media Restore",
-		Long:    "Restore archived medias to your account. This method accepts a list of up to 100 medias to restore per request. It processes requests asynchronously and will return a background_job_status object rather than the typical Media response object. Your account must have access to the Archiving feature to use this method.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
-		Example: "  wistia media restore --hashed-ids '[]' --project-id <id>",
+		Short:   "Restore Media",
+		Long:    "Restores archived medias to your account. This method accepts a list of up to 100 medias to restore per request. It processes requests asynchronously and will return a background_job_status object rather than the typical Media response object. Your account must have access to the Archiving feature to use this method.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
+		Example: "  wistia media restore --hashed-ids '[]' --folder-id <id>",
 		RunE:    runRestoreCmd,
 	}
 	flagutil.RegisterFlags(cmd, restoreCmdMeta)

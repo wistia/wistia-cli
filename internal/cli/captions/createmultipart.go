@@ -25,8 +25,8 @@ var createMultipartCmdMeta = []flagutil.FlagMeta{
 func initCreateMultipartCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "create-multipart",
-		Short:   "Captions Create",
-		Long:    "Adds captions to a specified video by providing an SRT file or its contents directly.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
+		Short:   "Create Captions",
+		Long:    "Adds captions to a specified media by providing an SRT file or its contents directly.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
 		Example: "  wistia captions create-multipart --media-hashed-id <id>",
 		RunE:    runCreateMultipartCmd,
 		Aliases: []string{"cm"},

@@ -1,17 +1,17 @@
 ## wistia stats-media get-engagement
 
-Stats:Media Engagement
+Show Media Engagement
 
 ### Synopsis
 
 Retrieve engagement data for a video. This endpoint provides engagement data for a specific video identified by its media-id.
 
+<!--- HIDE-MCP -->
 ## Requires api token with one of the following permissions
 ```
-Read, update & delete anything
-Read all data
-Read all folder and media data
+Read detailed stats
 ```
+<!--- /HIDE-MCP -->
 
 ```
 wistia stats-media get-engagement [flags]

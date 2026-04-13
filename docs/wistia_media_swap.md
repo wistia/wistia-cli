@@ -1,6 +1,6 @@
 ## wistia media swap
 
-Media Swap
+Swap Media
 
 ### Synopsis
 
