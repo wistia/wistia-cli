@@ -116,7 +116,7 @@ wistia completion powershell | Out-String | Invoke-Expression
 ### Example
 
 ```bash
-wistia media upload-form --bearer-auth 'Bearer test_token' --url 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' --low-priority true
+wistia upload-or-import-media post-form --bearer-auth 'Bearer test_token' --url 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' --low-priority true
 
 ```
 <!-- End CLI Example Usage [usage] -->
@@ -174,23 +174,10 @@ Configuration is stored in `~/.config/wistia/config.yaml`.
 <details open>
 <summary>Available commands</summary>
 
-### [media](docs/wistia_media.md)
+### [upload-or-import-media](docs/wistia_upload-or-import-media.md)
 
-* [`upload-form`](docs/wistia_media_upload-form.md) - Upload or Import Media
-* [`upload-multipart`](docs/wistia_media_upload-multipart.md) - Upload or Import Media
-* [`list`](docs/wistia_media_list.md) - List Media
-* [`get`](docs/wistia_media_get.md) - Show Media
-* [`update`](docs/wistia_media_update.md) - Update Media
-* [`delete`](docs/wistia_media_delete.md) - Delete Media
-* [`copy`](docs/wistia_media_copy.md) - Copy Media
-* [`swap`](docs/wistia_media_swap.md) - Swap Media
-* [`get-stats`](docs/wistia_media_get-stats.md) - Show Media Aggregated Stats
-* [`translate`](docs/wistia_media_translate.md) - Translate Media
-* [`post-medias-import-url`](docs/wistia_media_post-medias-import-url.md) - Import Media from URL
-* [`archive`](docs/wistia_media_archive.md) - Archive Media
-* [`move`](docs/wistia_media_move.md) - Move Media
-* [`restore`](docs/wistia_media_restore.md) - Restore Media
-* [`put-medias-copy`](docs/wistia_media_put-medias-copy.md) - Bulk Copy Media
+* [`post-form`](docs/wistia_upload-or-import-media_post-form.md) - Upload or Import Media
+* [`post-multipart`](docs/wistia_upload-or-import-media_post-multipart.md) - Upload or Import Media
 
 ### [media-extended-audio-descriptions](docs/wistia_media-extended-audio-descriptions.md)
 
@@ -202,33 +189,49 @@ Configuration is stored in `~/.config/wistia/config.yaml`.
 
 ### [folders](docs/wistia_folders.md)
 
-* [`get`](docs/wistia_folders_get.md) - List Folders
-* [`post`](docs/wistia_folders_post.md) - Create Folder
-* [`get-folders-id`](docs/wistia_folders_get-folders-id.md) - Show Folder
-* [`put-folders-id`](docs/wistia_folders_put-folders-id.md) - Update Folder
-* [`delete-folders-id`](docs/wistia_folders_delete-folders-id.md) - Delete Folder
-* [`post-folders-id-copy`](docs/wistia_folders_post-folders-id-copy.md) - Copy Folder
+* [`list`](docs/wistia_folders_list.md) - List Folders
+* [`create`](docs/wistia_folders_create.md) - Create Folder
+* [`get`](docs/wistia_folders_get.md) - Show Folder
+* [`update`](docs/wistia_folders_update.md) - Update Folder
+* [`delete`](docs/wistia_folders_delete.md) - Delete Folder
+* [`copy`](docs/wistia_folders_copy.md) - Copy Folder
 
 ### [subfolders](docs/wistia_subfolders.md)
 
-* [`get-folders-folder-id`](docs/wistia_subfolders_get-folders-folder-id.md) - List Subfolders
-* [`post-folders-folder-id`](docs/wistia_subfolders_post-folders-folder-id.md) - Create Subfolder
-* [`get-folders-folder-id-subfolders-subfolder-id`](docs/wistia_subfolders_get-folders-folder-id-subfolders-subfolder-id.md) - Show Subfolder
-* [`put-folders-folder-id-subfolders-subfolder-id`](docs/wistia_subfolders_put-folders-folder-id-subfolders-subfolder-id.md) - Update Subfolder
-* [`delete-folders-folder-id-subfolders-subfolder-id`](docs/wistia_subfolders_delete-folders-folder-id-subfolders-subfolder-id.md) - Delete Subfolder
-* [`delete-folders-folder-id-subfolders-bulk-delete`](docs/wistia_subfolders_delete-folders-folder-id-subfolders-bulk-delete.md) - Bulk Delete Subfolders
+* [`list`](docs/wistia_subfolders_list.md) - List Subfolders
+* [`create`](docs/wistia_subfolders_create.md) - Create Subfolder
+* [`get`](docs/wistia_subfolders_get.md) - Show Subfolder
+* [`update`](docs/wistia_subfolders_update.md) - Update Subfolder
+* [`delete`](docs/wistia_subfolders_delete.md) - Delete Subfolder
+* [`bulk-delete`](docs/wistia_subfolders_bulk-delete.md) - Bulk Delete Subfolders
 
 ### [folder-sharings](docs/wistia_folder-sharings.md)
 
-* [`get-folders-folder-id-sharings`](docs/wistia_folder-sharings_get-folders-folder-id-sharings.md) - List Folder Sharings
-* [`post-folders-folder-id-sharings`](docs/wistia_folder-sharings_post-folders-folder-id-sharings.md) - Create Folder Sharing
-* [`get-folders-folder-id-sharings-sharing-id`](docs/wistia_folder-sharings_get-folders-folder-id-sharings-sharing-id.md) - Show Folder Sharing
-* [`put-folders-folder-id-sharings-sharing-id`](docs/wistia_folder-sharings_put-folders-folder-id-sharings-sharing-id.md) - Update Folder Sharing
-* [`delete-folders-folder-id-sharings-sharing-id`](docs/wistia_folder-sharings_delete-folders-folder-id-sharings-sharing-id.md) - Delete Folder Sharing
+* [`list`](docs/wistia_folder-sharings_list.md) - List Folder Sharings
+* [`create`](docs/wistia_folder-sharings_create.md) - Create Folder Sharing
+* [`get`](docs/wistia_folder-sharings_get.md) - Show Folder Sharing
+* [`update`](docs/wistia_folder-sharings_update.md) - Update Folder Sharing
+* [`delete`](docs/wistia_folder-sharings_delete.md) - Delete Folder Sharing
+
+### [media](docs/wistia_media.md)
+
+* [`list`](docs/wistia_media_list.md) - List Media
+* [`get`](docs/wistia_media_get.md) - Show Media
+* [`update`](docs/wistia_media_update.md) - Update Media
+* [`delete`](docs/wistia_media_delete.md) - Delete Media
+* [`copy`](docs/wistia_media_copy.md) - Copy Media
+* [`swap`](docs/wistia_media_swap.md) - Swap Media
+* [`get-stats`](docs/wistia_media_get-stats.md) - Show Media Aggregated Stats
+* [`translate`](docs/wistia_media_translate.md) - Translate Media
+* [`import-url`](docs/wistia_media_import-url.md) - Import Media from URL
+* [`archive`](docs/wistia_media_archive.md) - Archive Media
+* [`move`](docs/wistia_media_move.md) - Move Media
+* [`restore`](docs/wistia_media_restore.md) - Restore Media
+* [`bulk-copy`](docs/wistia_media_bulk-copy.md) - Bulk Copy Media
 
 ### [taggings](docs/wistia_taggings.md)
 
-* [`post-taggings-bulk-create`](docs/wistia_taggings_post-taggings-bulk-create.md) - Bulk Tag Media
+* [`bulk-create`](docs/wistia_taggings_bulk-create.md) - Bulk Tag Media
 
 ### [account](docs/wistia_account.md)
 
@@ -258,7 +261,7 @@ Configuration is stored in `~/.config/wistia/config.yaml`.
 * [`list`](docs/wistia_captions_list.md) - List Captions by Media
 * [`create`](docs/wistia_captions_create.md) - Create Captions
 * [`create-multipart`](docs/wistia_captions_create-multipart.md) - Create Captions
-* [`get`](docs/wistia_captions_get.md) - List Captions
+* [`list-all`](docs/wistia_captions_list-all.md) - List Captions
 * [`purchase`](docs/wistia_captions_purchase.md) - Purchase Captions
 * [`get`](docs/wistia_captions_get.md) - Show Captions
 * [`update`](docs/wistia_captions_update.md) - Update Captions
@@ -289,10 +292,10 @@ Configuration is stored in `~/.config/wistia/config.yaml`.
 ### [channels](docs/wistia_channels.md)
 
 * [`list`](docs/wistia_channels_list.md) - List Channels
-* [`post`](docs/wistia_channels_post.md) - Create Channel
+* [`create`](docs/wistia_channels_create.md) - Create Channel
 * [`get`](docs/wistia_channels_get.md) - Show Channel
-* [`put-channels-channel-hashed-id`](docs/wistia_channels_put-channels-channel-hashed-id.md) - Update Channel
-* [`delete-channels-channel-hashed-id`](docs/wistia_channels_delete-channels-channel-hashed-id.md) - Delete Channel
+* [`update`](docs/wistia_channels_update.md) - Update Channel
+* [`delete`](docs/wistia_channels_delete.md) - Delete Channel
 
 #### [channels-channel-episodes](docs/wistia_channels_channels-channel-episodes.md)
 
@@ -303,10 +306,10 @@ Configuration is stored in `~/.config/wistia/config.yaml`.
 * [`get`](docs/wistia_channel-episodes_get.md) - Show Channel Episode
 * [`create`](docs/wistia_channel-episodes_create.md) - Create Channel Episode
 * [`list`](docs/wistia_channel-episodes_list.md) - List Channel Episodes
-* [`put-channel-episodes-channel-episode-hashed-id`](docs/wistia_channel-episodes_put-channel-episodes-channel-episode-hashed-id.md) - Update Channel Episode
-* [`delete-channel-episodes-channel-episode-hashed-id`](docs/wistia_channel-episodes_delete-channel-episodes-channel-episode-hashed-id.md) - Delete Channel Episode
-* [`put-channel-episodes-channel-episode-hashed-id-publish`](docs/wistia_channel-episodes_put-channel-episodes-channel-episode-hashed-id-publish.md) - Publish Channel Episode
-* [`put-channel-episodes-channel-episode-hashed-id-unpublish`](docs/wistia_channel-episodes_put-channel-episodes-channel-episode-hashed-id-unpublish.md) - Un-publish Channel Episode
+* [`update`](docs/wistia_channel-episodes_update.md) - Update Channel Episode
+* [`delete`](docs/wistia_channel-episodes_delete.md) - Delete Channel Episode
+* [`publish`](docs/wistia_channel-episodes_publish.md) - Publish Channel Episode
+* [`unpublish`](docs/wistia_channel-episodes_unpublish.md) - Un-publish Channel Episode
 
 ### [expiring-access-tokens](docs/wistia_expiring-access-tokens.md)
 
@@ -314,15 +317,24 @@ Configuration is stored in `~/.config/wistia/config.yaml`.
 
 ### [webinars](docs/wistia_webinars.md)
 
-* [`get`](docs/wistia_webinars_get.md) - List Webinars
-* [`post`](docs/wistia_webinars_post.md) - Create Webinar
-* [`get-webinars-id`](docs/wistia_webinars_get-webinars-id.md) - Show Webinar
-* [`put-webinars-id`](docs/wistia_webinars_put-webinars-id.md) - Update Webinar
-* [`delete-webinars-id`](docs/wistia_webinars_delete-webinars-id.md) - Delete Webinar
+* [`list`](docs/wistia_webinars_list.md) - List Webinars
+* [`create`](docs/wistia_webinars_create.md) - Create Webinar
+* [`get`](docs/wistia_webinars_get.md) - Show Webinar
+* [`update`](docs/wistia_webinars_update.md) - Update Webinar
+* [`delete`](docs/wistia_webinars_delete.md) - Delete Webinar
 
 ### [webinar-registrations](docs/wistia_webinar-registrations.md)
 
-* [`post-webinars-webinar-id-registrations`](docs/wistia_webinar-registrations_post-webinars-webinar-id-registrations.md) - Create Webinar Registration
+* [`get-webinars-webinar-id-registrations`](docs/wistia_webinar-registrations_get-webinars-webinar-id-registrations.md) - List Webinar Registrations
+* [`create`](docs/wistia_webinar-registrations_create.md) - Create Webinar Registration
+
+### [remix](docs/wistia_remix.md)
+
+* [`post-remixes`](docs/wistia_remix_post-remixes.md) - Create Remix
+* [`get-remixes-remix-hashed-id`](docs/wistia_remix_get-remixes-remix-hashed-id.md) - Get Remix
+* [`post-remixes-remix-hashed-id-continue`](docs/wistia_remix_post-remixes-remix-hashed-id-continue.md) - Continue Remix
+* [`post-remixes-remix-hashed-id-export`](docs/wistia_remix_post-remixes-remix-hashed-id-export.md) - Export Remix
+* [`get-remix-account-status`](docs/wistia_remix_get-remix-account-status.md) - Get Remix Account Status
 
 ### [stats-account](docs/wistia_stats-account.md)
 
@@ -351,20 +363,20 @@ Configuration is stored in `~/.config/wistia/config.yaml`.
 
 ### [analytics-media](docs/wistia_analytics-media.md)
 
-* [`get-analytics-medias-media-id`](docs/wistia_analytics-media_get-analytics-medias-media-id.md) - Show Media Analytics
-* [`get-analytics-medias-media-id-timeseries`](docs/wistia_analytics-media_get-analytics-medias-media-id-timeseries.md) - Show Media Analytics Timeseries
-* [`get-analytics-medias-media-id-embed-locations`](docs/wistia_analytics-media_get-analytics-medias-media-id-embed-locations.md) - Show Media Embed Locations
-* [`get-analytics-medias-media-id-traffic`](docs/wistia_analytics-media_get-analytics-medias-media-id-traffic.md) - Show Media Traffic Breakdown
-* [`get-analytics-medias-media-id-conversions`](docs/wistia_analytics-media_get-analytics-medias-media-id-conversions.md) - Show Media Form Conversions
-* [`get-analytics-medias-media-id-languages`](docs/wistia_analytics-media_get-analytics-medias-media-id-languages.md) - Show Media Languages
+* [`get`](docs/wistia_analytics-media_get.md) - Show Media Analytics
+* [`get-timeseries`](docs/wistia_analytics-media_get-timeseries.md) - Show Media Analytics Timeseries
+* [`get-embed-locations`](docs/wistia_analytics-media_get-embed-locations.md) - Show Media Embed Locations
+* [`get-traffic`](docs/wistia_analytics-media_get-traffic.md) - Show Media Traffic Breakdown
+* [`get-conversions`](docs/wistia_analytics-media_get-conversions.md) - Show Media Form Conversions
+* [`get-languages`](docs/wistia_analytics-media_get-languages.md) - Show Media Languages
 
 ### [analytics-webinar](docs/wistia_analytics-webinar.md)
 
-* [`get-analytics-webinars-webinar-id`](docs/wistia_analytics-webinar_get-analytics-webinars-webinar-id.md) - Show Webinar Analytics
-* [`get-analytics-webinars-webinar-id-registration`](docs/wistia_analytics-webinar_get-analytics-webinars-webinar-id-registration.md) - Show Webinar Registration Timeseries
-* [`get-analytics-webinars-webinar-id-traffic`](docs/wistia_analytics-webinar_get-analytics-webinars-webinar-id-traffic.md) - Show Webinar Traffic Breakdown
-* [`get-analytics-webinars-webinar-id-audience`](docs/wistia_analytics-webinar_get-analytics-webinars-webinar-id-audience.md) - Show Webinar Audience
-* [`get-analytics-webinars-webinar-id-histograms`](docs/wistia_analytics-webinar_get-analytics-webinars-webinar-id-histograms.md) - Show Webinar Histograms
+* [`get`](docs/wistia_analytics-webinar_get.md) - Show Webinar Analytics
+* [`get-registration`](docs/wistia_analytics-webinar_get-registration.md) - Show Webinar Registration Timeseries
+* [`get-traffic`](docs/wistia_analytics-webinar_get-traffic.md) - Show Webinar Traffic Breakdown
+* [`get-audience`](docs/wistia_analytics-webinar_get-audience.md) - Show Webinar Audience
+* [`get-histograms`](docs/wistia_analytics-webinar_get-histograms.md) - Show Webinar Histograms
 
 </details>
 <!-- End Available Commands [operations] -->

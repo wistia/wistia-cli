@@ -22,27 +22,27 @@ func InitAnalyticsMediaRoot(parent *cobra.Command) error {
 		Aliases: []string{"am"},
 	}
 
-	if err := initGetAnalyticsMediasMediaIdCmd(AnalyticsMediaCmd); err != nil {
+	if err := initGetCmd(AnalyticsMediaCmd); err != nil {
 		return err
 	}
 
-	if err := initGetAnalyticsMediasMediaIdTimeseriesCmd(AnalyticsMediaCmd); err != nil {
+	if err := initGetTimeseriesCmd(AnalyticsMediaCmd); err != nil {
 		return err
 	}
 
-	if err := initGetAnalyticsMediasMediaIdEmbedLocationsCmd(AnalyticsMediaCmd); err != nil {
+	if err := initGetEmbedLocationsCmd(AnalyticsMediaCmd); err != nil {
 		return err
 	}
 
-	if err := initGetAnalyticsMediasMediaIdTrafficCmd(AnalyticsMediaCmd); err != nil {
+	if err := initGetTrafficCmd(AnalyticsMediaCmd); err != nil {
 		return err
 	}
 
-	if err := initGetAnalyticsMediasMediaIdConversionsCmd(AnalyticsMediaCmd); err != nil {
+	if err := initGetConversionsCmd(AnalyticsMediaCmd); err != nil {
 		return err
 	}
 
-	if err := initGetAnalyticsMediasMediaIdLanguagesCmd(AnalyticsMediaCmd); err != nil {
+	if err := initGetLanguagesCmd(AnalyticsMediaCmd); err != nil {
 		return err
 	}
 

@@ -74,9 +74,9 @@ func (e *GetAnalyticsMediasMediaIDEmbedLocationsSortDirection) UnmarshalJSON(dat
 type GetAnalyticsMediasMediaIDEmbedLocationsRequest struct {
 	// The hashed ID of the video.
 	MediaID string `pathParam:"style=simple,explode=false,name=mediaId"`
-	// Start date for the analytics period in ISO 8601 format (YYYY-MM-DD).
+	// Start date for the analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date.
 	StartDate types.Date `queryParam:"style=form,explode=true,name=start_date"`
-	// End date for the analytics period in ISO 8601 format (YYYY-MM-DD).
+	// End date for the analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date.
 	EndDate types.Date `queryParam:"style=form,explode=true,name=end_date"`
 	// The metric to sort embed locations by.
 	SortBy *GetAnalyticsMediasMediaIDEmbedLocationsSortBy `default:"plays" queryParam:"style=form,explode=true,name=sort_by"`
@@ -161,8 +161,12 @@ type GetAnalyticsMediasMediaIDEmbedLocationsResponseBody struct {
 	PageTitle *string `json:"page_title,omitzero"`
 	// The number of video loads from this location.
 	Loads *int64 `json:"loads,omitzero"`
+	// The number of unique video loads from this location (one per visitor session).
+	UniqueLoads *int64 `json:"unique_loads,omitzero"`
 	// The number of video plays from this location.
 	Plays *int64 `json:"plays,omitzero"`
+	// The number of unique video plays from this location (one per visitor session).
+	UniquePlays *int64 `json:"unique_plays,omitzero"`
 	// The play rate from this location (between 0 and 1).
 	PlayRate *float32 `json:"play_rate,omitzero"`
 	// Total time spent watching from this location in seconds.
@@ -210,11 +214,25 @@ func (g *GetAnalyticsMediasMediaIDEmbedLocationsResponseBody) GetLoads() *int64 
 	return g.Loads
 }
 
+func (g *GetAnalyticsMediasMediaIDEmbedLocationsResponseBody) GetUniqueLoads() *int64 {
+	if g == nil {
+		return nil
+	}
+	return g.UniqueLoads
+}
+
 func (g *GetAnalyticsMediasMediaIDEmbedLocationsResponseBody) GetPlays() *int64 {
 	if g == nil {
 		return nil
 	}
 	return g.Plays
+}
+
+func (g *GetAnalyticsMediasMediaIDEmbedLocationsResponseBody) GetUniquePlays() *int64 {
+	if g == nil {
+		return nil
+	}
+	return g.UniquePlays
 }
 
 func (g *GetAnalyticsMediasMediaIDEmbedLocationsResponseBody) GetPlayRate() *float32 {

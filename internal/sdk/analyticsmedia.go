@@ -30,7 +30,7 @@ func newAnalyticsMedia(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks
 	}
 }
 
-// GetAnalyticsMediasMediaID - Show Media Analytics
+// Get - Show Media Analytics
 // Retrieve aggregate analytics for a video over a date range. This endpoint provides
 // Bottler-powered analytics including plays, loads, engagement rate, play rate, and
 // conversion metrics.
@@ -43,7 +43,7 @@ func newAnalyticsMedia(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks
 // Read detailed stats
 // ```
 // <!--- /HIDE-MCP -->
-func (s *AnalyticsMedia) GetAnalyticsMediasMediaID(ctx context.Context, request operations.GetAnalyticsMediasMediaIDRequest, opts ...operations.Option) (*operations.GetAnalyticsMediasMediaIDResponse, error) {
+func (s *AnalyticsMedia) Get(ctx context.Context, request operations.GetAnalyticsMediasMediaIDRequest, opts ...operations.Option) (*operations.GetAnalyticsMediasMediaIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,
@@ -318,7 +318,7 @@ func (s *AnalyticsMedia) GetAnalyticsMediasMediaID(ctx context.Context, request 
 
 }
 
-// GetAnalyticsMediasMediaIDTimeseries - Show Media Analytics Timeseries
+// GetTimeseries - Show Media Analytics Timeseries
 // Retrieve analytics timeseries data for a video over a date range with configurable
 // granularity. Returns an array of timestamped metric buckets.
 //
@@ -330,7 +330,7 @@ func (s *AnalyticsMedia) GetAnalyticsMediasMediaID(ctx context.Context, request 
 // Read detailed stats
 // ```
 // <!--- /HIDE-MCP -->
-func (s *AnalyticsMedia) GetAnalyticsMediasMediaIDTimeseries(ctx context.Context, request operations.GetAnalyticsMediasMediaIDTimeseriesRequest, opts ...operations.Option) (*operations.GetAnalyticsMediasMediaIDTimeseriesResponse, error) {
+func (s *AnalyticsMedia) GetTimeseries(ctx context.Context, request operations.GetAnalyticsMediasMediaIDTimeseriesRequest, opts ...operations.Option) (*operations.GetAnalyticsMediasMediaIDTimeseriesResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,
@@ -605,7 +605,7 @@ func (s *AnalyticsMedia) GetAnalyticsMediasMediaIDTimeseries(ctx context.Context
 
 }
 
-// GetAnalyticsMediasMediaIDEmbedLocations - Show Media Embed Locations
+// GetEmbedLocations - Show Media Embed Locations
 // Retrieve embed location analytics for a video. Returns a list of pages where the
 // video is embedded, ranked by the chosen metric.
 //
@@ -617,7 +617,7 @@ func (s *AnalyticsMedia) GetAnalyticsMediasMediaIDTimeseries(ctx context.Context
 // Read detailed stats
 // ```
 // <!--- /HIDE-MCP -->
-func (s *AnalyticsMedia) GetAnalyticsMediasMediaIDEmbedLocations(ctx context.Context, request operations.GetAnalyticsMediasMediaIDEmbedLocationsRequest, opts ...operations.Option) (*operations.GetAnalyticsMediasMediaIDEmbedLocationsResponse, error) {
+func (s *AnalyticsMedia) GetEmbedLocations(ctx context.Context, request operations.GetAnalyticsMediasMediaIDEmbedLocationsRequest, opts ...operations.Option) (*operations.GetAnalyticsMediasMediaIDEmbedLocationsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,
@@ -892,7 +892,7 @@ func (s *AnalyticsMedia) GetAnalyticsMediasMediaIDEmbedLocations(ctx context.Con
 
 }
 
-// GetAnalyticsMediasMediaIDTraffic - Show Media Traffic Breakdown
+// GetTraffic - Show Media Traffic Breakdown
 // Retrieve traffic breakdown analytics for a video, grouped by a specified dimension
 // such as UTM campaign, UTM source, UTM medium, referrer domain, or viewer screen size.
 //
@@ -904,7 +904,7 @@ func (s *AnalyticsMedia) GetAnalyticsMediasMediaIDEmbedLocations(ctx context.Con
 // Read detailed stats
 // ```
 // <!--- /HIDE-MCP -->
-func (s *AnalyticsMedia) GetAnalyticsMediasMediaIDTraffic(ctx context.Context, request operations.GetAnalyticsMediasMediaIDTrafficRequest, opts ...operations.Option) (*operations.GetAnalyticsMediasMediaIDTrafficResponse, error) {
+func (s *AnalyticsMedia) GetTraffic(ctx context.Context, request operations.GetAnalyticsMediasMediaIDTrafficRequest, opts ...operations.Option) (*operations.GetAnalyticsMediasMediaIDTrafficResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,
@@ -1179,7 +1179,7 @@ func (s *AnalyticsMedia) GetAnalyticsMediasMediaIDTraffic(ctx context.Context, r
 
 }
 
-// GetAnalyticsMediasMediaIDConversions - Show Media Form Conversions
+// GetConversions - Show Media Form Conversions
 // Retrieve form conversion data for a video. Returns a paginated list of form
 // submissions with visitor details and timestamps.
 //
@@ -1191,7 +1191,7 @@ func (s *AnalyticsMedia) GetAnalyticsMediasMediaIDTraffic(ctx context.Context, r
 // Read detailed stats
 // ```
 // <!--- /HIDE-MCP -->
-func (s *AnalyticsMedia) GetAnalyticsMediasMediaIDConversions(ctx context.Context, request operations.GetAnalyticsMediasMediaIDConversionsRequest, opts ...operations.Option) (*operations.GetAnalyticsMediasMediaIDConversionsResponse, error) {
+func (s *AnalyticsMedia) GetConversions(ctx context.Context, request operations.GetAnalyticsMediasMediaIDConversionsRequest, opts ...operations.Option) (*operations.GetAnalyticsMediasMediaIDConversionsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,
@@ -1466,7 +1466,7 @@ func (s *AnalyticsMedia) GetAnalyticsMediasMediaIDConversions(ctx context.Contex
 
 }
 
-// GetAnalyticsMediasMediaIDLanguages - Show Media Languages
+// GetLanguages - Show Media Languages
 // Retrieve language analytics for a video. Returns a breakdown of plays by
 // viewer browser language, sorted by number of plays in descending order.
 //
@@ -1478,7 +1478,7 @@ func (s *AnalyticsMedia) GetAnalyticsMediasMediaIDConversions(ctx context.Contex
 // Read detailed stats
 // ```
 // <!--- /HIDE-MCP -->
-func (s *AnalyticsMedia) GetAnalyticsMediasMediaIDLanguages(ctx context.Context, request operations.GetAnalyticsMediasMediaIDLanguagesRequest, opts ...operations.Option) (*operations.GetAnalyticsMediasMediaIDLanguagesResponse, error) {
+func (s *AnalyticsMedia) GetLanguages(ctx context.Context, request operations.GetAnalyticsMediasMediaIDLanguagesRequest, opts ...operations.Option) (*operations.GetAnalyticsMediasMediaIDLanguagesResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,

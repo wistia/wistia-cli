@@ -31,7 +31,7 @@ func newTaggings(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks *hook
 	}
 }
 
-// PostTaggingsBulkCreate - Bulk Tag Media
+// BulkCreate - Bulk Tag Media
 // This method accepts a list of medias to tag. It processes requests asynchronously and will return a background_job_status object rather than the typical Media response object.
 //
 // The tags will be added to the existing tags on each media file, not replaced.
@@ -40,7 +40,7 @@ func newTaggings(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks *hook
 // ```
 // Read, update & delete anything
 // ```
-func (s *Taggings) PostTaggingsBulkCreate(ctx context.Context, request operations.PostTaggingsBulkCreateRequest, opts ...operations.Option) (*operations.PostTaggingsBulkCreateResponse, error) {
+func (s *Taggings) BulkCreate(ctx context.Context, request operations.PostTaggingsBulkCreateRequest, opts ...operations.Option) (*operations.PostTaggingsBulkCreateResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,

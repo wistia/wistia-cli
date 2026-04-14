@@ -4,12 +4,10 @@ Show Subfolder
 
 ### Synopsis
 
-Retrieve detailed information about a specific subfolder, including all media files contained within it.
+Retrieves detailed information about a specific subfolder, including all media contained within it.
 
 ## Requires api token with one of the following permissions
 ```
-Read, update & delete anything
-Read all data
 Read all folder and media data
 ```
 
@@ -20,14 +18,14 @@ wistia subfolders get [flags]
 ### Examples
 
 ```
-  wistia subfolders get --project-id abc123def4 --subfolder-id xyz789ghi0
+  wistia subfolders get --folder-id abc123def4 --subfolder-id xyz789ghi0
 ```
 
 ### Options
 
 ```
+  -f, --folder-id string      The hashed ID of the folder [required]
   -h, --help                  help for get
-  -p, --project-id string     The hashed ID of the project [required]
   -s, --subfolder-id string   The hashed ID of the subfolder [required]
 ```
 

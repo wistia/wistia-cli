@@ -12,7 +12,7 @@ import (
 type GetMediasMediaHashedIDCaptionsLanguageCodeRequest struct {
 	// The hashed ID of the media from which captions are to be retrieved.
 	MediaHashedID string `pathParam:"style=simple,explode=false,name=mediaHashedId"`
-	// The language code of the captions to be retrieved.
+	// The 3-character ISO 639-2 language code of the captions to be retrieved (e.g., `eng`, `fra`, `spa`). Some languages use extended IETF subtags (e.g., `zh-Hant`).
 	LanguageCode string `pathParam:"style=simple,explode=false,name=languageCode"`
 }
 

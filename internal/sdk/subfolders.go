@@ -30,14 +30,14 @@ func newSubfolders(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks *ho
 	}
 }
 
-// GetFoldersFolderIDSubfolders - List Subfolders
+// List Subfolders
 // Lists subfolders in a specific folder.
 //
 // ## Requires api token with one of the following permissions
 // ```
 // Read all folder and media data
 // ```
-func (s *Subfolders) GetFoldersFolderIDSubfolders(ctx context.Context, request operations.GetFoldersFolderIDSubfoldersRequest, opts ...operations.Option) (*operations.GetFoldersFolderIDSubfoldersResponse, error) {
+func (s *Subfolders) List(ctx context.Context, request operations.GetFoldersFolderIDSubfoldersRequest, opts ...operations.Option) (*operations.GetFoldersFolderIDSubfoldersResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,
@@ -285,14 +285,14 @@ func (s *Subfolders) GetFoldersFolderIDSubfolders(ctx context.Context, request o
 
 }
 
-// PostFoldersFolderIDSubfolders - Create Subfolder
+// Create Subfolder
 // Creates a new subfolder within a folder. The subfolder will be created with the next available position.
 //
 // ## Requires api token with one of the following permissions
 // ```
 // Read, update & delete anything
 // ```
-func (s *Subfolders) PostFoldersFolderIDSubfolders(ctx context.Context, request operations.PostFoldersFolderIDSubfoldersRequest, opts ...operations.Option) (*operations.PostFoldersFolderIDSubfoldersResponse, error) {
+func (s *Subfolders) Create(ctx context.Context, request operations.PostFoldersFolderIDSubfoldersRequest, opts ...operations.Option) (*operations.PostFoldersFolderIDSubfoldersResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,
@@ -543,14 +543,14 @@ func (s *Subfolders) PostFoldersFolderIDSubfolders(ctx context.Context, request 
 
 }
 
-// GetFoldersFolderIDSubfoldersSubfolderID - Show Subfolder
+// Get - Show Subfolder
 // Retrieves detailed information about a specific subfolder, including all media contained within it.
 //
 // ## Requires api token with one of the following permissions
 // ```
 // Read all folder and media data
 // ```
-func (s *Subfolders) GetFoldersFolderIDSubfoldersSubfolderID(ctx context.Context, request operations.GetFoldersFolderIDSubfoldersSubfolderIDRequest, opts ...operations.Option) (*operations.GetFoldersFolderIDSubfoldersSubfolderIDResponse, error) {
+func (s *Subfolders) Get(ctx context.Context, request operations.GetFoldersFolderIDSubfoldersSubfolderIDRequest, opts ...operations.Option) (*operations.GetFoldersFolderIDSubfoldersSubfolderIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,
@@ -773,14 +773,14 @@ func (s *Subfolders) GetFoldersFolderIDSubfoldersSubfolderID(ctx context.Context
 
 }
 
-// PutFoldersFolderIDSubfoldersSubfolderID - Update Subfolder
+// Update Subfolder
 // Updates a subfolder's name and/or description.
 //
 // ## Requires api token with one of the following permissions
 // ```
 // Read, update & delete anything
 // ```
-func (s *Subfolders) PutFoldersFolderIDSubfoldersSubfolderID(ctx context.Context, request operations.PutFoldersFolderIDSubfoldersSubfolderIDRequest, opts ...operations.Option) (*operations.PutFoldersFolderIDSubfoldersSubfolderIDResponse, error) {
+func (s *Subfolders) Update(ctx context.Context, request operations.PutFoldersFolderIDSubfoldersSubfolderIDRequest, opts ...operations.Option) (*operations.PutFoldersFolderIDSubfoldersSubfolderIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,
@@ -1006,7 +1006,7 @@ func (s *Subfolders) PutFoldersFolderIDSubfoldersSubfolderID(ctx context.Context
 
 }
 
-// DeleteFoldersFolderIDSubfoldersSubfolderID - Delete Subfolder
+// Delete Subfolder
 // Deletes a subfolder from a folder. All media files in the subfolder will be moved to the folder's root level.
 //
 // The subfolder is soft-deleted and may be recoverable through other means, but is no longer accessible via the API.
@@ -1015,7 +1015,7 @@ func (s *Subfolders) PutFoldersFolderIDSubfoldersSubfolderID(ctx context.Context
 // ```
 // Read, update & delete anything
 // ```
-func (s *Subfolders) DeleteFoldersFolderIDSubfoldersSubfolderID(ctx context.Context, request operations.DeleteFoldersFolderIDSubfoldersSubfolderIDRequest, opts ...operations.Option) (*operations.DeleteFoldersFolderIDSubfoldersSubfolderIDResponse, error) {
+func (s *Subfolders) Delete(ctx context.Context, request operations.DeleteFoldersFolderIDSubfoldersSubfolderIDRequest, opts ...operations.Option) (*operations.DeleteFoldersFolderIDSubfoldersSubfolderIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,
@@ -1234,14 +1234,14 @@ func (s *Subfolders) DeleteFoldersFolderIDSubfoldersSubfolderID(ctx context.Cont
 
 }
 
-// DeleteFoldersFolderIDSubfoldersBulkDelete - Bulk Delete Subfolders
+// BulkDelete - Bulk Delete Subfolders
 // This method accepts a list of subfolders to delete. It processes requests asynchronously and will return a background_job_status object. All media files in each deleted subfolder will be moved to the folder's root level.
 //
 // ## Requires api token with one of the following permissions
 // ```
 // Read, update & delete anything
 // ```
-func (s *Subfolders) DeleteFoldersFolderIDSubfoldersBulkDelete(ctx context.Context, request operations.DeleteFoldersFolderIDSubfoldersBulkDeleteRequest, opts ...operations.Option) (*operations.DeleteFoldersFolderIDSubfoldersBulkDeleteResponse, error) {
+func (s *Subfolders) BulkDelete(ctx context.Context, request operations.DeleteFoldersFolderIDSubfoldersBulkDeleteRequest, opts ...operations.Option) (*operations.DeleteFoldersFolderIDSubfoldersBulkDeleteResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,

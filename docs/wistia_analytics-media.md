@@ -38,9 +38,9 @@ wistia analytics-media [flags]
 ### SEE ALSO
 
 * [wistia](wistia.md)	 - Data API: Wistia Data API
-* [wistia analytics-media get-analytics-medias-media-id](wistia_analytics-media_get-analytics-medias-media-id.md)	 - Show Media Analytics
-* [wistia analytics-media get-analytics-medias-media-id-conversions](wistia_analytics-media_get-analytics-medias-media-id-conversions.md)	 - Show Media Form Conversions
-* [wistia analytics-media get-analytics-medias-media-id-embed-locations](wistia_analytics-media_get-analytics-medias-media-id-embed-locations.md)	 - Show Media Embed Locations
-* [wistia analytics-media get-analytics-medias-media-id-languages](wistia_analytics-media_get-analytics-medias-media-id-languages.md)	 - Show Media Languages
-* [wistia analytics-media get-analytics-medias-media-id-timeseries](wistia_analytics-media_get-analytics-medias-media-id-timeseries.md)	 - Show Media Analytics Timeseries
-* [wistia analytics-media get-analytics-medias-media-id-traffic](wistia_analytics-media_get-analytics-medias-media-id-traffic.md)	 - Show Media Traffic Breakdown
+* [wistia analytics-media get](wistia_analytics-media_get.md)	 - Show Media Analytics
+* [wistia analytics-media get-conversions](wistia_analytics-media_get-conversions.md)	 - Show Media Form Conversions
+* [wistia analytics-media get-embed-locations](wistia_analytics-media_get-embed-locations.md)	 - Show Media Embed Locations
+* [wistia analytics-media get-languages](wistia_analytics-media_get-languages.md)	 - Show Media Languages
+* [wistia analytics-media get-timeseries](wistia_analytics-media_get-timeseries.md)	 - Show Media Analytics Timeseries
+* [wistia analytics-media get-traffic](wistia_analytics-media_get-traffic.md)	 - Show Media Traffic Breakdown

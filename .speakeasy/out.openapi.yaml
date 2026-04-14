@@ -1,7 +1,7 @@
 openapi: 3.1.1
 info:
   title: Data API
-  version: 2026.03.0
+  version: edge-version
   description: Wistia Data API
 paths:
   /:
@@ -23,7 +23,7 @@ paths:
                     - url
                   properties:
                     url:
-                      description: The web location of the media file to import.
+                      description: The publicly accessible web location of the media file to import.
                       type: string
                       format: uri
                       examples:
@@ -111,8 +111,6 @@ paths:
         - Upload or Import Media
       security:
         - BearerAuth: []
-      x-speakeasy-group: media
-      x-speakeasy-name-override: upload
     servers:
       - url: https://upload.wistia.com
   /media_extended_audio_descriptions:
@@ -766,6 +764,9 @@ paths:
                     examples:
                       - Internal server error
       x-wistia-mcp-tool-name: order-media-extended-audio-description
+      x-wistia-mcp-annotations:
+        open_world_hint: true
+        destructive_hint: true
       x-wistia-mcp-description: >
         Orders an extended audio description for a media. The request will charge the credit card on the account when the order is ready. Only accounts on paid plans with the order_audio_descriptions feature can use this endpoint.
 
@@ -1206,6 +1207,8 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: folders
+      x-speakeasy-name-override: list
       x-wistia-mcp-tool-name: get-folders
       x-wistia-mcp-description: |
         Gets folders (previously called projects) belonging to the account.
@@ -1422,6 +1425,17 @@ paths:
                     type: string
                     examples:
                       - Invalid credentials.
+        "403":
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                      - Webinars are not available on your current plan
         "500":
           description: Internal server error
           content:
@@ -1433,6 +1447,8 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: folders
+      x-speakeasy-name-override: create
       x-wistia-mcp-tool-name: create-folder
       x-wistia-mcp-description: >
         Creates a new folder (previously called project). If the folder is created successfully the Location HTTP header will point to the new folder.
@@ -1655,6 +1671,8 @@ paths:
                     examples:
                       - Internal server error
       x-wistia-mcp-ignore: true
+      x-speakeasy-group: folders
+      x-speakeasy-name-override: get
     put:
       summary: Update Folder
       description: |
@@ -1915,6 +1933,8 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: folders
+      x-speakeasy-name-override: update
       x-wistia-mcp-tool-name: update-folder
       x-wistia-mcp-description: |
         Updates a folder (previously called project)
@@ -2145,6 +2165,8 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: folders
+      x-speakeasy-name-override: delete
       x-wistia-mcp-tool-name: delete-folder
       x-wistia-mcp-description: |
         Deletes a folder (previously called project)
@@ -2248,6 +2270,8 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: folders
+      x-speakeasy-name-override: copy
       x-wistia-mcp-tool-name: copy-folder
       x-wistia-mcp-description: >
         This copies a folder (previously called project) and all its media and subfolders asynchronously in a background job.
@@ -2479,6 +2503,8 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: subfolders
+      x-speakeasy-name-override: list
       x-wistia-mcp-tool-name: get-subfolders
       x-wistia-mcp-description: |
         Lists subfolders in a specific folder. You can use the hashed_ids
@@ -2638,6 +2664,8 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: subfolders
+      x-speakeasy-name-override: create
       x-wistia-mcp-tool-name: create-subfolder
       x-wistia-mcp-description: >
         Creates a new subfolder within a folder. The subfolder will be created with the next available position.
@@ -2865,6 +2893,8 @@ paths:
                     examples:
                       - Internal server error
       x-wistia-mcp-ignore: true
+      x-speakeasy-group: subfolders
+      x-speakeasy-name-override: get
     put:
       summary: Update Subfolder
       description: |
@@ -3014,6 +3044,8 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: subfolders
+      x-speakeasy-name-override: update
       x-wistia-mcp-tool-name: update-subfolder
       x-wistia-mcp-description: |
         Updates a subfolder's name and/or description.
@@ -3151,6 +3183,8 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: subfolders
+      x-speakeasy-name-override: delete
       x-wistia-mcp-tool-name: delete-subfolder
       x-wistia-mcp-description: >
         Deletes a subfolder from a folder. All media files in the subfolder will be moved to the folder's root level.
@@ -3268,6 +3302,8 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: subfolders
+      x-speakeasy-name-override: bulkDelete
       x-wistia-mcp-tool-name: bulk-delete-subfolders
       x-wistia-mcp-description: >
         This method accepts a list of subfolders to delete. It processes requests asynchronously and will return a background_job_status object. All media files in each deleted subfolder will be moved to the folder's root level.
@@ -3483,6 +3519,8 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: folderSharings
+      x-speakeasy-name-override: list
       x-wistia-mcp-tool-name: get-folder-sharings
       x-wistia-mcp-description: |
         Gets the sharings of contacts and contact groups on a folder.
@@ -3716,6 +3754,8 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: folderSharings
+      x-speakeasy-name-override: create
       x-wistia-mcp-tool-name: create-folder-sharing
       x-wistia-mcp-description: >
         Creates a new sharing object for a folder by specifying the email of the person to share with and other optional parameters.
@@ -3864,6 +3904,8 @@ paths:
                     examples:
                       - Internal server error
       x-wistia-mcp-ignore: true
+      x-speakeasy-group: folderSharings
+      x-speakeasy-name-override: get
     put:
       summary: Update Folder Sharing
       description: |
@@ -4027,6 +4069,8 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: folderSharings
+      x-speakeasy-name-override: update
       x-wistia-mcp-tool-name: update-folder-sharing
       x-wistia-mcp-description: |
         Updates a sharing on a folder.
@@ -4172,6 +4216,8 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: folderSharings
+      x-speakeasy-name-override: delete
       x-wistia-mcp-tool-name: delete-folder-sharing
       x-wistia-mcp-description: |
         Deletes a sharing on a folder.
@@ -4586,13 +4632,14 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: media
+      x-speakeasy-name-override: list
       x-wistia-mcp-tool-name: get-medias
       x-wistia-mcp-description: >
         Lists the media belonging to the account. This endpoint can also be used to
 
         do a batch fetch based off of the hashed id.
 
-      x-speakeasy-name-override: list
   /medias/{mediaHashedId}:
     get:
       summary: Show Media
@@ -4875,6 +4922,7 @@ paths:
                     examples:
                       - Internal server error
       x-wistia-mcp-ignore: true
+      x-speakeasy-group: media
       x-speakeasy-name-override: get
     put:
       summary: Update Media
@@ -5072,10 +5120,11 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: media
+      x-speakeasy-name-override: update
       x-wistia-mcp-tool-name: update-media
       x-wistia-mcp-description: |
         Updates the attributes on a media.
-      x-speakeasy-name-override: update
     delete:
       summary: Delete Media
       description: |
@@ -5226,10 +5275,11 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: media
+      x-speakeasy-name-override: delete
       x-wistia-mcp-tool-name: delete-media
       x-wistia-mcp-description: |
         Deletes a media.
-      x-speakeasy-name-override: delete
   /medias/{mediaHashedId}/copy:
     post:
       summary: Copy Media
@@ -5443,11 +5493,12 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: media
+      x-speakeasy-name-override: copy
       x-wistia-mcp-tool-name: copy-media
       x-wistia-mcp-description: >
         This endpoint copies a media and its assets to a destination folder (defaults to source media).
 
-      x-speakeasy-name-override: copy
   /medias/{mediaHashedId}/swap:
     put:
       summary: Swap Media
@@ -5649,11 +5700,12 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: media
+      x-speakeasy-name-override: swap
       x-wistia-mcp-tool-name: swap-media
       x-wistia-mcp-description: >
         Swap one media with another media. This operation queues a background job to replace the original media with the replacement media while preserving the original media's hashed ID and URLs.
 
-      x-speakeasy-name-override: swap
   /medias/{mediaHashedId}/stats:
     get:
       summary: Show Media Aggregated Stats
@@ -5768,10 +5820,11 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: media
+      x-speakeasy-name-override: getStats
       x-wistia-mcp-tool-name: show-media-aggregated-stats
       x-wistia-mcp-description: |
         Aggregated tracking statistics for a video embedded on your site.
-      x-speakeasy-name-override: getStats
   /medias/{mediaHashedId}/translate:
     post:
       summary: Translate Media
@@ -5906,10 +5959,14 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: media
+      x-speakeasy-name-override: translate
       x-wistia-mcp-tool-name: translate-media
+      x-wistia-mcp-annotations:
+        open_world_hint: true
+        destructive_hint: true
       x-wistia-mcp-description: |
         Translates the transcript for a media.
-      x-speakeasy-name-override: translate
   /medias/import_url:
     post:
       summary: Import Media from URL
@@ -5921,6 +5978,8 @@ paths:
 
         If no folder_id is provided, a new folder called "Untitled Folder" will be
         created and the imported media will be placed there.
+
+        The URL must be publicly accessible — Wistia's servers need to be able to fetch the file directly.
 
         Note: imports from certain domains (e.g. vimeo.com, wistia.com) are not permitted.
 
@@ -5945,7 +6004,7 @@ paths:
                   examples:
                     - https://example.com/video.mp4
                   format: uri
-                  description: The URL of the media file to import.
+                  description: The publicly accessible URL of the media file to import.
                 folder_id:
                   type: string
                   description: The hashed ID of the folder (project) to import the media into. If not provided, a new folder will be created.
@@ -6049,6 +6108,12 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: media
+      x-speakeasy-name-override: importUrl
+      x-cli-action-override: import
+      x-wistia-mcp-annotations:
+        open_world_hint: true
+        destructive_hint: true
   /medias/archive:
     put:
       summary: Archive Media
@@ -6148,11 +6213,12 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: media
+      x-speakeasy-name-override: archive
       x-wistia-mcp-tool-name: archive-media
       x-wistia-mcp-description: >
         This method accepts a list of up to 100 medias to archive per request. It processes requests asynchronously and will return a background_job_status object rather than the typical Media response object. Note that webinar medias and Soapbox videos imported to Wistia before September 1, 2023 cannot be archived.
 
-      x-speakeasy-name-override: archive
   /medias/move:
     put:
       summary: Move Media
@@ -6318,6 +6384,8 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: media
+      x-speakeasy-name-override: move
       x-wistia-mcp-tool-name: move-media
       x-wistia-mcp-description: >
         Move one or many media to a different folder and optionally to a specific subfolder.
@@ -6334,7 +6402,6 @@ paths:
 
         Returns a Background Job as the move is async.
 
-      x-speakeasy-name-override: move
   /medias/restore:
     put:
       summary: Restore Media
@@ -6465,11 +6532,12 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: media
+      x-speakeasy-name-override: restore
       x-wistia-mcp-tool-name: restore-media
       x-wistia-mcp-description: >
         Restores archived medias to your account. This method accepts a list of up to 100 medias to restore per request. It processes requests asynchronously and will return a background_job_status object rather than the typical Media response object. Your account must have access to the Archiving feature to use this method.
 
-      x-speakeasy-name-override: restore
   /medias/copy:
     put:
       summary: Bulk Copy Media
@@ -6589,6 +6657,8 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: media
+      x-speakeasy-name-override: bulkCopy
       x-wistia-mcp-tool-name: bulk-copy-media
       x-wistia-mcp-description: >
         This method accepts a list of medias to copy to a destination folder. It processes requests asynchronously and will return a background_job_status object rather than the typical Media response object.
@@ -6705,6 +6775,9 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: taggings
+      x-speakeasy-name-override: bulkCreate
+      x-cli-action-override: bulk-tag
       x-wistia-mcp-tool-name: bulk-tag-media
       x-wistia-mcp-description: >
         This method accepts a list of medias to tag. It processes requests asynchronously and will return a background_job_status object rather than the typical Media response object.
@@ -6791,11 +6864,13 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-wistia-openai-ignore: true
+      x-speakeasy-group: account
+      x-speakeasy-name-override: get
       x-wistia-mcp-tool-name: get-current-account
       x-wistia-mcp-description: >
         Retrieves a summary of the Wistia account including account name, description, URL and counts of records.
 
-      x-speakeasy-name-override: get
   /token:
     get:
       operationId: getTokenDetails
@@ -6885,6 +6960,10 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-wistia-openai-ignore: true
+      x-speakeasy-group: account
+      x-speakeasy-name-override: getTokenDetails
+      x-cli-action-override: token
       x-wistia-mcp-tool-name: get-current-token
       x-wistia-mcp-description: >
         Retrieves a summary of the token used to make tool calls. This endpoint can primarily be used to
@@ -7037,6 +7116,7 @@ paths:
                     examples:
                       - Internal server error
       x-wistia-mcp-ignore: true
+      x-speakeasy-group: allowedDomains
       x-speakeasy-name-override: list
     post:
       summary: Create Allowed Domain
@@ -7143,6 +7223,7 @@ paths:
                     examples:
                       - Internal server error
       x-wistia-mcp-ignore: true
+      x-speakeasy-group: allowedDomains
       x-speakeasy-name-override: create
   /allowed_domains/{domain}:
     get:
@@ -7233,6 +7314,7 @@ paths:
                     examples:
                       - Internal server error
       x-wistia-mcp-ignore: true
+      x-speakeasy-group: allowedDomains
       x-speakeasy-name-override: get
     delete:
       summary: Delete Allowed Domain
@@ -7333,6 +7415,7 @@ paths:
                     examples:
                       - Internal server error
       x-wistia-mcp-ignore: true
+      x-speakeasy-group: allowedDomains
       x-speakeasy-name-override: delete
   /background_job_status/{backgroundJobStatusId}:
     get:
@@ -7409,14 +7492,15 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: backgroundJobStatus
+      x-speakeasy-name-override: get
+      x-cli-topic-override: jobs
       x-wistia-mcp-tool-name: show-background-job-status
       x-wistia-mcp-description: >
         Retrieves the status of a background job. This can be used to see when a background
 
         job succeeds or fails.
 
-      x-speakeasy-group: backgroundJobStatus
-      x-speakeasy-name-override: get
   /medias/{mediaId}/customizations:
     get:
       summary: Show Customizations
@@ -7670,10 +7754,11 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: customizations
+      x-speakeasy-name-override: get
       x-wistia-mcp-tool-name: show-customizations
       x-wistia-mcp-description: |
         Fetches explicitly defined customizations for the video.
-      x-speakeasy-name-override: get
     post:
       summary: Create Customizations
       description: |
@@ -8167,11 +8252,12 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: customizations
+      x-speakeasy-name-override: create
       x-wistia-mcp-tool-name: create-customizations
       x-wistia-mcp-description: >
         Set customizations for a video. Replaces the customizations explicitly set for this video.
 
-      x-speakeasy-name-override: create
     put:
       summary: Update Customizations
       description: |
@@ -8665,11 +8751,12 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: customizations
+      x-speakeasy-name-override: update
       x-wistia-mcp-tool-name: update-customizations
       x-wistia-mcp-description: >
         Allows for partial updates on a video’s customizations. If a value is null, then that key will be deleted from the saved customizations. If it is not null, that value will be set.
 
-      x-speakeasy-name-override: update
     delete:
       summary: Delete Customizations
       description: |
@@ -8726,11 +8813,12 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: customizations
+      x-speakeasy-name-override: delete
       x-wistia-mcp-tool-name: delete-customizations
       x-wistia-mcp-description: >
         Deletes all explicit customizations for a video, making it act as if it has never been customized.
 
-      x-speakeasy-name-override: delete
   /medias/{mediaHashedId}/captions:
     get:
       summary: List Captions by Media
@@ -8815,6 +8903,7 @@ paths:
                     examples:
                       - Internal server error
       x-wistia-mcp-ignore: true
+      x-speakeasy-group: captions
       x-speakeasy-name-override: list
     post:
       summary: Create Captions
@@ -8904,11 +8993,12 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: captions
+      x-speakeasy-name-override: create
       x-wistia-mcp-tool-name: create-captions
       x-wistia-mcp-description: >
         Adds captions to a specified media by providing an SRT file or its contents directly.
 
-      x-speakeasy-name-override: create
   /captions:
     get:
       summary: List Captions
@@ -9079,6 +9169,8 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: captions
+      x-speakeasy-name-override: listAll
       x-wistia-mcp-tool-name: get-captions
       x-wistia-mcp-description: >
         Gets captions belonging to the account. This endpoint can also narrow down results
@@ -9189,14 +9281,18 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: captions
+      x-speakeasy-name-override: purchase
       x-wistia-mcp-tool-name: purchase-captions
+      x-wistia-mcp-annotations:
+        open_world_hint: true
+        destructive_hint: true
       x-wistia-mcp-description: >
         This method is for purchasing English captions for a media. The request will charge the credit card on the account if successful. A saved credit card is required to use this endpoint.
 
 
         You can do a follow up call to the `translate-media` tool to get this in another language.
 
-      x-speakeasy-name-override: purchase
   /medias/{mediaHashedId}/captions/{languageCode}:
     get:
       summary: Show Captions
@@ -9222,7 +9318,7 @@ paths:
             type: string
         - name: languageCode
           in: path
-          description: The language code of the captions to be retrieved.
+          description: The 3-character ISO 639-2 language code of the captions to be retrieved (e.g., `eng`, `fra`, `spa`). Some languages use extended IETF subtags (e.g., `zh-Hant`).
           required: true
           schema:
             type: string
@@ -9294,10 +9390,11 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: captions
+      x-speakeasy-name-override: get
       x-wistia-mcp-tool-name: show-captions-file
       x-wistia-mcp-description: |
         Returns a video's captions in the specified language as JSON.
-      x-speakeasy-name-override: get
     put:
       summary: Update Captions
       description: |
@@ -9374,11 +9471,12 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: captions
+      x-speakeasy-name-override: update
       x-wistia-mcp-tool-name: update-captions
       x-wistia-mcp-description: >
         This method is for replacing the captions on a video for the specified language.
 
-      x-speakeasy-name-override: update
     delete:
       summary: Delete Captions
       description: |
@@ -9433,10 +9531,11 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: captions
+      x-speakeasy-name-override: delete
       x-wistia-mcp-tool-name: delete-captions
       x-wistia-mcp-description: |
         Removes the captions file from a media for the specified language.
-      x-speakeasy-name-override: delete
   /medias/{mediaHashedId}/trims:
     post:
       summary: Create Media from Trims
@@ -9560,6 +9659,8 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: trims
+      x-speakeasy-name-override: create
       x-wistia-mcp-tool-name: create-media-from-trims
       x-wistia-mcp-description: >
         Creates a new media that trims off parts of an existing media.
@@ -9570,7 +9671,6 @@ paths:
 
         **NOTE:** currently this tool only supports trimming video files.
 
-      x-speakeasy-name-override: create
   /medias/{mediaHashedId}/localizations:
     get:
       summary: List Localizations
@@ -9754,10 +9854,11 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: localizations
+      x-speakeasy-name-override: list
       x-wistia-mcp-tool-name: gets-localizations
       x-wistia-mcp-description: |
         Lists all the localizations for a media.
-      x-speakeasy-name-override: list
     post:
       summary: Create Localization
       description: |
@@ -10012,10 +10113,14 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: localizations
+      x-speakeasy-name-override: create
       x-wistia-mcp-tool-name: create-localization
+      x-wistia-mcp-annotations:
+        open_world_hint: true
+        destructive_hint: true
       x-wistia-mcp-description: |
         Creates a new localization.
-      x-speakeasy-name-override: create
   /medias/{mediaHashedId}/localizations/{localizationHashedId}:
     get:
       summary: Show Localization
@@ -10203,10 +10308,11 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: localizations
+      x-speakeasy-name-override: get
       x-wistia-mcp-tool-name: show-localization
       x-wistia-mcp-description: |
         Obtain detailed information about a localization.
-      x-speakeasy-name-override: get
     delete:
       summary: Delete Localization
       description: |
@@ -10397,10 +10503,11 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: localizations
+      x-speakeasy-name-override: delete
       x-wistia-mcp-tool-name: delete-localization
       x-wistia-mcp-description: |
         Deletes a localization.
-      x-speakeasy-name-override: delete
   /tags:
     get:
       summary: List Tags
@@ -10565,10 +10672,11 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: tags
+      x-speakeasy-name-override: list
       x-wistia-mcp-tool-name: get-tags
       x-wistia-mcp-description: |
         Lists tags belonging to the account.
-      x-speakeasy-name-override: list
     post:
       summary: Create Tags
       description: |
@@ -10686,10 +10794,11 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: tags
+      x-speakeasy-name-override: create
       x-wistia-mcp-tool-name: create-tags
       x-wistia-mcp-description: |
         Creates a new tag.
-      x-speakeasy-name-override: create
   /tags/{name}:
     delete:
       summary: Delete Tag
@@ -10750,10 +10859,11 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: tags
+      x-speakeasy-name-override: delete
       x-wistia-mcp-tool-name: delete-tag
       x-wistia-mcp-description: |
         Deletes a tag
-      x-speakeasy-name-override: delete
   /search:
     get:
       summary: Search
@@ -11403,13 +11513,14 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: search
+      x-speakeasy-name-override: search
       x-wistia-mcp-tool-name: search
       x-wistia-mcp-description: >
         Searches across folders, medias, channels, and channel episodes. Also searches through video transcripts,
 
         so media results may include transcript matches with timestamps when the query matches spoken content.
 
-      x-speakeasy-name-override: search
   /channels:
     get:
       summary: List Channels
@@ -11591,13 +11702,14 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: channels
+      x-speakeasy-name-override: list
       x-wistia-mcp-tool-name: get-channels
       x-wistia-mcp-description: >
         Gets all Channels belonging to an account. This endpoint can also be used to
 
         do a batch fetch based off of the hashed id.
 
-      x-speakeasy-name-override: list
     post:
       summary: Create Channel
       description: |
@@ -12140,6 +12252,8 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: channels
+      x-speakeasy-name-override: create
       x-wistia-mcp-tool-name: create-channel
       x-wistia-mcp-description: |
         Creates a channel.
@@ -12246,6 +12360,7 @@ paths:
                     examples:
                       - Internal server error
       x-wistia-mcp-ignore: true
+      x-speakeasy-group: channels
       x-speakeasy-name-override: get
     put:
       summary: Update Channel
@@ -12796,6 +12911,8 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: channels
+      x-speakeasy-name-override: update
       x-wistia-mcp-tool-name: update-channel
       x-wistia-mcp-description: |
         Updates a channel.
@@ -12894,6 +13011,8 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: channels
+      x-speakeasy-name-override: delete
       x-wistia-mcp-tool-name: delete-channel
       x-wistia-mcp-description: |
         Deletes a channel.
@@ -13246,6 +13365,7 @@ paths:
       x-wistia-mcp-ignore: true
       x-speakeasy-group: channels.channelEpisodes
       x-speakeasy-name-override: list
+      x-cli-action-override: list-by-channel
     post:
       summary: Create Channel Episode
       description: |
@@ -13430,11 +13550,11 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: channelEpisodes
+      x-speakeasy-name-override: create
       x-wistia-mcp-tool-name: create-channel-episode
       x-wistia-mcp-description: |
         Creates a new channel episode in a channel.
-      x-speakeasy-group: channelEpisodes
-      x-speakeasy-name-override: create
   /channel_episodes:
     get:
       summary: List Channel Episodes
@@ -13661,14 +13781,14 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: channelEpisodes
+      x-speakeasy-name-override: list
       x-wistia-mcp-tool-name: get-channel-episodes
       x-wistia-mcp-description: >
         Lists Channel Episodes belonging to an account. This endpoint can also be used to
 
         do a batch fetch based off of the hashed id.
 
-      x-speakeasy-group: channelEpisodes
-      x-speakeasy-name-override: list
   /channel_episodes/{channelEpisodeHashedId}:
     put:
       summary: Update Channel Episode
@@ -13847,6 +13967,8 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: channelEpisodes
+      x-speakeasy-name-override: update
       x-wistia-mcp-tool-name: update-channel-episode
       x-wistia-mcp-description: |
         Updates an existing channel episode in a channel.
@@ -13968,6 +14090,8 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: channelEpisodes
+      x-speakeasy-name-override: delete
       x-wistia-mcp-tool-name: delete-channel-episode
       x-wistia-mcp-description: |
         Deletes an existing channel episode in a channel.
@@ -14099,6 +14223,8 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: channelEpisodes
+      x-speakeasy-name-override: publish
       x-wistia-mcp-tool-name: publish-channel-episode
       x-wistia-mcp-description: |
         Publishes an existing channel episode in a channel.
@@ -14220,6 +14346,8 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: channelEpisodes
+      x-speakeasy-name-override: unpublish
       x-wistia-mcp-tool-name: un-publish-channel-episode
       x-wistia-mcp-description: |
         Un-publishes an existing channel episode in a channel.
@@ -14331,6 +14459,7 @@ paths:
       x-wistia-mcp-ignore: true
       x-speakeasy-group: expiringAccessTokens
       x-speakeasy-name-override: create
+      x-cli-topic-override: expiring-tokens
   /webinars:
     get:
       summary: List Webinars
@@ -14565,6 +14694,8 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: webinars
+      x-speakeasy-name-override: list
       x-wistia-mcp-tool-name: get-webinars
       x-wistia-mcp-description: >
         Gets webinars belonging to the account. This endpoint can also be used to
@@ -14769,6 +14900,8 @@ paths:
                           An error occurred while creating the webinar. Please try again.
                     items:
                       type: string
+      x-speakeasy-group: webinars
+      x-speakeasy-name-override: create
       x-wistia-mcp-tool-name: create-webinar
       x-wistia-mcp-description: |
         Creates a new webinar.
@@ -14923,6 +15056,8 @@ paths:
                     examples:
                       - Internal server error
       x-wistia-mcp-ignore: true
+      x-speakeasy-group: webinars
+      x-speakeasy-name-override: get
     put:
       summary: Update Webinar
       description: |
@@ -15118,6 +15253,8 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: webinars
+      x-speakeasy-name-override: update
       x-wistia-mcp-tool-name: update-webinar
       x-wistia-mcp-description: |
         Updates an existing webinar.
@@ -15270,10 +15407,420 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: webinars
+      x-speakeasy-name-override: delete
       x-wistia-mcp-tool-name: delete-webinar
       x-wistia-mcp-description: |
         Deletes an existing webinar.
   /webinars/{webinarId}/registrations:
+    get:
+      summary: List Webinar Registrations
+      description: |
+        Retrieve a paginated list of registrations for a webinar. Returns contact
+        information, attendance status, engagement metrics, and attribution data
+        for each registrant.
+
+        Pagination uses cursor-based pagination with a `page_info` object in the
+        response rather than per-record cursors. Use `page_info.end_cursor` as
+        the `cursor` parameter to fetch the next page.
+
+        ## Requires api token with one of the following permissions
+        ```
+        Read all data
+        ```
+      tags:
+        - Webinar Registrations
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: webinarId
+          in: path
+          description: Hashed ID of the webinar.
+          required: true
+          schema:
+            type: string
+            description: Hashed ID of the webinar (e.g., "abc123xyz")
+        - name: per_page
+          in: query
+          description: Number of results to return per page (max 100).
+          required: false
+          schema:
+            type: integer
+            maximum: 100
+            minimum: 1
+            default: 100
+        - name: cursor
+          in: query
+          description: Cursor for pagination. Use the value from the previous response's `page_info.end_cursor` or `page_info.start_cursor`.
+          required: false
+          schema:
+            type: string
+        - name: sort_direction
+          in: query
+          description: Sort direction (0 = desc/previous page, 1 = asc/next page; default is 1)
+          required: false
+          schema:
+            type: integer
+            enum:
+              - 0
+              - 1
+            default: 1
+        - name: attendance
+          in: query
+          description: Filter registrations by attendance status.
+          required: false
+          schema:
+            type: string
+            enum:
+              - all
+              - attendees
+              - non_attendees
+            default: all
+        - name: restriction
+          in: query
+          description: Filter registrations by restriction status.
+          required: false
+          schema:
+            type: string
+            enum:
+              - all
+              - restricted
+              - allowed
+            default: all
+        - name: emails[]
+          in: query
+          description: Filter registrations by email addresses.
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              format: email
+      responses:
+        "200":
+          description: Successful response with a paginated list of registrations.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  registrations:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        visitor_key:
+                          type:
+                            - string
+                            - "null"
+                          description: Unique visitor key for the registrant.
+                          example: iv_abc123
+                        email:
+                          type:
+                            - string
+                            - "null"
+                          description: Registrant's email address.
+                          example: john@example.com
+                        first_name:
+                          type:
+                            - string
+                            - "null"
+                          description: Registrant's first name.
+                          example: John
+                        last_name:
+                          type:
+                            - string
+                            - "null"
+                          description: Registrant's last name.
+                          example: Doe
+                        phone_number:
+                          type:
+                            - string
+                            - "null"
+                          description: Registrant's phone number.
+                        company:
+                          type:
+                            - string
+                            - "null"
+                          description: Registrant's company name.
+                        job_title:
+                          type:
+                            - string
+                            - "null"
+                          description: Registrant's job title.
+                        country:
+                          type:
+                            - string
+                            - "null"
+                          description: Registrant's country.
+                        registered_at:
+                          type:
+                            - string
+                            - "null"
+                          format: date-time
+                          description: When the person registered.
+                          example: '2026-01-15T10:00:00Z'
+                        attended_at:
+                          type:
+                            - string
+                            - "null"
+                          format: date-time
+                          description: When the person first attended the webinar.
+                          example: '2026-01-15T11:00:00Z'
+                        restriction_status:
+                          type:
+                            - string
+                            - "null"
+                          enum:
+                            - restricted
+                            - allowed
+                            - null
+                          description: Whether the registrant is restricted or allowed.
+                        origin_method:
+                          type:
+                            - string
+                            - "null"
+                          description: How the registrant was added (e.g., "form", "email").
+                          example: form
+                        form_field_data:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              value:
+                                type: string
+                                description: The registrant's response.
+                              label:
+                                type: string
+                                description: The form field label.
+                          description: Custom form field responses submitted by the registrant.
+                        utm_campaign:
+                          type:
+                            - string
+                            - "null"
+                          description: UTM campaign parameter captured at registration.
+                        utm_source:
+                          type:
+                            - string
+                            - "null"
+                          description: UTM source parameter captured at registration.
+                        utm_medium:
+                          type:
+                            - string
+                            - "null"
+                          description: UTM medium parameter captured at registration.
+                        utm_content:
+                          type:
+                            - string
+                            - "null"
+                          description: UTM content parameter captured at registration.
+                        utm_term:
+                          type:
+                            - string
+                            - "null"
+                          description: UTM term parameter captured at registration.
+                        referrer_domain:
+                          type:
+                            - string
+                            - "null"
+                          description: HTTP referrer domain at time of registration.
+                        ip_region:
+                          type:
+                            - string
+                            - "null"
+                          description: Region derived from IP address.
+                        ip_country:
+                          type:
+                            - string
+                            - "null"
+                          description: Country derived from IP address.
+                        ip_city:
+                          type:
+                            - string
+                            - "null"
+                          description: City derived from IP address.
+                        engagement_rate:
+                          type:
+                            - number
+                            - "null"
+                          format: float
+                          description: Engagement rate between 0.0 and 1.0.
+                          example: 0.85
+                        focused_rate:
+                          type:
+                            - number
+                            - "null"
+                          format: float
+                          description: Focused engagement rate between 0.0 and 1.0.
+                        played_time:
+                          type:
+                            - integer
+                            - "null"
+                          description: Total seconds of video watched.
+                        focused_played_time:
+                          type:
+                            - integer
+                            - "null"
+                          description: Total seconds watched in focused state.
+                        chat_count:
+                          type:
+                            - integer
+                            - "null"
+                          description: Number of chat messages sent.
+                        chats:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              rounded_player_position:
+                                type: integer
+                                description: Video position in seconds (rounded).
+                              chats:
+                                type: array
+                                items:
+                                  type: string
+                          description: Chat messages sent by the registrant.
+                        qa_questions:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              rounded_player_position:
+                                type: integer
+                                description: Video position in seconds (rounded).
+                              qa_questions:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    question_text:
+                                      type: string
+                          description: Q&A questions asked by the registrant.
+                        qa_answers:
+                          type:
+                            - integer
+                            - "null"
+                          description: Number of Q&A answers.
+                        poll_responses:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              poll_question_text:
+                                type:
+                                  - string
+                                  - "null"
+                              poll_option_text:
+                                type:
+                                  - string
+                                  - "null"
+                          description: Poll responses submitted by the registrant.
+                        poll_responses_count:
+                          type:
+                            - integer
+                            - "null"
+                          description: Number of poll responses submitted.
+                        annotation_click_count:
+                          type:
+                            - integer
+                            - "null"
+                          description: Total number of annotation clicks.
+                        attendee_histogram:
+                          type:
+                            - array
+                            - "null"
+                          items:
+                            type:
+                              - integer
+                              - "null"
+                          description: Per-bucket attendance data for this registrant.
+                        focused_attendee_histogram:
+                          type:
+                            - array
+                            - "null"
+                          items:
+                            type:
+                              - integer
+                              - "null"
+                          description: Per-bucket focused attendance data for this registrant.
+                  page_info:
+                    type: object
+                    properties:
+                      has_next_page:
+                        type: boolean
+                        description: Whether there are more results after this page.
+                      has_previous_page:
+                        type: boolean
+                        description: Whether there are results before this page.
+                      end_cursor:
+                        type:
+                          - string
+                          - "null"
+                        description: Cursor to use for fetching the next page.
+                      start_cursor:
+                        type:
+                          - string
+                          - "null"
+                        description: Cursor to use for fetching the previous page.
+        "401":
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                      - Invalid credentials.
+        "403":
+          description: Webinar feature not available
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                      - Live streaming is not available on your current plan
+        "404":
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                      - Folder with ID 'fakeid' not found.
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                      - Internal server error
+      x-wistia-mcp-tool-name: list-webinar-registrations
+      x-wistia-mcp-description: >
+        Retrieve a paginated list of registrations for a webinar. Returns contact
+
+        information, attendance status, engagement metrics, and attribution data
+
+        for each registrant.
+
+
+        Pagination uses cursor-based pagination with a `page_info` object in the
+
+        response rather than per-record cursors. Use `page_info.end_cursor` as
+
+        the `cursor` parameter to fetch the next page.
+
     post:
       summary: Create Webinar Registration
       description: |
@@ -15406,6 +15953,8 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-speakeasy-group: webinarRegistrations
+      x-speakeasy-name-override: create
       x-wistia-mcp-tool-name: create-webinar-registration
       x-wistia-mcp-description: >
         Register a person for a webinar by providing their email, first name, and last name.
@@ -15413,6 +15962,524 @@ paths:
 
         This endpoint generates a unique visitor key and returns a personalized webinar URL for the registrant.
 
+  /remixes:
+    post:
+      summary: Create Remix
+      description: |
+        Start a new video remix job. The remix is processed asynchronously — poll
+        the show endpoint to check status and get preview URLs when ready.
+
+        Remix uses AI to analyze video transcripts and create edited versions
+        (highlight reels, trailers, cut-downs, etc.) based on your instructions.
+
+        <!--- HIDE-MCP -->
+        ## Requires api token with one of the following permissions
+        ```
+        Read, update & delete anything
+        ```
+        <!--- /HIDE-MCP -->
+      tags:
+        - Remix
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                media_hashed_ids:
+                  type: array
+                  examples:
+                    - - abc123
+                      - def456
+                  items:
+                    type: string
+                  description: Array of source media hashed IDs to remix from.
+                instructions:
+                  type: string
+                  examples:
+                    - >-
+                      Create a 60-second highlight reel focusing on the product demo section
+                  description: Natural language instructions describing the desired remix (e.g., "create a 60-second highlight reel").
+              required:
+                - media_hashed_ids
+                - instructions
+      responses:
+        "201":
+          description: Remix job successfully created.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  remix_id:
+                    type: string
+                    description: Hashed ID of the created remix. Use this to poll for status.
+                  conversation_id:
+                    type: string
+                    description: Hashed ID of the remix conversation (groups multiple remix iterations).
+                  status:
+                    type: string
+                    enum:
+                      - pending
+                      - deferred
+                    description: Current status of the remix job.
+                  source_medias:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        hashed_id:
+                          type: string
+                        name:
+                          type: string
+                    description: The source media used for this remix.
+        "401":
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                      - Invalid credentials.
+        "422":
+          description: Unprocessable entity (e.g., credit limit reached, media not found).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  credits_renew_at:
+                    type: string
+                    format: date-time
+                    description: When remix credits renew (ISO 8601), if the error is a credit limit.
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                      - Internal server error
+      x-readme-hidden: true
+      x-wistia-mcp-tool-name: create-remix
+      x-wistia-mcp-description: |
+        Start a new video remix job. Provide source media hashed IDs and natural
+        language instructions describing the remix you want (e.g., "create a
+        60-second highlight reel focusing on the product demo"). Returns a
+        remix_id to poll for status via the get-remix endpoint.
+  /remixes/{remixHashedId}:
+    get:
+      summary: Get Remix
+      description: |
+        Get the current status of a remix job. When the status reaches
+        "edit_tree_generated", preview URLs are included in the response.
+
+        <!--- HIDE-MCP -->
+        ## Requires api token with one of the following permissions
+        ```
+        Read all folder and media data
+        ```
+        <!--- /HIDE-MCP -->
+      tags:
+        - Remix
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: remixHashedId
+          in: path
+          description: The hashed ID of the remix.
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Remix status and details.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  remix_id:
+                    type: string
+                    description: Hashed ID of the remix.
+                  conversation_id:
+                    type: string
+                    description: Hashed ID of the parent conversation.
+                  status:
+                    type: string
+                    enum:
+                      - pending
+                      - generating_scenes
+                      - editable_scenes_generated
+                      - edit_tree_generated
+                      - exporting
+                      - completed
+                      - error
+                    description: Current processing status.
+                  error_message:
+                    type: string
+                    description: Error details if status is "error".
+                  preview:
+                    type: object
+                    properties:
+                      video_url:
+                        type: string
+                        format: uri
+                        description: Iframe embed URL for video playback.
+                      thumbnail_url:
+                        type: string
+                        format: uri
+                        description: Thumbnail image URL.
+                      media_hashed_id:
+                        type: string
+                        description: Hashed ID of the output media.
+                      name:
+                        type: string
+                        description: Name of the output media.
+                    description: Preview URLs, available when status is "edit_tree_generated" or later.
+        "401":
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                      - Invalid credentials.
+        "404":
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                      - Folder with ID 'fakeid' not found.
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                      - Internal server error
+      x-readme-hidden: true
+      x-wistia-mcp-tool-name: get-remix
+      x-wistia-mcp-description: >
+        Get the status of a remix job. Poll this endpoint after creating a remix
+
+        or continuing an edit. When status is "edit_tree_generated", the remix is
+
+        ready and preview URLs (video embed, thumbnail) are included. Use this to
+
+        check progress and retrieve preview links.
+
+  /remixes/{remixHashedId}/continue:
+    post:
+      summary: Continue Remix
+      description: |
+        Submit a follow-up edit to an existing remix. Creates a new remix version
+        in the same conversation. The previous remix is preserved and can be
+        referenced later.
+
+        <!--- HIDE-MCP -->
+        ## Requires api token with one of the following permissions
+        ```
+        Read, update & delete anything
+        ```
+        <!--- /HIDE-MCP -->
+      tags:
+        - Remix
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: remixHashedId
+          in: path
+          description: The hashed ID of the current remix version to edit from.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                instructions:
+                  type: string
+                  examples:
+                    - Cut the intro and add background music
+                  description: Natural language instructions for the edit (e.g., "cut the first 10 seconds").
+              required:
+                - instructions
+      responses:
+        "201":
+          description: New remix version created.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  remix_id:
+                    type: string
+                    description: Hashed ID of the new remix version.
+                  conversation_id:
+                    type: string
+                    description: Hashed ID of the conversation.
+                  status:
+                    type: string
+                    enum:
+                      - pending
+                    description: Status of the new remix version.
+                  previous_remix_id:
+                    type: string
+                    description: Hashed ID of the remix version this edit is based on.
+        "401":
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                      - Invalid credentials.
+        "404":
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                      - Folder with ID 'fakeid' not found.
+        "422":
+          description: Unprocessable entity (e.g., conversation not found).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                      - Internal server error
+      x-readme-hidden: true
+      x-wistia-mcp-tool-name: continue-remix
+      x-wistia-mcp-description: >
+        Edit an existing remix by providing new instructions (e.g., "cut the intro"
+
+        or "add background music"). Creates a new version in the same conversation.
+
+        Returns a new remix_id to poll for status. The previous version is preserved.
+
+  /remixes/{remixHashedId}/export:
+    post:
+      summary: Export Remix
+      description: |
+        Export a completed remix to a folder in your account. Triggers the full
+        render pipeline. The remix must have reached "edit_tree_generated" status.
+
+        If no folder_id is provided, the remix is exported to the source media's folder.
+
+        <!--- HIDE-MCP -->
+        ## Requires api token with one of the following permissions
+        ```
+        Read, update & delete anything
+        ```
+        <!--- /HIDE-MCP -->
+      tags:
+        - Remix
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: remixHashedId
+          in: path
+          description: The hashed ID of the remix to export.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                folder_id:
+                  type: string
+                  description: Hashed ID of the destination folder. Defaults to the source media's folder.
+                name:
+                  type: string
+                  description: Custom name for the exported media.
+      responses:
+        "202":
+          description: Export successfully queued.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  remix_id:
+                    type: string
+                    description: Hashed ID of the exported remix.
+                  media_hashed_id:
+                    type: string
+                    description: Hashed ID of the output media being rendered.
+                  media_name:
+                    type: string
+                    description: Name of the output media.
+                  folder_hashed_id:
+                    type: string
+                    description: Hashed ID of the destination folder.
+                  status:
+                    type: string
+                    enum:
+                      - exporting
+                    description: Export status.
+        "401":
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                      - Invalid credentials.
+        "404":
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                      - Folder with ID 'fakeid' not found.
+        "422":
+          description: Unprocessable entity (e.g., remix not ready for export).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                      - Internal server error
+      x-readme-hidden: true
+      x-wistia-mcp-tool-name: export-remix
+      x-wistia-mcp-description: >
+        Export (save) a completed remix to a folder in your Wistia account. This
+
+        triggers the full render pipeline. Optionally specify a destination folder
+
+        and custom name. The remix must have status "edit_tree_generated" to export.
+
+  /remix_account_status:
+    get:
+      summary: Get Remix Account Status
+      description: |
+        Check the current account's remix credit usage and limits.
+
+        <!--- HIDE-MCP -->
+        ## Requires api token with one of the following permissions
+        ```
+        Read all folder and media data
+        ```
+        <!--- /HIDE-MCP -->
+      tags:
+        - Remix
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Remix account status.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  monthly_limit:
+                    type: integer
+                    description: Maximum number of remix credits per month.
+                  monthly_usage:
+                    type: integer
+                    description: Number of remix credits used this month.
+                  remaining:
+                    type: integer
+                    description: Number of remix credits remaining this month.
+                  can_create_remix:
+                    type: boolean
+                    description: Whether the account can create a new remix.
+        "401":
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                      - Invalid credentials.
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                      - Internal server error
+      x-readme-hidden: true
+      x-wistia-mcp-tool-name: get-remix-account-status
+      x-wistia-mcp-description: |
+        Check how many remix credits the account has remaining this month.
+        Returns the monthly limit, current usage, remaining credits, and
+        whether the account can create new remixes.
   /stats/account:
     get:
       summary: Show Current Account Stats
@@ -15484,6 +16551,7 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-wistia-openai-ignore: true
       x-speakeasy-group: statsAccount
       x-speakeasy-name-override: get
   /stats/account/by_date:
@@ -15571,6 +16639,7 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-wistia-openai-ignore: true
   /stats/projects/{projectId}:
     get:
       summary: Show Project Stats
@@ -15653,6 +16722,7 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-wistia-openai-ignore: true
       x-speakeasy-group: statsProjects
       x-speakeasy-name-override: get
   /stats/medias/{mediaId}:
@@ -15762,6 +16832,7 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-wistia-openai-ignore: true
       x-speakeasy-group: statsMedia
       x-speakeasy-name-override: get
   /stats/medias/{mediaId}/by_date:
@@ -15858,6 +16929,7 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-wistia-openai-ignore: true
       x-speakeasy-group: statsMedia
       x-speakeasy-name-override: getByDate
   /stats/medias/{mediaId}/engagement:
@@ -15942,6 +17014,7 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-wistia-openai-ignore: true
       x-speakeasy-group: statsMedia
       x-speakeasy-name-override: getEngagement
   /stats/visitors:
@@ -16079,6 +17152,7 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-wistia-openai-ignore: true
       x-speakeasy-group: statsVisitors
       x-speakeasy-name-override: list
   /stats/visitors/{visitorKey}:
@@ -16199,6 +17273,7 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-wistia-openai-ignore: true
       x-speakeasy-group: statsVisitors
       x-speakeasy-name-override: get
   /stats/events:
@@ -16405,6 +17480,7 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-wistia-openai-ignore: true
       x-speakeasy-group: statsEvents
       x-speakeasy-name-override: list
   /stats/events/{eventKey}:
@@ -16576,6 +17652,7 @@ paths:
                     type: string
                     examples:
                       - Internal server error
+      x-wistia-openai-ignore: true
       x-speakeasy-group: statsEvents
       x-speakeasy-name-override: get
   /analytics/medias/{mediaId}:
@@ -16608,14 +17685,14 @@ paths:
             description: The hashed ID of the media (e.g., "4d23503f70")
         - name: start_date
           in: query
-          description: Start date for the analytics period in ISO 8601 format (YYYY-MM-DD).
+          description: Start date for the analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date.
           required: true
           schema:
             type: string
             format: date
         - name: end_date
           in: query
-          description: End date for the analytics period in ISO 8601 format (YYYY-MM-DD).
+          description: End date for the analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date.
           required: true
           schema:
             type: string
@@ -16745,6 +17822,8 @@ paths:
                     type: string
                     examples:
                       - Analytics service is temporarily unavailable
+      x-speakeasy-group: analyticsMedia
+      x-speakeasy-name-override: get
   /analytics/medias/{mediaId}/timeseries:
     get:
       summary: Show Media Analytics Timeseries
@@ -16774,14 +17853,14 @@ paths:
             description: The hashed ID of the media (e.g., "4d23503f70")
         - name: start_date
           in: query
-          description: Start date for the analytics period in ISO 8601 format (YYYY-MM-DD).
+          description: Start date for the analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date.
           required: true
           schema:
             type: string
             format: date
         - name: end_date
           in: query
-          description: End date for the analytics period in ISO 8601 format (YYYY-MM-DD).
+          description: End date for the analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date.
           required: true
           schema:
             type: string
@@ -16930,6 +18009,8 @@ paths:
                     type: string
                     examples:
                       - Analytics service is temporarily unavailable
+      x-speakeasy-group: analyticsMedia
+      x-speakeasy-name-override: getTimeseries
   /analytics/medias/{mediaId}/embed_locations:
     get:
       summary: Show Media Embed Locations
@@ -16959,14 +18040,14 @@ paths:
             description: The hashed ID of the media (e.g., "4d23503f70")
         - name: start_date
           in: query
-          description: Start date for the analytics period in ISO 8601 format (YYYY-MM-DD).
+          description: Start date for the analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date.
           required: true
           schema:
             type: string
             format: date
         - name: end_date
           in: query
-          description: End date for the analytics period in ISO 8601 format (YYYY-MM-DD).
+          description: End date for the analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date.
           required: true
           schema:
             type: string
@@ -17037,9 +18118,15 @@ paths:
                     loads:
                       type: integer
                       description: The number of video loads from this location.
+                    unique_loads:
+                      type: integer
+                      description: The number of unique video loads from this location (one per visitor session).
                     plays:
                       type: integer
                       description: The number of video plays from this location.
+                    unique_plays:
+                      type: integer
+                      description: The number of unique video plays from this location (one per visitor session).
                     play_rate:
                       type: number
                       format: float
@@ -17118,6 +18205,8 @@ paths:
                     type: string
                     examples:
                       - Analytics service is temporarily unavailable
+      x-speakeasy-group: analyticsMedia
+      x-speakeasy-name-override: getEmbedLocations
   /analytics/medias/{mediaId}/traffic:
     get:
       summary: Show Media Traffic Breakdown
@@ -17147,14 +18236,14 @@ paths:
             description: The hashed ID of the media (e.g., "4d23503f70")
         - name: start_date
           in: query
-          description: Start date for the analytics period in ISO 8601 format (YYYY-MM-DD).
+          description: Start date for the analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date.
           required: true
           schema:
             type: string
             format: date
         - name: end_date
           in: query
-          description: End date for the analytics period in ISO 8601 format (YYYY-MM-DD).
+          description: End date for the analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date.
           required: true
           schema:
             type: string
@@ -17296,6 +18385,8 @@ paths:
                     type: string
                     examples:
                       - Analytics service is temporarily unavailable
+      x-speakeasy-group: analyticsMedia
+      x-speakeasy-name-override: getTraffic
   /analytics/medias/{mediaId}/conversions:
     get:
       summary: Show Media Form Conversions
@@ -17325,14 +18416,14 @@ paths:
             description: The hashed ID of the media (e.g., "4d23503f70")
         - name: start_date
           in: query
-          description: Start date for the analytics period in ISO 8601 format (YYYY-MM-DD).
+          description: Start date for the analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date.
           required: true
           schema:
             type: string
             format: date
         - name: end_date
           in: query
-          description: End date for the analytics period in ISO 8601 format (YYYY-MM-DD).
+          description: End date for the analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date.
           required: true
           schema:
             type: string
@@ -17462,6 +18553,8 @@ paths:
                     type: string
                     examples:
                       - Analytics service is temporarily unavailable
+      x-speakeasy-group: analyticsMedia
+      x-speakeasy-name-override: getConversions
   /analytics/medias/{mediaId}/languages:
     get:
       summary: Show Media Languages
@@ -17491,14 +18584,14 @@ paths:
             description: The hashed ID of the media (e.g., "4d23503f70")
         - name: start_date
           in: query
-          description: Start date for the analytics period in ISO 8601 format (YYYY-MM-DD).
+          description: Start date for the analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date.
           required: true
           schema:
             type: string
             format: date
         - name: end_date
           in: query
-          description: End date for the analytics period in ISO 8601 format (YYYY-MM-DD).
+          description: End date for the analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date.
           required: true
           schema:
             type: string
@@ -17594,6 +18687,8 @@ paths:
                     type: string
                     examples:
                       - Analytics service is temporarily unavailable
+      x-speakeasy-group: analyticsMedia
+      x-speakeasy-name-override: getLanguages
   /analytics/webinars/{webinarId}:
     get:
       summary: Show Webinar Analytics
@@ -17629,14 +18724,14 @@ paths:
             default: false
         - name: post_event_start_date
           in: query
-          description: Start date for the post-event analytics period in ISO 8601 format (YYYY-MM-DD). Only used when include_post_event is true.
+          description: Start date for the post-event analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date. Only used when include_post_event is true.
           required: false
           schema:
             type: string
             format: date
         - name: post_event_end_date
           in: query
-          description: End date for the post-event analytics period in ISO 8601 format (YYYY-MM-DD). Only used when include_post_event is true.
+          description: End date for the post-event analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date. Only used when include_post_event is true.
           required: false
           schema:
             type: string
@@ -17852,6 +18947,8 @@ paths:
                     type: string
                     examples:
                       - Analytics service is temporarily unavailable
+      x-speakeasy-group: analyticsWebinar
+      x-speakeasy-name-override: get
   /analytics/webinars/{webinarId}/registration:
     get:
       summary: Show Webinar Registration Timeseries
@@ -17897,14 +18994,14 @@ paths:
             default: false
         - name: post_event_start_date
           in: query
-          description: Start date for the post-event analytics period in ISO 8601 format (YYYY-MM-DD). Only used when include_post_event is true.
+          description: Start date for the post-event analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date. Only used when include_post_event is true.
           required: false
           schema:
             type: string
             format: date
         - name: post_event_end_date
           in: query
-          description: End date for the post-event analytics period in ISO 8601 format (YYYY-MM-DD). Only used when include_post_event is true.
+          description: End date for the post-event analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date. Only used when include_post_event is true.
           required: false
           schema:
             type: string
@@ -18017,6 +19114,8 @@ paths:
                     type: string
                     examples:
                       - Analytics service is temporarily unavailable
+      x-speakeasy-group: analyticsWebinar
+      x-speakeasy-name-override: getRegistration
   /analytics/webinars/{webinarId}/traffic:
     get:
       summary: Show Webinar Traffic Breakdown
@@ -18165,6 +19264,8 @@ paths:
                     type: string
                     examples:
                       - Analytics service is temporarily unavailable
+      x-speakeasy-group: analyticsWebinar
+      x-speakeasy-name-override: getTraffic
   /analytics/webinars/{webinarId}/audience:
     get:
       summary: Show Webinar Audience
@@ -18447,6 +19548,8 @@ paths:
                     type: string
                     examples:
                       - Analytics service is temporarily unavailable
+      x-speakeasy-group: analyticsWebinar
+      x-speakeasy-name-override: getAudience
   /analytics/webinars/{webinarId}/histograms:
     get:
       summary: Show Webinar Histograms
@@ -18556,6 +19659,8 @@ paths:
                     type: string
                     examples:
                       - Analytics service is temporarily unavailable
+      x-speakeasy-group: analyticsWebinar
+      x-speakeasy-name-override: getHistograms
 components:
   schemas:
     CommonUploadProperties:
@@ -22437,6 +23542,243 @@ components:
                 - 90
               minimum: 15
               description: Duration of the webinar in minutes (minimum 15)
+    Registration:
+      type: object
+      properties:
+        visitor_key:
+          type:
+            - string
+            - "null"
+          description: Unique visitor key for the registrant.
+          example: iv_abc123
+        email:
+          type:
+            - string
+            - "null"
+          description: Registrant's email address.
+          example: john@example.com
+        first_name:
+          type:
+            - string
+            - "null"
+          description: Registrant's first name.
+          example: John
+        last_name:
+          type:
+            - string
+            - "null"
+          description: Registrant's last name.
+          example: Doe
+        phone_number:
+          type:
+            - string
+            - "null"
+          description: Registrant's phone number.
+        company:
+          type:
+            - string
+            - "null"
+          description: Registrant's company name.
+        job_title:
+          type:
+            - string
+            - "null"
+          description: Registrant's job title.
+        country:
+          type:
+            - string
+            - "null"
+          description: Registrant's country.
+        registered_at:
+          type:
+            - string
+            - "null"
+          format: date-time
+          description: When the person registered.
+          example: '2026-01-15T10:00:00Z'
+        attended_at:
+          type:
+            - string
+            - "null"
+          format: date-time
+          description: When the person first attended the webinar.
+          example: '2026-01-15T11:00:00Z'
+        restriction_status:
+          type:
+            - string
+            - "null"
+          enum:
+            - restricted
+            - allowed
+            - null
+          description: Whether the registrant is restricted or allowed.
+        origin_method:
+          type:
+            - string
+            - "null"
+          description: How the registrant was added (e.g., "form", "email").
+          example: form
+        form_field_data:
+          type: array
+          items:
+            type: object
+            properties:
+              value:
+                type: string
+                description: The registrant's response.
+              label:
+                type: string
+                description: The form field label.
+          description: Custom form field responses submitted by the registrant.
+        utm_campaign:
+          type:
+            - string
+            - "null"
+          description: UTM campaign parameter captured at registration.
+        utm_source:
+          type:
+            - string
+            - "null"
+          description: UTM source parameter captured at registration.
+        utm_medium:
+          type:
+            - string
+            - "null"
+          description: UTM medium parameter captured at registration.
+        utm_content:
+          type:
+            - string
+            - "null"
+          description: UTM content parameter captured at registration.
+        utm_term:
+          type:
+            - string
+            - "null"
+          description: UTM term parameter captured at registration.
+        referrer_domain:
+          type:
+            - string
+            - "null"
+          description: HTTP referrer domain at time of registration.
+        ip_region:
+          type:
+            - string
+            - "null"
+          description: Region derived from IP address.
+        ip_country:
+          type:
+            - string
+            - "null"
+          description: Country derived from IP address.
+        ip_city:
+          type:
+            - string
+            - "null"
+          description: City derived from IP address.
+        engagement_rate:
+          type:
+            - number
+            - "null"
+          format: float
+          description: Engagement rate between 0.0 and 1.0.
+          example: 0.85
+        focused_rate:
+          type:
+            - number
+            - "null"
+          format: float
+          description: Focused engagement rate between 0.0 and 1.0.
+        played_time:
+          type:
+            - integer
+            - "null"
+          description: Total seconds of video watched.
+        focused_played_time:
+          type:
+            - integer
+            - "null"
+          description: Total seconds watched in focused state.
+        chat_count:
+          type:
+            - integer
+            - "null"
+          description: Number of chat messages sent.
+        chats:
+          type: array
+          items:
+            type: object
+            properties:
+              rounded_player_position:
+                type: integer
+                description: Video position in seconds (rounded).
+              chats:
+                type: array
+                items:
+                  type: string
+          description: Chat messages sent by the registrant.
+        qa_questions:
+          type: array
+          items:
+            type: object
+            properties:
+              rounded_player_position:
+                type: integer
+                description: Video position in seconds (rounded).
+              qa_questions:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    question_text:
+                      type: string
+          description: Q&A questions asked by the registrant.
+        qa_answers:
+          type:
+            - integer
+            - "null"
+          description: Number of Q&A answers.
+        poll_responses:
+          type: array
+          items:
+            type: object
+            properties:
+              poll_question_text:
+                type:
+                  - string
+                  - "null"
+              poll_option_text:
+                type:
+                  - string
+                  - "null"
+          description: Poll responses submitted by the registrant.
+        poll_responses_count:
+          type:
+            - integer
+            - "null"
+          description: Number of poll responses submitted.
+        annotation_click_count:
+          type:
+            - integer
+            - "null"
+          description: Total number of annotation clicks.
+        attendee_histogram:
+          type:
+            - array
+            - "null"
+          items:
+            type:
+              - integer
+              - "null"
+          description: Per-bucket attendance data for this registrant.
+        focused_attendee_histogram:
+          type:
+            - array
+            - "null"
+          items:
+            type:
+              - integer
+              - "null"
+          description: Per-bucket focused attendance data for this registrant.
     CreateRegistration:
       type: object
       properties:
@@ -23305,6 +24647,8 @@ tags:
     x-displayName: Webinars
   - name: Webinar Registrations
     x-displayName: Webinar Registrations
+  - name: Remix
+    x-displayName: Remix
   - name: Stats:Account
     x-displayName: Stats:Account
   - name: Stats:Projects
@@ -23342,6 +24686,7 @@ x-tagGroups:
       - Expiring Access Tokens
       - Webinars
       - Webinar Registrations
+      - Remix
   - name: Stats API
     tags:
       - Stats:Account

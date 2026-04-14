@@ -41,9 +41,9 @@ wistia captions [flags]
 * [wistia captions create](wistia_captions_create.md)	 - Create Captions
 * [wistia captions create-multipart](wistia_captions_create-multipart.md)	 - Create Captions
 * [wistia captions delete](wistia_captions_delete.md)	 - Delete Captions
-* [wistia captions get](wistia_captions_get.md)	 - List Captions
 * [wistia captions get](wistia_captions_get.md)	 - Show Captions
 * [wistia captions list](wistia_captions_list.md)	 - List Captions by Media
+* [wistia captions list-all](wistia_captions_list-all.md)	 - List Captions
 * [wistia captions purchase](wistia_captions_purchase.md)	 - Purchase Captions
 * [wistia captions update](wistia_captions_update.md)	 - Update Captions
 * [wistia captions update-multipart](wistia_captions_update-multipart.md)	 - Update Captions

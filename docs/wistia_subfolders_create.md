@@ -4,7 +4,7 @@ Create Subfolder
 
 ### Synopsis
 
-Create a new subfolder within a project. The subfolder will be created with the next available position.
+Creates a new subfolder within a folder. The subfolder will be created with the next available position.
 
 ## Requires api token with one of the following permissions
 ```
@@ -18,7 +18,7 @@ wistia subfolders create [flags]
 ### Examples
 
 ```
-  wistia subfolders create --project-id abc123def4 --name Marketing Videos
+  wistia subfolders create --folder-id abc123def4 --name Marketing Videos
 ```
 
 ### Options
@@ -26,9 +26,9 @@ wistia subfolders create [flags]
 ```
       --body string          Request body as JSON (alternative to individual flags). Can also be provided via stdin.
       --description string   A description for the subfolder.
+  -f, --folder-id string     The hashed ID of the folder [required]
   -h, --help                 help for create
   -n, --name string          The display name of the subfolder. [required]
-  -p, --project-id string    The hashed ID of the project [required]
 ```
 
 ### Options inherited from parent commands

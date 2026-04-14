@@ -21,23 +21,23 @@ func InitWebinarsRoot(parent *cobra.Command) error {
 		},
 	}
 
-	if err := initGetWebinarsCmd(WebinarsCmd); err != nil {
+	if err := initListCmd(WebinarsCmd); err != nil {
 		return err
 	}
 
-	if err := initPostWebinarsCmd(WebinarsCmd); err != nil {
+	if err := initCreateCmd(WebinarsCmd); err != nil {
 		return err
 	}
 
-	if err := initGetWebinarsIdCmd(WebinarsCmd); err != nil {
+	if err := initGetCmd(WebinarsCmd); err != nil {
 		return err
 	}
 
-	if err := initPutWebinarsIdCmd(WebinarsCmd); err != nil {
+	if err := initUpdateCmd(WebinarsCmd); err != nil {
 		return err
 	}
 
-	if err := initDeleteWebinarsIdCmd(WebinarsCmd); err != nil {
+	if err := initDeleteCmd(WebinarsCmd); err != nil {
 		return err
 	}
 
