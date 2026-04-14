@@ -49,7 +49,9 @@ jobs:
       - name: Create release on source repo
         # GoReleaser publishes to homebrew-wistia-cli for Homebrew downloads.
         # Mirror a release here so it shows up on wistia/wistia-cli's Releases page.
-        run: gh release create "${{ github.ref_name }}" --title "${{ github.ref_name }}" --generate-notes
+        run: |
+          gh release create "${{ github.ref_name }}" --title "${{ github.ref_name }}" --generate-notes
+          gh release upload "${{ github.ref_name }}" dist/*.tar.gz dist/*.zip dist/checksums.txt
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
