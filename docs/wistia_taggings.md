@@ -38,4 +38,4 @@ wistia taggings [flags]
 ### SEE ALSO
 
 * [wistia](wistia.md)	 - Data API: Wistia Data API
-* [wistia taggings post-taggings-bulk-create](wistia_taggings_post-taggings-bulk-create.md)	 - Bulk Tag Media
+* [wistia taggings bulk-create](wistia_taggings_bulk-create.md)	 - Bulk Tag Media

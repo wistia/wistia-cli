@@ -38,8 +38,8 @@ wistia webinars [flags]
 ### SEE ALSO
 
 * [wistia](wistia.md)	 - Data API: Wistia Data API
-* [wistia webinars delete-webinars-id](wistia_webinars_delete-webinars-id.md)	 - Delete Webinar
-* [wistia webinars get](wistia_webinars_get.md)	 - List Webinars
-* [wistia webinars get-webinars-id](wistia_webinars_get-webinars-id.md)	 - Show Webinar
-* [wistia webinars post](wistia_webinars_post.md)	 - Create Webinar
-* [wistia webinars put-webinars-id](wistia_webinars_put-webinars-id.md)	 - Update Webinar
+* [wistia webinars create](wistia_webinars_create.md)	 - Create Webinar
+* [wistia webinars delete](wistia_webinars_delete.md)	 - Delete Webinar
+* [wistia webinars get](wistia_webinars_get.md)	 - Show Webinar
+* [wistia webinars list](wistia_webinars_list.md)	 - List Webinars
+* [wistia webinars update](wistia_webinars_update.md)	 - Update Webinar

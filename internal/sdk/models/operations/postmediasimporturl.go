@@ -9,7 +9,7 @@ import (
 )
 
 type PostMediasImportURLRequest struct {
-	// The URL of the media file to import.
+	// The publicly accessible URL of the media file to import.
 	URL string `json:"url"`
 	// The hashed ID of the folder (project) to import the media into. If not provided, a new folder will be created.
 	FolderID *string `json:"folder_id,omitzero"`

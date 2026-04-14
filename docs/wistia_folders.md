@@ -38,9 +38,9 @@ wistia folders [flags]
 ### SEE ALSO
 
 * [wistia](wistia.md)	 - Data API: Wistia Data API
-* [wistia folders delete-folders-id](wistia_folders_delete-folders-id.md)	 - Delete Folder
-* [wistia folders get](wistia_folders_get.md)	 - List Folders
-* [wistia folders get-folders-id](wistia_folders_get-folders-id.md)	 - Show Folder
-* [wistia folders post](wistia_folders_post.md)	 - Create Folder
-* [wistia folders post-folders-id-copy](wistia_folders_post-folders-id-copy.md)	 - Copy Folder
-* [wistia folders put-folders-id](wistia_folders_put-folders-id.md)	 - Update Folder
+* [wistia folders copy](wistia_folders_copy.md)	 - Copy Folder
+* [wistia folders create](wistia_folders_create.md)	 - Create Folder
+* [wistia folders delete](wistia_folders_delete.md)	 - Delete Folder
+* [wistia folders get](wistia_folders_get.md)	 - Show Folder
+* [wistia folders list](wistia_folders_list.md)	 - List Folders
+* [wistia folders update](wistia_folders_update.md)	 - Update Folder

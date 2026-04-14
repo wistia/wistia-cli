@@ -17,7 +17,7 @@ import (
 
 var getCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "media-hashed-id", Shorthand: "m", FieldPath: "MediaHashedID", Kind: flagutil.FlagKindString, Required: true, Description: "The hashed ID of the media from which captions are to be retrieved. [required]"},
-	{FlagName: "language-code", Shorthand: "l", FieldPath: "LanguageCode", Kind: flagutil.FlagKindString, Required: true, Description: "The language code of the captions to be retrieved. [required]"},
+	{FlagName: "language-code", Shorthand: "l", FieldPath: "LanguageCode", Kind: flagutil.FlagKindString, Required: true, Description: "The 3-character ISO 639-2 language code of the captions to be retrieved (e.g., `eng`, `fra`, `spa`). Some languages use extended IETF subtags (e.g., `zh-Hant`). [required]"},
 }
 
 // initGetCmd initializes the get command.

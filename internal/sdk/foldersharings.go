@@ -30,14 +30,14 @@ func newFolderSharings(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks
 	}
 }
 
-// GetFoldersFolderIDSharings - List Folder Sharings
+// List Folder Sharings
 // Lists the sharings of contacts and contact groups on a folder.
 //
 // ## Requires api token with one of the following permissions
 // ```
 // Read all data
 // ```
-func (s *FolderSharings) GetFoldersFolderIDSharings(ctx context.Context, request operations.GetFoldersFolderIDSharingsRequest, opts ...operations.Option) (*operations.GetFoldersFolderIDSharingsResponse, error) {
+func (s *FolderSharings) List(ctx context.Context, request operations.GetFoldersFolderIDSharingsRequest, opts ...operations.Option) (*operations.GetFoldersFolderIDSharingsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,
@@ -235,14 +235,14 @@ func (s *FolderSharings) GetFoldersFolderIDSharings(ctx context.Context, request
 
 }
 
-// PostFoldersFolderIDSharings - Create Folder Sharing
+// Create Folder Sharing
 // Creates a new sharing object for a folder by specifying the email of the person to share with and other optional parameters.
 //
 // ## Requires api token with one of the following permissions
 // ```
 // Read, update & delete anything
 // ```
-func (s *FolderSharings) PostFoldersFolderIDSharings(ctx context.Context, request operations.PostFoldersFolderIDSharingsRequest, opts ...operations.Option) (*operations.PostFoldersFolderIDSharingsResponse, error) {
+func (s *FolderSharings) Create(ctx context.Context, request operations.PostFoldersFolderIDSharingsRequest, opts ...operations.Option) (*operations.PostFoldersFolderIDSharingsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,
@@ -472,14 +472,14 @@ func (s *FolderSharings) PostFoldersFolderIDSharings(ctx context.Context, reques
 
 }
 
-// GetFoldersFolderIDSharingsSharingID - Show Folder Sharing
+// Get - Show Folder Sharing
 // Retrieves the details of a specific sharing object for a given folder.
 //
 // ## Requires api token with one of the following permissions
 // ```
 // Read all data
 // ```
-func (s *FolderSharings) GetFoldersFolderIDSharingsSharingID(ctx context.Context, request operations.GetFoldersFolderIDSharingsSharingIDRequest, opts ...operations.Option) (*operations.GetFoldersFolderIDSharingsSharingIDResponse, error) {
+func (s *FolderSharings) Get(ctx context.Context, request operations.GetFoldersFolderIDSharingsSharingIDRequest, opts ...operations.Option) (*operations.GetFoldersFolderIDSharingsSharingIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,
@@ -698,14 +698,14 @@ func (s *FolderSharings) GetFoldersFolderIDSharingsSharingID(ctx context.Context
 
 }
 
-// PutFoldersFolderIDSharingsSharingID - Update Folder Sharing
+// Update Folder Sharing
 // Updates a sharing on a folder.
 //
 // ## Requires api token with one of the following permissions
 // ```
 // Read, update & delete anything
 // ```
-func (s *FolderSharings) PutFoldersFolderIDSharingsSharingID(ctx context.Context, request operations.PutFoldersFolderIDSharingsSharingIDRequest, opts ...operations.Option) (*operations.PutFoldersFolderIDSharingsSharingIDResponse, error) {
+func (s *FolderSharings) Update(ctx context.Context, request operations.PutFoldersFolderIDSharingsSharingIDRequest, opts ...operations.Option) (*operations.PutFoldersFolderIDSharingsSharingIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,
@@ -931,14 +931,14 @@ func (s *FolderSharings) PutFoldersFolderIDSharingsSharingID(ctx context.Context
 
 }
 
-// DeleteFoldersFolderIDSharingsSharingID - Delete Folder Sharing
+// Delete Folder Sharing
 // Deletes a sharing on a folder.
 //
 // ## Requires api token with one of the following permissions
 // ```
 // Read, update & delete anything
 // ```
-func (s *FolderSharings) DeleteFoldersFolderIDSharingsSharingID(ctx context.Context, request operations.DeleteFoldersFolderIDSharingsSharingIDRequest, opts ...operations.Option) (*operations.DeleteFoldersFolderIDSharingsSharingIDResponse, error) {
+func (s *FolderSharings) Delete(ctx context.Context, request operations.DeleteFoldersFolderIDSharingsSharingIDRequest, opts ...operations.Option) (*operations.DeleteFoldersFolderIDSharingsSharingIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,

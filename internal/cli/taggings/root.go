@@ -21,7 +21,7 @@ func InitTaggingsRoot(parent *cobra.Command) error {
 		},
 	}
 
-	if err := initPostTaggingsBulkCreateCmd(TaggingsCmd); err != nil {
+	if err := initBulkCreateCmd(TaggingsCmd); err != nil {
 		return err
 	}
 

@@ -31,7 +31,7 @@ func newWebinars(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks *hook
 	}
 }
 
-// GetWebinars - List Webinars
+// List Webinars
 // Lists webinars belonging to the account. This endpoint can also be used to
 // do a batch fetch based off of the hashed id.
 //
@@ -39,7 +39,7 @@ func newWebinars(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks *hook
 // ```
 // Read all data
 // ```
-func (s *Webinars) GetWebinars(ctx context.Context, request *operations.GetWebinarsRequest, opts ...operations.Option) (*operations.GetWebinarsResponse, error) {
+func (s *Webinars) List(ctx context.Context, request *operations.GetWebinarsRequest, opts ...operations.Option) (*operations.GetWebinarsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,
@@ -262,14 +262,14 @@ func (s *Webinars) GetWebinars(ctx context.Context, request *operations.GetWebin
 
 }
 
-// PostWebinars - Create Webinar
+// Create Webinar
 // Creates a new webinar.
 //
 // ## Requires api token with one of the following permissions
 // ```
 // Read, update & delete anything
 // ```
-func (s *Webinars) PostWebinars(ctx context.Context, request operations.PostWebinarsRequest, opts ...operations.Option) (*operations.PostWebinarsResponse, error) {
+func (s *Webinars) Create(ctx context.Context, request operations.PostWebinarsRequest, opts ...operations.Option) (*operations.PostWebinarsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,
@@ -522,14 +522,14 @@ func (s *Webinars) PostWebinars(ctx context.Context, request operations.PostWebi
 
 }
 
-// GetWebinarsID - Show Webinar
+// Get - Show Webinar
 // Returns the webinar associated with the hashed id.
 //
 // ## Requires api token with one of the following permissions
 // ```
 // Read all data
 // ```
-func (s *Webinars) GetWebinarsID(ctx context.Context, request operations.GetWebinarsIDRequest, opts ...operations.Option) (*operations.GetWebinarsIDResponse, error) {
+func (s *Webinars) Get(ctx context.Context, request operations.GetWebinarsIDRequest, opts ...operations.Option) (*operations.GetWebinarsIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,
@@ -750,14 +750,14 @@ func (s *Webinars) GetWebinarsID(ctx context.Context, request operations.GetWebi
 
 }
 
-// PutWebinarsID - Update Webinar
+// Update Webinar
 // Updates an existing webinar.
 //
 // ## Requires api token with one of the following permissions
 // ```
 // Read, update & delete anything
 // ```
-func (s *Webinars) PutWebinarsID(ctx context.Context, request operations.PutWebinarsIDRequest, opts ...operations.Option) (*operations.PutWebinarsIDResponse, error) {
+func (s *Webinars) Update(ctx context.Context, request operations.PutWebinarsIDRequest, opts ...operations.Option) (*operations.PutWebinarsIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,
@@ -1010,14 +1010,14 @@ func (s *Webinars) PutWebinarsID(ctx context.Context, request operations.PutWebi
 
 }
 
-// DeleteWebinarsID - Delete Webinar
+// Delete Webinar
 // Deletes an existing webinar.
 //
 // ## Requires api token with one of the following permissions
 // ```
 // Read, update & delete anything
 // ```
-func (s *Webinars) DeleteWebinarsID(ctx context.Context, request operations.DeleteWebinarsIDRequest, opts ...operations.Option) (*operations.DeleteWebinarsIDResponse, error) {
+func (s *Webinars) Delete(ctx context.Context, request operations.DeleteWebinarsIDRequest, opts ...operations.Option) (*operations.DeleteWebinarsIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,

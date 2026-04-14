@@ -50,6 +50,7 @@ wistia [flags]
 * [wistia localizations](wistia_localizations.md)	 - Operations for localizations
 * [wistia media](wistia_media.md)	 - Operations for media
 * [wistia media-extended-audio-descriptions](wistia_media-extended-audio-descriptions.md)	 - Operations for media-extended-audio-descriptions
+* [wistia remix](wistia_remix.md)	 - Operations for remix
 * [wistia search](wistia_search.md)	 - Operations for search
 * [wistia stats-account](wistia_stats-account.md)	 - Operations for stats-account
 * [wistia stats-events](wistia_stats-events.md)	 - Operations for stats-events
@@ -60,6 +61,7 @@ wistia [flags]
 * [wistia taggings](wistia_taggings.md)	 - Operations for taggings
 * [wistia tags](wistia_tags.md)	 - Operations for tags
 * [wistia trims](wistia_trims.md)	 - Operations for trims
+* [wistia upload-or-import-media](wistia_upload-or-import-media.md)	 - Operations for upload-or-import-media
 * [wistia version](wistia_version.md)	 - Print the CLI version
 * [wistia webinar-registrations](wistia_webinar-registrations.md)	 - Operations for webinar-registrations
 * [wistia webinars](wistia_webinars.md)	 - Operations for webinars

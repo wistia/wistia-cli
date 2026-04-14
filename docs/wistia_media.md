@@ -39,17 +39,15 @@ wistia media [flags]
 
 * [wistia](wistia.md)	 - Data API: Wistia Data API
 * [wistia media archive](wistia_media_archive.md)	 - Archive Media
+* [wistia media bulk-copy](wistia_media_bulk-copy.md)	 - Bulk Copy Media
 * [wistia media copy](wistia_media_copy.md)	 - Copy Media
 * [wistia media delete](wistia_media_delete.md)	 - Delete Media
 * [wistia media get](wistia_media_get.md)	 - Show Media
 * [wistia media get-stats](wistia_media_get-stats.md)	 - Show Media Aggregated Stats
+* [wistia media import-url](wistia_media_import-url.md)	 - Import Media from URL
 * [wistia media list](wistia_media_list.md)	 - List Media
 * [wistia media move](wistia_media_move.md)	 - Move Media
-* [wistia media post-medias-import-url](wistia_media_post-medias-import-url.md)	 - Import Media from URL
-* [wistia media put-medias-copy](wistia_media_put-medias-copy.md)	 - Bulk Copy Media
 * [wistia media restore](wistia_media_restore.md)	 - Restore Media
 * [wistia media swap](wistia_media_swap.md)	 - Swap Media
 * [wistia media translate](wistia_media_translate.md)	 - Translate Media
 * [wistia media update](wistia_media_update.md)	 - Update Media
-* [wistia media upload-form](wistia_media_upload-form.md)	 - Upload or Import Media
-* [wistia media upload-multipart](wistia_media_upload-multipart.md)	 - Upload or Import Media

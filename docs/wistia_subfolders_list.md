@@ -1,15 +1,13 @@
 ## wistia subfolders list
 
-Subfolder List
+List Subfolders
 
 ### Synopsis
 
-Use this endpoint to request a list of subfolders in a specific project. This request supports paging and sorting.
+Lists subfolders in a specific folder.
 
 ## Requires api token with one of the following permissions
 ```
-Read, update & delete anything
-Read all data
 Read all folder and media data
 ```
 
@@ -20,18 +18,34 @@ wistia subfolders list [flags]
 ### Examples
 
 ```
-  wistia subfolders list --project-id abc123def4
+  wistia subfolders list --folder-id abc123def4
 ```
 
 ### Options
 
 ```
-  -h, --help                    help for list
-      --page int                Page number to retrieve (default 1)
-      --per-page int            Number of subfolders per page (default 100)
-      --project-id string       The hashed ID of the project [required]
-      --sort-by string          Field to sort by (options: name, created, updated, position, id) (default "position")
-      --sort-direction string   Sort direction (0 = desc, 1 = asc; default is 1) (options: 0, 1) (default "1")
+  -c, --cursor cursor[enabled]   If cursor[enabled] is set to 1 than cursor pagination is enabled and the
+                                 first set of records are fetched up to the `per_page`. Cursor
+                                 pagination will also be turned on if `cursor[before]` or `cursor[after]`
+                                 are set. Records returned will have a `cursor` property set which can be used to fetch more records in the same `sort_by` ordering.
+                                 The cursor value of the last record can be used to fetch records after the current result set and
+                                 the cursor of the first record can be used to fetch records before the result set.
+                                 
+                                 NOTE: a cursor value is only valid if the `sort_by` value hasn't changed from the
+                                 last fetch. For example, you cannot fetch using `sort_by` id and than pass that
+                                 cursor value to a `sort_by` name.
+                                 
+  -f, --folder-id string         The hashed ID of the folder [required]
+      --hashed-ids stringArray   Filter subfolders by their hashed IDs
+  -h, --help                     help for list
+      --page cursor              The page number to retrieve. This cannot be combined with cursor,
+                                 pagination.
+                                 
+      --per-page int             The number of medias per page. Use this for both offset pagination and cursor pagination.
+      --sort-by id               Field to sort by. When using cursor pagination (see cursor param),
+                                 only id is supported.
+                                  (options: name, created, updated, position, id) (default "position")
+      --sort-direction string    Sort direction (0 = desc, 1 = asc; default is 1) (options: 0, 1) (default "1")
 ```
 
 ### Options inherited from parent commands

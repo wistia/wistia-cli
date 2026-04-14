@@ -30,7 +30,7 @@ func newAnalyticsWebinar(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hoo
 	}
 }
 
-// GetAnalyticsWebinarsWebinarID - Show Webinar Analytics
+// Get - Show Webinar Analytics
 // Retrieve aggregate analytics for a webinar. This endpoint provides
 // Bottler-powered analytics including registrations, attendance, engagement,
 // chat activity, and poll results.
@@ -41,7 +41,7 @@ func newAnalyticsWebinar(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hoo
 // Read detailed stats
 // ```
 // <!--- /HIDE-MCP -->
-func (s *AnalyticsWebinar) GetAnalyticsWebinarsWebinarID(ctx context.Context, request operations.GetAnalyticsWebinarsWebinarIDRequest, opts ...operations.Option) (*operations.GetAnalyticsWebinarsWebinarIDResponse, error) {
+func (s *AnalyticsWebinar) Get(ctx context.Context, request operations.GetAnalyticsWebinarsWebinarIDRequest, opts ...operations.Option) (*operations.GetAnalyticsWebinarsWebinarIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,
@@ -341,7 +341,7 @@ func (s *AnalyticsWebinar) GetAnalyticsWebinarsWebinarID(ctx context.Context, re
 
 }
 
-// GetAnalyticsWebinarsWebinarIDRegistration - Show Webinar Registration Timeseries
+// GetRegistration - Show Webinar Registration Timeseries
 // Retrieve registration timeseries data for a webinar with configurable
 // granularity. Returns an array of timestamped registration metric buckets
 // including impressions, registrations, and completion rates.
@@ -352,7 +352,7 @@ func (s *AnalyticsWebinar) GetAnalyticsWebinarsWebinarID(ctx context.Context, re
 // Read detailed stats
 // ```
 // <!--- /HIDE-MCP -->
-func (s *AnalyticsWebinar) GetAnalyticsWebinarsWebinarIDRegistration(ctx context.Context, request operations.GetAnalyticsWebinarsWebinarIDRegistrationRequest, opts ...operations.Option) (*operations.GetAnalyticsWebinarsWebinarIDRegistrationResponse, error) {
+func (s *AnalyticsWebinar) GetRegistration(ctx context.Context, request operations.GetAnalyticsWebinarsWebinarIDRegistrationRequest, opts ...operations.Option) (*operations.GetAnalyticsWebinarsWebinarIDRegistrationResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,
@@ -627,7 +627,7 @@ func (s *AnalyticsWebinar) GetAnalyticsWebinarsWebinarIDRegistration(ctx context
 
 }
 
-// GetAnalyticsWebinarsWebinarIDTraffic - Show Webinar Traffic Breakdown
+// GetTraffic - Show Webinar Traffic Breakdown
 // Retrieve traffic breakdown analytics for a webinar, grouped by a specified dimension
 // such as UTM campaign, UTM source, UTM medium, or referrer domain.
 //
@@ -637,7 +637,7 @@ func (s *AnalyticsWebinar) GetAnalyticsWebinarsWebinarIDRegistration(ctx context
 // Read detailed stats
 // ```
 // <!--- /HIDE-MCP -->
-func (s *AnalyticsWebinar) GetAnalyticsWebinarsWebinarIDTraffic(ctx context.Context, request operations.GetAnalyticsWebinarsWebinarIDTrafficRequest, opts ...operations.Option) (*operations.GetAnalyticsWebinarsWebinarIDTrafficResponse, error) {
+func (s *AnalyticsWebinar) GetTraffic(ctx context.Context, request operations.GetAnalyticsWebinarsWebinarIDTrafficRequest, opts ...operations.Option) (*operations.GetAnalyticsWebinarsWebinarIDTrafficResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,
@@ -912,7 +912,7 @@ func (s *AnalyticsWebinar) GetAnalyticsWebinarsWebinarIDTraffic(ctx context.Cont
 
 }
 
-// GetAnalyticsWebinarsWebinarIDAudience - Show Webinar Audience
+// GetAudience - Show Webinar Audience
 // Retrieve audience data for a webinar. Returns a paginated list of
 // registrants with their attendance status, engagement metrics,
 // attribution data, and per-attendee histograms.
@@ -923,7 +923,7 @@ func (s *AnalyticsWebinar) GetAnalyticsWebinarsWebinarIDTraffic(ctx context.Cont
 // Read detailed stats
 // ```
 // <!--- /HIDE-MCP -->
-func (s *AnalyticsWebinar) GetAnalyticsWebinarsWebinarIDAudience(ctx context.Context, request operations.GetAnalyticsWebinarsWebinarIDAudienceRequest, opts ...operations.Option) (*operations.GetAnalyticsWebinarsWebinarIDAudienceResponse, error) {
+func (s *AnalyticsWebinar) GetAudience(ctx context.Context, request operations.GetAnalyticsWebinarsWebinarIDAudienceRequest, opts ...operations.Option) (*operations.GetAnalyticsWebinarsWebinarIDAudienceResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,
@@ -1173,7 +1173,7 @@ func (s *AnalyticsWebinar) GetAnalyticsWebinarsWebinarIDAudience(ctx context.Con
 
 }
 
-// GetAnalyticsWebinarsWebinarIDHistograms - Show Webinar Histograms
+// GetHistograms - Show Webinar Histograms
 // Retrieve engagement histogram data for a webinar. Returns arrays of
 // per-time-bucket counts for attendees, chat activity, and visual focus,
 // useful for rendering engagement visualizations.
@@ -1184,7 +1184,7 @@ func (s *AnalyticsWebinar) GetAnalyticsWebinarsWebinarIDAudience(ctx context.Con
 // Read detailed stats
 // ```
 // <!--- /HIDE-MCP -->
-func (s *AnalyticsWebinar) GetAnalyticsWebinarsWebinarIDHistograms(ctx context.Context, request operations.GetAnalyticsWebinarsWebinarIDHistogramsRequest, opts ...operations.Option) (*operations.GetAnalyticsWebinarsWebinarIDHistogramsResponse, error) {
+func (s *AnalyticsWebinar) GetHistograms(ctx context.Context, request operations.GetAnalyticsWebinarsWebinarIDHistogramsRequest, opts ...operations.Option) (*operations.GetAnalyticsWebinarsWebinarIDHistogramsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,

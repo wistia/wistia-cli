@@ -22,7 +22,11 @@ func InitWebinarRegistrationsRoot(parent *cobra.Command) error {
 		Aliases: []string{"wr"},
 	}
 
-	if err := initPostWebinarsWebinarIdRegistrationsCmd(WebinarRegistrationsCmd); err != nil {
+	if err := initGetWebinarsWebinarIdRegistrationsCmd(WebinarRegistrationsCmd); err != nil {
+		return err
+	}
+
+	if err := initCreateCmd(WebinarRegistrationsCmd); err != nil {
 		return err
 	}
 

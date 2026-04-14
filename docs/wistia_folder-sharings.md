@@ -38,8 +38,8 @@ wistia folder-sharings [flags]
 ### SEE ALSO
 
 * [wistia](wistia.md)	 - Data API: Wistia Data API
-* [wistia folder-sharings delete-folders-folder-id-sharings-sharing-id](wistia_folder-sharings_delete-folders-folder-id-sharings-sharing-id.md)	 - Delete Folder Sharing
-* [wistia folder-sharings get-folders-folder-id-sharings](wistia_folder-sharings_get-folders-folder-id-sharings.md)	 - List Folder Sharings
-* [wistia folder-sharings get-folders-folder-id-sharings-sharing-id](wistia_folder-sharings_get-folders-folder-id-sharings-sharing-id.md)	 - Show Folder Sharing
-* [wistia folder-sharings post-folders-folder-id-sharings](wistia_folder-sharings_post-folders-folder-id-sharings.md)	 - Create Folder Sharing
-* [wistia folder-sharings put-folders-folder-id-sharings-sharing-id](wistia_folder-sharings_put-folders-folder-id-sharings-sharing-id.md)	 - Update Folder Sharing
+* [wistia folder-sharings create](wistia_folder-sharings_create.md)	 - Create Folder Sharing
+* [wistia folder-sharings delete](wistia_folder-sharings_delete.md)	 - Delete Folder Sharing
+* [wistia folder-sharings get](wistia_folder-sharings_get.md)	 - Show Folder Sharing
+* [wistia folder-sharings list](wistia_folder-sharings_list.md)	 - List Folder Sharings
+* [wistia folder-sharings update](wistia_folder-sharings_update.md)	 - Update Folder Sharing

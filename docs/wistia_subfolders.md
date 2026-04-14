@@ -38,9 +38,9 @@ wistia subfolders [flags]
 ### SEE ALSO
 
 * [wistia](wistia.md)	 - Data API: Wistia Data API
-* [wistia subfolders delete-folders-folder-id-subfolders-bulk-delete](wistia_subfolders_delete-folders-folder-id-subfolders-bulk-delete.md)	 - Bulk Delete Subfolders
-* [wistia subfolders delete-folders-folder-id-subfolders-subfolder-id](wistia_subfolders_delete-folders-folder-id-subfolders-subfolder-id.md)	 - Delete Subfolder
-* [wistia subfolders get-folders-folder-id](wistia_subfolders_get-folders-folder-id.md)	 - List Subfolders
-* [wistia subfolders get-folders-folder-id-subfolders-subfolder-id](wistia_subfolders_get-folders-folder-id-subfolders-subfolder-id.md)	 - Show Subfolder
-* [wistia subfolders post-folders-folder-id](wistia_subfolders_post-folders-folder-id.md)	 - Create Subfolder
-* [wistia subfolders put-folders-folder-id-subfolders-subfolder-id](wistia_subfolders_put-folders-folder-id-subfolders-subfolder-id.md)	 - Update Subfolder
+* [wistia subfolders bulk-delete](wistia_subfolders_bulk-delete.md)	 - Bulk Delete Subfolders
+* [wistia subfolders create](wistia_subfolders_create.md)	 - Create Subfolder
+* [wistia subfolders delete](wistia_subfolders_delete.md)	 - Delete Subfolder
+* [wistia subfolders get](wistia_subfolders_get.md)	 - Show Subfolder
+* [wistia subfolders list](wistia_subfolders_list.md)	 - List Subfolders
+* [wistia subfolders update](wistia_subfolders_update.md)	 - Update Subfolder

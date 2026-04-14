@@ -22,23 +22,23 @@ func InitFolderSharingsRoot(parent *cobra.Command) error {
 		Aliases: []string{"fs"},
 	}
 
-	if err := initGetFoldersFolderIdSharingsCmd(FolderSharingsCmd); err != nil {
+	if err := initListCmd(FolderSharingsCmd); err != nil {
 		return err
 	}
 
-	if err := initPostFoldersFolderIdSharingsCmd(FolderSharingsCmd); err != nil {
+	if err := initCreateCmd(FolderSharingsCmd); err != nil {
 		return err
 	}
 
-	if err := initGetFoldersFolderIdSharingsSharingIdCmd(FolderSharingsCmd); err != nil {
+	if err := initGetCmd(FolderSharingsCmd); err != nil {
 		return err
 	}
 
-	if err := initPutFoldersFolderIdSharingsSharingIdCmd(FolderSharingsCmd); err != nil {
+	if err := initUpdateCmd(FolderSharingsCmd); err != nil {
 		return err
 	}
 
-	if err := initDeleteFoldersFolderIdSharingsSharingIdCmd(FolderSharingsCmd); err != nil {
+	if err := initDeleteCmd(FolderSharingsCmd); err != nil {
 		return err
 	}
 
