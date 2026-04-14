@@ -4,7 +4,7 @@ Update Subfolder
 
 ### Synopsis
 
-Update a subfolder's name and/or description. 
+Updates a subfolder's name and/or description.
 
 ## Requires api token with one of the following permissions
 ```
@@ -18,7 +18,7 @@ wistia subfolders update [flags]
 ### Examples
 
 ```
-  wistia subfolders update --project-id abc123def4 --subfolder-id xyz789ghi0
+  wistia subfolders update --folder-id abc123def4 --subfolder-id xyz789ghi0
 ```
 
 ### Options
@@ -26,9 +26,9 @@ wistia subfolders update [flags]
 ```
       --body string           Request body as JSON (alternative to individual flags). Can also be provided via stdin.
       --description string    The new description for the subfolder
+  -f, --folder-id string      The hashed ID of the folder [required]
   -h, --help                  help for update
   -n, --name string           The new name for the subfolder
-  -p, --project-id string     The hashed ID of the project [required]
   -s, --subfolder-id string   The hashed ID of the subfolder [required]
 ```
 

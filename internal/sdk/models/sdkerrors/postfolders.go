@@ -21,6 +21,19 @@ func (e *PostFoldersInternalServerError) Error() string {
 	return string(data)
 }
 
+// PostFoldersForbiddenError - Forbidden, token is valid but account does not have access to feature
+type PostFoldersForbiddenError struct {
+	Error_   *string                 `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata `json:"-"`
+}
+
+var _ error = &PostFoldersForbiddenError{}
+
+func (e *PostFoldersForbiddenError) Error() string {
+	data, _ := json.Marshal(e)
+	return string(data)
+}
+
 // PostFoldersUnauthorizedError - Unauthorized, invalid or missing token
 type PostFoldersUnauthorizedError struct {
 	Error_   *string                 `json:"error,omitzero"`

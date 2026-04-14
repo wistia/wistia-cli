@@ -31,14 +31,14 @@ func newFolders(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks *hooks
 	}
 }
 
-// GetFolders - List Folders
+// List Folders
 // Lists folders (previously called projects) belonging to the account.
 //
 // ## Requires api token with one of the following permissions
 // ```
 // Read all folder and media data
 // ```
-func (s *Folders) GetFolders(ctx context.Context, request *operations.GetFoldersRequest, opts ...operations.Option) (*operations.GetFoldersResponse, error) {
+func (s *Folders) List(ctx context.Context, request *operations.GetFoldersRequest, opts ...operations.Option) (*operations.GetFoldersResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,
@@ -261,14 +261,14 @@ func (s *Folders) GetFolders(ctx context.Context, request *operations.GetFolders
 
 }
 
-// PostFolders - Create Folder
+// Create Folder
 // Creates a new folder (previously called project). If the folder is created successfully the Location HTTP header will point to the new folder.
 //
 // ## Requires api token with one of the following permissions
 // ```
 // Read, update & delete anything
 // ```
-func (s *Folders) PostFolders(ctx context.Context, request *operations.PostFoldersRequest, opts ...operations.Option) (*operations.PostFoldersResponse, error) {
+func (s *Folders) Create(ctx context.Context, request *operations.PostFoldersRequest, opts ...operations.Option) (*operations.PostFoldersResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,
@@ -350,7 +350,7 @@ func (s *Folders) PostFolders(ctx context.Context, request *operations.PostFolde
 
 		_, err = s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
 		return nil, err
-	} else if utils.MatchStatusCodes([]string{"401", "4XX", "500", "5XX"}, httpRes.StatusCode) {
+	} else if utils.MatchStatusCodes([]string{"401", "403", "4XX", "500", "5XX"}, httpRes.StatusCode) {
 		_httpRes, err := s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
 		if err != nil {
 			return nil, err
@@ -420,6 +420,31 @@ func (s *Folders) PostFolders(ctx context.Context, request *operations.PostFolde
 			}
 			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
+	case httpRes.StatusCode == 403:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out sdkerrors.PostFoldersForbiddenError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, err
+			}
+
+			out.HTTPMeta = components.HTTPMetadata{
+				Request:  req,
+				Response: httpRes,
+			}
+			return nil, &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
 	case httpRes.StatusCode == 500:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
@@ -469,14 +494,14 @@ func (s *Folders) PostFolders(ctx context.Context, request *operations.PostFolde
 
 }
 
-// GetFoldersID - Show Folder
+// Get - Show Folder
 // Retrieves a single folder (previously called project).
 //
 // ## Requires api token with one of the following permissions
 // ```
 // Read all folder and media data
 // ```
-func (s *Folders) GetFoldersID(ctx context.Context, request operations.GetFoldersIDRequest, opts ...operations.Option) (*operations.GetFoldersIDResponse, error) {
+func (s *Folders) Get(ctx context.Context, request operations.GetFoldersIDRequest, opts ...operations.Option) (*operations.GetFoldersIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,
@@ -695,14 +720,14 @@ func (s *Folders) GetFoldersID(ctx context.Context, request operations.GetFolder
 
 }
 
-// PutFoldersID - Update Folder
+// Update Folder
 // Updates a folder (previously called project)
 //
 // ## Requires api token with one of the following permissions
 // ```
 // Read, update & delete anything
 // ```
-func (s *Folders) PutFoldersID(ctx context.Context, request operations.PutFoldersIDRequest, opts ...operations.Option) (*operations.PutFoldersIDResponse, error) {
+func (s *Folders) Update(ctx context.Context, request operations.PutFoldersIDRequest, opts ...operations.Option) (*operations.PutFoldersIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,
@@ -953,14 +978,14 @@ func (s *Folders) PutFoldersID(ctx context.Context, request operations.PutFolder
 
 }
 
-// DeleteFoldersID - Delete Folder
+// Delete Folder
 // Deletes a folder (previously called project)
 //
 // ## Requires api token with one of the following permissions
 // ```
 // Read, update & delete anything
 // ```
-func (s *Folders) DeleteFoldersID(ctx context.Context, request operations.DeleteFoldersIDRequest, opts ...operations.Option) (*operations.DeleteFoldersIDResponse, error) {
+func (s *Folders) Delete(ctx context.Context, request operations.DeleteFoldersIDRequest, opts ...operations.Option) (*operations.DeleteFoldersIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,
@@ -1204,7 +1229,7 @@ func (s *Folders) DeleteFoldersID(ctx context.Context, request operations.Delete
 
 }
 
-// PostFoldersIDCopy - Copy Folder
+// Copy Folder
 // This copies a folder (previously called project) and all its media and subfolders asynchronously in a background job.
 //
 // This method does not copy the folder’s sharing information (i.e. users that could see the old folder will not automatically be able to see the new one).
@@ -1217,7 +1242,7 @@ func (s *Folders) DeleteFoldersID(ctx context.Context, request operations.Delete
 // ```
 // Read, update & delete anything
 // ```
-func (s *Folders) PostFoldersIDCopy(ctx context.Context, request operations.PostFoldersIDCopyRequest, opts ...operations.Option) (*operations.PostFoldersIDCopyResponse, error) {
+func (s *Folders) Copy(ctx context.Context, request operations.PostFoldersIDCopyRequest, opts ...operations.Option) (*operations.PostFoldersIDCopyResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,

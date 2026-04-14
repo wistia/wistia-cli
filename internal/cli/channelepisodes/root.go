@@ -34,19 +34,19 @@ func InitChannelEpisodesRoot(parent *cobra.Command) error {
 		return err
 	}
 
-	if err := initPutChannelEpisodesChannelEpisodeHashedIdCmd(ChannelEpisodesCmd); err != nil {
+	if err := initUpdateCmd(ChannelEpisodesCmd); err != nil {
 		return err
 	}
 
-	if err := initDeleteChannelEpisodesChannelEpisodeHashedIdCmd(ChannelEpisodesCmd); err != nil {
+	if err := initDeleteCmd(ChannelEpisodesCmd); err != nil {
 		return err
 	}
 
-	if err := initPutChannelEpisodesChannelEpisodeHashedIdPublishCmd(ChannelEpisodesCmd); err != nil {
+	if err := initPublishCmd(ChannelEpisodesCmd); err != nil {
 		return err
 	}
 
-	if err := initPutChannelEpisodesChannelEpisodeHashedIdUnpublishCmd(ChannelEpisodesCmd); err != nil {
+	if err := initUnpublishCmd(ChannelEpisodesCmd); err != nil {
 		return err
 	}
 

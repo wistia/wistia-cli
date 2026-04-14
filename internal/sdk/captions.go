@@ -670,7 +670,7 @@ func (s *Captions) CreateMultipart(ctx context.Context, request operations.PostM
 
 }
 
-// GetCaptions - List Captions
+// ListAll - List Captions
 // Lists captions belonging to the account. This endpoint can also narrow down results
 // to those belonging to a specific media.
 //
@@ -678,7 +678,7 @@ func (s *Captions) CreateMultipart(ctx context.Context, request operations.PostM
 // ```
 // Read all folder and media data
 // ```
-func (s *Captions) GetCaptions(ctx context.Context, request *operations.GetCaptionsRequest, opts ...operations.Option) (*operations.GetCaptionsResponse, error) {
+func (s *Captions) ListAll(ctx context.Context, request *operations.GetCaptionsRequest, opts ...operations.Option) (*operations.GetCaptionsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,

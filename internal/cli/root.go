@@ -22,6 +22,7 @@ import (
 	"github.com/wistia/wistia-cli/internal/cli/localizations"
 	"github.com/wistia/wistia-cli/internal/cli/media"
 	"github.com/wistia/wistia-cli/internal/cli/mediaextendedaudiodescriptions"
+	"github.com/wistia/wistia-cli/internal/cli/remix"
 	"github.com/wistia/wistia-cli/internal/cli/search"
 	"github.com/wistia/wistia-cli/internal/cli/statsaccount"
 	"github.com/wistia/wistia-cli/internal/cli/statsevents"
@@ -32,6 +33,7 @@ import (
 	"github.com/wistia/wistia-cli/internal/cli/taggings"
 	"github.com/wistia/wistia-cli/internal/cli/tags"
 	"github.com/wistia/wistia-cli/internal/cli/trims"
+	"github.com/wistia/wistia-cli/internal/cli/uploadorimportmedia"
 	"github.com/wistia/wistia-cli/internal/cli/webinarregistrations"
 	"github.com/wistia/wistia-cli/internal/cli/webinars"
 	"github.com/wistia/wistia-cli/internal/config"
@@ -73,8 +75,8 @@ func NewRootCommand() (*cobra.Command, error) {
 			return nil
 		},
 	}
-	if err := media.InitMediaRoot(rootCmd); err != nil {
-		return nil, fmt.Errorf("init media: %w", err)
+	if err := uploadorimportmedia.InitUploadOrImportMediaRoot(rootCmd); err != nil {
+		return nil, fmt.Errorf("init upload-or-import-media: %w", err)
 	}
 	if err := mediaextendedaudiodescriptions.InitMediaExtendedAudioDescriptionsRoot(rootCmd); err != nil {
 		return nil, fmt.Errorf("init media-extended-audio-descriptions: %w", err)
@@ -87,6 +89,9 @@ func NewRootCommand() (*cobra.Command, error) {
 	}
 	if err := foldersharings.InitFolderSharingsRoot(rootCmd); err != nil {
 		return nil, fmt.Errorf("init folder-sharings: %w", err)
+	}
+	if err := media.InitMediaRoot(rootCmd); err != nil {
+		return nil, fmt.Errorf("init media: %w", err)
 	}
 	if err := taggings.InitTaggingsRoot(rootCmd); err != nil {
 		return nil, fmt.Errorf("init taggings: %w", err)
@@ -132,6 +137,9 @@ func NewRootCommand() (*cobra.Command, error) {
 	}
 	if err := webinarregistrations.InitWebinarRegistrationsRoot(rootCmd); err != nil {
 		return nil, fmt.Errorf("init webinar-registrations: %w", err)
+	}
+	if err := remix.InitRemixRoot(rootCmd); err != nil {
+		return nil, fmt.Errorf("init remix: %w", err)
 	}
 	if err := statsaccount.InitStatsAccountRoot(rootCmd); err != nil {
 		return nil, fmt.Errorf("init stats-account: %w", err)

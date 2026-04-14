@@ -722,13 +722,13 @@ func (s *ChannelEpisodes) List(ctx context.Context, request *operations.GetChann
 
 }
 
-// PutChannelEpisodesChannelEpisodeHashedID - Update Channel Episode
+// Update Channel Episode
 // Updates an existing channel episode in a channel.
 // ## Requires api token with one of the following permissions
 // ```
 // Read, update & delete anything
 // ```
-func (s *ChannelEpisodes) PutChannelEpisodesChannelEpisodeHashedID(ctx context.Context, request operations.PutChannelEpisodesChannelEpisodeHashedIDRequest, opts ...operations.Option) (*operations.PutChannelEpisodesChannelEpisodeHashedIDResponse, error) {
+func (s *ChannelEpisodes) Update(ctx context.Context, request operations.PutChannelEpisodesChannelEpisodeHashedIDRequest, opts ...operations.Option) (*operations.PutChannelEpisodesChannelEpisodeHashedIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,
@@ -954,14 +954,14 @@ func (s *ChannelEpisodes) PutChannelEpisodesChannelEpisodeHashedID(ctx context.C
 
 }
 
-// DeleteChannelEpisodesChannelEpisodeHashedID - Delete Channel Episode
+// Delete Channel Episode
 // Deletes an existing channel episode in a channel.
 //
 // ## Requires api token with one of the following permissions
 // ```
 // Read, update & delete anything
 // ```
-func (s *ChannelEpisodes) DeleteChannelEpisodesChannelEpisodeHashedID(ctx context.Context, request operations.DeleteChannelEpisodesChannelEpisodeHashedIDRequest, opts ...operations.Option) (*operations.DeleteChannelEpisodesChannelEpisodeHashedIDResponse, error) {
+func (s *ChannelEpisodes) Delete(ctx context.Context, request operations.DeleteChannelEpisodesChannelEpisodeHashedIDRequest, opts ...operations.Option) (*operations.DeleteChannelEpisodesChannelEpisodeHashedIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,
@@ -1180,13 +1180,13 @@ func (s *ChannelEpisodes) DeleteChannelEpisodesChannelEpisodeHashedID(ctx contex
 
 }
 
-// PutChannelEpisodesChannelEpisodeHashedIDPublish - Publish Channel Episode
+// Publish Channel Episode
 // Publishes an existing channel episode in a channel.
 // ## Requires api token with one of the following permissions
 // ```
 // Read, update & delete anything
 // ```
-func (s *ChannelEpisodes) PutChannelEpisodesChannelEpisodeHashedIDPublish(ctx context.Context, request operations.PutChannelEpisodesChannelEpisodeHashedIDPublishRequest, opts ...operations.Option) (*operations.PutChannelEpisodesChannelEpisodeHashedIDPublishResponse, error) {
+func (s *ChannelEpisodes) Publish(ctx context.Context, request operations.PutChannelEpisodesChannelEpisodeHashedIDPublishRequest, opts ...operations.Option) (*operations.PutChannelEpisodesChannelEpisodeHashedIDPublishResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,
@@ -1412,13 +1412,13 @@ func (s *ChannelEpisodes) PutChannelEpisodesChannelEpisodeHashedIDPublish(ctx co
 
 }
 
-// PutChannelEpisodesChannelEpisodeHashedIDUnpublish - Un-publish Channel Episode
+// Unpublish - Un-publish Channel Episode
 // Un-publishes an existing channel episode in a channel.
 // ## Requires api token with one of the following permissions
 // ```
 // Read, update & delete anything
 // ```
-func (s *ChannelEpisodes) PutChannelEpisodesChannelEpisodeHashedIDUnpublish(ctx context.Context, request operations.PutChannelEpisodesChannelEpisodeHashedIDUnpublishRequest, opts ...operations.Option) (*operations.PutChannelEpisodesChannelEpisodeHashedIDUnpublishResponse, error) {
+func (s *ChannelEpisodes) Unpublish(ctx context.Context, request operations.PutChannelEpisodesChannelEpisodeHashedIDUnpublishRequest, opts ...operations.Option) (*operations.PutChannelEpisodesChannelEpisodeHashedIDUnpublishResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,

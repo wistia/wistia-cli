@@ -27,7 +27,7 @@ wistia captions get [flags]
 
 ```
   -h, --help                     help for get
-  -l, --language-code string     The language code of the captions to be retrieved. [required]
+  -l, --language-code eng        The 3-character ISO 639-2 language code of the captions to be retrieved (e.g., eng, `fra`, `spa`). Some languages use extended IETF subtags (e.g., `zh-Hant`). [required]
   -m, --media-hashed-id string   The hashed ID of the media from which captions are to be retrieved. [required]
 ```
 

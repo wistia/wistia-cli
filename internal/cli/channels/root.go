@@ -30,7 +30,7 @@ func InitChannelsRoot(parent *cobra.Command) error {
 		return err
 	}
 
-	if err := initPostChannelsCmd(ChannelsCmd); err != nil {
+	if err := initCreateCmd(ChannelsCmd); err != nil {
 		return err
 	}
 
@@ -38,11 +38,11 @@ func InitChannelsRoot(parent *cobra.Command) error {
 		return err
 	}
 
-	if err := initPutChannelsChannelHashedIdCmd(ChannelsCmd); err != nil {
+	if err := initUpdateCmd(ChannelsCmd); err != nil {
 		return err
 	}
 
-	if err := initDeleteChannelsChannelHashedIdCmd(ChannelsCmd); err != nil {
+	if err := initDeleteCmd(ChannelsCmd); err != nil {
 		return err
 	}
 

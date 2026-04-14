@@ -21,14 +21,6 @@ func InitMediaRoot(parent *cobra.Command) error {
 		},
 	}
 
-	if err := initUploadFormCmd(MediaCmd); err != nil {
-		return err
-	}
-
-	if err := initUploadMultipartCmd(MediaCmd); err != nil {
-		return err
-	}
-
 	if err := initListCmd(MediaCmd); err != nil {
 		return err
 	}
@@ -61,7 +53,7 @@ func InitMediaRoot(parent *cobra.Command) error {
 		return err
 	}
 
-	if err := initPostMediasImportUrlCmd(MediaCmd); err != nil {
+	if err := initImportUrlCmd(MediaCmd); err != nil {
 		return err
 	}
 
@@ -77,7 +69,7 @@ func InitMediaRoot(parent *cobra.Command) error {
 		return err
 	}
 
-	if err := initPutMediasCopyCmd(MediaCmd); err != nil {
+	if err := initBulkCopyCmd(MediaCmd); err != nil {
 		return err
 	}
 

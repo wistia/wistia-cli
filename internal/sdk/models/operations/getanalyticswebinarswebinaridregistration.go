@@ -50,9 +50,9 @@ type GetAnalyticsWebinarsWebinarIDRegistrationRequest struct {
 	Granularity GetAnalyticsWebinarsWebinarIDRegistrationGranularity `queryParam:"style=form,explode=true,name=granularity"`
 	// Whether to include on-demand viewing data after the live event ended.
 	IncludePostEvent *bool `default:"false" queryParam:"style=form,explode=true,name=include_post_event"`
-	// Start date for the post-event analytics period in ISO 8601 format (YYYY-MM-DD). Only used when include_post_event is true.
+	// Start date for the post-event analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date. Only used when include_post_event is true.
 	PostEventStartDate *types.Date `queryParam:"style=form,explode=true,name=post_event_start_date"`
-	// End date for the post-event analytics period in ISO 8601 format (YYYY-MM-DD). Only used when include_post_event is true.
+	// End date for the post-event analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date. Only used when include_post_event is true.
 	PostEventEndDate *types.Date `queryParam:"style=form,explode=true,name=post_event_end_date"`
 }
 

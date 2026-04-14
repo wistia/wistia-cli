@@ -22,23 +22,23 @@ func InitAnalyticsWebinarRoot(parent *cobra.Command) error {
 		Aliases: []string{"aw"},
 	}
 
-	if err := initGetAnalyticsWebinarsWebinarIdCmd(AnalyticsWebinarCmd); err != nil {
+	if err := initGetCmd(AnalyticsWebinarCmd); err != nil {
 		return err
 	}
 
-	if err := initGetAnalyticsWebinarsWebinarIdRegistrationCmd(AnalyticsWebinarCmd); err != nil {
+	if err := initGetRegistrationCmd(AnalyticsWebinarCmd); err != nil {
 		return err
 	}
 
-	if err := initGetAnalyticsWebinarsWebinarIdTrafficCmd(AnalyticsWebinarCmd); err != nil {
+	if err := initGetTrafficCmd(AnalyticsWebinarCmd); err != nil {
 		return err
 	}
 
-	if err := initGetAnalyticsWebinarsWebinarIdAudienceCmd(AnalyticsWebinarCmd); err != nil {
+	if err := initGetAudienceCmd(AnalyticsWebinarCmd); err != nil {
 		return err
 	}
 
-	if err := initGetAnalyticsWebinarsWebinarIdHistogramsCmd(AnalyticsWebinarCmd); err != nil {
+	if err := initGetHistogramsCmd(AnalyticsWebinarCmd); err != nil {
 		return err
 	}
 

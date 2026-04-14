@@ -51,36 +51,36 @@ func (g *GetAnalyticsWebinarsWebinarIDAudienceRequest) GetCursor() *string {
 	return g.Cursor
 }
 
-type Chat struct {
+type GetAnalyticsWebinarsWebinarIDAudienceChat struct {
 	// The approximate position in the event when the chat was sent (in seconds).
 	RoundedPlayerPosition *int64 `json:"rounded_player_position,omitzero"`
 	// The chat message content.
 	Chats []string `json:"chats,omitzero"`
 }
 
-func (c Chat) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(c, "", false)
+func (g GetAnalyticsWebinarsWebinarIDAudienceChat) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(g, "", false)
 }
 
-func (c *Chat) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &c, "", false, nil); err != nil {
+func (g *GetAnalyticsWebinarsWebinarIDAudienceChat) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &g, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (c *Chat) GetRoundedPlayerPosition() *int64 {
-	if c == nil {
+func (g *GetAnalyticsWebinarsWebinarIDAudienceChat) GetRoundedPlayerPosition() *int64 {
+	if g == nil {
 		return nil
 	}
-	return c.RoundedPlayerPosition
+	return g.RoundedPlayerPosition
 }
 
-func (c *Chat) GetChats() []string {
-	if c == nil {
+func (g *GetAnalyticsWebinarsWebinarIDAudienceChat) GetChats() []string {
+	if g == nil {
 		return nil
 	}
-	return c.Chats
+	return g.Chats
 }
 
 type GetAnalyticsWebinarsWebinarIDAudienceData struct {
@@ -139,7 +139,7 @@ type GetAnalyticsWebinarsWebinarIDAudienceData struct {
 	// Per-bucket focused attendance data for this registrant.
 	FocusedAttendeeHistogram optionalnullable.OptionalNullable[[]*int64] `json:"focused_attendee_histogram,omitzero"`
 	// Chat messages sent by this registrant with timestamps.
-	Chats []Chat `json:"chats,omitzero"`
+	Chats []GetAnalyticsWebinarsWebinarIDAudienceChat `json:"chats,omitzero"`
 }
 
 func (g GetAnalyticsWebinarsWebinarIDAudienceData) MarshalJSON() ([]byte, error) {
@@ -342,7 +342,7 @@ func (g *GetAnalyticsWebinarsWebinarIDAudienceData) GetFocusedAttendeeHistogram(
 	return g.FocusedAttendeeHistogram
 }
 
-func (g *GetAnalyticsWebinarsWebinarIDAudienceData) GetChats() []Chat {
+func (g *GetAnalyticsWebinarsWebinarIDAudienceData) GetChats() []GetAnalyticsWebinarsWebinarIDAudienceChat {
 	if g == nil {
 		return nil
 	}

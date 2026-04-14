@@ -10,8 +10,8 @@ targets:
     wistia:
         source: Wistia-OAS
         sourceNamespace: data-api
-        sourceRevisionDigest: sha256:4c3bff76f4d7a8f16884cbc1e1f35309af16dfbff2561130463417b6e6dfffda
-        sourceBlobDigest: sha256:aafe340b56f76aee26fac9629e058f0dc966dae958f2d18b887d80160c0c0a0f
+        sourceRevisionDigest: sha256:25f0130c5b99295ab50773e60183aea4a18a76aa1ba0813a3554fc338d3ffa0f
+        sourceBlobDigest: sha256:a07d29efec88bb73b5839a2c10c7a223d30907f733c30208e9a6372cb350bfcf
 workflow:
     workflowVersion: 1.0.0
     speakeasyVersion: latest

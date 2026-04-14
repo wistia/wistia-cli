@@ -38,8 +38,8 @@ wistia analytics-webinar [flags]
 ### SEE ALSO
 
 * [wistia](wistia.md)	 - Data API: Wistia Data API
-* [wistia analytics-webinar get-analytics-webinars-webinar-id](wistia_analytics-webinar_get-analytics-webinars-webinar-id.md)	 - Show Webinar Analytics
-* [wistia analytics-webinar get-analytics-webinars-webinar-id-audience](wistia_analytics-webinar_get-analytics-webinars-webinar-id-audience.md)	 - Show Webinar Audience
-* [wistia analytics-webinar get-analytics-webinars-webinar-id-histograms](wistia_analytics-webinar_get-analytics-webinars-webinar-id-histograms.md)	 - Show Webinar Histograms
-* [wistia analytics-webinar get-analytics-webinars-webinar-id-registration](wistia_analytics-webinar_get-analytics-webinars-webinar-id-registration.md)	 - Show Webinar Registration Timeseries
-* [wistia analytics-webinar get-analytics-webinars-webinar-id-traffic](wistia_analytics-webinar_get-analytics-webinars-webinar-id-traffic.md)	 - Show Webinar Traffic Breakdown
+* [wistia analytics-webinar get](wistia_analytics-webinar_get.md)	 - Show Webinar Analytics
+* [wistia analytics-webinar get-audience](wistia_analytics-webinar_get-audience.md)	 - Show Webinar Audience
+* [wistia analytics-webinar get-histograms](wistia_analytics-webinar_get-histograms.md)	 - Show Webinar Histograms
+* [wistia analytics-webinar get-registration](wistia_analytics-webinar_get-registration.md)	 - Show Webinar Registration Timeseries
+* [wistia analytics-webinar get-traffic](wistia_analytics-webinar_get-traffic.md)	 - Show Webinar Traffic Breakdown

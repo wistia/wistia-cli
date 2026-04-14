@@ -38,4 +38,5 @@ wistia webinar-registrations [flags]
 ### SEE ALSO
 
 * [wistia](wistia.md)	 - Data API: Wistia Data API
-* [wistia webinar-registrations post-webinars-webinar-id-registrations](wistia_webinar-registrations_post-webinars-webinar-id-registrations.md)	 - Create Webinar Registration
+* [wistia webinar-registrations create](wistia_webinar-registrations_create.md)	 - Create Webinar Registration
+* [wistia webinar-registrations get-webinars-webinar-id-registrations](wistia_webinar-registrations_get-webinars-webinar-id-registrations.md)	 - List Webinar Registrations

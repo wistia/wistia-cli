@@ -21,27 +21,27 @@ func InitFoldersRoot(parent *cobra.Command) error {
 		},
 	}
 
-	if err := initGetFoldersCmd(FoldersCmd); err != nil {
+	if err := initListCmd(FoldersCmd); err != nil {
 		return err
 	}
 
-	if err := initPostFoldersCmd(FoldersCmd); err != nil {
+	if err := initCreateCmd(FoldersCmd); err != nil {
 		return err
 	}
 
-	if err := initGetFoldersIdCmd(FoldersCmd); err != nil {
+	if err := initGetCmd(FoldersCmd); err != nil {
 		return err
 	}
 
-	if err := initPutFoldersIdCmd(FoldersCmd); err != nil {
+	if err := initUpdateCmd(FoldersCmd); err != nil {
 		return err
 	}
 
-	if err := initDeleteFoldersIdCmd(FoldersCmd); err != nil {
+	if err := initDeleteCmd(FoldersCmd); err != nil {
 		return err
 	}
 
-	if err := initPostFoldersIdCopyCmd(FoldersCmd); err != nil {
+	if err := initCopyCmd(FoldersCmd); err != nil {
 		return err
 	}
 

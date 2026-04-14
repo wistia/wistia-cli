@@ -39,9 +39,9 @@ wistia channel-episodes [flags]
 
 * [wistia](wistia.md)	 - Data API: Wistia Data API
 * [wistia channel-episodes create](wistia_channel-episodes_create.md)	 - Create Channel Episode
-* [wistia channel-episodes delete-channel-episodes-channel-episode-hashed-id](wistia_channel-episodes_delete-channel-episodes-channel-episode-hashed-id.md)	 - Delete Channel Episode
+* [wistia channel-episodes delete](wistia_channel-episodes_delete.md)	 - Delete Channel Episode
 * [wistia channel-episodes get](wistia_channel-episodes_get.md)	 - Show Channel Episode
 * [wistia channel-episodes list](wistia_channel-episodes_list.md)	 - List Channel Episodes
-* [wistia channel-episodes put-channel-episodes-channel-episode-hashed-id](wistia_channel-episodes_put-channel-episodes-channel-episode-hashed-id.md)	 - Update Channel Episode
-* [wistia channel-episodes put-channel-episodes-channel-episode-hashed-id-publish](wistia_channel-episodes_put-channel-episodes-channel-episode-hashed-id-publish.md)	 - Publish Channel Episode
-* [wistia channel-episodes put-channel-episodes-channel-episode-hashed-id-unpublish](wistia_channel-episodes_put-channel-episodes-channel-episode-hashed-id-unpublish.md)	 - Un-publish Channel Episode
+* [wistia channel-episodes publish](wistia_channel-episodes_publish.md)	 - Publish Channel Episode
+* [wistia channel-episodes unpublish](wistia_channel-episodes_unpublish.md)	 - Un-publish Channel Episode
+* [wistia channel-episodes update](wistia_channel-episodes_update.md)	 - Update Channel Episode

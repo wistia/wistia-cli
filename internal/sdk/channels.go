@@ -265,9 +265,9 @@ func (s *Channels) List(ctx context.Context, request *operations.GetChannelsRequ
 
 }
 
-// PostChannels - Create Channel
+// Create Channel
 // Creates a channel.
-func (s *Channels) PostChannels(ctx context.Context, request *operations.PostChannelsRequest, opts ...operations.Option) (*operations.PostChannelsResponse, error) {
+func (s *Channels) Create(ctx context.Context, request *operations.PostChannelsRequest, opts ...operations.Option) (*operations.PostChannelsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,
@@ -719,9 +719,9 @@ func (s *Channels) Get(ctx context.Context, request operations.GetChannelsChanne
 
 }
 
-// PutChannelsChannelHashedID - Update Channel
+// Update Channel
 // Updates a channel.
-func (s *Channels) PutChannelsChannelHashedID(ctx context.Context, request operations.PutChannelsChannelHashedIDRequest, opts ...operations.Option) (*operations.PutChannelsChannelHashedIDResponse, error) {
+func (s *Channels) Update(ctx context.Context, request operations.PutChannelsChannelHashedIDRequest, opts ...operations.Option) (*operations.PutChannelsChannelHashedIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,
@@ -947,9 +947,9 @@ func (s *Channels) PutChannelsChannelHashedID(ctx context.Context, request opera
 
 }
 
-// DeleteChannelsChannelHashedID - Delete Channel
+// Delete Channel
 // Deletes a channel.
-func (s *Channels) DeleteChannelsChannelHashedID(ctx context.Context, request operations.DeleteChannelsChannelHashedIDRequest, opts ...operations.Option) (*operations.DeleteChannelsChannelHashedIDResponse, error) {
+func (s *Channels) Delete(ctx context.Context, request operations.DeleteChannelsChannelHashedIDRequest, opts ...operations.Option) (*operations.DeleteChannelsChannelHashedIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,

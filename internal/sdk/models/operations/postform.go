@@ -26,7 +26,7 @@ type PostFormRequest struct {
 	//
 	// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 	AccessToken *string `form:"name=access_token"`
-	// The web location of the media file to import.
+	// The publicly accessible web location of the media file to import.
 	URL string `form:"name=url"`
 	// Inform the encoding service that this upload can be considered lower priority than others. This is especially useful for platform customers doing bulk uploads or migrations. Setting this to "false" has no effect.
 	LowPriority *bool `form:"name=low_priority"`
