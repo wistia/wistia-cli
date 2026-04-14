@@ -27,8 +27,10 @@ jobs:
         # Redirect the release to the public homebrew tap repo so assets are
         # downloadable without auth, and strip the private-repo download strategy.
         run: |
+          # Speakeasy sets release.github.name to wistia-cli (the source repo).
+          # Redirect it to homebrew-wistia-cli so release assets are downloadable
+          # without auth (needed for Homebrew formula download URLs).
           sed -i 's/^    name: wistia-cli$/    name: homebrew-wistia-cli/' .goreleaser.yaml
-          sed -i 's/^  - name: wistia$/  - name: wistia-cli/' .goreleaser.yaml
           sed -i '/download_strategy:/d' .goreleaser.yaml
           sed -i '/custom_require:/d' .goreleaser.yaml
 
@@ -43,6 +45,13 @@ jobs:
           # wistia/homebrew-wistia-cli (for both the release assets and the formula).
           GITHUB_TOKEN: ${{ secrets.HOMEBREW_TAP_GITHUB_TOKEN }}
           HOMEBREW_TAP_GITHUB_TOKEN: ${{ secrets.HOMEBREW_TAP_GITHUB_TOKEN }}
+
+      - name: Create release on source repo
+        # GoReleaser publishes to homebrew-wistia-cli for Homebrew downloads.
+        # Mirror a release here so it shows up on wistia/wistia-cli's Releases page.
+        run: gh release create "${{ github.ref_name }}" --title "${{ github.ref_name }}" --generate-notes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
