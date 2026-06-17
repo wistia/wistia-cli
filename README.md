@@ -48,15 +48,7 @@ iwr -useb https://raw.githubusercontent.com/wistia/wistia-cli/main/scripts/insta
 ### Homebrew (macOS/Linux)
 
 ```bash
-brew install wistia/wistia-cli/wistia
-```
-
-### Go Install
-
-Alternatively, install directly via Go:
-
-```bash
-go install github.com/wistia/wistia-cli/cmd/wistia@latest
+brew install wistia/wistia-cli/wistia-cli
 ```
 
 ### Manual Download
@@ -507,7 +499,7 @@ The `NO_COLOR` and `FORCE_COLOR` environment variables are also respected.
 
 ### Streaming and pagination
 
-When using `--all` (pagination) or streaming operations, output is written incrementally as items arrive:
+When using streaming operations, output is written incrementally as items arrive:
 
 | Format | Streaming behavior |
 |--------|-------------------|
