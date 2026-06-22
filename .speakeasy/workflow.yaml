@@ -3,7 +3,8 @@ speakeasyVersion: latest
 sources:
     Wistia-OAS:
         inputs:
-            - location: registry.speakeasyapi.dev/wistia/wistia/data-api:edge-version
+            - location: https://wistia.github.io/wistia/api/openapi-upload.yaml
+            - location: https://wistia.github.io/wistia/api/openapi-modern.yaml
         output: .speakeasy/out.openapi.yaml
         registry:
             location: registry.speakeasyapi.dev/wistia/wistia/wistia-oas
