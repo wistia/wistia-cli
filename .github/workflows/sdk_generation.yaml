@@ -24,13 +24,6 @@ permissions:
       - labeled
       - unlabeled
 jobs:
-  # Reject a manual set_version with major >= 2. Such a version triggers Go's /vN
-  # module-suffix rule, which Speakeasy applies inconsistently to the CLI target
-  # (imports get /v2026 but go.mod does not) and the build fails to compile.
-  # Generation must stay on a Go-safe semver (0.x/1.x); dated versions are applied
-  # at RELEASE time instead (git tag + GoReleaser ldflags), decoupled from the
-  # module path. This guard runs on every trigger but only acts on a non-empty
-  # manual set_version (empty on schedule/dispatch/PR -> passes trivially).
   check-version:
     runs-on: ubuntu-latest
     steps:
