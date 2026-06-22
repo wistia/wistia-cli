@@ -26,18 +26,16 @@ wistia channel-episodes update [flags]
       --body string                          Request body as JSON (alternative to individual flags). Can also be provided via stdin.
   -c, --channel-episode-hashed-id string     The hashed id of the Channel Episode [required]
       --description string                   The episode's description or episode notes.
-      --episode-notes string                 Additional notes for the episode.
-      --episode-number int                   The number of the episode. This parameter only takes effect if podcasting is enabled for the channel.
-      --episode-type string                  The type of episode. This parameter only takes effect if podcasting is enabled for the channel. (options: full, trailer, bonus)
-      --explicit-content                     Whether the episode contains explicit content. This parameter only takes effect if podcasting is enabled for the channel.
+  -e, --episode-notes string                 Additional notes for the episode.
   -h, --help                                 help for update
-      --hide-from-feed                       Whether to hide the episode from the podcast feed. This parameter only takes effect if podcasting is enabled for the channel.
   -l, --live-stream-event-hashed-id string   The unique alphanumeric identifier for the live stream event associated with this channel episode.
   -m, --media-hashed-id string               The unique alphanumeric identifier for the media associated with this channel episode.
+      --podcast-settings string              Podcast specific settings for a channel episode. These settings only take effect
+                                             if podcasting is enabled for the channel.
+                                             
       --publish-at string                    The date and time when the episode is scheduled to be published in UTC timezone.
       --publish-status string                The status of whether or not the episode has been published to your channel. (options: draft, published, scheduled)
-      --season-number int                    The season number of the episode. This parameter only takes effect if podcasting is enabled for the channel.
-      --summary string                       A short summary of the episode that is displayed when space is limited.
+  -s, --summary string                       A short summary of the episode that is displayed when space is limited.
   -t, --title string                         The episode's title. If not provided, the channel episode uses the title of the media used to create it.
 ```
 

@@ -30,6 +30,31 @@ func (g *GetMediasMediaHashedIDCaptionsLanguageCodeRequest) GetLanguageCode() st
 	return g.LanguageCode
 }
 
+// GetMediasMediaHashedIDCaptionsLanguageCodeCode - A machine-readable identifier for the specific authorization failure.
+type GetMediasMediaHashedIDCaptionsLanguageCodeCode string
+
+const (
+	GetMediasMediaHashedIDCaptionsLanguageCodeCodeUnauthorizedCredentials GetMediasMediaHashedIDCaptionsLanguageCodeCode = "unauthorized_credentials"
+	GetMediasMediaHashedIDCaptionsLanguageCodeCodeAccountInactive         GetMediasMediaHashedIDCaptionsLanguageCodeCode = "account_inactive"
+	GetMediasMediaHashedIDCaptionsLanguageCodeCodeUnauthorizedScope       GetMediasMediaHashedIDCaptionsLanguageCodeCode = "unauthorized_scope"
+	GetMediasMediaHashedIDCaptionsLanguageCodeCodeUnauthorizedParams      GetMediasMediaHashedIDCaptionsLanguageCodeCode = "unauthorized_params"
+)
+
+func (e GetMediasMediaHashedIDCaptionsLanguageCodeCode) ToPointer() *GetMediasMediaHashedIDCaptionsLanguageCodeCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetMediasMediaHashedIDCaptionsLanguageCodeCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 // GetMediasMediaHashedIDCaptionsLanguageCodeResponseBody - Successful response containing captions in the requested format
 type GetMediasMediaHashedIDCaptionsLanguageCodeResponseBody struct {
 	// English name of the language.

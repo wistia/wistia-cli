@@ -21,15 +21,11 @@ var updateCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "title", Shorthand: "t", FieldPath: "Body.Title", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"title,omitempty"`, Description: "The episode's title. If not provided, the channel episode uses the title of the media used to create it."},
 	{FlagName: "media-hashed-id", Shorthand: "m", FieldPath: "Body.MediaHashedID", Kind: flagutil.FlagKindString, Optional: true, Description: "The unique alphanumeric identifier for the media associated with this channel episode."},
 	{FlagName: "live-stream-event-hashed-id", Shorthand: "l", FieldPath: "Body.LiveStreamEventHashedID", Kind: flagutil.FlagKindString, Optional: true, Description: "The unique alphanumeric identifier for the live stream event associated with this channel episode."},
-	{FlagName: "summary", FieldPath: "Body.Summary", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"summary,omitempty"`, Description: "A short summary of the episode that is displayed when space is limited."},
+	{FlagName: "summary", Shorthand: "s", FieldPath: "Body.Summary", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"summary,omitempty"`, Description: "A short summary of the episode that is displayed when space is limited."},
 	{FlagName: "publish-status", FieldPath: "Body.PublishStatus", Kind: flagutil.FlagKindEnum, Optional: true, EnumValues: []string{"draft", "published", "scheduled"}, Description: "The status of whether or not the episode has been published to your channel. (options: draft, published, scheduled)"},
 	{FlagName: "publish-at", FieldPath: "Body.PublishAt", Kind: flagutil.FlagKindDateTime, Optional: true, Description: "The date and time when the episode is scheduled to be published in UTC timezone."},
-	{FlagName: "episode-notes", FieldPath: "Body.EpisodeNotes", Kind: flagutil.FlagKindString, Optional: true, Description: "Additional notes for the episode."},
-	{FlagName: "episode-type", FieldPath: "Body.EpisodeType", Kind: flagutil.FlagKindEnum, Optional: true, EnumValues: []string{"full", "trailer", "bonus"}, Description: "The type of episode. This parameter only takes effect if podcasting is enabled for the channel. (options: full, trailer, bonus)"},
-	{FlagName: "episode-number", FieldPath: "Body.EpisodeNumber", Kind: flagutil.FlagKindInt64, Optional: true, Description: "The number of the episode. This parameter only takes effect if podcasting is enabled for the channel."},
-	{FlagName: "season-number", FieldPath: "Body.SeasonNumber", Kind: flagutil.FlagKindInt64, Optional: true, Description: "The season number of the episode. This parameter only takes effect if podcasting is enabled for the channel."},
-	{FlagName: "explicit-content", FieldPath: "Body.ExplicitContent", Kind: flagutil.FlagKindBool, Optional: true, Description: "Whether the episode contains explicit content. This parameter only takes effect if podcasting is enabled for the channel."},
-	{FlagName: "hide-from-feed", FieldPath: "Body.HideFromFeed", Kind: flagutil.FlagKindBool, Optional: true, Description: "Whether to hide the episode from the podcast feed. This parameter only takes effect if podcasting is enabled for the channel."},
+	{FlagName: "episode-notes", Shorthand: "e", FieldPath: "Body.EpisodeNotes", Kind: flagutil.FlagKindString, Optional: true, Description: "Additional notes for the episode."},
+	{FlagName: "podcast-settings", FieldPath: "Body.PodcastSettings", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"podcast_settings,omitempty"`, Description: "Podcast specific settings for a channel episode. These settings only take effect\nif podcasting is enabled for the channel.\n"},
 }
 
 // initUpdateCmd initializes the update command.

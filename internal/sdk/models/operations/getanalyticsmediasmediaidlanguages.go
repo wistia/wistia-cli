@@ -59,6 +59,31 @@ func (g *GetAnalyticsMediasMediaIDLanguagesRequest) GetPerPage() *int64 {
 	return g.PerPage
 }
 
+// GetAnalyticsMediasMediaIDLanguagesCode - A machine-readable identifier for the specific authorization failure.
+type GetAnalyticsMediasMediaIDLanguagesCode string
+
+const (
+	GetAnalyticsMediasMediaIDLanguagesCodeUnauthorizedCredentials GetAnalyticsMediasMediaIDLanguagesCode = "unauthorized_credentials"
+	GetAnalyticsMediasMediaIDLanguagesCodeAccountInactive         GetAnalyticsMediasMediaIDLanguagesCode = "account_inactive"
+	GetAnalyticsMediasMediaIDLanguagesCodeUnauthorizedScope       GetAnalyticsMediasMediaIDLanguagesCode = "unauthorized_scope"
+	GetAnalyticsMediasMediaIDLanguagesCodeUnauthorizedParams      GetAnalyticsMediasMediaIDLanguagesCode = "unauthorized_params"
+)
+
+func (e GetAnalyticsMediasMediaIDLanguagesCode) ToPointer() *GetAnalyticsMediasMediaIDLanguagesCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetAnalyticsMediasMediaIDLanguagesCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 type GetAnalyticsMediasMediaIDLanguagesResponseBody struct {
 	// The ISO 639-1 language code of the viewer's browser.
 	Language *string `json:"language,omitzero"`

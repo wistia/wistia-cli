@@ -62,6 +62,31 @@ func (p *PutFoldersFolderIDSubfoldersSubfolderIDRequest) GetBody() PutFoldersFol
 	return p.Body
 }
 
+// PutFoldersFolderIDSubfoldersSubfolderIDCode - A machine-readable identifier for the specific authorization failure.
+type PutFoldersFolderIDSubfoldersSubfolderIDCode string
+
+const (
+	PutFoldersFolderIDSubfoldersSubfolderIDCodeUnauthorizedCredentials PutFoldersFolderIDSubfoldersSubfolderIDCode = "unauthorized_credentials"
+	PutFoldersFolderIDSubfoldersSubfolderIDCodeAccountInactive         PutFoldersFolderIDSubfoldersSubfolderIDCode = "account_inactive"
+	PutFoldersFolderIDSubfoldersSubfolderIDCodeUnauthorizedScope       PutFoldersFolderIDSubfoldersSubfolderIDCode = "unauthorized_scope"
+	PutFoldersFolderIDSubfoldersSubfolderIDCodeUnauthorizedParams      PutFoldersFolderIDSubfoldersSubfolderIDCode = "unauthorized_params"
+)
+
+func (e PutFoldersFolderIDSubfoldersSubfolderIDCode) ToPointer() *PutFoldersFolderIDSubfoldersSubfolderIDCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *PutFoldersFolderIDSubfoldersSubfolderIDCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 // PutFoldersFolderIDSubfoldersSubfolderIDResponseBody - A subfolder within a folder that contains media.
 type PutFoldersFolderIDSubfoldersSubfolderIDResponseBody struct {
 	// A unique alphanumeric identifier for this subfolder.

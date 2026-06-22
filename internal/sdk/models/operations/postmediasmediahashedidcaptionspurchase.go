@@ -69,6 +69,31 @@ func (p *PostMediasMediaHashedIDCaptionsPurchaseRequest) GetBody() PostMediasMed
 	return p.Body
 }
 
+// PostMediasMediaHashedIDCaptionsPurchaseCode - A machine-readable identifier for the specific authorization failure.
+type PostMediasMediaHashedIDCaptionsPurchaseCode string
+
+const (
+	PostMediasMediaHashedIDCaptionsPurchaseCodeUnauthorizedCredentials PostMediasMediaHashedIDCaptionsPurchaseCode = "unauthorized_credentials"
+	PostMediasMediaHashedIDCaptionsPurchaseCodeAccountInactive         PostMediasMediaHashedIDCaptionsPurchaseCode = "account_inactive"
+	PostMediasMediaHashedIDCaptionsPurchaseCodeUnauthorizedScope       PostMediasMediaHashedIDCaptionsPurchaseCode = "unauthorized_scope"
+	PostMediasMediaHashedIDCaptionsPurchaseCodeUnauthorizedParams      PostMediasMediaHashedIDCaptionsPurchaseCode = "unauthorized_params"
+)
+
+func (e PostMediasMediaHashedIDCaptionsPurchaseCode) ToPointer() *PostMediasMediaHashedIDCaptionsPurchaseCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *PostMediasMediaHashedIDCaptionsPurchaseCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 // PostMediasMediaHashedIDCaptionsPurchaseResponseBody - Successful operation. Captions purchased.
 type PostMediasMediaHashedIDCaptionsPurchaseResponseBody struct {
 	// Success message indicating the captions have been purchased

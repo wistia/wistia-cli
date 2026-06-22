@@ -20,6 +20,31 @@ func (g *GetStatsProjectsProjectIDRequest) GetProjectID() string {
 	return g.ProjectID
 }
 
+// GetStatsProjectsProjectIDCode - A machine-readable identifier for the specific authorization failure.
+type GetStatsProjectsProjectIDCode string
+
+const (
+	GetStatsProjectsProjectIDCodeUnauthorizedCredentials GetStatsProjectsProjectIDCode = "unauthorized_credentials"
+	GetStatsProjectsProjectIDCodeAccountInactive         GetStatsProjectsProjectIDCode = "account_inactive"
+	GetStatsProjectsProjectIDCodeUnauthorizedScope       GetStatsProjectsProjectIDCode = "unauthorized_scope"
+	GetStatsProjectsProjectIDCodeUnauthorizedParams      GetStatsProjectsProjectIDCode = "unauthorized_params"
+)
+
+func (e GetStatsProjectsProjectIDCode) ToPointer() *GetStatsProjectsProjectIDCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetStatsProjectsProjectIDCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 // GetStatsProjectsProjectIDResponseBody - Success response with the stats of the project.
 type GetStatsProjectsProjectIDResponseBody struct {
 	// The total number of times the videos in this project have been loaded.

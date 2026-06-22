@@ -6,6 +6,7 @@ package sdkerrors
 import (
 	"encoding/json"
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
+	"github.com/wistia/wistia-cli/internal/sdk/models/operations"
 )
 
 // GetChannelEpisodesInternalServerError - Internal server error
@@ -23,8 +24,10 @@ func (e *GetChannelEpisodesInternalServerError) Error() string {
 
 // GetChannelEpisodesUnauthorizedError - Unauthorized, invalid or missing token
 type GetChannelEpisodesUnauthorizedError struct {
-	Error_   *string                 `json:"error,omitzero"`
-	HTTPMeta components.HTTPMetadata `json:"-"`
+	// A machine-readable identifier for the specific authorization failure.
+	Code     *operations.GetChannelEpisodesCode `json:"code,omitzero"`
+	Error_   *string                            `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata            `json:"-"`
 }
 
 var _ error = &GetChannelEpisodesUnauthorizedError{}
@@ -37,7 +40,9 @@ func (e *GetChannelEpisodesUnauthorizedError) Error() string {
 // GetChannelEpisodesBadRequestError - Bad request
 type GetChannelEpisodesBadRequestError struct {
 	// Error message detailing the reason for the bad request.
-	Error_   *string                 `json:"error,omitzero"`
+	Error_ *string `json:"error,omitzero"`
+	// Array of error messages detailing the reasons for the bad request.
+	Errors   []string                `json:"errors,omitzero"`
 	HTTPMeta components.HTTPMetadata `json:"-"`
 }
 

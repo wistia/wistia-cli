@@ -16,10 +16,12 @@ import (
 )
 
 var createCmdMeta = []flagutil.FlagMeta{
-	{FlagName: "title", Shorthand: "t", FieldPath: "Title", Kind: flagutil.FlagKindString, Required: true, Description: "The title of the webinar [required]"},
+	{FlagName: "title", FieldPath: "Title", Kind: flagutil.FlagKindString, Required: true, Description: "The title of the webinar [required]"},
 	{FlagName: "description", FieldPath: "Description", Kind: flagutil.FlagKindString, Optional: true, Description: "The description of the webinar"},
-	{FlagName: "scheduled-for", Shorthand: "s", FieldPath: "ScheduledFor", Kind: flagutil.FlagKindDateTime, Required: true, Description: "The scheduled start time in W3C format with timezone [required]"},
+	{FlagName: "scheduled-for", Shorthand: "s", FieldPath: "ScheduledFor", Kind: flagutil.FlagKindDateTime, Required: true, Description: "The scheduled start time as a UTC formatted ISO 8601 string (offset `Z` or `+00:00`). [required]"},
 	{FlagName: "event-duration", Shorthand: "e", FieldPath: "EventDuration", Kind: flagutil.FlagKindInt64, Required: true, Description: "Duration of the event in minutes (minimum 15) [required]"},
+	{FlagName: "time-zone", FieldPath: "TimeZone", Kind: flagutil.FlagKindString, Required: true, Description: "The IANA time zone identifier the webinar is scheduled in. [required]"},
+	{FlagName: "folder-id", Shorthand: "f", FieldPath: "FolderID", Kind: flagutil.FlagKindString, Optional: true, Description: "Hashed ID of the folder to place this webinar in. Defaults to the account's default webinar folder if not provided."},
 }
 
 // initCreateCmd initializes the create command.
@@ -28,7 +30,7 @@ func initCreateCmd(parent *cobra.Command) error {
 		Use:     "create",
 		Short:   "Create Webinar",
 		Long:    "Creates a new webinar.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
-		Example: "  wistia webinars create --title Wellness Session: Coping with Outie Memories --scheduled-for 2024-03-20T15:30:00-05:00 --event-duration 60",
+		Example: "  wistia webinars create --title Wellness Session: Coping with Outie Memories --scheduled-for 2024-03-20T15:30:00-05:00 --event-duration 60 --time-zone America/New_York",
 		RunE:    runCreateCmd,
 	}
 	flagutil.RegisterFlags(cmd, createCmdMeta)

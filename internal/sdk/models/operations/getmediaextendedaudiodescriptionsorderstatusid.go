@@ -22,6 +22,31 @@ func (g *GetMediaExtendedAudioDescriptionsOrderStatusIDRequest) GetID() string {
 	return g.ID
 }
 
+// GetMediaExtendedAudioDescriptionsOrderStatusIDCode - A machine-readable identifier for the specific authorization failure.
+type GetMediaExtendedAudioDescriptionsOrderStatusIDCode string
+
+const (
+	GetMediaExtendedAudioDescriptionsOrderStatusIDCodeUnauthorizedCredentials GetMediaExtendedAudioDescriptionsOrderStatusIDCode = "unauthorized_credentials"
+	GetMediaExtendedAudioDescriptionsOrderStatusIDCodeAccountInactive         GetMediaExtendedAudioDescriptionsOrderStatusIDCode = "account_inactive"
+	GetMediaExtendedAudioDescriptionsOrderStatusIDCodeUnauthorizedScope       GetMediaExtendedAudioDescriptionsOrderStatusIDCode = "unauthorized_scope"
+	GetMediaExtendedAudioDescriptionsOrderStatusIDCodeUnauthorizedParams      GetMediaExtendedAudioDescriptionsOrderStatusIDCode = "unauthorized_params"
+)
+
+func (e GetMediaExtendedAudioDescriptionsOrderStatusIDCode) ToPointer() *GetMediaExtendedAudioDescriptionsOrderStatusIDCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetMediaExtendedAudioDescriptionsOrderStatusIDCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 // GetMediaExtendedAudioDescriptionsOrderStatusIDOrderStatus - The current status of the order.
 type GetMediaExtendedAudioDescriptionsOrderStatusIDOrderStatus string
 

@@ -22,6 +22,63 @@ func (g *GetWebinarsIDRequest) GetID() string {
 	return g.ID
 }
 
+// GetWebinarsIDCode - A machine-readable identifier for the specific authorization failure.
+type GetWebinarsIDCode string
+
+const (
+	GetWebinarsIDCodeUnauthorizedCredentials GetWebinarsIDCode = "unauthorized_credentials"
+	GetWebinarsIDCodeAccountInactive         GetWebinarsIDCode = "account_inactive"
+	GetWebinarsIDCodeUnauthorizedScope       GetWebinarsIDCode = "unauthorized_scope"
+	GetWebinarsIDCodeUnauthorizedParams      GetWebinarsIDCode = "unauthorized_params"
+)
+
+func (e GetWebinarsIDCode) ToPointer() *GetWebinarsIDCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetWebinarsIDCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
+type GetWebinarsIDFolder struct {
+	// A unique alphanumeric identifier for the record.
+	ID string `json:"id"`
+	// A URL for fetching all the records of the given record type. You can pass hashed_ids as a param with multiple values
+	// to do a batch fetch for this records type.
+	//
+	IndexURL string `json:"index_url"`
+	// A URL that can be used to fetch this record.
+	URL string `json:"url"`
+}
+
+func (g *GetWebinarsIDFolder) GetID() string {
+	if g == nil {
+		return ""
+	}
+	return g.ID
+}
+
+func (g *GetWebinarsIDFolder) GetIndexURL() string {
+	if g == nil {
+		return ""
+	}
+	return g.IndexURL
+}
+
+func (g *GetWebinarsIDFolder) GetURL() string {
+	if g == nil {
+		return ""
+	}
+	return g.URL
+}
+
 // GetWebinarsIDResponseBody - A webinar is an event which allows you to stream a video
 // to multiple participants. See our [Webinars Guide](https://support.wistia.com/en/articles/8288501-getting-started-with-webinars)
 // for more info.
@@ -36,6 +93,8 @@ type GetWebinarsIDResponseBody struct {
 	ScheduledFor optionalnullable.OptionalNullable[time.Time] `json:"scheduled_for,omitzero"`
 	// Duration of the webinar in minutes
 	EventDuration optionalnullable.OptionalNullable[int64] `json:"event_duration,omitzero"`
+	// The IANA time zone identifier the webinar is scheduled in
+	TimeZone string `json:"time_zone"`
 	// Current lifecycle status of the event
 	LifecycleStatus string `json:"lifecycle_status"`
 	// Registration status of the event
@@ -50,6 +109,10 @@ type GetWebinarsIDResponseBody struct {
 	HostLink string `json:"host_link"`
 	// Link for panelists to join the event
 	PanelistLink string `json:"panelist_link"`
+	// The folder (project) this webinar belongs to
+	Folder optionalnullable.OptionalNullable[GetWebinarsIDFolder] `json:"folder,omitzero"`
+	// A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+	Cursor optionalnullable.OptionalNullable[string] `json:"cursor,omitzero"`
 }
 
 func (g GetWebinarsIDResponseBody) MarshalJSON() ([]byte, error) {
@@ -96,6 +159,13 @@ func (g *GetWebinarsIDResponseBody) GetEventDuration() optionalnullable.Optional
 		return nil
 	}
 	return g.EventDuration
+}
+
+func (g *GetWebinarsIDResponseBody) GetTimeZone() string {
+	if g == nil {
+		return ""
+	}
+	return g.TimeZone
 }
 
 func (g *GetWebinarsIDResponseBody) GetLifecycleStatus() string {
@@ -145,6 +215,20 @@ func (g *GetWebinarsIDResponseBody) GetPanelistLink() string {
 		return ""
 	}
 	return g.PanelistLink
+}
+
+func (g *GetWebinarsIDResponseBody) GetFolder() optionalnullable.OptionalNullable[GetWebinarsIDFolder] {
+	if g == nil {
+		return nil
+	}
+	return g.Folder
+}
+
+func (g *GetWebinarsIDResponseBody) GetCursor() optionalnullable.OptionalNullable[string] {
+	if g == nil {
+		return nil
+	}
+	return g.Cursor
 }
 
 type GetWebinarsIDResponse struct {

@@ -3,7 +3,7 @@
 
 package sdk
 
-// Generated from OpenAPI doc version edge-version and generator version 2.879.13
+// Generated from OpenAPI doc version edge-version and generator version 2.911.0
 
 import (
 	"context"
@@ -52,20 +52,23 @@ func Pointer[T any](v T) *T { return &v }
 type Wistia struct {
 	SDKVersion                     string
 	UploadOrImportMedia            *UploadOrImportMedia
-	MediaExtendedAudioDescriptions *MediaExtendedAudioDescriptions
-	Folders                        *Folders
-	Subfolders                     *Subfolders
-	FolderSharings                 *FolderSharings
 	Media                          *Media
-	Taggings                       *Taggings
-	Account                        *Account
-	AllowedDomains                 *AllowedDomains
-	BackgroundJobStatus            *BackgroundJobStatus
 	Customizations                 *Customizations
+	ShareLinks                     *ShareLinks
 	Captions                       *Captions
-	Trims                          *Trims
 	Localizations                  *Localizations
+	Trims                          *Trims
+	MediaExtendedAudioDescriptions *MediaExtendedAudioDescriptions
 	Tags                           *Tags
+	Taggings                       *Taggings
+	Folders                        *Folders
+	FolderSharings                 *FolderSharings
+	Subfolders                     *Subfolders
+	Channels                       *Channels
+	ChannelEpisodes                *ChannelEpisodes
+	Webinars                       *Webinars
+	WebinarRegistrations           *WebinarRegistrations
+	Account                        *Account
 	// Search
 	// Searches across folders, subfolders, medias, channels, channel episodes, and webinars.
 	// Also searches through video transcripts, so media results may include transcript matches with
@@ -77,11 +80,9 @@ type Wistia struct {
 	// ```
 	//
 	Search               *Search
-	Channels             *Channels
-	ChannelEpisodes      *ChannelEpisodes
 	ExpiringAccessTokens *ExpiringAccessTokens
-	Webinars             *Webinars
-	WebinarRegistrations *WebinarRegistrations
+	BackgroundJobStatus  *BackgroundJobStatus
+	AllowedDomains       *AllowedDomains
 	Remix                *Remix
 	StatsAccount         *StatsAccount
 	StatsProjects        *StatsProjects
@@ -167,7 +168,7 @@ func New(opts ...SDKOption) *Wistia {
 	sdk := &Wistia{
 		SDKVersion: "0.0.1",
 		sdkConfiguration: config.SDKConfiguration{
-			UserAgent:  "speakeasy-sdk/go 0.0.1 2.879.13 edge-version github.com/wistia/wistia-cli/internal/sdk",
+			UserAgent:  "speakeasy-sdk/go 0.0.1 2.911.0 edge-version github.com/wistia/wistia-cli/internal/sdk",
 			ServerList: ServerList,
 		},
 		hooks: hooks.New(),
@@ -184,26 +185,27 @@ func New(opts ...SDKOption) *Wistia {
 	sdk.sdkConfiguration = sdk.hooks.SDKInit(sdk.sdkConfiguration)
 
 	sdk.UploadOrImportMedia = newUploadOrImportMedia(sdk, sdk.sdkConfiguration, sdk.hooks)
-	sdk.MediaExtendedAudioDescriptions = newMediaExtendedAudioDescriptions(sdk, sdk.sdkConfiguration, sdk.hooks)
-	sdk.Folders = newFolders(sdk, sdk.sdkConfiguration, sdk.hooks)
-	sdk.Subfolders = newSubfolders(sdk, sdk.sdkConfiguration, sdk.hooks)
-	sdk.FolderSharings = newFolderSharings(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Media = newMedia(sdk, sdk.sdkConfiguration, sdk.hooks)
-	sdk.Taggings = newTaggings(sdk, sdk.sdkConfiguration, sdk.hooks)
-	sdk.Account = newAccount(sdk, sdk.sdkConfiguration, sdk.hooks)
-	sdk.AllowedDomains = newAllowedDomains(sdk, sdk.sdkConfiguration, sdk.hooks)
-	sdk.BackgroundJobStatus = newBackgroundJobStatus(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Customizations = newCustomizations(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.ShareLinks = newShareLinks(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Captions = newCaptions(sdk, sdk.sdkConfiguration, sdk.hooks)
-	sdk.Trims = newTrims(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Localizations = newLocalizations(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.Trims = newTrims(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.MediaExtendedAudioDescriptions = newMediaExtendedAudioDescriptions(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Tags = newTags(sdk, sdk.sdkConfiguration, sdk.hooks)
-	sdk.Search = newSearch(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.Taggings = newTaggings(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.Folders = newFolders(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.FolderSharings = newFolderSharings(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.Subfolders = newSubfolders(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Channels = newChannels(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.ChannelEpisodes = newChannelEpisodes(sdk, sdk.sdkConfiguration, sdk.hooks)
-	sdk.ExpiringAccessTokens = newExpiringAccessTokens(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Webinars = newWebinars(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.WebinarRegistrations = newWebinarRegistrations(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.Account = newAccount(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.Search = newSearch(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.ExpiringAccessTokens = newExpiringAccessTokens(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.BackgroundJobStatus = newBackgroundJobStatus(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.AllowedDomains = newAllowedDomains(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Remix = newRemix(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.StatsAccount = newStatsAccount(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.StatsProjects = newStatsProjects(sdk, sdk.sdkConfiguration, sdk.hooks)

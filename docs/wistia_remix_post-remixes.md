@@ -10,6 +10,11 @@ the show endpoint to check status and get preview URLs when ready.
 Remix uses AI to analyze video transcripts and create edited versions
 (highlight reels, trailers, cut-downs, etc.) based on your instructions.
 
+The remix is automatically exported (rendered) upon completion. When the
+status reaches "completed", the output media is available in the
+destination folder. If no `folder_id` is provided, the remix is exported
+to the source media's folder.
+
 <!--- HIDE-MCP -->
 ## Requires api token with one of the following permissions
 ```
@@ -31,6 +36,7 @@ wistia remix post-remixes [flags]
 
 ```
       --body string                    Request body as JSON (alternative to individual flags). Can also be provided via stdin.
+  -f, --folder-id string               Hashed ID of the destination folder for the exported media. Defaults to the source media's folder if not specified.
   -h, --help                           help for post-remixes
   -i, --instructions string            Natural language instructions describing the desired remix (e.g., "create a 60-second highlight reel"). [required]
   -m, --media-hashed-ids stringArray   Array of source media hashed IDs to remix from. [required]

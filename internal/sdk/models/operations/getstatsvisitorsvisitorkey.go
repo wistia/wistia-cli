@@ -22,6 +22,31 @@ func (g *GetStatsVisitorsVisitorKeyRequest) GetVisitorKey() string {
 	return g.VisitorKey
 }
 
+// GetStatsVisitorsVisitorKeyCode - A machine-readable identifier for the specific authorization failure.
+type GetStatsVisitorsVisitorKeyCode string
+
+const (
+	GetStatsVisitorsVisitorKeyCodeUnauthorizedCredentials GetStatsVisitorsVisitorKeyCode = "unauthorized_credentials"
+	GetStatsVisitorsVisitorKeyCodeAccountInactive         GetStatsVisitorsVisitorKeyCode = "account_inactive"
+	GetStatsVisitorsVisitorKeyCodeUnauthorizedScope       GetStatsVisitorsVisitorKeyCode = "unauthorized_scope"
+	GetStatsVisitorsVisitorKeyCodeUnauthorizedParams      GetStatsVisitorsVisitorKeyCode = "unauthorized_params"
+)
+
+func (e GetStatsVisitorsVisitorKeyCode) ToPointer() *GetStatsVisitorsVisitorKeyCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetStatsVisitorsVisitorKeyCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 type GetStatsVisitorsVisitorKeyOrg struct {
 	Name  optionalnullable.OptionalNullable[string] `json:"name,omitzero"`
 	Title optionalnullable.OptionalNullable[string] `json:"title,omitzero"`

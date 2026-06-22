@@ -81,6 +81,31 @@ func (g *GetStatsEventsRequest) GetEndDate() *types.Date {
 	return g.EndDate
 }
 
+// GetStatsEventsCode - A machine-readable identifier for the specific authorization failure.
+type GetStatsEventsCode string
+
+const (
+	GetStatsEventsCodeUnauthorizedCredentials GetStatsEventsCode = "unauthorized_credentials"
+	GetStatsEventsCodeAccountInactive         GetStatsEventsCode = "account_inactive"
+	GetStatsEventsCodeUnauthorizedScope       GetStatsEventsCode = "unauthorized_scope"
+	GetStatsEventsCodeUnauthorizedParams      GetStatsEventsCode = "unauthorized_params"
+)
+
+func (e GetStatsEventsCode) ToPointer() *GetStatsEventsCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetStatsEventsCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 type GetStatsEventsThumbnail struct {
 	URL         *string `json:"url,omitzero"`
 	Width       *int64  `json:"width,omitzero"`
@@ -320,6 +345,10 @@ func (g *GetStatsEventsUserAgentDetails) GetMobile() *bool {
 	return g.Mobile
 }
 
+// GetStatsEventsAttributes - Raw event attributes returned by the underlying analytics store. The keys mirror the top-level event fields.
+type GetStatsEventsAttributes struct {
+}
+
 type GetStatsEventsResponseBody struct {
 	// Date and time when the event occurred.
 	ReceivedAt *time.Time `json:"received_at,omitzero"`
@@ -362,6 +391,8 @@ type GetStatsEventsResponseBody struct {
 	ConversionData *GetStatsEventsConversionData `json:"conversion_data,omitzero"`
 	// Details about the user agent of the viewer.
 	UserAgentDetails *GetStatsEventsUserAgentDetails `json:"user_agent_details,omitzero"`
+	// Raw event attributes returned by the underlying analytics store. The keys mirror the top-level event fields.
+	Attributes *GetStatsEventsAttributes `json:"attributes,omitzero"`
 }
 
 func (g GetStatsEventsResponseBody) MarshalJSON() ([]byte, error) {
@@ -520,6 +551,13 @@ func (g *GetStatsEventsResponseBody) GetUserAgentDetails() *GetStatsEventsUserAg
 		return nil
 	}
 	return g.UserAgentDetails
+}
+
+func (g *GetStatsEventsResponseBody) GetAttributes() *GetStatsEventsAttributes {
+	if g == nil {
+		return nil
+	}
+	return g.Attributes
 }
 
 type GetStatsEventsResponse struct {

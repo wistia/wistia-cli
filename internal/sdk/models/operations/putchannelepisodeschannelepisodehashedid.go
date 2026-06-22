@@ -42,19 +42,19 @@ func (e *PutChannelEpisodesChannelEpisodeHashedIDPublishStatus) UnmarshalJSON(da
 	}
 }
 
-// PutChannelEpisodesChannelEpisodeHashedIDEpisodeType - The type of episode. This parameter only takes effect if podcasting is enabled for the channel.
-type PutChannelEpisodesChannelEpisodeHashedIDEpisodeType string
+// PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeRequest - The type of episode.
+type PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeRequest string
 
 const (
-	PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeFull    PutChannelEpisodesChannelEpisodeHashedIDEpisodeType = "full"
-	PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeTrailer PutChannelEpisodesChannelEpisodeHashedIDEpisodeType = "trailer"
-	PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeBonus   PutChannelEpisodesChannelEpisodeHashedIDEpisodeType = "bonus"
+	PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeRequestFull    PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeRequest = "full"
+	PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeRequestTrailer PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeRequest = "trailer"
+	PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeRequestBonus   PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeRequest = "bonus"
 )
 
-func (e PutChannelEpisodesChannelEpisodeHashedIDEpisodeType) ToPointer() *PutChannelEpisodesChannelEpisodeHashedIDEpisodeType {
+func (e PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeRequest) ToPointer() *PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeRequest {
 	return &e
 }
-func (e *PutChannelEpisodesChannelEpisodeHashedIDEpisodeType) UnmarshalJSON(data []byte) error {
+func (e *PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeRequest) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
 		return err
@@ -65,11 +65,61 @@ func (e *PutChannelEpisodesChannelEpisodeHashedIDEpisodeType) UnmarshalJSON(data
 	case "trailer":
 		fallthrough
 	case "bonus":
-		*e = PutChannelEpisodesChannelEpisodeHashedIDEpisodeType(v)
+		*e = PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeRequest(v)
 		return nil
 	default:
-		return fmt.Errorf("invalid value for PutChannelEpisodesChannelEpisodeHashedIDEpisodeType: %v", v)
+		return fmt.Errorf("invalid value for PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeRequest: %v", v)
 	}
+}
+
+// PutChannelEpisodesChannelEpisodeHashedIDPodcastSettingsRequest - Podcast specific settings for a channel episode. These settings only take effect
+// if podcasting is enabled for the channel.
+type PutChannelEpisodesChannelEpisodeHashedIDPodcastSettingsRequest struct {
+	// The type of episode.
+	EpisodeType *PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeRequest `json:"episode_type,omitzero"`
+	// The number of the episode.
+	EpisodeNumber *int64 `json:"episode_number,omitzero"`
+	// The season number of the episode.
+	SeasonNumber *int64 `json:"season_number,omitzero"`
+	// Whether the episode contains explicit content.
+	ExplicitContent *bool `json:"explicit_content,omitzero"`
+	// Whether to hide the episode from the podcast feed.
+	HideFromFeed *bool `json:"hide_from_feed,omitzero"`
+}
+
+func (p *PutChannelEpisodesChannelEpisodeHashedIDPodcastSettingsRequest) GetEpisodeType() *PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeRequest {
+	if p == nil {
+		return nil
+	}
+	return p.EpisodeType
+}
+
+func (p *PutChannelEpisodesChannelEpisodeHashedIDPodcastSettingsRequest) GetEpisodeNumber() *int64 {
+	if p == nil {
+		return nil
+	}
+	return p.EpisodeNumber
+}
+
+func (p *PutChannelEpisodesChannelEpisodeHashedIDPodcastSettingsRequest) GetSeasonNumber() *int64 {
+	if p == nil {
+		return nil
+	}
+	return p.SeasonNumber
+}
+
+func (p *PutChannelEpisodesChannelEpisodeHashedIDPodcastSettingsRequest) GetExplicitContent() *bool {
+	if p == nil {
+		return nil
+	}
+	return p.ExplicitContent
+}
+
+func (p *PutChannelEpisodesChannelEpisodeHashedIDPodcastSettingsRequest) GetHideFromFeed() *bool {
+	if p == nil {
+		return nil
+	}
+	return p.HideFromFeed
 }
 
 type PutChannelEpisodesChannelEpisodeHashedIDRequestBody struct {
@@ -89,16 +139,10 @@ type PutChannelEpisodesChannelEpisodeHashedIDRequestBody struct {
 	PublishAt *time.Time `json:"publish_at,omitzero"`
 	// Additional notes for the episode.
 	EpisodeNotes *string `json:"episode_notes,omitzero"`
-	// The type of episode. This parameter only takes effect if podcasting is enabled for the channel.
-	EpisodeType *PutChannelEpisodesChannelEpisodeHashedIDEpisodeType `json:"episode_type,omitzero"`
-	// The number of the episode. This parameter only takes effect if podcasting is enabled for the channel.
-	EpisodeNumber *int64 `json:"episode_number,omitzero"`
-	// The season number of the episode. This parameter only takes effect if podcasting is enabled for the channel.
-	SeasonNumber *int64 `json:"season_number,omitzero"`
-	// Whether the episode contains explicit content. This parameter only takes effect if podcasting is enabled for the channel.
-	ExplicitContent *bool `json:"explicit_content,omitzero"`
-	// Whether to hide the episode from the podcast feed. This parameter only takes effect if podcasting is enabled for the channel.
-	HideFromFeed *bool `json:"hide_from_feed,omitzero"`
+	// Podcast specific settings for a channel episode. These settings only take effect
+	// if podcasting is enabled for the channel.
+	//
+	PodcastSettings *PutChannelEpisodesChannelEpisodeHashedIDPodcastSettingsRequest `json:"podcast_settings,omitzero"`
 }
 
 func (p PutChannelEpisodesChannelEpisodeHashedIDRequestBody) MarshalJSON() ([]byte, error) {
@@ -168,39 +212,11 @@ func (p *PutChannelEpisodesChannelEpisodeHashedIDRequestBody) GetEpisodeNotes() 
 	return p.EpisodeNotes
 }
 
-func (p *PutChannelEpisodesChannelEpisodeHashedIDRequestBody) GetEpisodeType() *PutChannelEpisodesChannelEpisodeHashedIDEpisodeType {
+func (p *PutChannelEpisodesChannelEpisodeHashedIDRequestBody) GetPodcastSettings() *PutChannelEpisodesChannelEpisodeHashedIDPodcastSettingsRequest {
 	if p == nil {
 		return nil
 	}
-	return p.EpisodeType
-}
-
-func (p *PutChannelEpisodesChannelEpisodeHashedIDRequestBody) GetEpisodeNumber() *int64 {
-	if p == nil {
-		return nil
-	}
-	return p.EpisodeNumber
-}
-
-func (p *PutChannelEpisodesChannelEpisodeHashedIDRequestBody) GetSeasonNumber() *int64 {
-	if p == nil {
-		return nil
-	}
-	return p.SeasonNumber
-}
-
-func (p *PutChannelEpisodesChannelEpisodeHashedIDRequestBody) GetExplicitContent() *bool {
-	if p == nil {
-		return nil
-	}
-	return p.ExplicitContent
-}
-
-func (p *PutChannelEpisodesChannelEpisodeHashedIDRequestBody) GetHideFromFeed() *bool {
-	if p == nil {
-		return nil
-	}
-	return p.HideFromFeed
+	return p.PodcastSettings
 }
 
 type PutChannelEpisodesChannelEpisodeHashedIDRequest struct {
@@ -234,9 +250,110 @@ func (p *PutChannelEpisodesChannelEpisodeHashedIDRequest) GetBody() *PutChannelE
 	return p.Body
 }
 
+// PutChannelEpisodesChannelEpisodeHashedIDCode - A machine-readable identifier for the specific authorization failure.
+type PutChannelEpisodesChannelEpisodeHashedIDCode string
+
+const (
+	PutChannelEpisodesChannelEpisodeHashedIDCodeUnauthorizedCredentials PutChannelEpisodesChannelEpisodeHashedIDCode = "unauthorized_credentials"
+	PutChannelEpisodesChannelEpisodeHashedIDCodeAccountInactive         PutChannelEpisodesChannelEpisodeHashedIDCode = "account_inactive"
+	PutChannelEpisodesChannelEpisodeHashedIDCodeUnauthorizedScope       PutChannelEpisodesChannelEpisodeHashedIDCode = "unauthorized_scope"
+	PutChannelEpisodesChannelEpisodeHashedIDCodeUnauthorizedParams      PutChannelEpisodesChannelEpisodeHashedIDCode = "unauthorized_params"
+)
+
+func (e PutChannelEpisodesChannelEpisodeHashedIDCode) ToPointer() *PutChannelEpisodesChannelEpisodeHashedIDCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *PutChannelEpisodesChannelEpisodeHashedIDCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
+// PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeResponse - The type of episode.
+type PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeResponse string
+
+const (
+	PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeResponseFull    PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeResponse = "full"
+	PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeResponseTrailer PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeResponse = "trailer"
+	PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeResponseBonus   PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeResponse = "bonus"
+)
+
+func (e PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeResponse) ToPointer() *PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeResponse {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeResponse) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "full", "trailer", "bonus":
+			return true
+		}
+	}
+	return false
+}
+
+// PutChannelEpisodesChannelEpisodeHashedIDPodcastSettingsResponse - Podcast specific settings for the episode. Only present when podcasting
+// is enabled for the channel.
+type PutChannelEpisodesChannelEpisodeHashedIDPodcastSettingsResponse struct {
+	// The type of episode.
+	EpisodeType *PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeResponse `json:"episode_type,omitzero"`
+	// The number of the episode.
+	EpisodeNumber *int64 `json:"episode_number,omitzero"`
+	// The season number of the episode.
+	SeasonNumber *int64 `json:"season_number,omitzero"`
+	// Whether the episode contains explicit content.
+	ExplicitContent *bool `json:"explicit_content,omitzero"`
+	// Whether to hide the episode from the podcast feed.
+	HideFromFeed *bool `json:"hide_from_feed,omitzero"`
+}
+
+func (p *PutChannelEpisodesChannelEpisodeHashedIDPodcastSettingsResponse) GetEpisodeType() *PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeResponse {
+	if p == nil {
+		return nil
+	}
+	return p.EpisodeType
+}
+
+func (p *PutChannelEpisodesChannelEpisodeHashedIDPodcastSettingsResponse) GetEpisodeNumber() *int64 {
+	if p == nil {
+		return nil
+	}
+	return p.EpisodeNumber
+}
+
+func (p *PutChannelEpisodesChannelEpisodeHashedIDPodcastSettingsResponse) GetSeasonNumber() *int64 {
+	if p == nil {
+		return nil
+	}
+	return p.SeasonNumber
+}
+
+func (p *PutChannelEpisodesChannelEpisodeHashedIDPodcastSettingsResponse) GetExplicitContent() *bool {
+	if p == nil {
+		return nil
+	}
+	return p.ExplicitContent
+}
+
+func (p *PutChannelEpisodesChannelEpisodeHashedIDPodcastSettingsResponse) GetHideFromFeed() *bool {
+	if p == nil {
+		return nil
+	}
+	return p.HideFromFeed
+}
+
 // PutChannelEpisodesChannelEpisodeHashedIDResponseBody - A channel episode represents a media that has been added to a channel. Only published
 // episodes are displayed in a channel.
 type PutChannelEpisodesChannelEpisodeHashedIDResponseBody struct {
+	// A unique numeric identifier for the channel episode.
+	ID *int64 `json:"id,omitzero"`
 	// A unique alphanumeric identifier for the channel episode's channel.
 	ChannelHashedID string `json:"channel_hashed_id"`
 	// The date when the channel episode was originally created.
@@ -251,6 +368,8 @@ type PutChannelEpisodesChannelEpisodeHashedIDResponseBody struct {
 	HashedID string `json:"hashed_id"`
 	// A unique alphanumeric identifier for the channel episode's media.
 	MediaHashedID string `json:"media_hashed_id"`
+	// A unique alphanumeric identifier for the channel episode's live stream event, if any. Null when the episode is not linked to a live stream event.
+	LiveStreamEventHashedID optionalnullable.OptionalNullable[string] `json:"live_stream_event_hashed_id,omitzero"`
 	// Whether the channel episode has been published or is still in draft form.
 	Published bool `json:"published"`
 	// The date and time when the episode is scheduled to be published in UTC timezone (only present when publish_status is 'scheduled').
@@ -259,6 +378,10 @@ type PutChannelEpisodesChannelEpisodeHashedIDResponseBody struct {
 	Title *string `json:"title"`
 	// The date when the channel was last updated.
 	Updated time.Time `json:"updated"`
+	// Podcast specific settings for the episode. Only present when podcasting
+	// is enabled for the channel.
+	//
+	PodcastSettings *PutChannelEpisodesChannelEpisodeHashedIDPodcastSettingsResponse `json:"podcast_settings,omitzero"`
 }
 
 func (p PutChannelEpisodesChannelEpisodeHashedIDResponseBody) MarshalJSON() ([]byte, error) {
@@ -270,6 +393,13 @@ func (p *PutChannelEpisodesChannelEpisodeHashedIDResponseBody) UnmarshalJSON(dat
 		return err
 	}
 	return nil
+}
+
+func (p *PutChannelEpisodesChannelEpisodeHashedIDResponseBody) GetID() *int64 {
+	if p == nil {
+		return nil
+	}
+	return p.ID
 }
 
 func (p *PutChannelEpisodesChannelEpisodeHashedIDResponseBody) GetChannelHashedID() string {
@@ -321,6 +451,13 @@ func (p *PutChannelEpisodesChannelEpisodeHashedIDResponseBody) GetMediaHashedID(
 	return p.MediaHashedID
 }
 
+func (p *PutChannelEpisodesChannelEpisodeHashedIDResponseBody) GetLiveStreamEventHashedID() optionalnullable.OptionalNullable[string] {
+	if p == nil {
+		return nil
+	}
+	return p.LiveStreamEventHashedID
+}
+
 func (p *PutChannelEpisodesChannelEpisodeHashedIDResponseBody) GetPublished() bool {
 	if p == nil {
 		return false
@@ -347,6 +484,13 @@ func (p *PutChannelEpisodesChannelEpisodeHashedIDResponseBody) GetUpdated() time
 		return time.Time{}
 	}
 	return p.Updated
+}
+
+func (p *PutChannelEpisodesChannelEpisodeHashedIDResponseBody) GetPodcastSettings() *PutChannelEpisodesChannelEpisodeHashedIDPodcastSettingsResponse {
+	if p == nil {
+		return nil
+	}
+	return p.PodcastSettings
 }
 
 type PutChannelEpisodesChannelEpisodeHashedIDResponse struct {

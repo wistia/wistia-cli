@@ -81,6 +81,31 @@ func (g *GetStatsVisitorsRequest) GetSearch() *string {
 	return g.Search
 }
 
+// GetStatsVisitorsCode - A machine-readable identifier for the specific authorization failure.
+type GetStatsVisitorsCode string
+
+const (
+	GetStatsVisitorsCodeUnauthorizedCredentials GetStatsVisitorsCode = "unauthorized_credentials"
+	GetStatsVisitorsCodeAccountInactive         GetStatsVisitorsCode = "account_inactive"
+	GetStatsVisitorsCodeUnauthorizedScope       GetStatsVisitorsCode = "unauthorized_scope"
+	GetStatsVisitorsCodeUnauthorizedParams      GetStatsVisitorsCode = "unauthorized_params"
+)
+
+func (e GetStatsVisitorsCode) ToPointer() *GetStatsVisitorsCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetStatsVisitorsCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 type GetStatsVisitorsOrg struct {
 	Name  optionalnullable.OptionalNullable[string] `json:"name,omitzero"`
 	Title optionalnullable.OptionalNullable[string] `json:"title,omitzero"`

@@ -67,6 +67,31 @@ func (p *PutMediasMediaHashedIDCaptionsLanguageCodeMultipartRequest) GetBody() P
 	return p.Body
 }
 
+// PutMediasMediaHashedIDCaptionsLanguageCodeMultipartCode - A machine-readable identifier for the specific authorization failure.
+type PutMediasMediaHashedIDCaptionsLanguageCodeMultipartCode string
+
+const (
+	PutMediasMediaHashedIDCaptionsLanguageCodeMultipartCodeUnauthorizedCredentials PutMediasMediaHashedIDCaptionsLanguageCodeMultipartCode = "unauthorized_credentials"
+	PutMediasMediaHashedIDCaptionsLanguageCodeMultipartCodeAccountInactive         PutMediasMediaHashedIDCaptionsLanguageCodeMultipartCode = "account_inactive"
+	PutMediasMediaHashedIDCaptionsLanguageCodeMultipartCodeUnauthorizedScope       PutMediasMediaHashedIDCaptionsLanguageCodeMultipartCode = "unauthorized_scope"
+	PutMediasMediaHashedIDCaptionsLanguageCodeMultipartCodeUnauthorizedParams      PutMediasMediaHashedIDCaptionsLanguageCodeMultipartCode = "unauthorized_params"
+)
+
+func (e PutMediasMediaHashedIDCaptionsLanguageCodeMultipartCode) ToPointer() *PutMediasMediaHashedIDCaptionsLanguageCodeMultipartCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *PutMediasMediaHashedIDCaptionsLanguageCodeMultipartCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 type PutMediasMediaHashedIDCaptionsLanguageCodeMultipartResponse struct {
 	HTTPMeta components.HTTPMetadata `json:"-"`
 }

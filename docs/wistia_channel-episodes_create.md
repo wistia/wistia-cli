@@ -27,12 +27,11 @@ wistia channel-episodes create [flags]
       --body string                Request body as JSON (alternative to individual flags). Can also be provided via stdin.
   -c, --channel-hashed-id string   The hashed ID of the channel to add the episode to. [required]
       --description string         The episode's description or episode notes.
-      --episode-number int         The episode number for this episode in your podcast.  This parameter only takes effect if podcasting is enabled for the channel.
-      --episode-type string        The episode type for your podcast.  This parameter only takes effect if podcasting is enabled for the channel. (options: full, trailer, bonus)
-      --explicit-content           Whether this episode contains explicit content.  This parameter only takes effect if podcasting is enabled for the channel.
   -h, --help                       help for create
-      --hide-from-feed             Whether or not to hide this episode from your podcast feed.  Set to true to hide the episode, false to show the episode.  This parameter only takes effect if podcasting is enabled for the channel.
   -m, --media-id string            The alphanumeric hashed ID of the media to be added as a channel episode.
+      --podcast-settings string    Podcast specific settings for a channel episode. These settings only take effect
+                                   if podcasting is enabled for the channel.
+                                   
       --publish-at string          The date and time when the episode should be published in UTC timezone. Required when publish_status is 'scheduled'. Must be a valid ISO8601 timestamp in UTC (ending with 'Z').  Can only be provided when publish_status is 'scheduled.'
       --publish-status string      The status of whether or not the episode has been published to your channel. (options: draft, published, scheduled)
   -s, --summary string             A short summary of the episode that is displayed when space is limited.

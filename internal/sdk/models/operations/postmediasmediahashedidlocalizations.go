@@ -73,6 +73,31 @@ func (p *PostMediasMediaHashedIDLocalizationsRequest) GetBody() *PostMediasMedia
 	return p.Body
 }
 
+// PostMediasMediaHashedIDLocalizationsCode - A machine-readable identifier for the specific authorization failure.
+type PostMediasMediaHashedIDLocalizationsCode string
+
+const (
+	PostMediasMediaHashedIDLocalizationsCodeUnauthorizedCredentials PostMediasMediaHashedIDLocalizationsCode = "unauthorized_credentials"
+	PostMediasMediaHashedIDLocalizationsCodeAccountInactive         PostMediasMediaHashedIDLocalizationsCode = "account_inactive"
+	PostMediasMediaHashedIDLocalizationsCodeUnauthorizedScope       PostMediasMediaHashedIDLocalizationsCode = "unauthorized_scope"
+	PostMediasMediaHashedIDLocalizationsCodeUnauthorizedParams      PostMediasMediaHashedIDLocalizationsCode = "unauthorized_params"
+)
+
+func (e PostMediasMediaHashedIDLocalizationsCode) ToPointer() *PostMediasMediaHashedIDLocalizationsCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *PostMediasMediaHashedIDLocalizationsCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 // PostMediasMediaHashedIDLocalizationsSourceMedia - The media that the localization is associated with.
 type PostMediasMediaHashedIDLocalizationsSourceMedia struct {
 	// A unique alphanumeric identifier for this media.

@@ -40,7 +40,7 @@ func (e *GetChannelsEnabled) UnmarshalJSON(data []byte) error {
 	}
 }
 
-// GetChannelsCursor - If `cursor[enabled]` is set to 1 than cursor pagination is enabled and the
+// GetChannelsCursor - If `cursor[enabled]` is set to 1 then cursor pagination is enabled and the
 // first set of records are fetched up to the `per_page`. Cursor
 // pagination will also be turned on if `cursor[before]` or `cursor[after]`
 // are set. Records returned will have a `cursor` property set which can be used to fetch more records in the same `sort_by` ordering.
@@ -48,20 +48,20 @@ func (e *GetChannelsEnabled) UnmarshalJSON(data []byte) error {
 // the cursor of the first record can be used to fetch records before the result set.
 //
 // NOTE: a cursor value is only valid if the `sort_by` value hasn't changed from the
-// last fetch. For example, you cannot fetch using `sort_by` id and than pass that
+// last fetch. For example, you cannot fetch using `sort_by` id and then pass that
 // cursor value to a `sort_by` name.
 type GetChannelsCursor struct {
 	// If `cursor[enabled]` is set to 1, the first result set will be fetched with cursor pagination enabled. This
 	// values is ignored if `cursor[before]` or `cursor[after]` are set.
 	//
 	Enabled *GetChannelsEnabled `queryParam:"name=enabled"`
-	// If `cursor[before]` is set than cursor pagination is enabled and all records
+	// If `cursor[before]` is set then cursor pagination is enabled and all records
 	// before the cursor up to the `per_page` are returned. This feature is useful for
 	// fetching "new records", for example, in a "pull to refersh" feature when showing records in a descending
 	// order.
 	//
 	Before *string `queryParam:"name=before"`
-	// If `cursor[after]` is set than cursor pagination is enabled and all records
+	// If `cursor[after]` is set then cursor pagination is enabled and all records
 	// after the cursor up to the `per_page` are returned.
 	//
 	After *string `queryParam:"name=after"`
@@ -150,7 +150,7 @@ func (e *GetChannelsSortDirection) UnmarshalJSON(data []byte) error {
 }
 
 type GetChannelsRequest struct {
-	// If `cursor[enabled]` is set to 1 than cursor pagination is enabled and the
+	// If `cursor[enabled]` is set to 1 then cursor pagination is enabled and the
 	// first set of records are fetched up to the `per_page`. Cursor
 	// pagination will also be turned on if `cursor[before]` or `cursor[after]`
 	// are set. Records returned will have a `cursor` property set which can be used to fetch more records in the same `sort_by` ordering.
@@ -158,7 +158,7 @@ type GetChannelsRequest struct {
 	// the cursor of the first record can be used to fetch records before the result set.
 	//
 	// NOTE: a cursor value is only valid if the `sort_by` value hasn't changed from the
-	// last fetch. For example, you cannot fetch using `sort_by` id and than pass that
+	// last fetch. For example, you cannot fetch using `sort_by` id and then pass that
 	// cursor value to a `sort_by` name.
 	//
 	Cursor *GetChannelsCursor `queryParam:"style=deepObject,explode=true,name=cursor"`
@@ -229,6 +229,603 @@ func (g *GetChannelsRequest) GetHashedIds() []string {
 	return g.HashedIds
 }
 
+// GetChannelsCode - A machine-readable identifier for the specific authorization failure.
+type GetChannelsCode string
+
+const (
+	GetChannelsCodeUnauthorizedCredentials GetChannelsCode = "unauthorized_credentials"
+	GetChannelsCodeAccountInactive         GetChannelsCode = "account_inactive"
+	GetChannelsCodeUnauthorizedScope       GetChannelsCode = "unauthorized_scope"
+	GetChannelsCodeUnauthorizedParams      GetChannelsCode = "unauthorized_params"
+)
+
+func (e GetChannelsCode) ToPointer() *GetChannelsCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetChannelsCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
+// GetChannelsEpisodeFormat - The format for episodes for the podcast channel.
+type GetChannelsEpisodeFormat string
+
+const (
+	GetChannelsEpisodeFormatEpisodic            GetChannelsEpisodeFormat = "episodic"
+	GetChannelsEpisodeFormatEpisodicWithSeasons GetChannelsEpisodeFormat = "episodic_with_seasons"
+	GetChannelsEpisodeFormatSerial              GetChannelsEpisodeFormat = "serial"
+)
+
+func (e GetChannelsEpisodeFormat) ToPointer() *GetChannelsEpisodeFormat {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetChannelsEpisodeFormat) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "episodic", "episodic_with_seasons", "serial":
+			return true
+		}
+	}
+	return false
+}
+
+// GetChannelsCategory1 - The primary category for the channel.
+type GetChannelsCategory1 string
+
+const (
+	GetChannelsCategory1ArtsGreaterThanBooks                           GetChannelsCategory1 = "arts > books"
+	GetChannelsCategory1ArtsGreaterThanDesign                          GetChannelsCategory1 = "arts > design"
+	GetChannelsCategory1ArtsGreaterThanFashionAndBeauty                GetChannelsCategory1 = "arts > fashion_and_beauty"
+	GetChannelsCategory1ArtsGreaterThanFood                            GetChannelsCategory1 = "arts > food"
+	GetChannelsCategory1ArtsGreaterThanPerformingArts                  GetChannelsCategory1 = "arts > performing_arts"
+	GetChannelsCategory1ArtsGreaterThanVisualArts                      GetChannelsCategory1 = "arts > visual_arts"
+	GetChannelsCategory1BusinessGreaterThanCareers                     GetChannelsCategory1 = "business > careers"
+	GetChannelsCategory1BusinessGreaterThanEntrepreneurship            GetChannelsCategory1 = "business > entrepreneurship"
+	GetChannelsCategory1BusinessGreaterThanInvesting                   GetChannelsCategory1 = "business > investing"
+	GetChannelsCategory1BusinessGreaterThanManagement                  GetChannelsCategory1 = "business > management"
+	GetChannelsCategory1BusinessGreaterThanMarketing                   GetChannelsCategory1 = "business > marketing"
+	GetChannelsCategory1BusinessGreaterThanNonProfit                   GetChannelsCategory1 = "business > non_profit"
+	GetChannelsCategory1ComedyGreaterThanComedyInterviews              GetChannelsCategory1 = "comedy > comedy_interviews"
+	GetChannelsCategory1ComedyGreaterThanImprov                        GetChannelsCategory1 = "comedy > improv"
+	GetChannelsCategory1ComedyGreaterThanStandUp                       GetChannelsCategory1 = "comedy > stand_up"
+	GetChannelsCategory1EducationGreaterThanCourses                    GetChannelsCategory1 = "education > courses"
+	GetChannelsCategory1EducationGreaterThanHowTo                      GetChannelsCategory1 = "education > how_to"
+	GetChannelsCategory1EducationGreaterThanLanguageLearning           GetChannelsCategory1 = "education > language_learning"
+	GetChannelsCategory1EducationGreaterThanSelfImprovement            GetChannelsCategory1 = "education > self_improvement"
+	GetChannelsCategory1FictionGreaterThanComedyFiction                GetChannelsCategory1 = "fiction > comedy_fiction"
+	GetChannelsCategory1FictionGreaterThanDrama                        GetChannelsCategory1 = "fiction > drama"
+	GetChannelsCategory1FictionGreaterThanScienceFiction               GetChannelsCategory1 = "fiction > science_fiction"
+	GetChannelsCategory1HealthAndFitnessGreaterThanAlternativeHealth   GetChannelsCategory1 = "health_and_fitness > alternative_health"
+	GetChannelsCategory1HealthAndFitnessGreaterThanFitness             GetChannelsCategory1 = "health_and_fitness > fitness"
+	GetChannelsCategory1HealthAndFitnessGreaterThanMedicine            GetChannelsCategory1 = "health_and_fitness > medicine"
+	GetChannelsCategory1HealthAndFitnessGreaterThanMentalHealth        GetChannelsCategory1 = "health_and_fitness > mental_health"
+	GetChannelsCategory1HealthAndFitnessGreaterThanNutrition           GetChannelsCategory1 = "health_and_fitness > nutrition"
+	GetChannelsCategory1HealthAndFitnessGreaterThanSexuality           GetChannelsCategory1 = "health_and_fitness > sexuality"
+	GetChannelsCategory1KidsAndFamilyGreaterThanEducationForKids       GetChannelsCategory1 = "kids_and_family > education_for_kids"
+	GetChannelsCategory1KidsAndFamilyGreaterThanParenting              GetChannelsCategory1 = "kids_and_family > parenting"
+	GetChannelsCategory1KidsAndFamilyGreaterThanPetsAndAnimals         GetChannelsCategory1 = "kids_and_family > pets_and_animals"
+	GetChannelsCategory1KidsAndFamilyGreaterThanStoriesForKids         GetChannelsCategory1 = "kids_and_family > stories_for_kids"
+	GetChannelsCategory1LeisureGreaterThanAnimationAndManga            GetChannelsCategory1 = "leisure > animation_and_manga"
+	GetChannelsCategory1LeisureGreaterThanAutomotive                   GetChannelsCategory1 = "leisure > automotive"
+	GetChannelsCategory1LeisureGreaterThanAviation                     GetChannelsCategory1 = "leisure > aviation"
+	GetChannelsCategory1LeisureGreaterThanCrafts                       GetChannelsCategory1 = "leisure > crafts"
+	GetChannelsCategory1LeisureGreaterThanGames                        GetChannelsCategory1 = "leisure > games"
+	GetChannelsCategory1LeisureGreaterThanHobbies                      GetChannelsCategory1 = "leisure > hobbies"
+	GetChannelsCategory1LeisureGreaterThanHomeAndGarden                GetChannelsCategory1 = "leisure > home_and_garden"
+	GetChannelsCategory1LeisureGreaterThanVideoGames                   GetChannelsCategory1 = "leisure > video_games"
+	GetChannelsCategory1MusicGreaterThanMusicCommentary                GetChannelsCategory1 = "music > music_commentary"
+	GetChannelsCategory1MusicGreaterThanMusicHistory                   GetChannelsCategory1 = "music > music_history"
+	GetChannelsCategory1MusicGreaterThanMusicInterviews                GetChannelsCategory1 = "music > music_interviews"
+	GetChannelsCategory1NewsGreaterThanBusinessNews                    GetChannelsCategory1 = "news > business_news"
+	GetChannelsCategory1NewsGreaterThanDailyNews                       GetChannelsCategory1 = "news > daily_news"
+	GetChannelsCategory1NewsGreaterThanEntertainmentNews               GetChannelsCategory1 = "news > entertainment_news"
+	GetChannelsCategory1NewsGreaterThanNewsCommentary                  GetChannelsCategory1 = "news > news_commentary"
+	GetChannelsCategory1NewsGreaterThanPolitics                        GetChannelsCategory1 = "news > politics"
+	GetChannelsCategory1NewsGreaterThanSportsNews                      GetChannelsCategory1 = "news > sports_news"
+	GetChannelsCategory1NewsGreaterThanTechNews                        GetChannelsCategory1 = "news > tech_news"
+	GetChannelsCategory1ReligionAndSpiritualityGreaterThanBuddhism     GetChannelsCategory1 = "religion_and_spirituality > buddhism"
+	GetChannelsCategory1ReligionAndSpiritualityGreaterThanChristianity GetChannelsCategory1 = "religion_and_spirituality > christianity"
+	GetChannelsCategory1ReligionAndSpiritualityGreaterThanHinduism     GetChannelsCategory1 = "religion_and_spirituality > hinduism"
+	GetChannelsCategory1ReligionAndSpiritualityGreaterThanIslam        GetChannelsCategory1 = "religion_and_spirituality > islam"
+	GetChannelsCategory1ReligionAndSpiritualityGreaterThanJudaism      GetChannelsCategory1 = "religion_and_spirituality > judaism"
+	GetChannelsCategory1ReligionAndSpiritualityGreaterThanReligion     GetChannelsCategory1 = "religion_and_spirituality > religion"
+	GetChannelsCategory1ReligionAndSpiritualityGreaterThanSpirituality GetChannelsCategory1 = "religion_and_spirituality > spirituality"
+	GetChannelsCategory1ScienceGreaterThanAstronomy                    GetChannelsCategory1 = "science > astronomy"
+	GetChannelsCategory1ScienceGreaterThanChemistry                    GetChannelsCategory1 = "science > chemistry"
+	GetChannelsCategory1ScienceGreaterThanEarthSciences                GetChannelsCategory1 = "science > earth_sciences"
+	GetChannelsCategory1ScienceGreaterThanLifeSciences                 GetChannelsCategory1 = "science > life_sciences"
+	GetChannelsCategory1ScienceGreaterThanMathematics                  GetChannelsCategory1 = "science > mathematics"
+	GetChannelsCategory1ScienceGreaterThanNaturalSciences              GetChannelsCategory1 = "science > natural_sciences"
+	GetChannelsCategory1ScienceGreaterThanNature                       GetChannelsCategory1 = "science > nature"
+	GetChannelsCategory1ScienceGreaterThanPhysics                      GetChannelsCategory1 = "science > physics"
+	GetChannelsCategory1ScienceGreaterThanSocialSciences               GetChannelsCategory1 = "science > social_sciences"
+	GetChannelsCategory1SocietyAndCultureGreaterThanDocumentary        GetChannelsCategory1 = "society_and_culture > documentary"
+	GetChannelsCategory1SocietyAndCultureGreaterThanPersonalJournals   GetChannelsCategory1 = "society_and_culture > personal_journals"
+	GetChannelsCategory1SocietyAndCultureGreaterThanPhilosophy         GetChannelsCategory1 = "society_and_culture > philosophy"
+	GetChannelsCategory1SocietyAndCultureGreaterThanPlacesAndTravel    GetChannelsCategory1 = "society_and_culture > places_and_travel"
+	GetChannelsCategory1SocietyAndCultureGreaterThanRelationships      GetChannelsCategory1 = "society_and_culture > relationships"
+	GetChannelsCategory1SportsGreaterThanBaseball                      GetChannelsCategory1 = "sports > baseball"
+	GetChannelsCategory1SportsGreaterThanBasketball                    GetChannelsCategory1 = "sports > basketball"
+	GetChannelsCategory1SportsGreaterThanCricket                       GetChannelsCategory1 = "sports > cricket"
+	GetChannelsCategory1SportsGreaterThanFantasySports                 GetChannelsCategory1 = "sports > fantasy_sports"
+	GetChannelsCategory1SportsGreaterThanFootball                      GetChannelsCategory1 = "sports > football"
+	GetChannelsCategory1SportsGreaterThanGolf                          GetChannelsCategory1 = "sports > golf"
+	GetChannelsCategory1SportsGreaterThanHockey                        GetChannelsCategory1 = "sports > hockey"
+	GetChannelsCategory1SportsGreaterThanRugby                         GetChannelsCategory1 = "sports > rugby"
+	GetChannelsCategory1SportsGreaterThanRunning                       GetChannelsCategory1 = "sports > running"
+	GetChannelsCategory1SportsGreaterThanSoccer                        GetChannelsCategory1 = "sports > soccer"
+	GetChannelsCategory1SportsGreaterThanSwimming                      GetChannelsCategory1 = "sports > swimming"
+	GetChannelsCategory1SportsGreaterThanTennis                        GetChannelsCategory1 = "sports > tennis"
+	GetChannelsCategory1SportsGreaterThanVolleyball                    GetChannelsCategory1 = "sports > volleyball"
+	GetChannelsCategory1SportsGreaterThanWilderness                    GetChannelsCategory1 = "sports > wilderness"
+	GetChannelsCategory1SportsGreaterThanWrestling                     GetChannelsCategory1 = "sports > wrestling"
+	GetChannelsCategory1TvAndFilmGreaterThanAfterShows                 GetChannelsCategory1 = "tv_and_film > after_shows"
+	GetChannelsCategory1TvAndFilmGreaterThanFilmHistory                GetChannelsCategory1 = "tv_and_film > film_history"
+	GetChannelsCategory1TvAndFilmGreaterThanFilmInterviews             GetChannelsCategory1 = "tv_and_film > film_interviews"
+	GetChannelsCategory1TvAndFilmGreaterThanFilmReviews                GetChannelsCategory1 = "tv_and_film > film_reviews"
+	GetChannelsCategory1TvAndFilmGreaterThanTvReviews                  GetChannelsCategory1 = "tv_and_film > tv_reviews"
+)
+
+func (e GetChannelsCategory1) ToPointer() *GetChannelsCategory1 {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetChannelsCategory1) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "arts > books", "arts > design", "arts > fashion_and_beauty", "arts > food", "arts > performing_arts", "arts > visual_arts", "business > careers", "business > entrepreneurship", "business > investing", "business > management", "business > marketing", "business > non_profit", "comedy > comedy_interviews", "comedy > improv", "comedy > stand_up", "education > courses", "education > how_to", "education > language_learning", "education > self_improvement", "fiction > comedy_fiction", "fiction > drama", "fiction > science_fiction", "health_and_fitness > alternative_health", "health_and_fitness > fitness", "health_and_fitness > medicine", "health_and_fitness > mental_health", "health_and_fitness > nutrition", "health_and_fitness > sexuality", "kids_and_family > education_for_kids", "kids_and_family > parenting", "kids_and_family > pets_and_animals", "kids_and_family > stories_for_kids", "leisure > animation_and_manga", "leisure > automotive", "leisure > aviation", "leisure > crafts", "leisure > games", "leisure > hobbies", "leisure > home_and_garden", "leisure > video_games", "music > music_commentary", "music > music_history", "music > music_interviews", "news > business_news", "news > daily_news", "news > entertainment_news", "news > news_commentary", "news > politics", "news > sports_news", "news > tech_news", "religion_and_spirituality > buddhism", "religion_and_spirituality > christianity", "religion_and_spirituality > hinduism", "religion_and_spirituality > islam", "religion_and_spirituality > judaism", "religion_and_spirituality > religion", "religion_and_spirituality > spirituality", "science > astronomy", "science > chemistry", "science > earth_sciences", "science > life_sciences", "science > mathematics", "science > natural_sciences", "science > nature", "science > physics", "science > social_sciences", "society_and_culture > documentary", "society_and_culture > personal_journals", "society_and_culture > philosophy", "society_and_culture > places_and_travel", "society_and_culture > relationships", "sports > baseball", "sports > basketball", "sports > cricket", "sports > fantasy_sports", "sports > football", "sports > golf", "sports > hockey", "sports > rugby", "sports > running", "sports > soccer", "sports > swimming", "sports > tennis", "sports > volleyball", "sports > wilderness", "sports > wrestling", "tv_and_film > after_shows", "tv_and_film > film_history", "tv_and_film > film_interviews", "tv_and_film > film_reviews", "tv_and_film > tv_reviews":
+			return true
+		}
+	}
+	return false
+}
+
+// GetChannelsCategory2 - The secondary category for the channel.
+type GetChannelsCategory2 string
+
+const (
+	GetChannelsCategory2ArtsGreaterThanBooks                           GetChannelsCategory2 = "arts > books"
+	GetChannelsCategory2ArtsGreaterThanDesign                          GetChannelsCategory2 = "arts > design"
+	GetChannelsCategory2ArtsGreaterThanFashionAndBeauty                GetChannelsCategory2 = "arts > fashion_and_beauty"
+	GetChannelsCategory2ArtsGreaterThanFood                            GetChannelsCategory2 = "arts > food"
+	GetChannelsCategory2ArtsGreaterThanPerformingArts                  GetChannelsCategory2 = "arts > performing_arts"
+	GetChannelsCategory2ArtsGreaterThanVisualArts                      GetChannelsCategory2 = "arts > visual_arts"
+	GetChannelsCategory2BusinessGreaterThanCareers                     GetChannelsCategory2 = "business > careers"
+	GetChannelsCategory2BusinessGreaterThanEntrepreneurship            GetChannelsCategory2 = "business > entrepreneurship"
+	GetChannelsCategory2BusinessGreaterThanInvesting                   GetChannelsCategory2 = "business > investing"
+	GetChannelsCategory2BusinessGreaterThanManagement                  GetChannelsCategory2 = "business > management"
+	GetChannelsCategory2BusinessGreaterThanMarketing                   GetChannelsCategory2 = "business > marketing"
+	GetChannelsCategory2BusinessGreaterThanNonProfit                   GetChannelsCategory2 = "business > non_profit"
+	GetChannelsCategory2ComedyGreaterThanComedyInterviews              GetChannelsCategory2 = "comedy > comedy_interviews"
+	GetChannelsCategory2ComedyGreaterThanImprov                        GetChannelsCategory2 = "comedy > improv"
+	GetChannelsCategory2ComedyGreaterThanStandUp                       GetChannelsCategory2 = "comedy > stand_up"
+	GetChannelsCategory2EducationGreaterThanCourses                    GetChannelsCategory2 = "education > courses"
+	GetChannelsCategory2EducationGreaterThanHowTo                      GetChannelsCategory2 = "education > how_to"
+	GetChannelsCategory2EducationGreaterThanLanguageLearning           GetChannelsCategory2 = "education > language_learning"
+	GetChannelsCategory2EducationGreaterThanSelfImprovement            GetChannelsCategory2 = "education > self_improvement"
+	GetChannelsCategory2FictionGreaterThanComedyFiction                GetChannelsCategory2 = "fiction > comedy_fiction"
+	GetChannelsCategory2FictionGreaterThanDrama                        GetChannelsCategory2 = "fiction > drama"
+	GetChannelsCategory2FictionGreaterThanScienceFiction               GetChannelsCategory2 = "fiction > science_fiction"
+	GetChannelsCategory2HealthAndFitnessGreaterThanAlternativeHealth   GetChannelsCategory2 = "health_and_fitness > alternative_health"
+	GetChannelsCategory2HealthAndFitnessGreaterThanFitness             GetChannelsCategory2 = "health_and_fitness > fitness"
+	GetChannelsCategory2HealthAndFitnessGreaterThanMedicine            GetChannelsCategory2 = "health_and_fitness > medicine"
+	GetChannelsCategory2HealthAndFitnessGreaterThanMentalHealth        GetChannelsCategory2 = "health_and_fitness > mental_health"
+	GetChannelsCategory2HealthAndFitnessGreaterThanNutrition           GetChannelsCategory2 = "health_and_fitness > nutrition"
+	GetChannelsCategory2HealthAndFitnessGreaterThanSexuality           GetChannelsCategory2 = "health_and_fitness > sexuality"
+	GetChannelsCategory2KidsAndFamilyGreaterThanEducationForKids       GetChannelsCategory2 = "kids_and_family > education_for_kids"
+	GetChannelsCategory2KidsAndFamilyGreaterThanParenting              GetChannelsCategory2 = "kids_and_family > parenting"
+	GetChannelsCategory2KidsAndFamilyGreaterThanPetsAndAnimals         GetChannelsCategory2 = "kids_and_family > pets_and_animals"
+	GetChannelsCategory2KidsAndFamilyGreaterThanStoriesForKids         GetChannelsCategory2 = "kids_and_family > stories_for_kids"
+	GetChannelsCategory2LeisureGreaterThanAnimationAndManga            GetChannelsCategory2 = "leisure > animation_and_manga"
+	GetChannelsCategory2LeisureGreaterThanAutomotive                   GetChannelsCategory2 = "leisure > automotive"
+	GetChannelsCategory2LeisureGreaterThanAviation                     GetChannelsCategory2 = "leisure > aviation"
+	GetChannelsCategory2LeisureGreaterThanCrafts                       GetChannelsCategory2 = "leisure > crafts"
+	GetChannelsCategory2LeisureGreaterThanGames                        GetChannelsCategory2 = "leisure > games"
+	GetChannelsCategory2LeisureGreaterThanHobbies                      GetChannelsCategory2 = "leisure > hobbies"
+	GetChannelsCategory2LeisureGreaterThanHomeAndGarden                GetChannelsCategory2 = "leisure > home_and_garden"
+	GetChannelsCategory2LeisureGreaterThanVideoGames                   GetChannelsCategory2 = "leisure > video_games"
+	GetChannelsCategory2MusicGreaterThanMusicCommentary                GetChannelsCategory2 = "music > music_commentary"
+	GetChannelsCategory2MusicGreaterThanMusicHistory                   GetChannelsCategory2 = "music > music_history"
+	GetChannelsCategory2MusicGreaterThanMusicInterviews                GetChannelsCategory2 = "music > music_interviews"
+	GetChannelsCategory2NewsGreaterThanBusinessNews                    GetChannelsCategory2 = "news > business_news"
+	GetChannelsCategory2NewsGreaterThanDailyNews                       GetChannelsCategory2 = "news > daily_news"
+	GetChannelsCategory2NewsGreaterThanEntertainmentNews               GetChannelsCategory2 = "news > entertainment_news"
+	GetChannelsCategory2NewsGreaterThanNewsCommentary                  GetChannelsCategory2 = "news > news_commentary"
+	GetChannelsCategory2NewsGreaterThanPolitics                        GetChannelsCategory2 = "news > politics"
+	GetChannelsCategory2NewsGreaterThanSportsNews                      GetChannelsCategory2 = "news > sports_news"
+	GetChannelsCategory2NewsGreaterThanTechNews                        GetChannelsCategory2 = "news > tech_news"
+	GetChannelsCategory2ReligionAndSpiritualityGreaterThanBuddhism     GetChannelsCategory2 = "religion_and_spirituality > buddhism"
+	GetChannelsCategory2ReligionAndSpiritualityGreaterThanChristianity GetChannelsCategory2 = "religion_and_spirituality > christianity"
+	GetChannelsCategory2ReligionAndSpiritualityGreaterThanHinduism     GetChannelsCategory2 = "religion_and_spirituality > hinduism"
+	GetChannelsCategory2ReligionAndSpiritualityGreaterThanIslam        GetChannelsCategory2 = "religion_and_spirituality > islam"
+	GetChannelsCategory2ReligionAndSpiritualityGreaterThanJudaism      GetChannelsCategory2 = "religion_and_spirituality > judaism"
+	GetChannelsCategory2ReligionAndSpiritualityGreaterThanReligion     GetChannelsCategory2 = "religion_and_spirituality > religion"
+	GetChannelsCategory2ReligionAndSpiritualityGreaterThanSpirituality GetChannelsCategory2 = "religion_and_spirituality > spirituality"
+	GetChannelsCategory2ScienceGreaterThanAstronomy                    GetChannelsCategory2 = "science > astronomy"
+	GetChannelsCategory2ScienceGreaterThanChemistry                    GetChannelsCategory2 = "science > chemistry"
+	GetChannelsCategory2ScienceGreaterThanEarthSciences                GetChannelsCategory2 = "science > earth_sciences"
+	GetChannelsCategory2ScienceGreaterThanLifeSciences                 GetChannelsCategory2 = "science > life_sciences"
+	GetChannelsCategory2ScienceGreaterThanMathematics                  GetChannelsCategory2 = "science > mathematics"
+	GetChannelsCategory2ScienceGreaterThanNaturalSciences              GetChannelsCategory2 = "science > natural_sciences"
+	GetChannelsCategory2ScienceGreaterThanNature                       GetChannelsCategory2 = "science > nature"
+	GetChannelsCategory2ScienceGreaterThanPhysics                      GetChannelsCategory2 = "science > physics"
+	GetChannelsCategory2ScienceGreaterThanSocialSciences               GetChannelsCategory2 = "science > social_sciences"
+	GetChannelsCategory2SocietyAndCultureGreaterThanDocumentary        GetChannelsCategory2 = "society_and_culture > documentary"
+	GetChannelsCategory2SocietyAndCultureGreaterThanPersonalJournals   GetChannelsCategory2 = "society_and_culture > personal_journals"
+	GetChannelsCategory2SocietyAndCultureGreaterThanPhilosophy         GetChannelsCategory2 = "society_and_culture > philosophy"
+	GetChannelsCategory2SocietyAndCultureGreaterThanPlacesAndTravel    GetChannelsCategory2 = "society_and_culture > places_and_travel"
+	GetChannelsCategory2SocietyAndCultureGreaterThanRelationships      GetChannelsCategory2 = "society_and_culture > relationships"
+	GetChannelsCategory2SportsGreaterThanBaseball                      GetChannelsCategory2 = "sports > baseball"
+	GetChannelsCategory2SportsGreaterThanBasketball                    GetChannelsCategory2 = "sports > basketball"
+	GetChannelsCategory2SportsGreaterThanCricket                       GetChannelsCategory2 = "sports > cricket"
+	GetChannelsCategory2SportsGreaterThanFantasySports                 GetChannelsCategory2 = "sports > fantasy_sports"
+	GetChannelsCategory2SportsGreaterThanFootball                      GetChannelsCategory2 = "sports > football"
+	GetChannelsCategory2SportsGreaterThanGolf                          GetChannelsCategory2 = "sports > golf"
+	GetChannelsCategory2SportsGreaterThanHockey                        GetChannelsCategory2 = "sports > hockey"
+	GetChannelsCategory2SportsGreaterThanRugby                         GetChannelsCategory2 = "sports > rugby"
+	GetChannelsCategory2SportsGreaterThanRunning                       GetChannelsCategory2 = "sports > running"
+	GetChannelsCategory2SportsGreaterThanSoccer                        GetChannelsCategory2 = "sports > soccer"
+	GetChannelsCategory2SportsGreaterThanSwimming                      GetChannelsCategory2 = "sports > swimming"
+	GetChannelsCategory2SportsGreaterThanTennis                        GetChannelsCategory2 = "sports > tennis"
+	GetChannelsCategory2SportsGreaterThanVolleyball                    GetChannelsCategory2 = "sports > volleyball"
+	GetChannelsCategory2SportsGreaterThanWilderness                    GetChannelsCategory2 = "sports > wilderness"
+	GetChannelsCategory2SportsGreaterThanWrestling                     GetChannelsCategory2 = "sports > wrestling"
+	GetChannelsCategory2TvAndFilmGreaterThanAfterShows                 GetChannelsCategory2 = "tv_and_film > after_shows"
+	GetChannelsCategory2TvAndFilmGreaterThanFilmHistory                GetChannelsCategory2 = "tv_and_film > film_history"
+	GetChannelsCategory2TvAndFilmGreaterThanFilmInterviews             GetChannelsCategory2 = "tv_and_film > film_interviews"
+	GetChannelsCategory2TvAndFilmGreaterThanFilmReviews                GetChannelsCategory2 = "tv_and_film > film_reviews"
+	GetChannelsCategory2TvAndFilmGreaterThanTvReviews                  GetChannelsCategory2 = "tv_and_film > tv_reviews"
+)
+
+func (e GetChannelsCategory2) ToPointer() *GetChannelsCategory2 {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetChannelsCategory2) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "arts > books", "arts > design", "arts > fashion_and_beauty", "arts > food", "arts > performing_arts", "arts > visual_arts", "business > careers", "business > entrepreneurship", "business > investing", "business > management", "business > marketing", "business > non_profit", "comedy > comedy_interviews", "comedy > improv", "comedy > stand_up", "education > courses", "education > how_to", "education > language_learning", "education > self_improvement", "fiction > comedy_fiction", "fiction > drama", "fiction > science_fiction", "health_and_fitness > alternative_health", "health_and_fitness > fitness", "health_and_fitness > medicine", "health_and_fitness > mental_health", "health_and_fitness > nutrition", "health_and_fitness > sexuality", "kids_and_family > education_for_kids", "kids_and_family > parenting", "kids_and_family > pets_and_animals", "kids_and_family > stories_for_kids", "leisure > animation_and_manga", "leisure > automotive", "leisure > aviation", "leisure > crafts", "leisure > games", "leisure > hobbies", "leisure > home_and_garden", "leisure > video_games", "music > music_commentary", "music > music_history", "music > music_interviews", "news > business_news", "news > daily_news", "news > entertainment_news", "news > news_commentary", "news > politics", "news > sports_news", "news > tech_news", "religion_and_spirituality > buddhism", "religion_and_spirituality > christianity", "religion_and_spirituality > hinduism", "religion_and_spirituality > islam", "religion_and_spirituality > judaism", "religion_and_spirituality > religion", "religion_and_spirituality > spirituality", "science > astronomy", "science > chemistry", "science > earth_sciences", "science > life_sciences", "science > mathematics", "science > natural_sciences", "science > nature", "science > physics", "science > social_sciences", "society_and_culture > documentary", "society_and_culture > personal_journals", "society_and_culture > philosophy", "society_and_culture > places_and_travel", "society_and_culture > relationships", "sports > baseball", "sports > basketball", "sports > cricket", "sports > fantasy_sports", "sports > football", "sports > golf", "sports > hockey", "sports > rugby", "sports > running", "sports > soccer", "sports > swimming", "sports > tennis", "sports > volleyball", "sports > wilderness", "sports > wrestling", "tv_and_film > after_shows", "tv_and_film > film_history", "tv_and_film > film_interviews", "tv_and_film > film_reviews", "tv_and_film > tv_reviews":
+			return true
+		}
+	}
+	return false
+}
+
+// GetChannelsCategory3 - The third category for the channel.
+type GetChannelsCategory3 string
+
+const (
+	GetChannelsCategory3ArtsGreaterThanBooks                           GetChannelsCategory3 = "arts > books"
+	GetChannelsCategory3ArtsGreaterThanDesign                          GetChannelsCategory3 = "arts > design"
+	GetChannelsCategory3ArtsGreaterThanFashionAndBeauty                GetChannelsCategory3 = "arts > fashion_and_beauty"
+	GetChannelsCategory3ArtsGreaterThanFood                            GetChannelsCategory3 = "arts > food"
+	GetChannelsCategory3ArtsGreaterThanPerformingArts                  GetChannelsCategory3 = "arts > performing_arts"
+	GetChannelsCategory3ArtsGreaterThanVisualArts                      GetChannelsCategory3 = "arts > visual_arts"
+	GetChannelsCategory3BusinessGreaterThanCareers                     GetChannelsCategory3 = "business > careers"
+	GetChannelsCategory3BusinessGreaterThanEntrepreneurship            GetChannelsCategory3 = "business > entrepreneurship"
+	GetChannelsCategory3BusinessGreaterThanInvesting                   GetChannelsCategory3 = "business > investing"
+	GetChannelsCategory3BusinessGreaterThanManagement                  GetChannelsCategory3 = "business > management"
+	GetChannelsCategory3BusinessGreaterThanMarketing                   GetChannelsCategory3 = "business > marketing"
+	GetChannelsCategory3BusinessGreaterThanNonProfit                   GetChannelsCategory3 = "business > non_profit"
+	GetChannelsCategory3ComedyGreaterThanComedyInterviews              GetChannelsCategory3 = "comedy > comedy_interviews"
+	GetChannelsCategory3ComedyGreaterThanImprov                        GetChannelsCategory3 = "comedy > improv"
+	GetChannelsCategory3ComedyGreaterThanStandUp                       GetChannelsCategory3 = "comedy > stand_up"
+	GetChannelsCategory3EducationGreaterThanCourses                    GetChannelsCategory3 = "education > courses"
+	GetChannelsCategory3EducationGreaterThanHowTo                      GetChannelsCategory3 = "education > how_to"
+	GetChannelsCategory3EducationGreaterThanLanguageLearning           GetChannelsCategory3 = "education > language_learning"
+	GetChannelsCategory3EducationGreaterThanSelfImprovement            GetChannelsCategory3 = "education > self_improvement"
+	GetChannelsCategory3FictionGreaterThanComedyFiction                GetChannelsCategory3 = "fiction > comedy_fiction"
+	GetChannelsCategory3FictionGreaterThanDrama                        GetChannelsCategory3 = "fiction > drama"
+	GetChannelsCategory3FictionGreaterThanScienceFiction               GetChannelsCategory3 = "fiction > science_fiction"
+	GetChannelsCategory3HealthAndFitnessGreaterThanAlternativeHealth   GetChannelsCategory3 = "health_and_fitness > alternative_health"
+	GetChannelsCategory3HealthAndFitnessGreaterThanFitness             GetChannelsCategory3 = "health_and_fitness > fitness"
+	GetChannelsCategory3HealthAndFitnessGreaterThanMedicine            GetChannelsCategory3 = "health_and_fitness > medicine"
+	GetChannelsCategory3HealthAndFitnessGreaterThanMentalHealth        GetChannelsCategory3 = "health_and_fitness > mental_health"
+	GetChannelsCategory3HealthAndFitnessGreaterThanNutrition           GetChannelsCategory3 = "health_and_fitness > nutrition"
+	GetChannelsCategory3HealthAndFitnessGreaterThanSexuality           GetChannelsCategory3 = "health_and_fitness > sexuality"
+	GetChannelsCategory3KidsAndFamilyGreaterThanEducationForKids       GetChannelsCategory3 = "kids_and_family > education_for_kids"
+	GetChannelsCategory3KidsAndFamilyGreaterThanParenting              GetChannelsCategory3 = "kids_and_family > parenting"
+	GetChannelsCategory3KidsAndFamilyGreaterThanPetsAndAnimals         GetChannelsCategory3 = "kids_and_family > pets_and_animals"
+	GetChannelsCategory3KidsAndFamilyGreaterThanStoriesForKids         GetChannelsCategory3 = "kids_and_family > stories_for_kids"
+	GetChannelsCategory3LeisureGreaterThanAnimationAndManga            GetChannelsCategory3 = "leisure > animation_and_manga"
+	GetChannelsCategory3LeisureGreaterThanAutomotive                   GetChannelsCategory3 = "leisure > automotive"
+	GetChannelsCategory3LeisureGreaterThanAviation                     GetChannelsCategory3 = "leisure > aviation"
+	GetChannelsCategory3LeisureGreaterThanCrafts                       GetChannelsCategory3 = "leisure > crafts"
+	GetChannelsCategory3LeisureGreaterThanGames                        GetChannelsCategory3 = "leisure > games"
+	GetChannelsCategory3LeisureGreaterThanHobbies                      GetChannelsCategory3 = "leisure > hobbies"
+	GetChannelsCategory3LeisureGreaterThanHomeAndGarden                GetChannelsCategory3 = "leisure > home_and_garden"
+	GetChannelsCategory3LeisureGreaterThanVideoGames                   GetChannelsCategory3 = "leisure > video_games"
+	GetChannelsCategory3MusicGreaterThanMusicCommentary                GetChannelsCategory3 = "music > music_commentary"
+	GetChannelsCategory3MusicGreaterThanMusicHistory                   GetChannelsCategory3 = "music > music_history"
+	GetChannelsCategory3MusicGreaterThanMusicInterviews                GetChannelsCategory3 = "music > music_interviews"
+	GetChannelsCategory3NewsGreaterThanBusinessNews                    GetChannelsCategory3 = "news > business_news"
+	GetChannelsCategory3NewsGreaterThanDailyNews                       GetChannelsCategory3 = "news > daily_news"
+	GetChannelsCategory3NewsGreaterThanEntertainmentNews               GetChannelsCategory3 = "news > entertainment_news"
+	GetChannelsCategory3NewsGreaterThanNewsCommentary                  GetChannelsCategory3 = "news > news_commentary"
+	GetChannelsCategory3NewsGreaterThanPolitics                        GetChannelsCategory3 = "news > politics"
+	GetChannelsCategory3NewsGreaterThanSportsNews                      GetChannelsCategory3 = "news > sports_news"
+	GetChannelsCategory3NewsGreaterThanTechNews                        GetChannelsCategory3 = "news > tech_news"
+	GetChannelsCategory3ReligionAndSpiritualityGreaterThanBuddhism     GetChannelsCategory3 = "religion_and_spirituality > buddhism"
+	GetChannelsCategory3ReligionAndSpiritualityGreaterThanChristianity GetChannelsCategory3 = "religion_and_spirituality > christianity"
+	GetChannelsCategory3ReligionAndSpiritualityGreaterThanHinduism     GetChannelsCategory3 = "religion_and_spirituality > hinduism"
+	GetChannelsCategory3ReligionAndSpiritualityGreaterThanIslam        GetChannelsCategory3 = "religion_and_spirituality > islam"
+	GetChannelsCategory3ReligionAndSpiritualityGreaterThanJudaism      GetChannelsCategory3 = "religion_and_spirituality > judaism"
+	GetChannelsCategory3ReligionAndSpiritualityGreaterThanReligion     GetChannelsCategory3 = "religion_and_spirituality > religion"
+	GetChannelsCategory3ReligionAndSpiritualityGreaterThanSpirituality GetChannelsCategory3 = "religion_and_spirituality > spirituality"
+	GetChannelsCategory3ScienceGreaterThanAstronomy                    GetChannelsCategory3 = "science > astronomy"
+	GetChannelsCategory3ScienceGreaterThanChemistry                    GetChannelsCategory3 = "science > chemistry"
+	GetChannelsCategory3ScienceGreaterThanEarthSciences                GetChannelsCategory3 = "science > earth_sciences"
+	GetChannelsCategory3ScienceGreaterThanLifeSciences                 GetChannelsCategory3 = "science > life_sciences"
+	GetChannelsCategory3ScienceGreaterThanMathematics                  GetChannelsCategory3 = "science > mathematics"
+	GetChannelsCategory3ScienceGreaterThanNaturalSciences              GetChannelsCategory3 = "science > natural_sciences"
+	GetChannelsCategory3ScienceGreaterThanNature                       GetChannelsCategory3 = "science > nature"
+	GetChannelsCategory3ScienceGreaterThanPhysics                      GetChannelsCategory3 = "science > physics"
+	GetChannelsCategory3ScienceGreaterThanSocialSciences               GetChannelsCategory3 = "science > social_sciences"
+	GetChannelsCategory3SocietyAndCultureGreaterThanDocumentary        GetChannelsCategory3 = "society_and_culture > documentary"
+	GetChannelsCategory3SocietyAndCultureGreaterThanPersonalJournals   GetChannelsCategory3 = "society_and_culture > personal_journals"
+	GetChannelsCategory3SocietyAndCultureGreaterThanPhilosophy         GetChannelsCategory3 = "society_and_culture > philosophy"
+	GetChannelsCategory3SocietyAndCultureGreaterThanPlacesAndTravel    GetChannelsCategory3 = "society_and_culture > places_and_travel"
+	GetChannelsCategory3SocietyAndCultureGreaterThanRelationships      GetChannelsCategory3 = "society_and_culture > relationships"
+	GetChannelsCategory3SportsGreaterThanBaseball                      GetChannelsCategory3 = "sports > baseball"
+	GetChannelsCategory3SportsGreaterThanBasketball                    GetChannelsCategory3 = "sports > basketball"
+	GetChannelsCategory3SportsGreaterThanCricket                       GetChannelsCategory3 = "sports > cricket"
+	GetChannelsCategory3SportsGreaterThanFantasySports                 GetChannelsCategory3 = "sports > fantasy_sports"
+	GetChannelsCategory3SportsGreaterThanFootball                      GetChannelsCategory3 = "sports > football"
+	GetChannelsCategory3SportsGreaterThanGolf                          GetChannelsCategory3 = "sports > golf"
+	GetChannelsCategory3SportsGreaterThanHockey                        GetChannelsCategory3 = "sports > hockey"
+	GetChannelsCategory3SportsGreaterThanRugby                         GetChannelsCategory3 = "sports > rugby"
+	GetChannelsCategory3SportsGreaterThanRunning                       GetChannelsCategory3 = "sports > running"
+	GetChannelsCategory3SportsGreaterThanSoccer                        GetChannelsCategory3 = "sports > soccer"
+	GetChannelsCategory3SportsGreaterThanSwimming                      GetChannelsCategory3 = "sports > swimming"
+	GetChannelsCategory3SportsGreaterThanTennis                        GetChannelsCategory3 = "sports > tennis"
+	GetChannelsCategory3SportsGreaterThanVolleyball                    GetChannelsCategory3 = "sports > volleyball"
+	GetChannelsCategory3SportsGreaterThanWilderness                    GetChannelsCategory3 = "sports > wilderness"
+	GetChannelsCategory3SportsGreaterThanWrestling                     GetChannelsCategory3 = "sports > wrestling"
+	GetChannelsCategory3TvAndFilmGreaterThanAfterShows                 GetChannelsCategory3 = "tv_and_film > after_shows"
+	GetChannelsCategory3TvAndFilmGreaterThanFilmHistory                GetChannelsCategory3 = "tv_and_film > film_history"
+	GetChannelsCategory3TvAndFilmGreaterThanFilmInterviews             GetChannelsCategory3 = "tv_and_film > film_interviews"
+	GetChannelsCategory3TvAndFilmGreaterThanFilmReviews                GetChannelsCategory3 = "tv_and_film > film_reviews"
+	GetChannelsCategory3TvAndFilmGreaterThanTvReviews                  GetChannelsCategory3 = "tv_and_film > tv_reviews"
+)
+
+func (e GetChannelsCategory3) ToPointer() *GetChannelsCategory3 {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetChannelsCategory3) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "arts > books", "arts > design", "arts > fashion_and_beauty", "arts > food", "arts > performing_arts", "arts > visual_arts", "business > careers", "business > entrepreneurship", "business > investing", "business > management", "business > marketing", "business > non_profit", "comedy > comedy_interviews", "comedy > improv", "comedy > stand_up", "education > courses", "education > how_to", "education > language_learning", "education > self_improvement", "fiction > comedy_fiction", "fiction > drama", "fiction > science_fiction", "health_and_fitness > alternative_health", "health_and_fitness > fitness", "health_and_fitness > medicine", "health_and_fitness > mental_health", "health_and_fitness > nutrition", "health_and_fitness > sexuality", "kids_and_family > education_for_kids", "kids_and_family > parenting", "kids_and_family > pets_and_animals", "kids_and_family > stories_for_kids", "leisure > animation_and_manga", "leisure > automotive", "leisure > aviation", "leisure > crafts", "leisure > games", "leisure > hobbies", "leisure > home_and_garden", "leisure > video_games", "music > music_commentary", "music > music_history", "music > music_interviews", "news > business_news", "news > daily_news", "news > entertainment_news", "news > news_commentary", "news > politics", "news > sports_news", "news > tech_news", "religion_and_spirituality > buddhism", "religion_and_spirituality > christianity", "religion_and_spirituality > hinduism", "religion_and_spirituality > islam", "religion_and_spirituality > judaism", "religion_and_spirituality > religion", "religion_and_spirituality > spirituality", "science > astronomy", "science > chemistry", "science > earth_sciences", "science > life_sciences", "science > mathematics", "science > natural_sciences", "science > nature", "science > physics", "science > social_sciences", "society_and_culture > documentary", "society_and_culture > personal_journals", "society_and_culture > philosophy", "society_and_culture > places_and_travel", "society_and_culture > relationships", "sports > baseball", "sports > basketball", "sports > cricket", "sports > fantasy_sports", "sports > football", "sports > golf", "sports > hockey", "sports > rugby", "sports > running", "sports > soccer", "sports > swimming", "sports > tennis", "sports > volleyball", "sports > wilderness", "sports > wrestling", "tv_and_film > after_shows", "tv_and_film > film_history", "tv_and_film > film_interviews", "tv_and_film > film_reviews", "tv_and_film > tv_reviews":
+			return true
+		}
+	}
+	return false
+}
+
+// GetChannelsLanguage - The ISO 639-1 language code for the channel.
+type GetChannelsLanguage string
+
+const (
+	GetChannelsLanguageAf   GetChannelsLanguage = "af"
+	GetChannelsLanguageBe   GetChannelsLanguage = "be"
+	GetChannelsLanguageBg   GetChannelsLanguage = "bg"
+	GetChannelsLanguageCa   GetChannelsLanguage = "ca"
+	GetChannelsLanguageCs   GetChannelsLanguage = "cs"
+	GetChannelsLanguageDa   GetChannelsLanguage = "da"
+	GetChannelsLanguageDeAt GetChannelsLanguage = "de-at"
+	GetChannelsLanguageDeCh GetChannelsLanguage = "de-ch"
+	GetChannelsLanguageDeDe GetChannelsLanguage = "de-de"
+	GetChannelsLanguageDeLi GetChannelsLanguage = "de-li"
+	GetChannelsLanguageDeLu GetChannelsLanguage = "de-lu"
+	GetChannelsLanguageDe   GetChannelsLanguage = "de"
+	GetChannelsLanguageEl   GetChannelsLanguage = "el"
+	GetChannelsLanguageEnAu GetChannelsLanguage = "en-au"
+	GetChannelsLanguageEnBz GetChannelsLanguage = "en-bz"
+	GetChannelsLanguageEnCa GetChannelsLanguage = "en-ca"
+	GetChannelsLanguageEnGb GetChannelsLanguage = "en-gb"
+	GetChannelsLanguageEnIe GetChannelsLanguage = "en-ie"
+	GetChannelsLanguageEnJm GetChannelsLanguage = "en-jm"
+	GetChannelsLanguageEnNz GetChannelsLanguage = "en-nz"
+	GetChannelsLanguageEnPh GetChannelsLanguage = "en-ph"
+	GetChannelsLanguageEnTt GetChannelsLanguage = "en-tt"
+	GetChannelsLanguageEnUs GetChannelsLanguage = "en-us"
+	GetChannelsLanguageEnZa GetChannelsLanguage = "en-za"
+	GetChannelsLanguageEnZw GetChannelsLanguage = "en-zw"
+	GetChannelsLanguageEn   GetChannelsLanguage = "en"
+	GetChannelsLanguageEsAr GetChannelsLanguage = "es-ar"
+	GetChannelsLanguageEsBo GetChannelsLanguage = "es-bo"
+	GetChannelsLanguageEsCl GetChannelsLanguage = "es-cl"
+	GetChannelsLanguageEsCo GetChannelsLanguage = "es-co"
+	GetChannelsLanguageEsCr GetChannelsLanguage = "es-cr"
+	GetChannelsLanguageEsDo GetChannelsLanguage = "es-do"
+	GetChannelsLanguageEsEc GetChannelsLanguage = "es-ec"
+	GetChannelsLanguageEsEs GetChannelsLanguage = "es-es"
+	GetChannelsLanguageEsGt GetChannelsLanguage = "es-gt"
+	GetChannelsLanguageEsHn GetChannelsLanguage = "es-hn"
+	GetChannelsLanguageEsMx GetChannelsLanguage = "es-mx"
+	GetChannelsLanguageEsNi GetChannelsLanguage = "es-ni"
+	GetChannelsLanguageEsPa GetChannelsLanguage = "es-pa"
+	GetChannelsLanguageEsPe GetChannelsLanguage = "es-pe"
+	GetChannelsLanguageEsPr GetChannelsLanguage = "es-pr"
+	GetChannelsLanguageEsPy GetChannelsLanguage = "es-py"
+	GetChannelsLanguageEsSv GetChannelsLanguage = "es-sv"
+	GetChannelsLanguageEsUy GetChannelsLanguage = "es-uy"
+	GetChannelsLanguageEsVe GetChannelsLanguage = "es-ve"
+	GetChannelsLanguageEs   GetChannelsLanguage = "es"
+	GetChannelsLanguageEt   GetChannelsLanguage = "et"
+	GetChannelsLanguageEu   GetChannelsLanguage = "eu"
+	GetChannelsLanguageFi   GetChannelsLanguage = "fi"
+	GetChannelsLanguageFo   GetChannelsLanguage = "fo"
+	GetChannelsLanguageFrBe GetChannelsLanguage = "fr-be"
+	GetChannelsLanguageFrCa GetChannelsLanguage = "fr-ca"
+	GetChannelsLanguageFrCh GetChannelsLanguage = "fr-ch"
+	GetChannelsLanguageFrFr GetChannelsLanguage = "fr-fr"
+	GetChannelsLanguageFrLu GetChannelsLanguage = "fr-lu"
+	GetChannelsLanguageFrMc GetChannelsLanguage = "fr-mc"
+	GetChannelsLanguageFr   GetChannelsLanguage = "fr"
+	GetChannelsLanguageGa   GetChannelsLanguage = "ga"
+	GetChannelsLanguageGd   GetChannelsLanguage = "gd"
+	GetChannelsLanguageGl   GetChannelsLanguage = "gl"
+	GetChannelsLanguageHaw  GetChannelsLanguage = "haw"
+	GetChannelsLanguageHr   GetChannelsLanguage = "hr"
+	GetChannelsLanguageHu   GetChannelsLanguage = "hu"
+	GetChannelsLanguageIn   GetChannelsLanguage = "in"
+	GetChannelsLanguageIs   GetChannelsLanguage = "is"
+	GetChannelsLanguageItCh GetChannelsLanguage = "it-ch"
+	GetChannelsLanguageItIt GetChannelsLanguage = "it-it"
+	GetChannelsLanguageIt   GetChannelsLanguage = "it"
+	GetChannelsLanguageJa   GetChannelsLanguage = "ja"
+	GetChannelsLanguageKo   GetChannelsLanguage = "ko"
+	GetChannelsLanguageMk   GetChannelsLanguage = "mk"
+	GetChannelsLanguageNlBe GetChannelsLanguage = "nl-be"
+	GetChannelsLanguageNlNl GetChannelsLanguage = "nl-nl"
+	GetChannelsLanguageNl   GetChannelsLanguage = "nl"
+	GetChannelsLanguageNo   GetChannelsLanguage = "no"
+	GetChannelsLanguagePl   GetChannelsLanguage = "pl"
+	GetChannelsLanguagePtBr GetChannelsLanguage = "pt-br"
+	GetChannelsLanguagePtPt GetChannelsLanguage = "pt-pt"
+	GetChannelsLanguagePt   GetChannelsLanguage = "pt"
+	GetChannelsLanguageRoMo GetChannelsLanguage = "ro-mo"
+	GetChannelsLanguageRoRo GetChannelsLanguage = "ro-ro"
+	GetChannelsLanguageRo   GetChannelsLanguage = "ro"
+	GetChannelsLanguageRuMo GetChannelsLanguage = "ru-mo"
+	GetChannelsLanguageRuRu GetChannelsLanguage = "ru-ru"
+	GetChannelsLanguageRu   GetChannelsLanguage = "ru"
+	GetChannelsLanguageSk   GetChannelsLanguage = "sk"
+	GetChannelsLanguageSl   GetChannelsLanguage = "sl"
+	GetChannelsLanguageSq   GetChannelsLanguage = "sq"
+	GetChannelsLanguageSr   GetChannelsLanguage = "sr"
+	GetChannelsLanguageSvFi GetChannelsLanguage = "sv-fi"
+	GetChannelsLanguageSvSe GetChannelsLanguage = "sv-se"
+	GetChannelsLanguageSv   GetChannelsLanguage = "sv"
+	GetChannelsLanguageTr   GetChannelsLanguage = "tr"
+	GetChannelsLanguageUk   GetChannelsLanguage = "uk"
+	GetChannelsLanguageZhCn GetChannelsLanguage = "zh-cn"
+	GetChannelsLanguageZhTw GetChannelsLanguage = "zh-tw"
+)
+
+func (e GetChannelsLanguage) ToPointer() *GetChannelsLanguage {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetChannelsLanguage) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "af", "be", "bg", "ca", "cs", "da", "de-at", "de-ch", "de-de", "de-li", "de-lu", "de", "el", "en-au", "en-bz", "en-ca", "en-gb", "en-ie", "en-jm", "en-nz", "en-ph", "en-tt", "en-us", "en-za", "en-zw", "en", "es-ar", "es-bo", "es-cl", "es-co", "es-cr", "es-do", "es-ec", "es-es", "es-gt", "es-hn", "es-mx", "es-ni", "es-pa", "es-pe", "es-pr", "es-py", "es-sv", "es-uy", "es-ve", "es", "et", "eu", "fi", "fo", "fr-be", "fr-ca", "fr-ch", "fr-fr", "fr-lu", "fr-mc", "fr", "ga", "gd", "gl", "haw", "hr", "hu", "in", "is", "it-ch", "it-it", "it", "ja", "ko", "mk", "nl-be", "nl-nl", "nl", "no", "pl", "pt-br", "pt-pt", "pt", "ro-mo", "ro-ro", "ro", "ru-mo", "ru-ru", "ru", "sk", "sl", "sq", "sr", "sv-fi", "sv-se", "sv", "tr", "uk", "zh-cn", "zh-tw":
+			return true
+		}
+	}
+	return false
+}
+
+// GetChannelsPodcastSettings - Podcast specific settings for the channel. Only present when podcasting
+// is enabled for the channel.
+type GetChannelsPodcastSettings struct {
+	// The channel's copyright information.
+	Copyright optionalnullable.OptionalNullable[string] `json:"copyright,omitzero"`
+	// The format for episodes for the podcast channel.
+	EpisodeFormat optionalnullable.OptionalNullable[GetChannelsEpisodeFormat] `json:"episode_format,omitzero"`
+	// The name of the author(s) for the channel.
+	AuthorName optionalnullable.OptionalNullable[string] `json:"author_name,omitzero"`
+	// Whether the channel contains explicit content.
+	Explicit optionalnullable.OptionalNullable[bool] `json:"explicit,omitzero"`
+	// The name of the owner for the channel.
+	OwnerName optionalnullable.OptionalNullable[string] `json:"owner_name,omitzero"`
+	// The email of the owner for the channel.
+	OwnerEmail optionalnullable.OptionalNullable[string] `json:"owner_email,omitzero"`
+	// The primary category for the channel.
+	Category1 optionalnullable.OptionalNullable[GetChannelsCategory1] `json:"category1,omitzero"`
+	// The secondary category for the channel.
+	Category2 optionalnullable.OptionalNullable[GetChannelsCategory2] `json:"category2,omitzero"`
+	// The third category for the channel.
+	Category3 optionalnullable.OptionalNullable[GetChannelsCategory3] `json:"category3,omitzero"`
+	// The ISO 639-1 language code for the channel.
+	Language optionalnullable.OptionalNullable[GetChannelsLanguage] `json:"language,omitzero"`
+}
+
+func (g *GetChannelsPodcastSettings) GetCopyright() optionalnullable.OptionalNullable[string] {
+	if g == nil {
+		return nil
+	}
+	return g.Copyright
+}
+
+func (g *GetChannelsPodcastSettings) GetEpisodeFormat() optionalnullable.OptionalNullable[GetChannelsEpisodeFormat] {
+	if g == nil {
+		return nil
+	}
+	return g.EpisodeFormat
+}
+
+func (g *GetChannelsPodcastSettings) GetAuthorName() optionalnullable.OptionalNullable[string] {
+	if g == nil {
+		return nil
+	}
+	return g.AuthorName
+}
+
+func (g *GetChannelsPodcastSettings) GetExplicit() optionalnullable.OptionalNullable[bool] {
+	if g == nil {
+		return nil
+	}
+	return g.Explicit
+}
+
+func (g *GetChannelsPodcastSettings) GetOwnerName() optionalnullable.OptionalNullable[string] {
+	if g == nil {
+		return nil
+	}
+	return g.OwnerName
+}
+
+func (g *GetChannelsPodcastSettings) GetOwnerEmail() optionalnullable.OptionalNullable[string] {
+	if g == nil {
+		return nil
+	}
+	return g.OwnerEmail
+}
+
+func (g *GetChannelsPodcastSettings) GetCategory1() optionalnullable.OptionalNullable[GetChannelsCategory1] {
+	if g == nil {
+		return nil
+	}
+	return g.Category1
+}
+
+func (g *GetChannelsPodcastSettings) GetCategory2() optionalnullable.OptionalNullable[GetChannelsCategory2] {
+	if g == nil {
+		return nil
+	}
+	return g.Category2
+}
+
+func (g *GetChannelsPodcastSettings) GetCategory3() optionalnullable.OptionalNullable[GetChannelsCategory3] {
+	if g == nil {
+		return nil
+	}
+	return g.Category3
+}
+
+func (g *GetChannelsPodcastSettings) GetLanguage() optionalnullable.OptionalNullable[GetChannelsLanguage] {
+	if g == nil {
+		return nil
+	}
+	return g.Language
+}
+
 // GetChannelsResponseBody - A Channel lets you take a collection of video (or audio) and embed them
 // on your site, as well as distribute through podcasting.
 type GetChannelsResponseBody struct {
@@ -242,10 +839,22 @@ type GetChannelsResponseBody struct {
 	HashedID string `json:"hashed_id"`
 	// The number of medias in the channel.
 	MediaCount int64 `json:"media_count"`
+	// The number of live stream events in the channel.
+	LiveStreamEventCount *int64 `json:"live_stream_event_count,omitzero"`
 	// The display name for the channel
 	Name string `json:"name"`
 	// The date when the channel was last updated.
 	Updated time.Time `json:"updated"`
+	// Whether episodes are automatically published when added to the channel.
+	AutoPublishEnabled optionalnullable.OptionalNullable[bool] `json:"auto_publish_enabled,omitzero"`
+	// Whether podcasting is enabled for the channel.
+	PodcastEnabled optionalnullable.OptionalNullable[bool] `json:"podcast_enabled,omitzero"`
+	// The custom URL used when embedding the channel on your own site. Null if no custom URL is set.
+	CustomURL optionalnullable.OptionalNullable[string] `json:"custom_url,omitzero"`
+	// Podcast specific settings for the channel. Only present when podcasting
+	// is enabled for the channel.
+	//
+	PodcastSettings *GetChannelsPodcastSettings `json:"podcast_settings,omitzero"`
 	// A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
 	Cursor optionalnullable.OptionalNullable[string] `json:"cursor,omitzero"`
 }
@@ -296,6 +905,13 @@ func (g *GetChannelsResponseBody) GetMediaCount() int64 {
 	return g.MediaCount
 }
 
+func (g *GetChannelsResponseBody) GetLiveStreamEventCount() *int64 {
+	if g == nil {
+		return nil
+	}
+	return g.LiveStreamEventCount
+}
+
 func (g *GetChannelsResponseBody) GetName() string {
 	if g == nil {
 		return ""
@@ -308,6 +924,34 @@ func (g *GetChannelsResponseBody) GetUpdated() time.Time {
 		return time.Time{}
 	}
 	return g.Updated
+}
+
+func (g *GetChannelsResponseBody) GetAutoPublishEnabled() optionalnullable.OptionalNullable[bool] {
+	if g == nil {
+		return nil
+	}
+	return g.AutoPublishEnabled
+}
+
+func (g *GetChannelsResponseBody) GetPodcastEnabled() optionalnullable.OptionalNullable[bool] {
+	if g == nil {
+		return nil
+	}
+	return g.PodcastEnabled
+}
+
+func (g *GetChannelsResponseBody) GetCustomURL() optionalnullable.OptionalNullable[string] {
+	if g == nil {
+		return nil
+	}
+	return g.CustomURL
+}
+
+func (g *GetChannelsResponseBody) GetPodcastSettings() *GetChannelsPodcastSettings {
+	if g == nil {
+		return nil
+	}
+	return g.PodcastSettings
 }
 
 func (g *GetChannelsResponseBody) GetCursor() optionalnullable.OptionalNullable[string] {

@@ -22,6 +22,603 @@ func (d *DeleteChannelsChannelHashedIDRequest) GetChannelHashedID() string {
 	return d.ChannelHashedID
 }
 
+// DeleteChannelsChannelHashedIDCode - A machine-readable identifier for the specific authorization failure.
+type DeleteChannelsChannelHashedIDCode string
+
+const (
+	DeleteChannelsChannelHashedIDCodeUnauthorizedCredentials DeleteChannelsChannelHashedIDCode = "unauthorized_credentials"
+	DeleteChannelsChannelHashedIDCodeAccountInactive         DeleteChannelsChannelHashedIDCode = "account_inactive"
+	DeleteChannelsChannelHashedIDCodeUnauthorizedScope       DeleteChannelsChannelHashedIDCode = "unauthorized_scope"
+	DeleteChannelsChannelHashedIDCodeUnauthorizedParams      DeleteChannelsChannelHashedIDCode = "unauthorized_params"
+)
+
+func (e DeleteChannelsChannelHashedIDCode) ToPointer() *DeleteChannelsChannelHashedIDCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *DeleteChannelsChannelHashedIDCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
+// DeleteChannelsChannelHashedIDEpisodeFormat - The format for episodes for the podcast channel.
+type DeleteChannelsChannelHashedIDEpisodeFormat string
+
+const (
+	DeleteChannelsChannelHashedIDEpisodeFormatEpisodic            DeleteChannelsChannelHashedIDEpisodeFormat = "episodic"
+	DeleteChannelsChannelHashedIDEpisodeFormatEpisodicWithSeasons DeleteChannelsChannelHashedIDEpisodeFormat = "episodic_with_seasons"
+	DeleteChannelsChannelHashedIDEpisodeFormatSerial              DeleteChannelsChannelHashedIDEpisodeFormat = "serial"
+)
+
+func (e DeleteChannelsChannelHashedIDEpisodeFormat) ToPointer() *DeleteChannelsChannelHashedIDEpisodeFormat {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *DeleteChannelsChannelHashedIDEpisodeFormat) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "episodic", "episodic_with_seasons", "serial":
+			return true
+		}
+	}
+	return false
+}
+
+// DeleteChannelsChannelHashedIDCategory1 - The primary category for the channel.
+type DeleteChannelsChannelHashedIDCategory1 string
+
+const (
+	DeleteChannelsChannelHashedIDCategory1ArtsGreaterThanBooks                           DeleteChannelsChannelHashedIDCategory1 = "arts > books"
+	DeleteChannelsChannelHashedIDCategory1ArtsGreaterThanDesign                          DeleteChannelsChannelHashedIDCategory1 = "arts > design"
+	DeleteChannelsChannelHashedIDCategory1ArtsGreaterThanFashionAndBeauty                DeleteChannelsChannelHashedIDCategory1 = "arts > fashion_and_beauty"
+	DeleteChannelsChannelHashedIDCategory1ArtsGreaterThanFood                            DeleteChannelsChannelHashedIDCategory1 = "arts > food"
+	DeleteChannelsChannelHashedIDCategory1ArtsGreaterThanPerformingArts                  DeleteChannelsChannelHashedIDCategory1 = "arts > performing_arts"
+	DeleteChannelsChannelHashedIDCategory1ArtsGreaterThanVisualArts                      DeleteChannelsChannelHashedIDCategory1 = "arts > visual_arts"
+	DeleteChannelsChannelHashedIDCategory1BusinessGreaterThanCareers                     DeleteChannelsChannelHashedIDCategory1 = "business > careers"
+	DeleteChannelsChannelHashedIDCategory1BusinessGreaterThanEntrepreneurship            DeleteChannelsChannelHashedIDCategory1 = "business > entrepreneurship"
+	DeleteChannelsChannelHashedIDCategory1BusinessGreaterThanInvesting                   DeleteChannelsChannelHashedIDCategory1 = "business > investing"
+	DeleteChannelsChannelHashedIDCategory1BusinessGreaterThanManagement                  DeleteChannelsChannelHashedIDCategory1 = "business > management"
+	DeleteChannelsChannelHashedIDCategory1BusinessGreaterThanMarketing                   DeleteChannelsChannelHashedIDCategory1 = "business > marketing"
+	DeleteChannelsChannelHashedIDCategory1BusinessGreaterThanNonProfit                   DeleteChannelsChannelHashedIDCategory1 = "business > non_profit"
+	DeleteChannelsChannelHashedIDCategory1ComedyGreaterThanComedyInterviews              DeleteChannelsChannelHashedIDCategory1 = "comedy > comedy_interviews"
+	DeleteChannelsChannelHashedIDCategory1ComedyGreaterThanImprov                        DeleteChannelsChannelHashedIDCategory1 = "comedy > improv"
+	DeleteChannelsChannelHashedIDCategory1ComedyGreaterThanStandUp                       DeleteChannelsChannelHashedIDCategory1 = "comedy > stand_up"
+	DeleteChannelsChannelHashedIDCategory1EducationGreaterThanCourses                    DeleteChannelsChannelHashedIDCategory1 = "education > courses"
+	DeleteChannelsChannelHashedIDCategory1EducationGreaterThanHowTo                      DeleteChannelsChannelHashedIDCategory1 = "education > how_to"
+	DeleteChannelsChannelHashedIDCategory1EducationGreaterThanLanguageLearning           DeleteChannelsChannelHashedIDCategory1 = "education > language_learning"
+	DeleteChannelsChannelHashedIDCategory1EducationGreaterThanSelfImprovement            DeleteChannelsChannelHashedIDCategory1 = "education > self_improvement"
+	DeleteChannelsChannelHashedIDCategory1FictionGreaterThanComedyFiction                DeleteChannelsChannelHashedIDCategory1 = "fiction > comedy_fiction"
+	DeleteChannelsChannelHashedIDCategory1FictionGreaterThanDrama                        DeleteChannelsChannelHashedIDCategory1 = "fiction > drama"
+	DeleteChannelsChannelHashedIDCategory1FictionGreaterThanScienceFiction               DeleteChannelsChannelHashedIDCategory1 = "fiction > science_fiction"
+	DeleteChannelsChannelHashedIDCategory1HealthAndFitnessGreaterThanAlternativeHealth   DeleteChannelsChannelHashedIDCategory1 = "health_and_fitness > alternative_health"
+	DeleteChannelsChannelHashedIDCategory1HealthAndFitnessGreaterThanFitness             DeleteChannelsChannelHashedIDCategory1 = "health_and_fitness > fitness"
+	DeleteChannelsChannelHashedIDCategory1HealthAndFitnessGreaterThanMedicine            DeleteChannelsChannelHashedIDCategory1 = "health_and_fitness > medicine"
+	DeleteChannelsChannelHashedIDCategory1HealthAndFitnessGreaterThanMentalHealth        DeleteChannelsChannelHashedIDCategory1 = "health_and_fitness > mental_health"
+	DeleteChannelsChannelHashedIDCategory1HealthAndFitnessGreaterThanNutrition           DeleteChannelsChannelHashedIDCategory1 = "health_and_fitness > nutrition"
+	DeleteChannelsChannelHashedIDCategory1HealthAndFitnessGreaterThanSexuality           DeleteChannelsChannelHashedIDCategory1 = "health_and_fitness > sexuality"
+	DeleteChannelsChannelHashedIDCategory1KidsAndFamilyGreaterThanEducationForKids       DeleteChannelsChannelHashedIDCategory1 = "kids_and_family > education_for_kids"
+	DeleteChannelsChannelHashedIDCategory1KidsAndFamilyGreaterThanParenting              DeleteChannelsChannelHashedIDCategory1 = "kids_and_family > parenting"
+	DeleteChannelsChannelHashedIDCategory1KidsAndFamilyGreaterThanPetsAndAnimals         DeleteChannelsChannelHashedIDCategory1 = "kids_and_family > pets_and_animals"
+	DeleteChannelsChannelHashedIDCategory1KidsAndFamilyGreaterThanStoriesForKids         DeleteChannelsChannelHashedIDCategory1 = "kids_and_family > stories_for_kids"
+	DeleteChannelsChannelHashedIDCategory1LeisureGreaterThanAnimationAndManga            DeleteChannelsChannelHashedIDCategory1 = "leisure > animation_and_manga"
+	DeleteChannelsChannelHashedIDCategory1LeisureGreaterThanAutomotive                   DeleteChannelsChannelHashedIDCategory1 = "leisure > automotive"
+	DeleteChannelsChannelHashedIDCategory1LeisureGreaterThanAviation                     DeleteChannelsChannelHashedIDCategory1 = "leisure > aviation"
+	DeleteChannelsChannelHashedIDCategory1LeisureGreaterThanCrafts                       DeleteChannelsChannelHashedIDCategory1 = "leisure > crafts"
+	DeleteChannelsChannelHashedIDCategory1LeisureGreaterThanGames                        DeleteChannelsChannelHashedIDCategory1 = "leisure > games"
+	DeleteChannelsChannelHashedIDCategory1LeisureGreaterThanHobbies                      DeleteChannelsChannelHashedIDCategory1 = "leisure > hobbies"
+	DeleteChannelsChannelHashedIDCategory1LeisureGreaterThanHomeAndGarden                DeleteChannelsChannelHashedIDCategory1 = "leisure > home_and_garden"
+	DeleteChannelsChannelHashedIDCategory1LeisureGreaterThanVideoGames                   DeleteChannelsChannelHashedIDCategory1 = "leisure > video_games"
+	DeleteChannelsChannelHashedIDCategory1MusicGreaterThanMusicCommentary                DeleteChannelsChannelHashedIDCategory1 = "music > music_commentary"
+	DeleteChannelsChannelHashedIDCategory1MusicGreaterThanMusicHistory                   DeleteChannelsChannelHashedIDCategory1 = "music > music_history"
+	DeleteChannelsChannelHashedIDCategory1MusicGreaterThanMusicInterviews                DeleteChannelsChannelHashedIDCategory1 = "music > music_interviews"
+	DeleteChannelsChannelHashedIDCategory1NewsGreaterThanBusinessNews                    DeleteChannelsChannelHashedIDCategory1 = "news > business_news"
+	DeleteChannelsChannelHashedIDCategory1NewsGreaterThanDailyNews                       DeleteChannelsChannelHashedIDCategory1 = "news > daily_news"
+	DeleteChannelsChannelHashedIDCategory1NewsGreaterThanEntertainmentNews               DeleteChannelsChannelHashedIDCategory1 = "news > entertainment_news"
+	DeleteChannelsChannelHashedIDCategory1NewsGreaterThanNewsCommentary                  DeleteChannelsChannelHashedIDCategory1 = "news > news_commentary"
+	DeleteChannelsChannelHashedIDCategory1NewsGreaterThanPolitics                        DeleteChannelsChannelHashedIDCategory1 = "news > politics"
+	DeleteChannelsChannelHashedIDCategory1NewsGreaterThanSportsNews                      DeleteChannelsChannelHashedIDCategory1 = "news > sports_news"
+	DeleteChannelsChannelHashedIDCategory1NewsGreaterThanTechNews                        DeleteChannelsChannelHashedIDCategory1 = "news > tech_news"
+	DeleteChannelsChannelHashedIDCategory1ReligionAndSpiritualityGreaterThanBuddhism     DeleteChannelsChannelHashedIDCategory1 = "religion_and_spirituality > buddhism"
+	DeleteChannelsChannelHashedIDCategory1ReligionAndSpiritualityGreaterThanChristianity DeleteChannelsChannelHashedIDCategory1 = "religion_and_spirituality > christianity"
+	DeleteChannelsChannelHashedIDCategory1ReligionAndSpiritualityGreaterThanHinduism     DeleteChannelsChannelHashedIDCategory1 = "religion_and_spirituality > hinduism"
+	DeleteChannelsChannelHashedIDCategory1ReligionAndSpiritualityGreaterThanIslam        DeleteChannelsChannelHashedIDCategory1 = "religion_and_spirituality > islam"
+	DeleteChannelsChannelHashedIDCategory1ReligionAndSpiritualityGreaterThanJudaism      DeleteChannelsChannelHashedIDCategory1 = "religion_and_spirituality > judaism"
+	DeleteChannelsChannelHashedIDCategory1ReligionAndSpiritualityGreaterThanReligion     DeleteChannelsChannelHashedIDCategory1 = "religion_and_spirituality > religion"
+	DeleteChannelsChannelHashedIDCategory1ReligionAndSpiritualityGreaterThanSpirituality DeleteChannelsChannelHashedIDCategory1 = "religion_and_spirituality > spirituality"
+	DeleteChannelsChannelHashedIDCategory1ScienceGreaterThanAstronomy                    DeleteChannelsChannelHashedIDCategory1 = "science > astronomy"
+	DeleteChannelsChannelHashedIDCategory1ScienceGreaterThanChemistry                    DeleteChannelsChannelHashedIDCategory1 = "science > chemistry"
+	DeleteChannelsChannelHashedIDCategory1ScienceGreaterThanEarthSciences                DeleteChannelsChannelHashedIDCategory1 = "science > earth_sciences"
+	DeleteChannelsChannelHashedIDCategory1ScienceGreaterThanLifeSciences                 DeleteChannelsChannelHashedIDCategory1 = "science > life_sciences"
+	DeleteChannelsChannelHashedIDCategory1ScienceGreaterThanMathematics                  DeleteChannelsChannelHashedIDCategory1 = "science > mathematics"
+	DeleteChannelsChannelHashedIDCategory1ScienceGreaterThanNaturalSciences              DeleteChannelsChannelHashedIDCategory1 = "science > natural_sciences"
+	DeleteChannelsChannelHashedIDCategory1ScienceGreaterThanNature                       DeleteChannelsChannelHashedIDCategory1 = "science > nature"
+	DeleteChannelsChannelHashedIDCategory1ScienceGreaterThanPhysics                      DeleteChannelsChannelHashedIDCategory1 = "science > physics"
+	DeleteChannelsChannelHashedIDCategory1ScienceGreaterThanSocialSciences               DeleteChannelsChannelHashedIDCategory1 = "science > social_sciences"
+	DeleteChannelsChannelHashedIDCategory1SocietyAndCultureGreaterThanDocumentary        DeleteChannelsChannelHashedIDCategory1 = "society_and_culture > documentary"
+	DeleteChannelsChannelHashedIDCategory1SocietyAndCultureGreaterThanPersonalJournals   DeleteChannelsChannelHashedIDCategory1 = "society_and_culture > personal_journals"
+	DeleteChannelsChannelHashedIDCategory1SocietyAndCultureGreaterThanPhilosophy         DeleteChannelsChannelHashedIDCategory1 = "society_and_culture > philosophy"
+	DeleteChannelsChannelHashedIDCategory1SocietyAndCultureGreaterThanPlacesAndTravel    DeleteChannelsChannelHashedIDCategory1 = "society_and_culture > places_and_travel"
+	DeleteChannelsChannelHashedIDCategory1SocietyAndCultureGreaterThanRelationships      DeleteChannelsChannelHashedIDCategory1 = "society_and_culture > relationships"
+	DeleteChannelsChannelHashedIDCategory1SportsGreaterThanBaseball                      DeleteChannelsChannelHashedIDCategory1 = "sports > baseball"
+	DeleteChannelsChannelHashedIDCategory1SportsGreaterThanBasketball                    DeleteChannelsChannelHashedIDCategory1 = "sports > basketball"
+	DeleteChannelsChannelHashedIDCategory1SportsGreaterThanCricket                       DeleteChannelsChannelHashedIDCategory1 = "sports > cricket"
+	DeleteChannelsChannelHashedIDCategory1SportsGreaterThanFantasySports                 DeleteChannelsChannelHashedIDCategory1 = "sports > fantasy_sports"
+	DeleteChannelsChannelHashedIDCategory1SportsGreaterThanFootball                      DeleteChannelsChannelHashedIDCategory1 = "sports > football"
+	DeleteChannelsChannelHashedIDCategory1SportsGreaterThanGolf                          DeleteChannelsChannelHashedIDCategory1 = "sports > golf"
+	DeleteChannelsChannelHashedIDCategory1SportsGreaterThanHockey                        DeleteChannelsChannelHashedIDCategory1 = "sports > hockey"
+	DeleteChannelsChannelHashedIDCategory1SportsGreaterThanRugby                         DeleteChannelsChannelHashedIDCategory1 = "sports > rugby"
+	DeleteChannelsChannelHashedIDCategory1SportsGreaterThanRunning                       DeleteChannelsChannelHashedIDCategory1 = "sports > running"
+	DeleteChannelsChannelHashedIDCategory1SportsGreaterThanSoccer                        DeleteChannelsChannelHashedIDCategory1 = "sports > soccer"
+	DeleteChannelsChannelHashedIDCategory1SportsGreaterThanSwimming                      DeleteChannelsChannelHashedIDCategory1 = "sports > swimming"
+	DeleteChannelsChannelHashedIDCategory1SportsGreaterThanTennis                        DeleteChannelsChannelHashedIDCategory1 = "sports > tennis"
+	DeleteChannelsChannelHashedIDCategory1SportsGreaterThanVolleyball                    DeleteChannelsChannelHashedIDCategory1 = "sports > volleyball"
+	DeleteChannelsChannelHashedIDCategory1SportsGreaterThanWilderness                    DeleteChannelsChannelHashedIDCategory1 = "sports > wilderness"
+	DeleteChannelsChannelHashedIDCategory1SportsGreaterThanWrestling                     DeleteChannelsChannelHashedIDCategory1 = "sports > wrestling"
+	DeleteChannelsChannelHashedIDCategory1TvAndFilmGreaterThanAfterShows                 DeleteChannelsChannelHashedIDCategory1 = "tv_and_film > after_shows"
+	DeleteChannelsChannelHashedIDCategory1TvAndFilmGreaterThanFilmHistory                DeleteChannelsChannelHashedIDCategory1 = "tv_and_film > film_history"
+	DeleteChannelsChannelHashedIDCategory1TvAndFilmGreaterThanFilmInterviews             DeleteChannelsChannelHashedIDCategory1 = "tv_and_film > film_interviews"
+	DeleteChannelsChannelHashedIDCategory1TvAndFilmGreaterThanFilmReviews                DeleteChannelsChannelHashedIDCategory1 = "tv_and_film > film_reviews"
+	DeleteChannelsChannelHashedIDCategory1TvAndFilmGreaterThanTvReviews                  DeleteChannelsChannelHashedIDCategory1 = "tv_and_film > tv_reviews"
+)
+
+func (e DeleteChannelsChannelHashedIDCategory1) ToPointer() *DeleteChannelsChannelHashedIDCategory1 {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *DeleteChannelsChannelHashedIDCategory1) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "arts > books", "arts > design", "arts > fashion_and_beauty", "arts > food", "arts > performing_arts", "arts > visual_arts", "business > careers", "business > entrepreneurship", "business > investing", "business > management", "business > marketing", "business > non_profit", "comedy > comedy_interviews", "comedy > improv", "comedy > stand_up", "education > courses", "education > how_to", "education > language_learning", "education > self_improvement", "fiction > comedy_fiction", "fiction > drama", "fiction > science_fiction", "health_and_fitness > alternative_health", "health_and_fitness > fitness", "health_and_fitness > medicine", "health_and_fitness > mental_health", "health_and_fitness > nutrition", "health_and_fitness > sexuality", "kids_and_family > education_for_kids", "kids_and_family > parenting", "kids_and_family > pets_and_animals", "kids_and_family > stories_for_kids", "leisure > animation_and_manga", "leisure > automotive", "leisure > aviation", "leisure > crafts", "leisure > games", "leisure > hobbies", "leisure > home_and_garden", "leisure > video_games", "music > music_commentary", "music > music_history", "music > music_interviews", "news > business_news", "news > daily_news", "news > entertainment_news", "news > news_commentary", "news > politics", "news > sports_news", "news > tech_news", "religion_and_spirituality > buddhism", "religion_and_spirituality > christianity", "religion_and_spirituality > hinduism", "religion_and_spirituality > islam", "religion_and_spirituality > judaism", "religion_and_spirituality > religion", "religion_and_spirituality > spirituality", "science > astronomy", "science > chemistry", "science > earth_sciences", "science > life_sciences", "science > mathematics", "science > natural_sciences", "science > nature", "science > physics", "science > social_sciences", "society_and_culture > documentary", "society_and_culture > personal_journals", "society_and_culture > philosophy", "society_and_culture > places_and_travel", "society_and_culture > relationships", "sports > baseball", "sports > basketball", "sports > cricket", "sports > fantasy_sports", "sports > football", "sports > golf", "sports > hockey", "sports > rugby", "sports > running", "sports > soccer", "sports > swimming", "sports > tennis", "sports > volleyball", "sports > wilderness", "sports > wrestling", "tv_and_film > after_shows", "tv_and_film > film_history", "tv_and_film > film_interviews", "tv_and_film > film_reviews", "tv_and_film > tv_reviews":
+			return true
+		}
+	}
+	return false
+}
+
+// DeleteChannelsChannelHashedIDCategory2 - The secondary category for the channel.
+type DeleteChannelsChannelHashedIDCategory2 string
+
+const (
+	DeleteChannelsChannelHashedIDCategory2ArtsGreaterThanBooks                           DeleteChannelsChannelHashedIDCategory2 = "arts > books"
+	DeleteChannelsChannelHashedIDCategory2ArtsGreaterThanDesign                          DeleteChannelsChannelHashedIDCategory2 = "arts > design"
+	DeleteChannelsChannelHashedIDCategory2ArtsGreaterThanFashionAndBeauty                DeleteChannelsChannelHashedIDCategory2 = "arts > fashion_and_beauty"
+	DeleteChannelsChannelHashedIDCategory2ArtsGreaterThanFood                            DeleteChannelsChannelHashedIDCategory2 = "arts > food"
+	DeleteChannelsChannelHashedIDCategory2ArtsGreaterThanPerformingArts                  DeleteChannelsChannelHashedIDCategory2 = "arts > performing_arts"
+	DeleteChannelsChannelHashedIDCategory2ArtsGreaterThanVisualArts                      DeleteChannelsChannelHashedIDCategory2 = "arts > visual_arts"
+	DeleteChannelsChannelHashedIDCategory2BusinessGreaterThanCareers                     DeleteChannelsChannelHashedIDCategory2 = "business > careers"
+	DeleteChannelsChannelHashedIDCategory2BusinessGreaterThanEntrepreneurship            DeleteChannelsChannelHashedIDCategory2 = "business > entrepreneurship"
+	DeleteChannelsChannelHashedIDCategory2BusinessGreaterThanInvesting                   DeleteChannelsChannelHashedIDCategory2 = "business > investing"
+	DeleteChannelsChannelHashedIDCategory2BusinessGreaterThanManagement                  DeleteChannelsChannelHashedIDCategory2 = "business > management"
+	DeleteChannelsChannelHashedIDCategory2BusinessGreaterThanMarketing                   DeleteChannelsChannelHashedIDCategory2 = "business > marketing"
+	DeleteChannelsChannelHashedIDCategory2BusinessGreaterThanNonProfit                   DeleteChannelsChannelHashedIDCategory2 = "business > non_profit"
+	DeleteChannelsChannelHashedIDCategory2ComedyGreaterThanComedyInterviews              DeleteChannelsChannelHashedIDCategory2 = "comedy > comedy_interviews"
+	DeleteChannelsChannelHashedIDCategory2ComedyGreaterThanImprov                        DeleteChannelsChannelHashedIDCategory2 = "comedy > improv"
+	DeleteChannelsChannelHashedIDCategory2ComedyGreaterThanStandUp                       DeleteChannelsChannelHashedIDCategory2 = "comedy > stand_up"
+	DeleteChannelsChannelHashedIDCategory2EducationGreaterThanCourses                    DeleteChannelsChannelHashedIDCategory2 = "education > courses"
+	DeleteChannelsChannelHashedIDCategory2EducationGreaterThanHowTo                      DeleteChannelsChannelHashedIDCategory2 = "education > how_to"
+	DeleteChannelsChannelHashedIDCategory2EducationGreaterThanLanguageLearning           DeleteChannelsChannelHashedIDCategory2 = "education > language_learning"
+	DeleteChannelsChannelHashedIDCategory2EducationGreaterThanSelfImprovement            DeleteChannelsChannelHashedIDCategory2 = "education > self_improvement"
+	DeleteChannelsChannelHashedIDCategory2FictionGreaterThanComedyFiction                DeleteChannelsChannelHashedIDCategory2 = "fiction > comedy_fiction"
+	DeleteChannelsChannelHashedIDCategory2FictionGreaterThanDrama                        DeleteChannelsChannelHashedIDCategory2 = "fiction > drama"
+	DeleteChannelsChannelHashedIDCategory2FictionGreaterThanScienceFiction               DeleteChannelsChannelHashedIDCategory2 = "fiction > science_fiction"
+	DeleteChannelsChannelHashedIDCategory2HealthAndFitnessGreaterThanAlternativeHealth   DeleteChannelsChannelHashedIDCategory2 = "health_and_fitness > alternative_health"
+	DeleteChannelsChannelHashedIDCategory2HealthAndFitnessGreaterThanFitness             DeleteChannelsChannelHashedIDCategory2 = "health_and_fitness > fitness"
+	DeleteChannelsChannelHashedIDCategory2HealthAndFitnessGreaterThanMedicine            DeleteChannelsChannelHashedIDCategory2 = "health_and_fitness > medicine"
+	DeleteChannelsChannelHashedIDCategory2HealthAndFitnessGreaterThanMentalHealth        DeleteChannelsChannelHashedIDCategory2 = "health_and_fitness > mental_health"
+	DeleteChannelsChannelHashedIDCategory2HealthAndFitnessGreaterThanNutrition           DeleteChannelsChannelHashedIDCategory2 = "health_and_fitness > nutrition"
+	DeleteChannelsChannelHashedIDCategory2HealthAndFitnessGreaterThanSexuality           DeleteChannelsChannelHashedIDCategory2 = "health_and_fitness > sexuality"
+	DeleteChannelsChannelHashedIDCategory2KidsAndFamilyGreaterThanEducationForKids       DeleteChannelsChannelHashedIDCategory2 = "kids_and_family > education_for_kids"
+	DeleteChannelsChannelHashedIDCategory2KidsAndFamilyGreaterThanParenting              DeleteChannelsChannelHashedIDCategory2 = "kids_and_family > parenting"
+	DeleteChannelsChannelHashedIDCategory2KidsAndFamilyGreaterThanPetsAndAnimals         DeleteChannelsChannelHashedIDCategory2 = "kids_and_family > pets_and_animals"
+	DeleteChannelsChannelHashedIDCategory2KidsAndFamilyGreaterThanStoriesForKids         DeleteChannelsChannelHashedIDCategory2 = "kids_and_family > stories_for_kids"
+	DeleteChannelsChannelHashedIDCategory2LeisureGreaterThanAnimationAndManga            DeleteChannelsChannelHashedIDCategory2 = "leisure > animation_and_manga"
+	DeleteChannelsChannelHashedIDCategory2LeisureGreaterThanAutomotive                   DeleteChannelsChannelHashedIDCategory2 = "leisure > automotive"
+	DeleteChannelsChannelHashedIDCategory2LeisureGreaterThanAviation                     DeleteChannelsChannelHashedIDCategory2 = "leisure > aviation"
+	DeleteChannelsChannelHashedIDCategory2LeisureGreaterThanCrafts                       DeleteChannelsChannelHashedIDCategory2 = "leisure > crafts"
+	DeleteChannelsChannelHashedIDCategory2LeisureGreaterThanGames                        DeleteChannelsChannelHashedIDCategory2 = "leisure > games"
+	DeleteChannelsChannelHashedIDCategory2LeisureGreaterThanHobbies                      DeleteChannelsChannelHashedIDCategory2 = "leisure > hobbies"
+	DeleteChannelsChannelHashedIDCategory2LeisureGreaterThanHomeAndGarden                DeleteChannelsChannelHashedIDCategory2 = "leisure > home_and_garden"
+	DeleteChannelsChannelHashedIDCategory2LeisureGreaterThanVideoGames                   DeleteChannelsChannelHashedIDCategory2 = "leisure > video_games"
+	DeleteChannelsChannelHashedIDCategory2MusicGreaterThanMusicCommentary                DeleteChannelsChannelHashedIDCategory2 = "music > music_commentary"
+	DeleteChannelsChannelHashedIDCategory2MusicGreaterThanMusicHistory                   DeleteChannelsChannelHashedIDCategory2 = "music > music_history"
+	DeleteChannelsChannelHashedIDCategory2MusicGreaterThanMusicInterviews                DeleteChannelsChannelHashedIDCategory2 = "music > music_interviews"
+	DeleteChannelsChannelHashedIDCategory2NewsGreaterThanBusinessNews                    DeleteChannelsChannelHashedIDCategory2 = "news > business_news"
+	DeleteChannelsChannelHashedIDCategory2NewsGreaterThanDailyNews                       DeleteChannelsChannelHashedIDCategory2 = "news > daily_news"
+	DeleteChannelsChannelHashedIDCategory2NewsGreaterThanEntertainmentNews               DeleteChannelsChannelHashedIDCategory2 = "news > entertainment_news"
+	DeleteChannelsChannelHashedIDCategory2NewsGreaterThanNewsCommentary                  DeleteChannelsChannelHashedIDCategory2 = "news > news_commentary"
+	DeleteChannelsChannelHashedIDCategory2NewsGreaterThanPolitics                        DeleteChannelsChannelHashedIDCategory2 = "news > politics"
+	DeleteChannelsChannelHashedIDCategory2NewsGreaterThanSportsNews                      DeleteChannelsChannelHashedIDCategory2 = "news > sports_news"
+	DeleteChannelsChannelHashedIDCategory2NewsGreaterThanTechNews                        DeleteChannelsChannelHashedIDCategory2 = "news > tech_news"
+	DeleteChannelsChannelHashedIDCategory2ReligionAndSpiritualityGreaterThanBuddhism     DeleteChannelsChannelHashedIDCategory2 = "religion_and_spirituality > buddhism"
+	DeleteChannelsChannelHashedIDCategory2ReligionAndSpiritualityGreaterThanChristianity DeleteChannelsChannelHashedIDCategory2 = "religion_and_spirituality > christianity"
+	DeleteChannelsChannelHashedIDCategory2ReligionAndSpiritualityGreaterThanHinduism     DeleteChannelsChannelHashedIDCategory2 = "religion_and_spirituality > hinduism"
+	DeleteChannelsChannelHashedIDCategory2ReligionAndSpiritualityGreaterThanIslam        DeleteChannelsChannelHashedIDCategory2 = "religion_and_spirituality > islam"
+	DeleteChannelsChannelHashedIDCategory2ReligionAndSpiritualityGreaterThanJudaism      DeleteChannelsChannelHashedIDCategory2 = "religion_and_spirituality > judaism"
+	DeleteChannelsChannelHashedIDCategory2ReligionAndSpiritualityGreaterThanReligion     DeleteChannelsChannelHashedIDCategory2 = "religion_and_spirituality > religion"
+	DeleteChannelsChannelHashedIDCategory2ReligionAndSpiritualityGreaterThanSpirituality DeleteChannelsChannelHashedIDCategory2 = "religion_and_spirituality > spirituality"
+	DeleteChannelsChannelHashedIDCategory2ScienceGreaterThanAstronomy                    DeleteChannelsChannelHashedIDCategory2 = "science > astronomy"
+	DeleteChannelsChannelHashedIDCategory2ScienceGreaterThanChemistry                    DeleteChannelsChannelHashedIDCategory2 = "science > chemistry"
+	DeleteChannelsChannelHashedIDCategory2ScienceGreaterThanEarthSciences                DeleteChannelsChannelHashedIDCategory2 = "science > earth_sciences"
+	DeleteChannelsChannelHashedIDCategory2ScienceGreaterThanLifeSciences                 DeleteChannelsChannelHashedIDCategory2 = "science > life_sciences"
+	DeleteChannelsChannelHashedIDCategory2ScienceGreaterThanMathematics                  DeleteChannelsChannelHashedIDCategory2 = "science > mathematics"
+	DeleteChannelsChannelHashedIDCategory2ScienceGreaterThanNaturalSciences              DeleteChannelsChannelHashedIDCategory2 = "science > natural_sciences"
+	DeleteChannelsChannelHashedIDCategory2ScienceGreaterThanNature                       DeleteChannelsChannelHashedIDCategory2 = "science > nature"
+	DeleteChannelsChannelHashedIDCategory2ScienceGreaterThanPhysics                      DeleteChannelsChannelHashedIDCategory2 = "science > physics"
+	DeleteChannelsChannelHashedIDCategory2ScienceGreaterThanSocialSciences               DeleteChannelsChannelHashedIDCategory2 = "science > social_sciences"
+	DeleteChannelsChannelHashedIDCategory2SocietyAndCultureGreaterThanDocumentary        DeleteChannelsChannelHashedIDCategory2 = "society_and_culture > documentary"
+	DeleteChannelsChannelHashedIDCategory2SocietyAndCultureGreaterThanPersonalJournals   DeleteChannelsChannelHashedIDCategory2 = "society_and_culture > personal_journals"
+	DeleteChannelsChannelHashedIDCategory2SocietyAndCultureGreaterThanPhilosophy         DeleteChannelsChannelHashedIDCategory2 = "society_and_culture > philosophy"
+	DeleteChannelsChannelHashedIDCategory2SocietyAndCultureGreaterThanPlacesAndTravel    DeleteChannelsChannelHashedIDCategory2 = "society_and_culture > places_and_travel"
+	DeleteChannelsChannelHashedIDCategory2SocietyAndCultureGreaterThanRelationships      DeleteChannelsChannelHashedIDCategory2 = "society_and_culture > relationships"
+	DeleteChannelsChannelHashedIDCategory2SportsGreaterThanBaseball                      DeleteChannelsChannelHashedIDCategory2 = "sports > baseball"
+	DeleteChannelsChannelHashedIDCategory2SportsGreaterThanBasketball                    DeleteChannelsChannelHashedIDCategory2 = "sports > basketball"
+	DeleteChannelsChannelHashedIDCategory2SportsGreaterThanCricket                       DeleteChannelsChannelHashedIDCategory2 = "sports > cricket"
+	DeleteChannelsChannelHashedIDCategory2SportsGreaterThanFantasySports                 DeleteChannelsChannelHashedIDCategory2 = "sports > fantasy_sports"
+	DeleteChannelsChannelHashedIDCategory2SportsGreaterThanFootball                      DeleteChannelsChannelHashedIDCategory2 = "sports > football"
+	DeleteChannelsChannelHashedIDCategory2SportsGreaterThanGolf                          DeleteChannelsChannelHashedIDCategory2 = "sports > golf"
+	DeleteChannelsChannelHashedIDCategory2SportsGreaterThanHockey                        DeleteChannelsChannelHashedIDCategory2 = "sports > hockey"
+	DeleteChannelsChannelHashedIDCategory2SportsGreaterThanRugby                         DeleteChannelsChannelHashedIDCategory2 = "sports > rugby"
+	DeleteChannelsChannelHashedIDCategory2SportsGreaterThanRunning                       DeleteChannelsChannelHashedIDCategory2 = "sports > running"
+	DeleteChannelsChannelHashedIDCategory2SportsGreaterThanSoccer                        DeleteChannelsChannelHashedIDCategory2 = "sports > soccer"
+	DeleteChannelsChannelHashedIDCategory2SportsGreaterThanSwimming                      DeleteChannelsChannelHashedIDCategory2 = "sports > swimming"
+	DeleteChannelsChannelHashedIDCategory2SportsGreaterThanTennis                        DeleteChannelsChannelHashedIDCategory2 = "sports > tennis"
+	DeleteChannelsChannelHashedIDCategory2SportsGreaterThanVolleyball                    DeleteChannelsChannelHashedIDCategory2 = "sports > volleyball"
+	DeleteChannelsChannelHashedIDCategory2SportsGreaterThanWilderness                    DeleteChannelsChannelHashedIDCategory2 = "sports > wilderness"
+	DeleteChannelsChannelHashedIDCategory2SportsGreaterThanWrestling                     DeleteChannelsChannelHashedIDCategory2 = "sports > wrestling"
+	DeleteChannelsChannelHashedIDCategory2TvAndFilmGreaterThanAfterShows                 DeleteChannelsChannelHashedIDCategory2 = "tv_and_film > after_shows"
+	DeleteChannelsChannelHashedIDCategory2TvAndFilmGreaterThanFilmHistory                DeleteChannelsChannelHashedIDCategory2 = "tv_and_film > film_history"
+	DeleteChannelsChannelHashedIDCategory2TvAndFilmGreaterThanFilmInterviews             DeleteChannelsChannelHashedIDCategory2 = "tv_and_film > film_interviews"
+	DeleteChannelsChannelHashedIDCategory2TvAndFilmGreaterThanFilmReviews                DeleteChannelsChannelHashedIDCategory2 = "tv_and_film > film_reviews"
+	DeleteChannelsChannelHashedIDCategory2TvAndFilmGreaterThanTvReviews                  DeleteChannelsChannelHashedIDCategory2 = "tv_and_film > tv_reviews"
+)
+
+func (e DeleteChannelsChannelHashedIDCategory2) ToPointer() *DeleteChannelsChannelHashedIDCategory2 {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *DeleteChannelsChannelHashedIDCategory2) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "arts > books", "arts > design", "arts > fashion_and_beauty", "arts > food", "arts > performing_arts", "arts > visual_arts", "business > careers", "business > entrepreneurship", "business > investing", "business > management", "business > marketing", "business > non_profit", "comedy > comedy_interviews", "comedy > improv", "comedy > stand_up", "education > courses", "education > how_to", "education > language_learning", "education > self_improvement", "fiction > comedy_fiction", "fiction > drama", "fiction > science_fiction", "health_and_fitness > alternative_health", "health_and_fitness > fitness", "health_and_fitness > medicine", "health_and_fitness > mental_health", "health_and_fitness > nutrition", "health_and_fitness > sexuality", "kids_and_family > education_for_kids", "kids_and_family > parenting", "kids_and_family > pets_and_animals", "kids_and_family > stories_for_kids", "leisure > animation_and_manga", "leisure > automotive", "leisure > aviation", "leisure > crafts", "leisure > games", "leisure > hobbies", "leisure > home_and_garden", "leisure > video_games", "music > music_commentary", "music > music_history", "music > music_interviews", "news > business_news", "news > daily_news", "news > entertainment_news", "news > news_commentary", "news > politics", "news > sports_news", "news > tech_news", "religion_and_spirituality > buddhism", "religion_and_spirituality > christianity", "religion_and_spirituality > hinduism", "religion_and_spirituality > islam", "religion_and_spirituality > judaism", "religion_and_spirituality > religion", "religion_and_spirituality > spirituality", "science > astronomy", "science > chemistry", "science > earth_sciences", "science > life_sciences", "science > mathematics", "science > natural_sciences", "science > nature", "science > physics", "science > social_sciences", "society_and_culture > documentary", "society_and_culture > personal_journals", "society_and_culture > philosophy", "society_and_culture > places_and_travel", "society_and_culture > relationships", "sports > baseball", "sports > basketball", "sports > cricket", "sports > fantasy_sports", "sports > football", "sports > golf", "sports > hockey", "sports > rugby", "sports > running", "sports > soccer", "sports > swimming", "sports > tennis", "sports > volleyball", "sports > wilderness", "sports > wrestling", "tv_and_film > after_shows", "tv_and_film > film_history", "tv_and_film > film_interviews", "tv_and_film > film_reviews", "tv_and_film > tv_reviews":
+			return true
+		}
+	}
+	return false
+}
+
+// DeleteChannelsChannelHashedIDCategory3 - The third category for the channel.
+type DeleteChannelsChannelHashedIDCategory3 string
+
+const (
+	DeleteChannelsChannelHashedIDCategory3ArtsGreaterThanBooks                           DeleteChannelsChannelHashedIDCategory3 = "arts > books"
+	DeleteChannelsChannelHashedIDCategory3ArtsGreaterThanDesign                          DeleteChannelsChannelHashedIDCategory3 = "arts > design"
+	DeleteChannelsChannelHashedIDCategory3ArtsGreaterThanFashionAndBeauty                DeleteChannelsChannelHashedIDCategory3 = "arts > fashion_and_beauty"
+	DeleteChannelsChannelHashedIDCategory3ArtsGreaterThanFood                            DeleteChannelsChannelHashedIDCategory3 = "arts > food"
+	DeleteChannelsChannelHashedIDCategory3ArtsGreaterThanPerformingArts                  DeleteChannelsChannelHashedIDCategory3 = "arts > performing_arts"
+	DeleteChannelsChannelHashedIDCategory3ArtsGreaterThanVisualArts                      DeleteChannelsChannelHashedIDCategory3 = "arts > visual_arts"
+	DeleteChannelsChannelHashedIDCategory3BusinessGreaterThanCareers                     DeleteChannelsChannelHashedIDCategory3 = "business > careers"
+	DeleteChannelsChannelHashedIDCategory3BusinessGreaterThanEntrepreneurship            DeleteChannelsChannelHashedIDCategory3 = "business > entrepreneurship"
+	DeleteChannelsChannelHashedIDCategory3BusinessGreaterThanInvesting                   DeleteChannelsChannelHashedIDCategory3 = "business > investing"
+	DeleteChannelsChannelHashedIDCategory3BusinessGreaterThanManagement                  DeleteChannelsChannelHashedIDCategory3 = "business > management"
+	DeleteChannelsChannelHashedIDCategory3BusinessGreaterThanMarketing                   DeleteChannelsChannelHashedIDCategory3 = "business > marketing"
+	DeleteChannelsChannelHashedIDCategory3BusinessGreaterThanNonProfit                   DeleteChannelsChannelHashedIDCategory3 = "business > non_profit"
+	DeleteChannelsChannelHashedIDCategory3ComedyGreaterThanComedyInterviews              DeleteChannelsChannelHashedIDCategory3 = "comedy > comedy_interviews"
+	DeleteChannelsChannelHashedIDCategory3ComedyGreaterThanImprov                        DeleteChannelsChannelHashedIDCategory3 = "comedy > improv"
+	DeleteChannelsChannelHashedIDCategory3ComedyGreaterThanStandUp                       DeleteChannelsChannelHashedIDCategory3 = "comedy > stand_up"
+	DeleteChannelsChannelHashedIDCategory3EducationGreaterThanCourses                    DeleteChannelsChannelHashedIDCategory3 = "education > courses"
+	DeleteChannelsChannelHashedIDCategory3EducationGreaterThanHowTo                      DeleteChannelsChannelHashedIDCategory3 = "education > how_to"
+	DeleteChannelsChannelHashedIDCategory3EducationGreaterThanLanguageLearning           DeleteChannelsChannelHashedIDCategory3 = "education > language_learning"
+	DeleteChannelsChannelHashedIDCategory3EducationGreaterThanSelfImprovement            DeleteChannelsChannelHashedIDCategory3 = "education > self_improvement"
+	DeleteChannelsChannelHashedIDCategory3FictionGreaterThanComedyFiction                DeleteChannelsChannelHashedIDCategory3 = "fiction > comedy_fiction"
+	DeleteChannelsChannelHashedIDCategory3FictionGreaterThanDrama                        DeleteChannelsChannelHashedIDCategory3 = "fiction > drama"
+	DeleteChannelsChannelHashedIDCategory3FictionGreaterThanScienceFiction               DeleteChannelsChannelHashedIDCategory3 = "fiction > science_fiction"
+	DeleteChannelsChannelHashedIDCategory3HealthAndFitnessGreaterThanAlternativeHealth   DeleteChannelsChannelHashedIDCategory3 = "health_and_fitness > alternative_health"
+	DeleteChannelsChannelHashedIDCategory3HealthAndFitnessGreaterThanFitness             DeleteChannelsChannelHashedIDCategory3 = "health_and_fitness > fitness"
+	DeleteChannelsChannelHashedIDCategory3HealthAndFitnessGreaterThanMedicine            DeleteChannelsChannelHashedIDCategory3 = "health_and_fitness > medicine"
+	DeleteChannelsChannelHashedIDCategory3HealthAndFitnessGreaterThanMentalHealth        DeleteChannelsChannelHashedIDCategory3 = "health_and_fitness > mental_health"
+	DeleteChannelsChannelHashedIDCategory3HealthAndFitnessGreaterThanNutrition           DeleteChannelsChannelHashedIDCategory3 = "health_and_fitness > nutrition"
+	DeleteChannelsChannelHashedIDCategory3HealthAndFitnessGreaterThanSexuality           DeleteChannelsChannelHashedIDCategory3 = "health_and_fitness > sexuality"
+	DeleteChannelsChannelHashedIDCategory3KidsAndFamilyGreaterThanEducationForKids       DeleteChannelsChannelHashedIDCategory3 = "kids_and_family > education_for_kids"
+	DeleteChannelsChannelHashedIDCategory3KidsAndFamilyGreaterThanParenting              DeleteChannelsChannelHashedIDCategory3 = "kids_and_family > parenting"
+	DeleteChannelsChannelHashedIDCategory3KidsAndFamilyGreaterThanPetsAndAnimals         DeleteChannelsChannelHashedIDCategory3 = "kids_and_family > pets_and_animals"
+	DeleteChannelsChannelHashedIDCategory3KidsAndFamilyGreaterThanStoriesForKids         DeleteChannelsChannelHashedIDCategory3 = "kids_and_family > stories_for_kids"
+	DeleteChannelsChannelHashedIDCategory3LeisureGreaterThanAnimationAndManga            DeleteChannelsChannelHashedIDCategory3 = "leisure > animation_and_manga"
+	DeleteChannelsChannelHashedIDCategory3LeisureGreaterThanAutomotive                   DeleteChannelsChannelHashedIDCategory3 = "leisure > automotive"
+	DeleteChannelsChannelHashedIDCategory3LeisureGreaterThanAviation                     DeleteChannelsChannelHashedIDCategory3 = "leisure > aviation"
+	DeleteChannelsChannelHashedIDCategory3LeisureGreaterThanCrafts                       DeleteChannelsChannelHashedIDCategory3 = "leisure > crafts"
+	DeleteChannelsChannelHashedIDCategory3LeisureGreaterThanGames                        DeleteChannelsChannelHashedIDCategory3 = "leisure > games"
+	DeleteChannelsChannelHashedIDCategory3LeisureGreaterThanHobbies                      DeleteChannelsChannelHashedIDCategory3 = "leisure > hobbies"
+	DeleteChannelsChannelHashedIDCategory3LeisureGreaterThanHomeAndGarden                DeleteChannelsChannelHashedIDCategory3 = "leisure > home_and_garden"
+	DeleteChannelsChannelHashedIDCategory3LeisureGreaterThanVideoGames                   DeleteChannelsChannelHashedIDCategory3 = "leisure > video_games"
+	DeleteChannelsChannelHashedIDCategory3MusicGreaterThanMusicCommentary                DeleteChannelsChannelHashedIDCategory3 = "music > music_commentary"
+	DeleteChannelsChannelHashedIDCategory3MusicGreaterThanMusicHistory                   DeleteChannelsChannelHashedIDCategory3 = "music > music_history"
+	DeleteChannelsChannelHashedIDCategory3MusicGreaterThanMusicInterviews                DeleteChannelsChannelHashedIDCategory3 = "music > music_interviews"
+	DeleteChannelsChannelHashedIDCategory3NewsGreaterThanBusinessNews                    DeleteChannelsChannelHashedIDCategory3 = "news > business_news"
+	DeleteChannelsChannelHashedIDCategory3NewsGreaterThanDailyNews                       DeleteChannelsChannelHashedIDCategory3 = "news > daily_news"
+	DeleteChannelsChannelHashedIDCategory3NewsGreaterThanEntertainmentNews               DeleteChannelsChannelHashedIDCategory3 = "news > entertainment_news"
+	DeleteChannelsChannelHashedIDCategory3NewsGreaterThanNewsCommentary                  DeleteChannelsChannelHashedIDCategory3 = "news > news_commentary"
+	DeleteChannelsChannelHashedIDCategory3NewsGreaterThanPolitics                        DeleteChannelsChannelHashedIDCategory3 = "news > politics"
+	DeleteChannelsChannelHashedIDCategory3NewsGreaterThanSportsNews                      DeleteChannelsChannelHashedIDCategory3 = "news > sports_news"
+	DeleteChannelsChannelHashedIDCategory3NewsGreaterThanTechNews                        DeleteChannelsChannelHashedIDCategory3 = "news > tech_news"
+	DeleteChannelsChannelHashedIDCategory3ReligionAndSpiritualityGreaterThanBuddhism     DeleteChannelsChannelHashedIDCategory3 = "religion_and_spirituality > buddhism"
+	DeleteChannelsChannelHashedIDCategory3ReligionAndSpiritualityGreaterThanChristianity DeleteChannelsChannelHashedIDCategory3 = "religion_and_spirituality > christianity"
+	DeleteChannelsChannelHashedIDCategory3ReligionAndSpiritualityGreaterThanHinduism     DeleteChannelsChannelHashedIDCategory3 = "religion_and_spirituality > hinduism"
+	DeleteChannelsChannelHashedIDCategory3ReligionAndSpiritualityGreaterThanIslam        DeleteChannelsChannelHashedIDCategory3 = "religion_and_spirituality > islam"
+	DeleteChannelsChannelHashedIDCategory3ReligionAndSpiritualityGreaterThanJudaism      DeleteChannelsChannelHashedIDCategory3 = "religion_and_spirituality > judaism"
+	DeleteChannelsChannelHashedIDCategory3ReligionAndSpiritualityGreaterThanReligion     DeleteChannelsChannelHashedIDCategory3 = "religion_and_spirituality > religion"
+	DeleteChannelsChannelHashedIDCategory3ReligionAndSpiritualityGreaterThanSpirituality DeleteChannelsChannelHashedIDCategory3 = "religion_and_spirituality > spirituality"
+	DeleteChannelsChannelHashedIDCategory3ScienceGreaterThanAstronomy                    DeleteChannelsChannelHashedIDCategory3 = "science > astronomy"
+	DeleteChannelsChannelHashedIDCategory3ScienceGreaterThanChemistry                    DeleteChannelsChannelHashedIDCategory3 = "science > chemistry"
+	DeleteChannelsChannelHashedIDCategory3ScienceGreaterThanEarthSciences                DeleteChannelsChannelHashedIDCategory3 = "science > earth_sciences"
+	DeleteChannelsChannelHashedIDCategory3ScienceGreaterThanLifeSciences                 DeleteChannelsChannelHashedIDCategory3 = "science > life_sciences"
+	DeleteChannelsChannelHashedIDCategory3ScienceGreaterThanMathematics                  DeleteChannelsChannelHashedIDCategory3 = "science > mathematics"
+	DeleteChannelsChannelHashedIDCategory3ScienceGreaterThanNaturalSciences              DeleteChannelsChannelHashedIDCategory3 = "science > natural_sciences"
+	DeleteChannelsChannelHashedIDCategory3ScienceGreaterThanNature                       DeleteChannelsChannelHashedIDCategory3 = "science > nature"
+	DeleteChannelsChannelHashedIDCategory3ScienceGreaterThanPhysics                      DeleteChannelsChannelHashedIDCategory3 = "science > physics"
+	DeleteChannelsChannelHashedIDCategory3ScienceGreaterThanSocialSciences               DeleteChannelsChannelHashedIDCategory3 = "science > social_sciences"
+	DeleteChannelsChannelHashedIDCategory3SocietyAndCultureGreaterThanDocumentary        DeleteChannelsChannelHashedIDCategory3 = "society_and_culture > documentary"
+	DeleteChannelsChannelHashedIDCategory3SocietyAndCultureGreaterThanPersonalJournals   DeleteChannelsChannelHashedIDCategory3 = "society_and_culture > personal_journals"
+	DeleteChannelsChannelHashedIDCategory3SocietyAndCultureGreaterThanPhilosophy         DeleteChannelsChannelHashedIDCategory3 = "society_and_culture > philosophy"
+	DeleteChannelsChannelHashedIDCategory3SocietyAndCultureGreaterThanPlacesAndTravel    DeleteChannelsChannelHashedIDCategory3 = "society_and_culture > places_and_travel"
+	DeleteChannelsChannelHashedIDCategory3SocietyAndCultureGreaterThanRelationships      DeleteChannelsChannelHashedIDCategory3 = "society_and_culture > relationships"
+	DeleteChannelsChannelHashedIDCategory3SportsGreaterThanBaseball                      DeleteChannelsChannelHashedIDCategory3 = "sports > baseball"
+	DeleteChannelsChannelHashedIDCategory3SportsGreaterThanBasketball                    DeleteChannelsChannelHashedIDCategory3 = "sports > basketball"
+	DeleteChannelsChannelHashedIDCategory3SportsGreaterThanCricket                       DeleteChannelsChannelHashedIDCategory3 = "sports > cricket"
+	DeleteChannelsChannelHashedIDCategory3SportsGreaterThanFantasySports                 DeleteChannelsChannelHashedIDCategory3 = "sports > fantasy_sports"
+	DeleteChannelsChannelHashedIDCategory3SportsGreaterThanFootball                      DeleteChannelsChannelHashedIDCategory3 = "sports > football"
+	DeleteChannelsChannelHashedIDCategory3SportsGreaterThanGolf                          DeleteChannelsChannelHashedIDCategory3 = "sports > golf"
+	DeleteChannelsChannelHashedIDCategory3SportsGreaterThanHockey                        DeleteChannelsChannelHashedIDCategory3 = "sports > hockey"
+	DeleteChannelsChannelHashedIDCategory3SportsGreaterThanRugby                         DeleteChannelsChannelHashedIDCategory3 = "sports > rugby"
+	DeleteChannelsChannelHashedIDCategory3SportsGreaterThanRunning                       DeleteChannelsChannelHashedIDCategory3 = "sports > running"
+	DeleteChannelsChannelHashedIDCategory3SportsGreaterThanSoccer                        DeleteChannelsChannelHashedIDCategory3 = "sports > soccer"
+	DeleteChannelsChannelHashedIDCategory3SportsGreaterThanSwimming                      DeleteChannelsChannelHashedIDCategory3 = "sports > swimming"
+	DeleteChannelsChannelHashedIDCategory3SportsGreaterThanTennis                        DeleteChannelsChannelHashedIDCategory3 = "sports > tennis"
+	DeleteChannelsChannelHashedIDCategory3SportsGreaterThanVolleyball                    DeleteChannelsChannelHashedIDCategory3 = "sports > volleyball"
+	DeleteChannelsChannelHashedIDCategory3SportsGreaterThanWilderness                    DeleteChannelsChannelHashedIDCategory3 = "sports > wilderness"
+	DeleteChannelsChannelHashedIDCategory3SportsGreaterThanWrestling                     DeleteChannelsChannelHashedIDCategory3 = "sports > wrestling"
+	DeleteChannelsChannelHashedIDCategory3TvAndFilmGreaterThanAfterShows                 DeleteChannelsChannelHashedIDCategory3 = "tv_and_film > after_shows"
+	DeleteChannelsChannelHashedIDCategory3TvAndFilmGreaterThanFilmHistory                DeleteChannelsChannelHashedIDCategory3 = "tv_and_film > film_history"
+	DeleteChannelsChannelHashedIDCategory3TvAndFilmGreaterThanFilmInterviews             DeleteChannelsChannelHashedIDCategory3 = "tv_and_film > film_interviews"
+	DeleteChannelsChannelHashedIDCategory3TvAndFilmGreaterThanFilmReviews                DeleteChannelsChannelHashedIDCategory3 = "tv_and_film > film_reviews"
+	DeleteChannelsChannelHashedIDCategory3TvAndFilmGreaterThanTvReviews                  DeleteChannelsChannelHashedIDCategory3 = "tv_and_film > tv_reviews"
+)
+
+func (e DeleteChannelsChannelHashedIDCategory3) ToPointer() *DeleteChannelsChannelHashedIDCategory3 {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *DeleteChannelsChannelHashedIDCategory3) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "arts > books", "arts > design", "arts > fashion_and_beauty", "arts > food", "arts > performing_arts", "arts > visual_arts", "business > careers", "business > entrepreneurship", "business > investing", "business > management", "business > marketing", "business > non_profit", "comedy > comedy_interviews", "comedy > improv", "comedy > stand_up", "education > courses", "education > how_to", "education > language_learning", "education > self_improvement", "fiction > comedy_fiction", "fiction > drama", "fiction > science_fiction", "health_and_fitness > alternative_health", "health_and_fitness > fitness", "health_and_fitness > medicine", "health_and_fitness > mental_health", "health_and_fitness > nutrition", "health_and_fitness > sexuality", "kids_and_family > education_for_kids", "kids_and_family > parenting", "kids_and_family > pets_and_animals", "kids_and_family > stories_for_kids", "leisure > animation_and_manga", "leisure > automotive", "leisure > aviation", "leisure > crafts", "leisure > games", "leisure > hobbies", "leisure > home_and_garden", "leisure > video_games", "music > music_commentary", "music > music_history", "music > music_interviews", "news > business_news", "news > daily_news", "news > entertainment_news", "news > news_commentary", "news > politics", "news > sports_news", "news > tech_news", "religion_and_spirituality > buddhism", "religion_and_spirituality > christianity", "religion_and_spirituality > hinduism", "religion_and_spirituality > islam", "religion_and_spirituality > judaism", "religion_and_spirituality > religion", "religion_and_spirituality > spirituality", "science > astronomy", "science > chemistry", "science > earth_sciences", "science > life_sciences", "science > mathematics", "science > natural_sciences", "science > nature", "science > physics", "science > social_sciences", "society_and_culture > documentary", "society_and_culture > personal_journals", "society_and_culture > philosophy", "society_and_culture > places_and_travel", "society_and_culture > relationships", "sports > baseball", "sports > basketball", "sports > cricket", "sports > fantasy_sports", "sports > football", "sports > golf", "sports > hockey", "sports > rugby", "sports > running", "sports > soccer", "sports > swimming", "sports > tennis", "sports > volleyball", "sports > wilderness", "sports > wrestling", "tv_and_film > after_shows", "tv_and_film > film_history", "tv_and_film > film_interviews", "tv_and_film > film_reviews", "tv_and_film > tv_reviews":
+			return true
+		}
+	}
+	return false
+}
+
+// DeleteChannelsChannelHashedIDLanguage - The ISO 639-1 language code for the channel.
+type DeleteChannelsChannelHashedIDLanguage string
+
+const (
+	DeleteChannelsChannelHashedIDLanguageAf   DeleteChannelsChannelHashedIDLanguage = "af"
+	DeleteChannelsChannelHashedIDLanguageBe   DeleteChannelsChannelHashedIDLanguage = "be"
+	DeleteChannelsChannelHashedIDLanguageBg   DeleteChannelsChannelHashedIDLanguage = "bg"
+	DeleteChannelsChannelHashedIDLanguageCa   DeleteChannelsChannelHashedIDLanguage = "ca"
+	DeleteChannelsChannelHashedIDLanguageCs   DeleteChannelsChannelHashedIDLanguage = "cs"
+	DeleteChannelsChannelHashedIDLanguageDa   DeleteChannelsChannelHashedIDLanguage = "da"
+	DeleteChannelsChannelHashedIDLanguageDeAt DeleteChannelsChannelHashedIDLanguage = "de-at"
+	DeleteChannelsChannelHashedIDLanguageDeCh DeleteChannelsChannelHashedIDLanguage = "de-ch"
+	DeleteChannelsChannelHashedIDLanguageDeDe DeleteChannelsChannelHashedIDLanguage = "de-de"
+	DeleteChannelsChannelHashedIDLanguageDeLi DeleteChannelsChannelHashedIDLanguage = "de-li"
+	DeleteChannelsChannelHashedIDLanguageDeLu DeleteChannelsChannelHashedIDLanguage = "de-lu"
+	DeleteChannelsChannelHashedIDLanguageDe   DeleteChannelsChannelHashedIDLanguage = "de"
+	DeleteChannelsChannelHashedIDLanguageEl   DeleteChannelsChannelHashedIDLanguage = "el"
+	DeleteChannelsChannelHashedIDLanguageEnAu DeleteChannelsChannelHashedIDLanguage = "en-au"
+	DeleteChannelsChannelHashedIDLanguageEnBz DeleteChannelsChannelHashedIDLanguage = "en-bz"
+	DeleteChannelsChannelHashedIDLanguageEnCa DeleteChannelsChannelHashedIDLanguage = "en-ca"
+	DeleteChannelsChannelHashedIDLanguageEnGb DeleteChannelsChannelHashedIDLanguage = "en-gb"
+	DeleteChannelsChannelHashedIDLanguageEnIe DeleteChannelsChannelHashedIDLanguage = "en-ie"
+	DeleteChannelsChannelHashedIDLanguageEnJm DeleteChannelsChannelHashedIDLanguage = "en-jm"
+	DeleteChannelsChannelHashedIDLanguageEnNz DeleteChannelsChannelHashedIDLanguage = "en-nz"
+	DeleteChannelsChannelHashedIDLanguageEnPh DeleteChannelsChannelHashedIDLanguage = "en-ph"
+	DeleteChannelsChannelHashedIDLanguageEnTt DeleteChannelsChannelHashedIDLanguage = "en-tt"
+	DeleteChannelsChannelHashedIDLanguageEnUs DeleteChannelsChannelHashedIDLanguage = "en-us"
+	DeleteChannelsChannelHashedIDLanguageEnZa DeleteChannelsChannelHashedIDLanguage = "en-za"
+	DeleteChannelsChannelHashedIDLanguageEnZw DeleteChannelsChannelHashedIDLanguage = "en-zw"
+	DeleteChannelsChannelHashedIDLanguageEn   DeleteChannelsChannelHashedIDLanguage = "en"
+	DeleteChannelsChannelHashedIDLanguageEsAr DeleteChannelsChannelHashedIDLanguage = "es-ar"
+	DeleteChannelsChannelHashedIDLanguageEsBo DeleteChannelsChannelHashedIDLanguage = "es-bo"
+	DeleteChannelsChannelHashedIDLanguageEsCl DeleteChannelsChannelHashedIDLanguage = "es-cl"
+	DeleteChannelsChannelHashedIDLanguageEsCo DeleteChannelsChannelHashedIDLanguage = "es-co"
+	DeleteChannelsChannelHashedIDLanguageEsCr DeleteChannelsChannelHashedIDLanguage = "es-cr"
+	DeleteChannelsChannelHashedIDLanguageEsDo DeleteChannelsChannelHashedIDLanguage = "es-do"
+	DeleteChannelsChannelHashedIDLanguageEsEc DeleteChannelsChannelHashedIDLanguage = "es-ec"
+	DeleteChannelsChannelHashedIDLanguageEsEs DeleteChannelsChannelHashedIDLanguage = "es-es"
+	DeleteChannelsChannelHashedIDLanguageEsGt DeleteChannelsChannelHashedIDLanguage = "es-gt"
+	DeleteChannelsChannelHashedIDLanguageEsHn DeleteChannelsChannelHashedIDLanguage = "es-hn"
+	DeleteChannelsChannelHashedIDLanguageEsMx DeleteChannelsChannelHashedIDLanguage = "es-mx"
+	DeleteChannelsChannelHashedIDLanguageEsNi DeleteChannelsChannelHashedIDLanguage = "es-ni"
+	DeleteChannelsChannelHashedIDLanguageEsPa DeleteChannelsChannelHashedIDLanguage = "es-pa"
+	DeleteChannelsChannelHashedIDLanguageEsPe DeleteChannelsChannelHashedIDLanguage = "es-pe"
+	DeleteChannelsChannelHashedIDLanguageEsPr DeleteChannelsChannelHashedIDLanguage = "es-pr"
+	DeleteChannelsChannelHashedIDLanguageEsPy DeleteChannelsChannelHashedIDLanguage = "es-py"
+	DeleteChannelsChannelHashedIDLanguageEsSv DeleteChannelsChannelHashedIDLanguage = "es-sv"
+	DeleteChannelsChannelHashedIDLanguageEsUy DeleteChannelsChannelHashedIDLanguage = "es-uy"
+	DeleteChannelsChannelHashedIDLanguageEsVe DeleteChannelsChannelHashedIDLanguage = "es-ve"
+	DeleteChannelsChannelHashedIDLanguageEs   DeleteChannelsChannelHashedIDLanguage = "es"
+	DeleteChannelsChannelHashedIDLanguageEt   DeleteChannelsChannelHashedIDLanguage = "et"
+	DeleteChannelsChannelHashedIDLanguageEu   DeleteChannelsChannelHashedIDLanguage = "eu"
+	DeleteChannelsChannelHashedIDLanguageFi   DeleteChannelsChannelHashedIDLanguage = "fi"
+	DeleteChannelsChannelHashedIDLanguageFo   DeleteChannelsChannelHashedIDLanguage = "fo"
+	DeleteChannelsChannelHashedIDLanguageFrBe DeleteChannelsChannelHashedIDLanguage = "fr-be"
+	DeleteChannelsChannelHashedIDLanguageFrCa DeleteChannelsChannelHashedIDLanguage = "fr-ca"
+	DeleteChannelsChannelHashedIDLanguageFrCh DeleteChannelsChannelHashedIDLanguage = "fr-ch"
+	DeleteChannelsChannelHashedIDLanguageFrFr DeleteChannelsChannelHashedIDLanguage = "fr-fr"
+	DeleteChannelsChannelHashedIDLanguageFrLu DeleteChannelsChannelHashedIDLanguage = "fr-lu"
+	DeleteChannelsChannelHashedIDLanguageFrMc DeleteChannelsChannelHashedIDLanguage = "fr-mc"
+	DeleteChannelsChannelHashedIDLanguageFr   DeleteChannelsChannelHashedIDLanguage = "fr"
+	DeleteChannelsChannelHashedIDLanguageGa   DeleteChannelsChannelHashedIDLanguage = "ga"
+	DeleteChannelsChannelHashedIDLanguageGd   DeleteChannelsChannelHashedIDLanguage = "gd"
+	DeleteChannelsChannelHashedIDLanguageGl   DeleteChannelsChannelHashedIDLanguage = "gl"
+	DeleteChannelsChannelHashedIDLanguageHaw  DeleteChannelsChannelHashedIDLanguage = "haw"
+	DeleteChannelsChannelHashedIDLanguageHr   DeleteChannelsChannelHashedIDLanguage = "hr"
+	DeleteChannelsChannelHashedIDLanguageHu   DeleteChannelsChannelHashedIDLanguage = "hu"
+	DeleteChannelsChannelHashedIDLanguageIn   DeleteChannelsChannelHashedIDLanguage = "in"
+	DeleteChannelsChannelHashedIDLanguageIs   DeleteChannelsChannelHashedIDLanguage = "is"
+	DeleteChannelsChannelHashedIDLanguageItCh DeleteChannelsChannelHashedIDLanguage = "it-ch"
+	DeleteChannelsChannelHashedIDLanguageItIt DeleteChannelsChannelHashedIDLanguage = "it-it"
+	DeleteChannelsChannelHashedIDLanguageIt   DeleteChannelsChannelHashedIDLanguage = "it"
+	DeleteChannelsChannelHashedIDLanguageJa   DeleteChannelsChannelHashedIDLanguage = "ja"
+	DeleteChannelsChannelHashedIDLanguageKo   DeleteChannelsChannelHashedIDLanguage = "ko"
+	DeleteChannelsChannelHashedIDLanguageMk   DeleteChannelsChannelHashedIDLanguage = "mk"
+	DeleteChannelsChannelHashedIDLanguageNlBe DeleteChannelsChannelHashedIDLanguage = "nl-be"
+	DeleteChannelsChannelHashedIDLanguageNlNl DeleteChannelsChannelHashedIDLanguage = "nl-nl"
+	DeleteChannelsChannelHashedIDLanguageNl   DeleteChannelsChannelHashedIDLanguage = "nl"
+	DeleteChannelsChannelHashedIDLanguageNo   DeleteChannelsChannelHashedIDLanguage = "no"
+	DeleteChannelsChannelHashedIDLanguagePl   DeleteChannelsChannelHashedIDLanguage = "pl"
+	DeleteChannelsChannelHashedIDLanguagePtBr DeleteChannelsChannelHashedIDLanguage = "pt-br"
+	DeleteChannelsChannelHashedIDLanguagePtPt DeleteChannelsChannelHashedIDLanguage = "pt-pt"
+	DeleteChannelsChannelHashedIDLanguagePt   DeleteChannelsChannelHashedIDLanguage = "pt"
+	DeleteChannelsChannelHashedIDLanguageRoMo DeleteChannelsChannelHashedIDLanguage = "ro-mo"
+	DeleteChannelsChannelHashedIDLanguageRoRo DeleteChannelsChannelHashedIDLanguage = "ro-ro"
+	DeleteChannelsChannelHashedIDLanguageRo   DeleteChannelsChannelHashedIDLanguage = "ro"
+	DeleteChannelsChannelHashedIDLanguageRuMo DeleteChannelsChannelHashedIDLanguage = "ru-mo"
+	DeleteChannelsChannelHashedIDLanguageRuRu DeleteChannelsChannelHashedIDLanguage = "ru-ru"
+	DeleteChannelsChannelHashedIDLanguageRu   DeleteChannelsChannelHashedIDLanguage = "ru"
+	DeleteChannelsChannelHashedIDLanguageSk   DeleteChannelsChannelHashedIDLanguage = "sk"
+	DeleteChannelsChannelHashedIDLanguageSl   DeleteChannelsChannelHashedIDLanguage = "sl"
+	DeleteChannelsChannelHashedIDLanguageSq   DeleteChannelsChannelHashedIDLanguage = "sq"
+	DeleteChannelsChannelHashedIDLanguageSr   DeleteChannelsChannelHashedIDLanguage = "sr"
+	DeleteChannelsChannelHashedIDLanguageSvFi DeleteChannelsChannelHashedIDLanguage = "sv-fi"
+	DeleteChannelsChannelHashedIDLanguageSvSe DeleteChannelsChannelHashedIDLanguage = "sv-se"
+	DeleteChannelsChannelHashedIDLanguageSv   DeleteChannelsChannelHashedIDLanguage = "sv"
+	DeleteChannelsChannelHashedIDLanguageTr   DeleteChannelsChannelHashedIDLanguage = "tr"
+	DeleteChannelsChannelHashedIDLanguageUk   DeleteChannelsChannelHashedIDLanguage = "uk"
+	DeleteChannelsChannelHashedIDLanguageZhCn DeleteChannelsChannelHashedIDLanguage = "zh-cn"
+	DeleteChannelsChannelHashedIDLanguageZhTw DeleteChannelsChannelHashedIDLanguage = "zh-tw"
+)
+
+func (e DeleteChannelsChannelHashedIDLanguage) ToPointer() *DeleteChannelsChannelHashedIDLanguage {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *DeleteChannelsChannelHashedIDLanguage) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "af", "be", "bg", "ca", "cs", "da", "de-at", "de-ch", "de-de", "de-li", "de-lu", "de", "el", "en-au", "en-bz", "en-ca", "en-gb", "en-ie", "en-jm", "en-nz", "en-ph", "en-tt", "en-us", "en-za", "en-zw", "en", "es-ar", "es-bo", "es-cl", "es-co", "es-cr", "es-do", "es-ec", "es-es", "es-gt", "es-hn", "es-mx", "es-ni", "es-pa", "es-pe", "es-pr", "es-py", "es-sv", "es-uy", "es-ve", "es", "et", "eu", "fi", "fo", "fr-be", "fr-ca", "fr-ch", "fr-fr", "fr-lu", "fr-mc", "fr", "ga", "gd", "gl", "haw", "hr", "hu", "in", "is", "it-ch", "it-it", "it", "ja", "ko", "mk", "nl-be", "nl-nl", "nl", "no", "pl", "pt-br", "pt-pt", "pt", "ro-mo", "ro-ro", "ro", "ru-mo", "ru-ru", "ru", "sk", "sl", "sq", "sr", "sv-fi", "sv-se", "sv", "tr", "uk", "zh-cn", "zh-tw":
+			return true
+		}
+	}
+	return false
+}
+
+// DeleteChannelsChannelHashedIDPodcastSettings - Podcast specific settings for the channel. Only present when podcasting
+// is enabled for the channel.
+type DeleteChannelsChannelHashedIDPodcastSettings struct {
+	// The channel's copyright information.
+	Copyright optionalnullable.OptionalNullable[string] `json:"copyright,omitzero"`
+	// The format for episodes for the podcast channel.
+	EpisodeFormat optionalnullable.OptionalNullable[DeleteChannelsChannelHashedIDEpisodeFormat] `json:"episode_format,omitzero"`
+	// The name of the author(s) for the channel.
+	AuthorName optionalnullable.OptionalNullable[string] `json:"author_name,omitzero"`
+	// Whether the channel contains explicit content.
+	Explicit optionalnullable.OptionalNullable[bool] `json:"explicit,omitzero"`
+	// The name of the owner for the channel.
+	OwnerName optionalnullable.OptionalNullable[string] `json:"owner_name,omitzero"`
+	// The email of the owner for the channel.
+	OwnerEmail optionalnullable.OptionalNullable[string] `json:"owner_email,omitzero"`
+	// The primary category for the channel.
+	Category1 optionalnullable.OptionalNullable[DeleteChannelsChannelHashedIDCategory1] `json:"category1,omitzero"`
+	// The secondary category for the channel.
+	Category2 optionalnullable.OptionalNullable[DeleteChannelsChannelHashedIDCategory2] `json:"category2,omitzero"`
+	// The third category for the channel.
+	Category3 optionalnullable.OptionalNullable[DeleteChannelsChannelHashedIDCategory3] `json:"category3,omitzero"`
+	// The ISO 639-1 language code for the channel.
+	Language optionalnullable.OptionalNullable[DeleteChannelsChannelHashedIDLanguage] `json:"language,omitzero"`
+}
+
+func (d *DeleteChannelsChannelHashedIDPodcastSettings) GetCopyright() optionalnullable.OptionalNullable[string] {
+	if d == nil {
+		return nil
+	}
+	return d.Copyright
+}
+
+func (d *DeleteChannelsChannelHashedIDPodcastSettings) GetEpisodeFormat() optionalnullable.OptionalNullable[DeleteChannelsChannelHashedIDEpisodeFormat] {
+	if d == nil {
+		return nil
+	}
+	return d.EpisodeFormat
+}
+
+func (d *DeleteChannelsChannelHashedIDPodcastSettings) GetAuthorName() optionalnullable.OptionalNullable[string] {
+	if d == nil {
+		return nil
+	}
+	return d.AuthorName
+}
+
+func (d *DeleteChannelsChannelHashedIDPodcastSettings) GetExplicit() optionalnullable.OptionalNullable[bool] {
+	if d == nil {
+		return nil
+	}
+	return d.Explicit
+}
+
+func (d *DeleteChannelsChannelHashedIDPodcastSettings) GetOwnerName() optionalnullable.OptionalNullable[string] {
+	if d == nil {
+		return nil
+	}
+	return d.OwnerName
+}
+
+func (d *DeleteChannelsChannelHashedIDPodcastSettings) GetOwnerEmail() optionalnullable.OptionalNullable[string] {
+	if d == nil {
+		return nil
+	}
+	return d.OwnerEmail
+}
+
+func (d *DeleteChannelsChannelHashedIDPodcastSettings) GetCategory1() optionalnullable.OptionalNullable[DeleteChannelsChannelHashedIDCategory1] {
+	if d == nil {
+		return nil
+	}
+	return d.Category1
+}
+
+func (d *DeleteChannelsChannelHashedIDPodcastSettings) GetCategory2() optionalnullable.OptionalNullable[DeleteChannelsChannelHashedIDCategory2] {
+	if d == nil {
+		return nil
+	}
+	return d.Category2
+}
+
+func (d *DeleteChannelsChannelHashedIDPodcastSettings) GetCategory3() optionalnullable.OptionalNullable[DeleteChannelsChannelHashedIDCategory3] {
+	if d == nil {
+		return nil
+	}
+	return d.Category3
+}
+
+func (d *DeleteChannelsChannelHashedIDPodcastSettings) GetLanguage() optionalnullable.OptionalNullable[DeleteChannelsChannelHashedIDLanguage] {
+	if d == nil {
+		return nil
+	}
+	return d.Language
+}
+
 // DeleteChannelsChannelHashedIDResponseBody - A Channel lets you take a collection of video (or audio) and embed them
 // on your site, as well as distribute through podcasting.
 type DeleteChannelsChannelHashedIDResponseBody struct {
@@ -35,10 +632,22 @@ type DeleteChannelsChannelHashedIDResponseBody struct {
 	HashedID string `json:"hashed_id"`
 	// The number of medias in the channel.
 	MediaCount int64 `json:"media_count"`
+	// The number of live stream events in the channel.
+	LiveStreamEventCount *int64 `json:"live_stream_event_count,omitzero"`
 	// The display name for the channel
 	Name string `json:"name"`
 	// The date when the channel was last updated.
 	Updated time.Time `json:"updated"`
+	// Whether episodes are automatically published when added to the channel.
+	AutoPublishEnabled optionalnullable.OptionalNullable[bool] `json:"auto_publish_enabled,omitzero"`
+	// Whether podcasting is enabled for the channel.
+	PodcastEnabled optionalnullable.OptionalNullable[bool] `json:"podcast_enabled,omitzero"`
+	// The custom URL used when embedding the channel on your own site. Null if no custom URL is set.
+	CustomURL optionalnullable.OptionalNullable[string] `json:"custom_url,omitzero"`
+	// Podcast specific settings for the channel. Only present when podcasting
+	// is enabled for the channel.
+	//
+	PodcastSettings *DeleteChannelsChannelHashedIDPodcastSettings `json:"podcast_settings,omitzero"`
 	// A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
 	Cursor optionalnullable.OptionalNullable[string] `json:"cursor,omitzero"`
 }
@@ -89,6 +698,13 @@ func (d *DeleteChannelsChannelHashedIDResponseBody) GetMediaCount() int64 {
 	return d.MediaCount
 }
 
+func (d *DeleteChannelsChannelHashedIDResponseBody) GetLiveStreamEventCount() *int64 {
+	if d == nil {
+		return nil
+	}
+	return d.LiveStreamEventCount
+}
+
 func (d *DeleteChannelsChannelHashedIDResponseBody) GetName() string {
 	if d == nil {
 		return ""
@@ -101,6 +717,34 @@ func (d *DeleteChannelsChannelHashedIDResponseBody) GetUpdated() time.Time {
 		return time.Time{}
 	}
 	return d.Updated
+}
+
+func (d *DeleteChannelsChannelHashedIDResponseBody) GetAutoPublishEnabled() optionalnullable.OptionalNullable[bool] {
+	if d == nil {
+		return nil
+	}
+	return d.AutoPublishEnabled
+}
+
+func (d *DeleteChannelsChannelHashedIDResponseBody) GetPodcastEnabled() optionalnullable.OptionalNullable[bool] {
+	if d == nil {
+		return nil
+	}
+	return d.PodcastEnabled
+}
+
+func (d *DeleteChannelsChannelHashedIDResponseBody) GetCustomURL() optionalnullable.OptionalNullable[string] {
+	if d == nil {
+		return nil
+	}
+	return d.CustomURL
+}
+
+func (d *DeleteChannelsChannelHashedIDResponseBody) GetPodcastSettings() *DeleteChannelsChannelHashedIDPodcastSettings {
+	if d == nil {
+		return nil
+	}
+	return d.PodcastSettings
 }
 
 func (d *DeleteChannelsChannelHashedIDResponseBody) GetCursor() optionalnullable.OptionalNullable[string] {

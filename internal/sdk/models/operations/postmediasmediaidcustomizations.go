@@ -947,6 +947,31 @@ func (p *PostMediasMediaIDCustomizationsRequest) GetBody() PostMediasMediaIDCust
 	return p.Body
 }
 
+// PostMediasMediaIDCustomizationsCode - A machine-readable identifier for the specific authorization failure.
+type PostMediasMediaIDCustomizationsCode string
+
+const (
+	PostMediasMediaIDCustomizationsCodeUnauthorizedCredentials PostMediasMediaIDCustomizationsCode = "unauthorized_credentials"
+	PostMediasMediaIDCustomizationsCodeAccountInactive         PostMediasMediaIDCustomizationsCode = "account_inactive"
+	PostMediasMediaIDCustomizationsCodeUnauthorizedScope       PostMediasMediaIDCustomizationsCode = "unauthorized_scope"
+	PostMediasMediaIDCustomizationsCodeUnauthorizedParams      PostMediasMediaIDCustomizationsCode = "unauthorized_params"
+)
+
+func (e PostMediasMediaIDCustomizationsCode) ToPointer() *PostMediasMediaIDCustomizationsCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *PostMediasMediaIDCustomizationsCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 type PostMediasMediaIDCustomizationsPasswordProtectedVideo struct {
 	On        *string `json:"on,omitzero"`
 	Src       *string `json:"src,omitzero"`
@@ -1239,6 +1264,9 @@ func (p *PostMediasMediaIDCustomizationsCaptionsV1Response) GetOnByDefault() *st
 // #region class-body-postmediasmediaidcustomizationscaptionsv1response
 // #endregion class-body-postmediasmediaidcustomizationscaptionsv1response
 
+// PostMediasMediaIDCustomizationsPluginResponse - Container for player plugin configurations. Plugin keys are extensible and
+// not strictly validated; the documented sub-objects represent the most
+// common plugins.
 type PostMediasMediaIDCustomizationsPluginResponse struct {
 	PasswordProtectedVideo *PostMediasMediaIDCustomizationsPasswordProtectedVideo `json:"passwordProtectedVideo,omitzero"`
 	VideoThumbnail         *PostMediasMediaIDCustomizationsVideoThumbnailResponse `json:"videoThumbnail,omitzero"`
@@ -1379,10 +1407,14 @@ type PostMediasMediaIDCustomizationsResponseBody struct {
 	Volume                        *string `json:"volume,omitzero"`
 	Wmode                         *string `json:"wmode,omitzero"`
 	// String representation of whether the key moments feature is enabled.
-	KeyMoments *string                                        `json:"keyMoments,omitzero"`
-	Plugin     *PostMediasMediaIDCustomizationsPluginResponse `json:"plugin,omitzero"`
-	Private    *PostMediasMediaIDCustomizationsPrivate        `json:"private,omitzero"`
-	Encrypted  *PostMediasMediaIDCustomizationsEncrypted      `json:"encrypted,omitzero"`
+	KeyMoments *string `json:"keyMoments,omitzero"`
+	// Container for player plugin configurations. Plugin keys are extensible and
+	// not strictly validated; the documented sub-objects represent the most
+	// common plugins.
+	//
+	Plugin    *PostMediasMediaIDCustomizationsPluginResponse `json:"plugin,omitzero"`
+	Private   *PostMediasMediaIDCustomizationsPrivate        `json:"private,omitzero"`
+	Encrypted *PostMediasMediaIDCustomizationsEncrypted      `json:"encrypted,omitzero"`
 }
 
 func (p PostMediasMediaIDCustomizationsResponseBody) MarshalJSON() ([]byte, error) {

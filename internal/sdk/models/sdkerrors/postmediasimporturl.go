@@ -6,6 +6,7 @@ package sdkerrors
 import (
 	"encoding/json"
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
+	"github.com/wistia/wistia-cli/internal/sdk/models/operations"
 )
 
 // PostMediasImportURLInternalServerError - Internal server error
@@ -63,8 +64,10 @@ func (e *PostMediasImportURLForbiddenError) Error() string {
 
 // PostMediasImportURLUnauthorizedError - Unauthorized, invalid or missing token
 type PostMediasImportURLUnauthorizedError struct {
-	Error_   *string                 `json:"error,omitzero"`
-	HTTPMeta components.HTTPMetadata `json:"-"`
+	// A machine-readable identifier for the specific authorization failure.
+	Code     *operations.PostMediasImportURLCode `json:"code,omitzero"`
+	Error_   *string                             `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata             `json:"-"`
 }
 
 var _ error = &PostMediasImportURLUnauthorizedError{}
@@ -77,7 +80,9 @@ func (e *PostMediasImportURLUnauthorizedError) Error() string {
 // PostMediasImportURLBadRequestError - Bad request
 type PostMediasImportURLBadRequestError struct {
 	// Error message detailing the reason for the bad request.
-	Error_   *string                 `json:"error,omitzero"`
+	Error_ *string `json:"error,omitzero"`
+	// Array of error messages detailing the reasons for the bad request.
+	Errors   []string                `json:"errors,omitzero"`
 	HTTPMeta components.HTTPMetadata `json:"-"`
 }
 

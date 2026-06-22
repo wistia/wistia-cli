@@ -9,15 +9,40 @@ import (
 )
 
 type GetBackgroundJobStatusBackgroundJobStatusIDRequest struct {
-	// The numeric ID of the background job
-	BackgroundJobStatusID int64 `pathParam:"style=simple,explode=false,name=backgroundJobStatusId"`
+	// The hashed ID or numeric ID of the background job
+	BackgroundJobStatusID string `pathParam:"style=simple,explode=false,name=backgroundJobStatusId"`
 }
 
-func (g *GetBackgroundJobStatusBackgroundJobStatusIDRequest) GetBackgroundJobStatusID() int64 {
+func (g *GetBackgroundJobStatusBackgroundJobStatusIDRequest) GetBackgroundJobStatusID() string {
 	if g == nil {
-		return 0
+		return ""
 	}
 	return g.BackgroundJobStatusID
+}
+
+// GetBackgroundJobStatusBackgroundJobStatusIDCode - A machine-readable identifier for the specific authorization failure.
+type GetBackgroundJobStatusBackgroundJobStatusIDCode string
+
+const (
+	GetBackgroundJobStatusBackgroundJobStatusIDCodeUnauthorizedCredentials GetBackgroundJobStatusBackgroundJobStatusIDCode = "unauthorized_credentials"
+	GetBackgroundJobStatusBackgroundJobStatusIDCodeAccountInactive         GetBackgroundJobStatusBackgroundJobStatusIDCode = "account_inactive"
+	GetBackgroundJobStatusBackgroundJobStatusIDCodeUnauthorizedScope       GetBackgroundJobStatusBackgroundJobStatusIDCode = "unauthorized_scope"
+	GetBackgroundJobStatusBackgroundJobStatusIDCodeUnauthorizedParams      GetBackgroundJobStatusBackgroundJobStatusIDCode = "unauthorized_params"
+)
+
+func (e GetBackgroundJobStatusBackgroundJobStatusIDCode) ToPointer() *GetBackgroundJobStatusBackgroundJobStatusIDCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetBackgroundJobStatusBackgroundJobStatusIDCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
 }
 
 // GetBackgroundJobStatusBackgroundJobStatusIDStatus - The status of the background job that's been queued for the request.
@@ -50,6 +75,8 @@ func (e *GetBackgroundJobStatusBackgroundJobStatusIDStatus) IsExact() bool {
 type GetBackgroundJobStatusBackgroundJobStatusIDBackgroundJobStatus struct {
 	// The ID of the background job that's been queued for the request.
 	ID int64 `json:"id"`
+	// The unguessable hashed ID of the background job. Prefer this over the numeric ID when polling for status.
+	HashedID string `json:"hashed_id"`
 	// The status of the background job that's been queued for the request.
 	Status GetBackgroundJobStatusBackgroundJobStatusIDStatus `json:"status"`
 }
@@ -59,6 +86,13 @@ func (g *GetBackgroundJobStatusBackgroundJobStatusIDBackgroundJobStatus) GetID()
 		return 0
 	}
 	return g.ID
+}
+
+func (g *GetBackgroundJobStatusBackgroundJobStatusIDBackgroundJobStatus) GetHashedID() string {
+	if g == nil {
+		return ""
+	}
+	return g.HashedID
 }
 
 func (g *GetBackgroundJobStatusBackgroundJobStatusIDBackgroundJobStatus) GetStatus() GetBackgroundJobStatusBackgroundJobStatusIDStatus {

@@ -5,6 +5,7 @@ package operations
 
 import (
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
+	"github.com/wistia/wistia-cli/internal/sdk/optionalnullable"
 	"github.com/wistia/wistia-cli/internal/sdk/sdkinternal/utils"
 )
 
@@ -20,6 +21,31 @@ func (g *GetStatsMediasMediaIDRequest) GetMediaID() string {
 	return g.MediaID
 }
 
+// GetStatsMediasMediaIDCode - A machine-readable identifier for the specific authorization failure.
+type GetStatsMediasMediaIDCode string
+
+const (
+	GetStatsMediasMediaIDCodeUnauthorizedCredentials GetStatsMediasMediaIDCode = "unauthorized_credentials"
+	GetStatsMediasMediaIDCodeAccountInactive         GetStatsMediasMediaIDCode = "account_inactive"
+	GetStatsMediasMediaIDCodeUnauthorizedScope       GetStatsMediasMediaIDCode = "unauthorized_scope"
+	GetStatsMediasMediaIDCodeUnauthorizedParams      GetStatsMediasMediaIDCode = "unauthorized_params"
+)
+
+func (e GetStatsMediasMediaIDCode) ToPointer() *GetStatsMediasMediaIDCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetStatsMediasMediaIDCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 type Action struct {
 	// Type of action (e.g., "Call to Action").
 	Type *string `json:"type,omitzero"`
@@ -29,6 +55,10 @@ type Action struct {
 	ImpressionCount *int64 `json:"impression_count,omitzero"`
 	// The rate of actions performed over impressions.
 	Rate *float32 `json:"rate,omitzero"`
+	// For action types that link out (e.g., post-roll CTA), the URL the viewer was directed to.
+	URL optionalnullable.OptionalNullable[string] `json:"url,omitzero"`
+	// For action types that include display text (e.g., post-roll CTA), the text shown to the viewer.
+	Text optionalnullable.OptionalNullable[string] `json:"text,omitzero"`
 }
 
 func (a *Action) GetType() *string {
@@ -57,6 +87,20 @@ func (a *Action) GetRate() *float32 {
 		return nil
 	}
 	return a.Rate
+}
+
+func (a *Action) GetURL() optionalnullable.OptionalNullable[string] {
+	if a == nil {
+		return nil
+	}
+	return a.URL
+}
+
+func (a *Action) GetText() optionalnullable.OptionalNullable[string] {
+	if a == nil {
+		return nil
+	}
+	return a.Text
 }
 
 // GetStatsMediasMediaIDResponseBody - Success response with the stats of the video.

@@ -51,6 +51,31 @@ func (g *GetAnalyticsWebinarsWebinarIDAudienceRequest) GetCursor() *string {
 	return g.Cursor
 }
 
+// GetAnalyticsWebinarsWebinarIDAudienceCode - A machine-readable identifier for the specific authorization failure.
+type GetAnalyticsWebinarsWebinarIDAudienceCode string
+
+const (
+	GetAnalyticsWebinarsWebinarIDAudienceCodeUnauthorizedCredentials GetAnalyticsWebinarsWebinarIDAudienceCode = "unauthorized_credentials"
+	GetAnalyticsWebinarsWebinarIDAudienceCodeAccountInactive         GetAnalyticsWebinarsWebinarIDAudienceCode = "account_inactive"
+	GetAnalyticsWebinarsWebinarIDAudienceCodeUnauthorizedScope       GetAnalyticsWebinarsWebinarIDAudienceCode = "unauthorized_scope"
+	GetAnalyticsWebinarsWebinarIDAudienceCodeUnauthorizedParams      GetAnalyticsWebinarsWebinarIDAudienceCode = "unauthorized_params"
+)
+
+func (e GetAnalyticsWebinarsWebinarIDAudienceCode) ToPointer() *GetAnalyticsWebinarsWebinarIDAudienceCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetAnalyticsWebinarsWebinarIDAudienceCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 type GetAnalyticsWebinarsWebinarIDAudienceChat struct {
 	// The approximate position in the event when the chat was sent (in seconds).
 	RoundedPlayerPosition *int64 `json:"rounded_player_position,omitzero"`

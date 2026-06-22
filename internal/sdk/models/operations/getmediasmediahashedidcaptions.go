@@ -21,6 +21,31 @@ func (g *GetMediasMediaHashedIDCaptionsRequest) GetMediaHashedID() string {
 	return g.MediaHashedID
 }
 
+// GetMediasMediaHashedIDCaptionsCode - A machine-readable identifier for the specific authorization failure.
+type GetMediasMediaHashedIDCaptionsCode string
+
+const (
+	GetMediasMediaHashedIDCaptionsCodeUnauthorizedCredentials GetMediasMediaHashedIDCaptionsCode = "unauthorized_credentials"
+	GetMediasMediaHashedIDCaptionsCodeAccountInactive         GetMediasMediaHashedIDCaptionsCode = "account_inactive"
+	GetMediasMediaHashedIDCaptionsCodeUnauthorizedScope       GetMediasMediaHashedIDCaptionsCode = "unauthorized_scope"
+	GetMediasMediaHashedIDCaptionsCodeUnauthorizedParams      GetMediasMediaHashedIDCaptionsCode = "unauthorized_params"
+)
+
+func (e GetMediasMediaHashedIDCaptionsCode) ToPointer() *GetMediasMediaHashedIDCaptionsCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetMediasMediaHashedIDCaptionsCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 type GetMediasMediaHashedIDCaptionsResponseBody struct {
 	// English name of the language.
 	EnglishName *string `json:"english_name,omitzero"`

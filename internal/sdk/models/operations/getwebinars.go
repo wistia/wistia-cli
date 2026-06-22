@@ -40,7 +40,7 @@ func (e *GetWebinarsEnabled) UnmarshalJSON(data []byte) error {
 	}
 }
 
-// GetWebinarsCursor - If `cursor[enabled]` is set to 1 than cursor pagination is enabled and the
+// GetWebinarsCursor - If `cursor[enabled]` is set to 1 then cursor pagination is enabled and the
 // first set of records are fetched up to the `per_page`. Cursor
 // pagination will also be turned on if `cursor[before]` or `cursor[after]`
 // are set. Records returned will have a `cursor` property set which can be used to fetch more records in the same `sort_by` ordering.
@@ -48,20 +48,20 @@ func (e *GetWebinarsEnabled) UnmarshalJSON(data []byte) error {
 // the cursor of the first record can be used to fetch records before the result set.
 //
 // NOTE: a cursor value is only valid if the `sort_by` value hasn't changed from the
-// last fetch. For example, you cannot fetch using `sort_by` id and than pass that
+// last fetch. For example, you cannot fetch using `sort_by` id and then pass that
 // cursor value to a `sort_by` name.
 type GetWebinarsCursor struct {
 	// If `cursor[enabled]` is set to 1, the first result set will be fetched with cursor pagination enabled. This
 	// values is ignored if `cursor[before]` or `cursor[after]` are set.
 	//
 	Enabled *GetWebinarsEnabled `queryParam:"name=enabled"`
-	// If `cursor[before]` is set than cursor pagination is enabled and all records
+	// If `cursor[before]` is set then cursor pagination is enabled and all records
 	// before the cursor up to the `per_page` are returned. This feature is useful for
 	// fetching "new records", for example, in a "pull to refersh" feature when showing records in a descending
 	// order.
 	//
 	Before *string `queryParam:"name=before"`
-	// If `cursor[after]` is set than cursor pagination is enabled and all records
+	// If `cursor[after]` is set then cursor pagination is enabled and all records
 	// after the cursor up to the `per_page` are returned.
 	//
 	After *string `queryParam:"name=after"`
@@ -177,7 +177,7 @@ type GetWebinarsRequest struct {
 	Page *int64 `queryParam:"style=form,explode=true,name=page"`
 	// The number of medias per page. Use this for both offset pagination and cursor pagination.
 	PerPage *int64 `queryParam:"style=form,explode=true,name=per_page"`
-	// If `cursor[enabled]` is set to 1 than cursor pagination is enabled and the
+	// If `cursor[enabled]` is set to 1 then cursor pagination is enabled and the
 	// first set of records are fetched up to the `per_page`. Cursor
 	// pagination will also be turned on if `cursor[before]` or `cursor[after]`
 	// are set. Records returned will have a `cursor` property set which can be used to fetch more records in the same `sort_by` ordering.
@@ -185,7 +185,7 @@ type GetWebinarsRequest struct {
 	// the cursor of the first record can be used to fetch records before the result set.
 	//
 	// NOTE: a cursor value is only valid if the `sort_by` value hasn't changed from the
-	// last fetch. For example, you cannot fetch using `sort_by` id and than pass that
+	// last fetch. For example, you cannot fetch using `sort_by` id and then pass that
 	// cursor value to a `sort_by` name.
 	//
 	Cursor *GetWebinarsCursor `queryParam:"style=deepObject,explode=true,name=cursor"`
@@ -261,6 +261,63 @@ func (g *GetWebinarsRequest) GetStarted() *Started {
 	return g.Started
 }
 
+// GetWebinarsCode - A machine-readable identifier for the specific authorization failure.
+type GetWebinarsCode string
+
+const (
+	GetWebinarsCodeUnauthorizedCredentials GetWebinarsCode = "unauthorized_credentials"
+	GetWebinarsCodeAccountInactive         GetWebinarsCode = "account_inactive"
+	GetWebinarsCodeUnauthorizedScope       GetWebinarsCode = "unauthorized_scope"
+	GetWebinarsCodeUnauthorizedParams      GetWebinarsCode = "unauthorized_params"
+)
+
+func (e GetWebinarsCode) ToPointer() *GetWebinarsCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetWebinarsCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
+type GetWebinarsFolder struct {
+	// A unique alphanumeric identifier for the record.
+	ID string `json:"id"`
+	// A URL for fetching all the records of the given record type. You can pass hashed_ids as a param with multiple values
+	// to do a batch fetch for this records type.
+	//
+	IndexURL string `json:"index_url"`
+	// A URL that can be used to fetch this record.
+	URL string `json:"url"`
+}
+
+func (g *GetWebinarsFolder) GetID() string {
+	if g == nil {
+		return ""
+	}
+	return g.ID
+}
+
+func (g *GetWebinarsFolder) GetIndexURL() string {
+	if g == nil {
+		return ""
+	}
+	return g.IndexURL
+}
+
+func (g *GetWebinarsFolder) GetURL() string {
+	if g == nil {
+		return ""
+	}
+	return g.URL
+}
+
 // GetWebinarsResponseBody - A webinar is an event which allows you to stream a video
 // to multiple participants. See our [Webinars Guide](https://support.wistia.com/en/articles/8288501-getting-started-with-webinars)
 // for more info.
@@ -275,6 +332,8 @@ type GetWebinarsResponseBody struct {
 	ScheduledFor optionalnullable.OptionalNullable[time.Time] `json:"scheduled_for,omitzero"`
 	// Duration of the webinar in minutes
 	EventDuration optionalnullable.OptionalNullable[int64] `json:"event_duration,omitzero"`
+	// The IANA time zone identifier the webinar is scheduled in
+	TimeZone string `json:"time_zone"`
 	// Current lifecycle status of the event
 	LifecycleStatus string `json:"lifecycle_status"`
 	// Registration status of the event
@@ -289,6 +348,10 @@ type GetWebinarsResponseBody struct {
 	HostLink string `json:"host_link"`
 	// Link for panelists to join the event
 	PanelistLink string `json:"panelist_link"`
+	// The folder (project) this webinar belongs to
+	Folder optionalnullable.OptionalNullable[GetWebinarsFolder] `json:"folder,omitzero"`
+	// A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+	Cursor optionalnullable.OptionalNullable[string] `json:"cursor,omitzero"`
 }
 
 func (g GetWebinarsResponseBody) MarshalJSON() ([]byte, error) {
@@ -335,6 +398,13 @@ func (g *GetWebinarsResponseBody) GetEventDuration() optionalnullable.OptionalNu
 		return nil
 	}
 	return g.EventDuration
+}
+
+func (g *GetWebinarsResponseBody) GetTimeZone() string {
+	if g == nil {
+		return ""
+	}
+	return g.TimeZone
 }
 
 func (g *GetWebinarsResponseBody) GetLifecycleStatus() string {
@@ -384,6 +454,20 @@ func (g *GetWebinarsResponseBody) GetPanelistLink() string {
 		return ""
 	}
 	return g.PanelistLink
+}
+
+func (g *GetWebinarsResponseBody) GetFolder() optionalnullable.OptionalNullable[GetWebinarsFolder] {
+	if g == nil {
+		return nil
+	}
+	return g.Folder
+}
+
+func (g *GetWebinarsResponseBody) GetCursor() optionalnullable.OptionalNullable[string] {
+	if g == nil {
+		return nil
+	}
+	return g.Cursor
 }
 
 type GetWebinarsResponse struct {

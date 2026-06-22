@@ -21,17 +21,42 @@ func (p *PostTagsRequest) GetName() string {
 	return p.Name
 }
 
+// PostTagsCode - A machine-readable identifier for the specific authorization failure.
+type PostTagsCode string
+
+const (
+	PostTagsCodeUnauthorizedCredentials PostTagsCode = "unauthorized_credentials"
+	PostTagsCodeAccountInactive         PostTagsCode = "account_inactive"
+	PostTagsCodeUnauthorizedScope       PostTagsCode = "unauthorized_scope"
+	PostTagsCodeUnauthorizedParams      PostTagsCode = "unauthorized_params"
+)
+
+func (e PostTagsCode) ToPointer() *PostTagsCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *PostTagsCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 // PostTagsResponseBody - A tag is used to tag related media. You can then filter media
 // by a specific tag.
 type PostTagsResponseBody struct {
 	// The tag's display name.
 	Name *string `json:"name,omitzero"`
 	// The number of different medias that have been associated with this tag.
-	TaggingsCount *int64 `json:"taggingsCount,omitzero"`
+	TaggingsCount *int64 `json:"taggings_count,omitzero"`
 	// The date that the tag was originally created.
-	Created *time.Time `json:"created,omitzero"`
+	CreatedAt *time.Time `json:"created_at,omitzero"`
 	// The date that the tag was last updated.
-	Updated *time.Time `json:"updated,omitzero"`
+	UpdatedAt *time.Time `json:"updated_at,omitzero"`
 	// A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
 	Cursor optionalnullable.OptionalNullable[string] `json:"cursor,omitzero"`
 }
@@ -61,18 +86,18 @@ func (p *PostTagsResponseBody) GetTaggingsCount() *int64 {
 	return p.TaggingsCount
 }
 
-func (p *PostTagsResponseBody) GetCreated() *time.Time {
+func (p *PostTagsResponseBody) GetCreatedAt() *time.Time {
 	if p == nil {
 		return nil
 	}
-	return p.Created
+	return p.CreatedAt
 }
 
-func (p *PostTagsResponseBody) GetUpdated() *time.Time {
+func (p *PostTagsResponseBody) GetUpdatedAt() *time.Time {
 	if p == nil {
 		return nil
 	}
-	return p.Updated
+	return p.UpdatedAt
 }
 
 func (p *PostTagsResponseBody) GetCursor() optionalnullable.OptionalNullable[string] {

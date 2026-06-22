@@ -22,6 +22,31 @@ func (d *DeleteMediasMediaHashedIDRequest) GetMediaHashedID() string {
 	return d.MediaHashedID
 }
 
+// DeleteMediasMediaHashedIDCode - A machine-readable identifier for the specific authorization failure.
+type DeleteMediasMediaHashedIDCode string
+
+const (
+	DeleteMediasMediaHashedIDCodeUnauthorizedCredentials DeleteMediasMediaHashedIDCode = "unauthorized_credentials"
+	DeleteMediasMediaHashedIDCodeAccountInactive         DeleteMediasMediaHashedIDCode = "account_inactive"
+	DeleteMediasMediaHashedIDCodeUnauthorizedScope       DeleteMediasMediaHashedIDCode = "unauthorized_scope"
+	DeleteMediasMediaHashedIDCodeUnauthorizedParams      DeleteMediasMediaHashedIDCode = "unauthorized_params"
+)
+
+func (e DeleteMediasMediaHashedIDCode) ToPointer() *DeleteMediasMediaHashedIDCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *DeleteMediasMediaHashedIDCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 // DeleteMediasMediaHashedIDType - A string representing what type of media this is.
 type DeleteMediasMediaHashedIDType string
 
@@ -138,6 +163,8 @@ type DeleteMediasMediaHashedIDResponseBody struct {
 	// The title of the section in which the media appears. This attribute is omitted if the media is not in a section (default).
 	Section   optionalnullable.OptionalNullable[string] `json:"section,omitzero"`
 	Thumbnail *DeleteMediasMediaHashedIDThumbnail       `json:"thumbnail,omitzero"`
+	// Whether the media is protected (e.g. requires a password or other authentication to view). Null if the media is not protected.
+	Protected optionalnullable.OptionalNullable[bool] `json:"protected,omitzero"`
 }
 
 func (d DeleteMediasMediaHashedIDResponseBody) MarshalJSON() ([]byte, error) {
@@ -247,6 +274,13 @@ func (d *DeleteMediasMediaHashedIDResponseBody) GetThumbnail() *DeleteMediasMedi
 		return nil
 	}
 	return d.Thumbnail
+}
+
+func (d *DeleteMediasMediaHashedIDResponseBody) GetProtected() optionalnullable.OptionalNullable[bool] {
+	if d == nil {
+		return nil
+	}
+	return d.Protected
 }
 
 type DeleteMediasMediaHashedIDResponse struct {

@@ -6,6 +6,7 @@ package sdkerrors
 import (
 	"encoding/json"
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
+	"github.com/wistia/wistia-cli/internal/sdk/models/operations"
 )
 
 // GetTagsInternalServerError - Internal server error
@@ -23,6 +24,8 @@ func (e *GetTagsInternalServerError) Error() string {
 
 // GetTagsUnauthorizedError - Unauthorized, invalid or missing token
 type GetTagsUnauthorizedError struct {
+	// A machine-readable identifier for the specific authorization failure.
+	Code     *operations.GetTagsCode `json:"code,omitzero"`
 	Error_   *string                 `json:"error,omitzero"`
 	HTTPMeta components.HTTPMetadata `json:"-"`
 }
@@ -37,7 +40,9 @@ func (e *GetTagsUnauthorizedError) Error() string {
 // GetTagsBadRequestError - Bad request
 type GetTagsBadRequestError struct {
 	// Error message detailing the reason for the bad request.
-	Error_   *string                 `json:"error,omitzero"`
+	Error_ *string `json:"error,omitzero"`
+	// Array of error messages detailing the reasons for the bad request.
+	Errors   []string                `json:"errors,omitzero"`
 	HTTPMeta components.HTTPMetadata `json:"-"`
 }
 

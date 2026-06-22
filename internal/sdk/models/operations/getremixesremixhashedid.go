@@ -5,7 +5,9 @@ package operations
 
 import (
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
+	"github.com/wistia/wistia-cli/internal/sdk/optionalnullable"
 	"github.com/wistia/wistia-cli/internal/sdk/sdkinternal/utils"
+	"time"
 )
 
 type GetRemixesRemixHashedIDRequest struct {
@@ -20,11 +22,37 @@ func (g *GetRemixesRemixHashedIDRequest) GetRemixHashedID() string {
 	return g.RemixHashedID
 }
 
+// GetRemixesRemixHashedIDCode - A machine-readable identifier for the specific authorization failure.
+type GetRemixesRemixHashedIDCode string
+
+const (
+	GetRemixesRemixHashedIDCodeUnauthorizedCredentials GetRemixesRemixHashedIDCode = "unauthorized_credentials"
+	GetRemixesRemixHashedIDCodeAccountInactive         GetRemixesRemixHashedIDCode = "account_inactive"
+	GetRemixesRemixHashedIDCodeUnauthorizedScope       GetRemixesRemixHashedIDCode = "unauthorized_scope"
+	GetRemixesRemixHashedIDCodeUnauthorizedParams      GetRemixesRemixHashedIDCode = "unauthorized_params"
+)
+
+func (e GetRemixesRemixHashedIDCode) ToPointer() *GetRemixesRemixHashedIDCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetRemixesRemixHashedIDCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 // GetRemixesRemixHashedIDStatus - Current processing status.
 type GetRemixesRemixHashedIDStatus string
 
 const (
 	GetRemixesRemixHashedIDStatusPending                 GetRemixesRemixHashedIDStatus = "pending"
+	GetRemixesRemixHashedIDStatusGenerating              GetRemixesRemixHashedIDStatus = "generating"
 	GetRemixesRemixHashedIDStatusGeneratingScenes        GetRemixesRemixHashedIDStatus = "generating_scenes"
 	GetRemixesRemixHashedIDStatusEditableScenesGenerated GetRemixesRemixHashedIDStatus = "editable_scenes_generated"
 	GetRemixesRemixHashedIDStatusEditTreeGenerated       GetRemixesRemixHashedIDStatus = "edit_tree_generated"
@@ -41,7 +69,7 @@ func (e GetRemixesRemixHashedIDStatus) ToPointer() *GetRemixesRemixHashedIDStatu
 func (e *GetRemixesRemixHashedIDStatus) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "pending", "generating_scenes", "editable_scenes_generated", "edit_tree_generated", "exporting", "completed", "error":
+		case "pending", "generating", "generating_scenes", "editable_scenes_generated", "edit_tree_generated", "exporting", "completed", "error":
 			return true
 		}
 	}
@@ -51,41 +79,32 @@ func (e *GetRemixesRemixHashedIDStatus) IsExact() bool {
 // Preview URLs, available when status is "edit_tree_generated" or later.
 type Preview struct {
 	// Iframe embed URL for video playback.
-	VideoURL *string `json:"video_url,omitzero"`
+	EmbedURL *string `json:"embed_url,omitzero"`
 	// Thumbnail image URL.
-	ThumbnailURL *string `json:"thumbnail_url,omitzero"`
-	// Hashed ID of the output media.
-	MediaHashedID *string `json:"media_hashed_id,omitzero"`
-	// Name of the output media.
-	Name *string `json:"name,omitzero"`
+	ThumbnailURL optionalnullable.OptionalNullable[string] `json:"thumbnail_url,omitzero"`
+	// Whether the instant HLS preview is ready.
+	InstantHlsReady *bool `json:"instant_hls_ready,omitzero"`
 }
 
-func (p *Preview) GetVideoURL() *string {
+func (p *Preview) GetEmbedURL() *string {
 	if p == nil {
 		return nil
 	}
-	return p.VideoURL
+	return p.EmbedURL
 }
 
-func (p *Preview) GetThumbnailURL() *string {
+func (p *Preview) GetThumbnailURL() optionalnullable.OptionalNullable[string] {
 	if p == nil {
 		return nil
 	}
 	return p.ThumbnailURL
 }
 
-func (p *Preview) GetMediaHashedID() *string {
+func (p *Preview) GetInstantHlsReady() *bool {
 	if p == nil {
 		return nil
 	}
-	return p.MediaHashedID
-}
-
-func (p *Preview) GetName() *string {
-	if p == nil {
-		return nil
-	}
-	return p.Name
+	return p.InstantHlsReady
 }
 
 // GetRemixesRemixHashedIDResponseBody - Remix status and details.
@@ -94,6 +113,8 @@ type GetRemixesRemixHashedIDResponseBody struct {
 	RemixID *string `json:"remix_id,omitzero"`
 	// Hashed ID of the parent conversation.
 	ConversationID *string `json:"conversation_id,omitzero"`
+	// The ISO 8601 timestamp when the remix was created.
+	CreatedAt *time.Time `json:"created_at,omitzero"`
 	// Current processing status.
 	Status *GetRemixesRemixHashedIDStatus `json:"status,omitzero"`
 	// Error details if status is "error".
@@ -125,6 +146,13 @@ func (g *GetRemixesRemixHashedIDResponseBody) GetConversationID() *string {
 		return nil
 	}
 	return g.ConversationID
+}
+
+func (g *GetRemixesRemixHashedIDResponseBody) GetCreatedAt() *time.Time {
+	if g == nil {
+		return nil
+	}
+	return g.CreatedAt
 }
 
 func (g *GetRemixesRemixHashedIDResponseBody) GetStatus() *GetRemixesRemixHashedIDStatus {

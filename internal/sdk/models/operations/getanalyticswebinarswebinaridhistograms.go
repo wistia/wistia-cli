@@ -20,6 +20,31 @@ func (g *GetAnalyticsWebinarsWebinarIDHistogramsRequest) GetWebinarID() string {
 	return g.WebinarID
 }
 
+// GetAnalyticsWebinarsWebinarIDHistogramsCode - A machine-readable identifier for the specific authorization failure.
+type GetAnalyticsWebinarsWebinarIDHistogramsCode string
+
+const (
+	GetAnalyticsWebinarsWebinarIDHistogramsCodeUnauthorizedCredentials GetAnalyticsWebinarsWebinarIDHistogramsCode = "unauthorized_credentials"
+	GetAnalyticsWebinarsWebinarIDHistogramsCodeAccountInactive         GetAnalyticsWebinarsWebinarIDHistogramsCode = "account_inactive"
+	GetAnalyticsWebinarsWebinarIDHistogramsCodeUnauthorizedScope       GetAnalyticsWebinarsWebinarIDHistogramsCode = "unauthorized_scope"
+	GetAnalyticsWebinarsWebinarIDHistogramsCodeUnauthorizedParams      GetAnalyticsWebinarsWebinarIDHistogramsCode = "unauthorized_params"
+)
+
+func (e GetAnalyticsWebinarsWebinarIDHistogramsCode) ToPointer() *GetAnalyticsWebinarsWebinarIDHistogramsCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetAnalyticsWebinarsWebinarIDHistogramsCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 // GetAnalyticsWebinarsWebinarIDHistogramsResponseBody - Success response with webinar histogram data.
 type GetAnalyticsWebinarsWebinarIDHistogramsResponseBody struct {
 	// Per-time-bucket attendee counts. Each element represents the number of attendees in a 10-second bucket.

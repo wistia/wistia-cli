@@ -13,6 +13,8 @@ type PostRemixesRequest struct {
 	MediaHashedIds []string `json:"media_hashed_ids"`
 	// Natural language instructions describing the desired remix (e.g., "create a 60-second highlight reel").
 	Instructions string `json:"instructions"`
+	// Hashed ID of the destination folder for the exported media. Defaults to the source media's folder if not specified.
+	FolderID *string `json:"folder_id,omitzero"`
 }
 
 func (p *PostRemixesRequest) GetMediaHashedIds() []string {
@@ -27,6 +29,38 @@ func (p *PostRemixesRequest) GetInstructions() string {
 		return ""
 	}
 	return p.Instructions
+}
+
+func (p *PostRemixesRequest) GetFolderID() *string {
+	if p == nil {
+		return nil
+	}
+	return p.FolderID
+}
+
+// PostRemixesCode - A machine-readable identifier for the specific authorization failure.
+type PostRemixesCode string
+
+const (
+	PostRemixesCodeUnauthorizedCredentials PostRemixesCode = "unauthorized_credentials"
+	PostRemixesCodeAccountInactive         PostRemixesCode = "account_inactive"
+	PostRemixesCodeUnauthorizedScope       PostRemixesCode = "unauthorized_scope"
+	PostRemixesCodeUnauthorizedParams      PostRemixesCode = "unauthorized_params"
+)
+
+func (e PostRemixesCode) ToPointer() *PostRemixesCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *PostRemixesCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
 }
 
 // PostRemixesStatus - Current status of the remix job.

@@ -70,6 +70,31 @@ func (g *GetAnalyticsMediasMediaIDConversionsRequest) GetCursor() *string {
 	return g.Cursor
 }
 
+// GetAnalyticsMediasMediaIDConversionsCode - A machine-readable identifier for the specific authorization failure.
+type GetAnalyticsMediasMediaIDConversionsCode string
+
+const (
+	GetAnalyticsMediasMediaIDConversionsCodeUnauthorizedCredentials GetAnalyticsMediasMediaIDConversionsCode = "unauthorized_credentials"
+	GetAnalyticsMediasMediaIDConversionsCodeAccountInactive         GetAnalyticsMediasMediaIDConversionsCode = "account_inactive"
+	GetAnalyticsMediasMediaIDConversionsCodeUnauthorizedScope       GetAnalyticsMediasMediaIDConversionsCode = "unauthorized_scope"
+	GetAnalyticsMediasMediaIDConversionsCodeUnauthorizedParams      GetAnalyticsMediasMediaIDConversionsCode = "unauthorized_params"
+)
+
+func (e GetAnalyticsMediasMediaIDConversionsCode) ToPointer() *GetAnalyticsMediasMediaIDConversionsCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetAnalyticsMediasMediaIDConversionsCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 type GetAnalyticsMediasMediaIDConversionsData struct {
 	// The first name of the form submitter.
 	FirstName optionalnullable.OptionalNullable[string] `json:"first_name,omitzero"`

@@ -22,6 +22,31 @@ func (p *PostAllowedDomainsRequest) GetDomain() string {
 	return p.Domain
 }
 
+// PostAllowedDomainsCode - A machine-readable identifier for the specific authorization failure.
+type PostAllowedDomainsCode string
+
+const (
+	PostAllowedDomainsCodeUnauthorizedCredentials PostAllowedDomainsCode = "unauthorized_credentials"
+	PostAllowedDomainsCodeAccountInactive         PostAllowedDomainsCode = "account_inactive"
+	PostAllowedDomainsCodeUnauthorizedScope       PostAllowedDomainsCode = "unauthorized_scope"
+	PostAllowedDomainsCodeUnauthorizedParams      PostAllowedDomainsCode = "unauthorized_params"
+)
+
+func (e PostAllowedDomainsCode) ToPointer() *PostAllowedDomainsCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *PostAllowedDomainsCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 // PostAllowedDomainsResponseBody - An allowed domain represents a domain where a Wistia video can be embedded. Account
 // restrictions need to be enabled for an allowed domain to have an effect. See
 // our [Domain Restrictions](https://support.wistia.com/en/articles/9691672-domain-restrictions)

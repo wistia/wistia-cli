@@ -53,6 +53,31 @@ func (p *PostFoldersFolderIDSubfoldersRequest) GetBody() PostFoldersFolderIDSubf
 	return p.Body
 }
 
+// PostFoldersFolderIDSubfoldersCode - A machine-readable identifier for the specific authorization failure.
+type PostFoldersFolderIDSubfoldersCode string
+
+const (
+	PostFoldersFolderIDSubfoldersCodeUnauthorizedCredentials PostFoldersFolderIDSubfoldersCode = "unauthorized_credentials"
+	PostFoldersFolderIDSubfoldersCodeAccountInactive         PostFoldersFolderIDSubfoldersCode = "account_inactive"
+	PostFoldersFolderIDSubfoldersCodeUnauthorizedScope       PostFoldersFolderIDSubfoldersCode = "unauthorized_scope"
+	PostFoldersFolderIDSubfoldersCodeUnauthorizedParams      PostFoldersFolderIDSubfoldersCode = "unauthorized_params"
+)
+
+func (e PostFoldersFolderIDSubfoldersCode) ToPointer() *PostFoldersFolderIDSubfoldersCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *PostFoldersFolderIDSubfoldersCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 // PostFoldersFolderIDSubfoldersResponseBody - A subfolder within a folder that contains media.
 type PostFoldersFolderIDSubfoldersResponseBody struct {
 	// A unique alphanumeric identifier for this subfolder.

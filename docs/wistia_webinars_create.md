@@ -18,18 +18,20 @@ wistia webinars create [flags]
 ### Examples
 
 ```
-  wistia webinars create --title Wellness Session: Coping with Outie Memories --scheduled-for 2024-03-20T15:30:00-05:00 --event-duration 60
+  wistia webinars create --title Wellness Session: Coping with Outie Memories --scheduled-for 2024-03-20T15:30:00-05:00 --event-duration 60 --time-zone America/New_York
 ```
 
 ### Options
 
 ```
-      --body string            Request body as JSON (alternative to individual flags). Can also be provided via stdin.
-      --description string     The description of the webinar
-  -e, --event-duration int     Duration of the event in minutes (minimum 15) [required]
-  -h, --help                   help for create
-  -s, --scheduled-for string   The scheduled start time in W3C format with timezone [required]
-  -t, --title string           The title of the webinar [required]
+      --body string          Request body as JSON (alternative to individual flags). Can also be provided via stdin.
+      --description string   The description of the webinar
+  -e, --event-duration int   Duration of the event in minutes (minimum 15) [required]
+  -f, --folder-id string     Hashed ID of the folder to place this webinar in. Defaults to the account's default webinar folder if not provided.
+  -h, --help                 help for create
+  -s, --scheduled-for Z      The scheduled start time as a UTC formatted ISO 8601 string (offset Z or `+00:00`). [required]
+      --time-zone string     The IANA time zone identifier the webinar is scheduled in. [required]
+      --title string         The title of the webinar [required]
 ```
 
 ### Options inherited from parent commands

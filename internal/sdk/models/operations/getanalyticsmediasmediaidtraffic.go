@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
+	"github.com/wistia/wistia-cli/internal/sdk/optionalnullable"
 	"github.com/wistia/wistia-cli/internal/sdk/sdkinternal/utils"
 	"github.com/wistia/wistia-cli/internal/sdk/types"
 )
@@ -181,18 +182,43 @@ func (g *GetAnalyticsMediasMediaIDTrafficRequest) GetPerPage() *int64 {
 	return g.PerPage
 }
 
+// GetAnalyticsMediasMediaIDTrafficCode - A machine-readable identifier for the specific authorization failure.
+type GetAnalyticsMediasMediaIDTrafficCode string
+
+const (
+	GetAnalyticsMediasMediaIDTrafficCodeUnauthorizedCredentials GetAnalyticsMediasMediaIDTrafficCode = "unauthorized_credentials"
+	GetAnalyticsMediasMediaIDTrafficCodeAccountInactive         GetAnalyticsMediasMediaIDTrafficCode = "account_inactive"
+	GetAnalyticsMediasMediaIDTrafficCodeUnauthorizedScope       GetAnalyticsMediasMediaIDTrafficCode = "unauthorized_scope"
+	GetAnalyticsMediasMediaIDTrafficCodeUnauthorizedParams      GetAnalyticsMediasMediaIDTrafficCode = "unauthorized_params"
+)
+
+func (e GetAnalyticsMediasMediaIDTrafficCode) ToPointer() *GetAnalyticsMediasMediaIDTrafficCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetAnalyticsMediasMediaIDTrafficCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 // GetAnalyticsMediasMediaIDTrafficResponseBody - Each item contains the group_by field and associated metrics.
 type GetAnalyticsMediasMediaIDTrafficResponseBody struct {
 	// The UTM campaign value (present when group_by is utm_campaign).
-	UtmCampaign *string `json:"utm_campaign,omitzero"`
+	UtmCampaign optionalnullable.OptionalNullable[string] `json:"utm_campaign,omitzero"`
 	// The UTM source value (present when group_by is utm_source).
-	UtmSource *string `json:"utm_source,omitzero"`
+	UtmSource optionalnullable.OptionalNullable[string] `json:"utm_source,omitzero"`
 	// The UTM medium value (present when group_by is utm_medium).
-	UtmMedium *string `json:"utm_medium,omitzero"`
+	UtmMedium optionalnullable.OptionalNullable[string] `json:"utm_medium,omitzero"`
 	// The referrer domain (present when group_by is referrer_domain).
-	ReferrerDomain *string `json:"referrer_domain,omitzero"`
+	ReferrerDomain optionalnullable.OptionalNullable[string] `json:"referrer_domain,omitzero"`
 	// The viewer screen size (present when group_by is viewer_screen_size).
-	ViewerScreenSize *string `json:"viewer_screen_size,omitzero"`
+	ViewerScreenSize optionalnullable.OptionalNullable[string] `json:"viewer_screen_size,omitzero"`
 	// The number of video loads for this group.
 	Loads *int64 `json:"loads,omitzero"`
 	// The number of video plays for this group.
@@ -201,35 +227,35 @@ type GetAnalyticsMediasMediaIDTrafficResponseBody struct {
 	EngagementRate *float32 `json:"engagement_rate,omitzero"`
 }
 
-func (g *GetAnalyticsMediasMediaIDTrafficResponseBody) GetUtmCampaign() *string {
+func (g *GetAnalyticsMediasMediaIDTrafficResponseBody) GetUtmCampaign() optionalnullable.OptionalNullable[string] {
 	if g == nil {
 		return nil
 	}
 	return g.UtmCampaign
 }
 
-func (g *GetAnalyticsMediasMediaIDTrafficResponseBody) GetUtmSource() *string {
+func (g *GetAnalyticsMediasMediaIDTrafficResponseBody) GetUtmSource() optionalnullable.OptionalNullable[string] {
 	if g == nil {
 		return nil
 	}
 	return g.UtmSource
 }
 
-func (g *GetAnalyticsMediasMediaIDTrafficResponseBody) GetUtmMedium() *string {
+func (g *GetAnalyticsMediasMediaIDTrafficResponseBody) GetUtmMedium() optionalnullable.OptionalNullable[string] {
 	if g == nil {
 		return nil
 	}
 	return g.UtmMedium
 }
 
-func (g *GetAnalyticsMediasMediaIDTrafficResponseBody) GetReferrerDomain() *string {
+func (g *GetAnalyticsMediasMediaIDTrafficResponseBody) GetReferrerDomain() optionalnullable.OptionalNullable[string] {
 	if g == nil {
 		return nil
 	}
 	return g.ReferrerDomain
 }
 
-func (g *GetAnalyticsMediasMediaIDTrafficResponseBody) GetViewerScreenSize() *string {
+func (g *GetAnalyticsMediasMediaIDTrafficResponseBody) GetViewerScreenSize() optionalnullable.OptionalNullable[string] {
 	if g == nil {
 		return nil
 	}
