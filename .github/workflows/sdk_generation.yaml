@@ -24,40 +24,18 @@ permissions:
       - labeled
       - unlabeled
 jobs:
-  prepare:
-    runs-on: ubuntu-latest
-    outputs:
-      version: ${{ steps.version.outputs.version }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Compute version
-        id: version
-        run: |
-          if [ -n "${{ github.event.inputs.set_version }}" ]; then
-            # Explicit override wins.
-            echo "version=${{ github.event.inputs.set_version }}" >> "$GITHUB_OUTPUT"
-          elif [[ "$GITHUB_REF_NAME" == v20* ]]; then
-            # Version branch (e.g. v2026-05): patch-increment the current
-            # gen.yaml cli.version, e.g. 2026.5.0 -> 2026.5.1.
-            CURRENT=$(awk '/^cli:/{f=1} f && /^  version:/{print $2; exit}' .speakeasy/gen.yaml)
-            if ! [[ "$CURRENT" =~ ^20[0-9]{2}\.[0-9]+\.[0-9]+$ ]]; then
-              echo "::error::Expected a dated cli.version (e.g. 2026.5.0) before patch-incrementing on a version branch, got '$CURRENT'. Seed the branch via set_version first."
-              exit 1
-            fi
-            IFS='.' read -r YEAR MONTH PATCH <<< "$CURRENT"
-            echo "version=${YEAR}.${MONTH}.$((PATCH + 1))" >> "$GITHUB_OUTPUT"
-          else
-            # main: edge, date-based, unpadded month (e.g. 2026.6.1).
-            echo "version=$(date +'%Y.%-m.1')" >> "$GITHUB_OUTPUT"
-          fi
+  # Generation uses Speakeasy's automatic (Go-safe semver) versioning. We do NOT
+  # feed a dated 2026.x version in here: a major version >= 2 triggers Go's /vN
+  # module-suffix rule, which Speakeasy applies inconsistently to the CLI target
+  # (imports get /v2026 but go.mod does not) and the build fails to compile.
+  # The dated version is applied at RELEASE time instead (git tag + GoReleaser
+  # ldflags), decoupled from the Go module path. See the release/publish workflow.
   generate:
-    needs: prepare
     uses: speakeasy-api/sdk-generation-action/.github/workflows/workflow-executor.yaml@v15
     with:
       force: ${{ github.event.inputs.force || github.event_name == 'repository_dispatch' }}
       mode: pr
-      set_version: ${{ needs.prepare.outputs.version }}
+      set_version: ${{ github.event.inputs.set_version }}
     secrets:
       github_access_token: ${{ secrets.GITHUB_TOKEN }}
       speakeasy_api_key: ${{ secrets.SPEAKEASY_API_KEY }}
