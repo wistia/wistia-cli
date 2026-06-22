@@ -24,13 +24,29 @@ permissions:
       - labeled
       - unlabeled
 jobs:
-  # Generation uses Speakeasy's automatic (Go-safe semver) versioning. We do NOT
-  # feed a dated 2026.x version in here: a major version >= 2 triggers Go's /vN
+  # Reject a manual set_version with major >= 2. Such a version triggers Go's /vN
   # module-suffix rule, which Speakeasy applies inconsistently to the CLI target
   # (imports get /v2026 but go.mod does not) and the build fails to compile.
-  # The dated version is applied at RELEASE time instead (git tag + GoReleaser
-  # ldflags), decoupled from the Go module path. See the release/publish workflow.
+  # Generation must stay on a Go-safe semver (0.x/1.x); dated versions are applied
+  # at RELEASE time instead (git tag + GoReleaser ldflags), decoupled from the
+  # module path. This guard runs on every trigger but only acts on a non-empty
+  # manual set_version (empty on schedule/dispatch/PR -> passes trivially).
+  check-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Reject Go-incompatible set_version (major >= 2)
+        env:
+          SET_VERSION: ${{ github.event.inputs.set_version }}
+        run: |
+          if [ -n "$SET_VERSION" ]; then
+            MAJOR="${SET_VERSION%%.*}"
+            if [[ "$MAJOR" =~ ^[0-9]+$ ]] && [ "$MAJOR" -ge 2 ]; then
+              echo "::error::set_version '$SET_VERSION' has major version $MAJOR (>= 2), which triggers Go's /vN module-suffix rule and breaks CLI generation. Generation must use a Go-safe semver (0.x or 1.x); apply dated versions at release time (git tag) instead."
+              exit 1
+            fi
+          fi
   generate:
+    needs: [check-version]
     uses: speakeasy-api/sdk-generation-action/.github/workflows/workflow-executor.yaml@v15
     with:
       force: ${{ github.event.inputs.force || github.event_name == 'repository_dispatch' }}
