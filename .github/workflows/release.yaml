@@ -1,18 +1,5 @@
 name: Release
 
-# Releases originate ONLY from version branches (v20NN-NN), never from main or an
-# ad-hoc tag (F7: "main never releases"). A release is triggered when a regen lands
-# on a version branch (gen.lock changes), or manually via workflow_dispatch.
-#
-# The dated version is computed here from the branch name + existing tags and applied
-# to the git tag + GoReleaser ldflags — NOT to the Go module (F10). The module path
-# stays unsuffixed; the binary reports the dated version via -X main.version.
-#
-# DRY MODE: this builds the release (version-compute, tag, archives) but does NOT
-# publish — no tag push, no GitHub release, no Homebrew formula. Real publishing is
-# enabled at the public-launch cutover (push the tag, drop --skip=publish, point the
-# formula at wistia/homebrew-tap). A test gate (integration tests) is added later.
-
 on:
   push:
     branches:
@@ -22,7 +9,7 @@ on:
   workflow_dispatch: {}
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   release:
