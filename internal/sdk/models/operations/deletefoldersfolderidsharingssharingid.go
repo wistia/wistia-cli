@@ -30,6 +30,31 @@ func (d *DeleteFoldersFolderIDSharingsSharingIDRequest) GetSharingID() string {
 	return d.SharingID
 }
 
+// DeleteFoldersFolderIDSharingsSharingIDCode - A machine-readable identifier for the specific authorization failure.
+type DeleteFoldersFolderIDSharingsSharingIDCode string
+
+const (
+	DeleteFoldersFolderIDSharingsSharingIDCodeUnauthorizedCredentials DeleteFoldersFolderIDSharingsSharingIDCode = "unauthorized_credentials"
+	DeleteFoldersFolderIDSharingsSharingIDCodeAccountInactive         DeleteFoldersFolderIDSharingsSharingIDCode = "account_inactive"
+	DeleteFoldersFolderIDSharingsSharingIDCodeUnauthorizedScope       DeleteFoldersFolderIDSharingsSharingIDCode = "unauthorized_scope"
+	DeleteFoldersFolderIDSharingsSharingIDCodeUnauthorizedParams      DeleteFoldersFolderIDSharingsSharingIDCode = "unauthorized_params"
+)
+
+func (e DeleteFoldersFolderIDSharingsSharingIDCode) ToPointer() *DeleteFoldersFolderIDSharingsSharingIDCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *DeleteFoldersFolderIDSharingsSharingIDCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 type DeleteFoldersFolderIDSharingsSharingIDShare struct {
 	ID    int64  `json:"id"`
 	Name  string `json:"name"`

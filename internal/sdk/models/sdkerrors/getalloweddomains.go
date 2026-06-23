@@ -6,6 +6,7 @@ package sdkerrors
 import (
 	"encoding/json"
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
+	"github.com/wistia/wistia-cli/internal/sdk/models/operations"
 )
 
 // GetAllowedDomainsInternalServerError - Internal server error
@@ -23,13 +24,31 @@ func (e *GetAllowedDomainsInternalServerError) Error() string {
 
 // GetAllowedDomainsUnauthorizedError - Unauthorized, invalid or missing token
 type GetAllowedDomainsUnauthorizedError struct {
-	Error_   *string                 `json:"error,omitzero"`
-	HTTPMeta components.HTTPMetadata `json:"-"`
+	// A machine-readable identifier for the specific authorization failure.
+	Code     *operations.GetAllowedDomainsCode `json:"code,omitzero"`
+	Error_   *string                           `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata           `json:"-"`
 }
 
 var _ error = &GetAllowedDomainsUnauthorizedError{}
 
 func (e *GetAllowedDomainsUnauthorizedError) Error() string {
+	data, _ := json.Marshal(e)
+	return string(data)
+}
+
+// GetAllowedDomainsBadRequestError - Bad request
+type GetAllowedDomainsBadRequestError struct {
+	// Error message detailing the reason for the bad request.
+	Error_ *string `json:"error,omitzero"`
+	// Array of error messages detailing the reasons for the bad request.
+	Errors   []string                `json:"errors,omitzero"`
+	HTTPMeta components.HTTPMetadata `json:"-"`
+}
+
+var _ error = &GetAllowedDomainsBadRequestError{}
+
+func (e *GetAllowedDomainsBadRequestError) Error() string {
 	data, _ := json.Marshal(e)
 	return string(data)
 }

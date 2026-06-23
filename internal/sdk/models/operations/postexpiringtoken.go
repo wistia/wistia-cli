@@ -92,6 +92,31 @@ func (p *PostExpiringTokenRequest) GetExpiringAccessToken() *ExpiringAccessToken
 	return p.ExpiringAccessToken
 }
 
+// PostExpiringTokenCode - A machine-readable identifier for the specific authorization failure.
+type PostExpiringTokenCode string
+
+const (
+	PostExpiringTokenCodeUnauthorizedCredentials PostExpiringTokenCode = "unauthorized_credentials"
+	PostExpiringTokenCodeAccountInactive         PostExpiringTokenCode = "account_inactive"
+	PostExpiringTokenCodeUnauthorizedScope       PostExpiringTokenCode = "unauthorized_scope"
+	PostExpiringTokenCodeUnauthorizedParams      PostExpiringTokenCode = "unauthorized_params"
+)
+
+func (e PostExpiringTokenCode) ToPointer() *PostExpiringTokenCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *PostExpiringTokenCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 // PostExpiringTokenResponseBody - Successful response
 type PostExpiringTokenResponseBody struct {
 	// A token which can be used to authorize requests to Wistia. Currently only for doing transcript embeds.

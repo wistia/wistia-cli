@@ -6,6 +6,7 @@ package sdkerrors
 import (
 	"encoding/json"
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
+	"github.com/wistia/wistia-cli/internal/sdk/models/operations"
 )
 
 // GetBackgroundJobStatusBackgroundJobStatusIDInternalServerError - Internal server error
@@ -23,8 +24,10 @@ func (e *GetBackgroundJobStatusBackgroundJobStatusIDInternalServerError) Error()
 
 // GetBackgroundJobStatusBackgroundJobStatusIDUnauthorizedError - Unauthorized, invalid or missing token
 type GetBackgroundJobStatusBackgroundJobStatusIDUnauthorizedError struct {
-	Error_   *string                 `json:"error,omitzero"`
-	HTTPMeta components.HTTPMetadata `json:"-"`
+	// A machine-readable identifier for the specific authorization failure.
+	Code     *operations.GetBackgroundJobStatusBackgroundJobStatusIDCode `json:"code,omitzero"`
+	Error_   *string                                                     `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata                                     `json:"-"`
 }
 
 var _ error = &GetBackgroundJobStatusBackgroundJobStatusIDUnauthorizedError{}

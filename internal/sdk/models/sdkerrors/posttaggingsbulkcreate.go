@@ -6,6 +6,7 @@ package sdkerrors
 import (
 	"encoding/json"
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
+	"github.com/wistia/wistia-cli/internal/sdk/models/operations"
 )
 
 // PostTaggingsBulkCreateInternalServerError - Internal server error
@@ -49,8 +50,10 @@ func (e *PostTaggingsBulkCreateForbiddenError) Error() string {
 
 // PostTaggingsBulkCreateUnauthorizedError - Unauthorized, invalid or missing token
 type PostTaggingsBulkCreateUnauthorizedError struct {
-	Error_   *string                 `json:"error,omitzero"`
-	HTTPMeta components.HTTPMetadata `json:"-"`
+	// A machine-readable identifier for the specific authorization failure.
+	Code     *operations.PostTaggingsBulkCreateCode `json:"code,omitzero"`
+	Error_   *string                                `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata                `json:"-"`
 }
 
 var _ error = &PostTaggingsBulkCreateUnauthorizedError{}

@@ -41,6 +41,31 @@ func (g *GetStatsAccountByDateRequest) GetEndDate() *types.Date {
 	return g.EndDate
 }
 
+// GetStatsAccountByDateCode - A machine-readable identifier for the specific authorization failure.
+type GetStatsAccountByDateCode string
+
+const (
+	GetStatsAccountByDateCodeUnauthorizedCredentials GetStatsAccountByDateCode = "unauthorized_credentials"
+	GetStatsAccountByDateCodeAccountInactive         GetStatsAccountByDateCode = "account_inactive"
+	GetStatsAccountByDateCodeUnauthorizedScope       GetStatsAccountByDateCode = "unauthorized_scope"
+	GetStatsAccountByDateCodeUnauthorizedParams      GetStatsAccountByDateCode = "unauthorized_params"
+)
+
+func (e GetStatsAccountByDateCode) ToPointer() *GetStatsAccountByDateCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetStatsAccountByDateCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 type GetStatsAccountByDateResponseBody struct {
 	Date         *types.Date `json:"date,omitzero"`
 	LoadCount    *int64      `json:"load_count,omitzero"`

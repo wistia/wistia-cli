@@ -20,6 +20,31 @@ func (g *GetStatsMediasMediaIDEngagementRequest) GetMediaID() string {
 	return g.MediaID
 }
 
+// GetStatsMediasMediaIDEngagementCode - A machine-readable identifier for the specific authorization failure.
+type GetStatsMediasMediaIDEngagementCode string
+
+const (
+	GetStatsMediasMediaIDEngagementCodeUnauthorizedCredentials GetStatsMediasMediaIDEngagementCode = "unauthorized_credentials"
+	GetStatsMediasMediaIDEngagementCodeAccountInactive         GetStatsMediasMediaIDEngagementCode = "account_inactive"
+	GetStatsMediasMediaIDEngagementCodeUnauthorizedScope       GetStatsMediasMediaIDEngagementCode = "unauthorized_scope"
+	GetStatsMediasMediaIDEngagementCodeUnauthorizedParams      GetStatsMediasMediaIDEngagementCode = "unauthorized_params"
+)
+
+func (e GetStatsMediasMediaIDEngagementCode) ToPointer() *GetStatsMediasMediaIDEngagementCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetStatsMediasMediaIDEngagementCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 // GetStatsMediasMediaIDEngagementResponseBody - Success response with the engagement data of the video.
 type GetStatsMediasMediaIDEngagementResponseBody struct {
 	// The percentage of the video that was viewed, averaged across all viewing sessions.

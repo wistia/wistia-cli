@@ -40,3 +40,4 @@ wistia account [flags]
 * [wistia](wistia.md)	 - Data API: Wistia Data API
 * [wistia account get](wistia_account_get.md)	 - Get Current Account
 * [wistia account get-token-details](wistia_account_get-token-details.md)	 - Get Current Token
+* [wistia account get-usage](wistia_account_get-usage.md)	 - Get Account Usage

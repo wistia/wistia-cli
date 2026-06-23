@@ -15,10 +15,14 @@ type PutWebinarsIDWebinar struct {
 	Title *string `json:"title,omitzero"`
 	// The description of the webinar
 	Description *string `json:"description,omitzero"`
-	// The scheduled start time in W3C format with timezone
+	// The scheduled start time as a UTC formatted ISO 8601 string (offset `Z` or `+00:00`).
 	ScheduledFor *time.Time `json:"scheduled_for,omitzero"`
 	// Duration of the webinar in minutes (minimum 15)
 	EventDuration *int64 `json:"event_duration,omitzero"`
+	// The IANA time zone identifier the webinar is scheduled in.
+	TimeZone *string `json:"time_zone,omitzero"`
+	// Hashed ID of the folder to move this webinar to. Can only be changed before the webinar has started.
+	FolderID *string `json:"folder_id,omitzero"`
 }
 
 func (p PutWebinarsIDWebinar) MarshalJSON() ([]byte, error) {
@@ -58,6 +62,20 @@ func (p *PutWebinarsIDWebinar) GetEventDuration() *int64 {
 		return nil
 	}
 	return p.EventDuration
+}
+
+func (p *PutWebinarsIDWebinar) GetTimeZone() *string {
+	if p == nil {
+		return nil
+	}
+	return p.TimeZone
+}
+
+func (p *PutWebinarsIDWebinar) GetFolderID() *string {
+	if p == nil {
+		return nil
+	}
+	return p.FolderID
 }
 
 type PutWebinarsIDRequestBody struct {
@@ -102,6 +120,63 @@ func (p *PutWebinarsIDRequest) GetBody() PutWebinarsIDRequestBody {
 	return p.Body
 }
 
+// PutWebinarsIDCode - A machine-readable identifier for the specific authorization failure.
+type PutWebinarsIDCode string
+
+const (
+	PutWebinarsIDCodeUnauthorizedCredentials PutWebinarsIDCode = "unauthorized_credentials"
+	PutWebinarsIDCodeAccountInactive         PutWebinarsIDCode = "account_inactive"
+	PutWebinarsIDCodeUnauthorizedScope       PutWebinarsIDCode = "unauthorized_scope"
+	PutWebinarsIDCodeUnauthorizedParams      PutWebinarsIDCode = "unauthorized_params"
+)
+
+func (e PutWebinarsIDCode) ToPointer() *PutWebinarsIDCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *PutWebinarsIDCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
+type PutWebinarsIDFolder struct {
+	// A unique alphanumeric identifier for the record.
+	ID string `json:"id"`
+	// A URL for fetching all the records of the given record type. You can pass hashed_ids as a param with multiple values
+	// to do a batch fetch for this records type.
+	//
+	IndexURL string `json:"index_url"`
+	// A URL that can be used to fetch this record.
+	URL string `json:"url"`
+}
+
+func (p *PutWebinarsIDFolder) GetID() string {
+	if p == nil {
+		return ""
+	}
+	return p.ID
+}
+
+func (p *PutWebinarsIDFolder) GetIndexURL() string {
+	if p == nil {
+		return ""
+	}
+	return p.IndexURL
+}
+
+func (p *PutWebinarsIDFolder) GetURL() string {
+	if p == nil {
+		return ""
+	}
+	return p.URL
+}
+
 // PutWebinarsIDResponseBody - A webinar is an event which allows you to stream a video
 // to multiple participants. See our [Webinars Guide](https://support.wistia.com/en/articles/8288501-getting-started-with-webinars)
 // for more info.
@@ -116,6 +191,8 @@ type PutWebinarsIDResponseBody struct {
 	ScheduledFor optionalnullable.OptionalNullable[time.Time] `json:"scheduled_for,omitzero"`
 	// Duration of the webinar in minutes
 	EventDuration optionalnullable.OptionalNullable[int64] `json:"event_duration,omitzero"`
+	// The IANA time zone identifier the webinar is scheduled in
+	TimeZone string `json:"time_zone"`
 	// Current lifecycle status of the event
 	LifecycleStatus string `json:"lifecycle_status"`
 	// Registration status of the event
@@ -130,6 +207,10 @@ type PutWebinarsIDResponseBody struct {
 	HostLink string `json:"host_link"`
 	// Link for panelists to join the event
 	PanelistLink string `json:"panelist_link"`
+	// The folder (project) this webinar belongs to
+	Folder optionalnullable.OptionalNullable[PutWebinarsIDFolder] `json:"folder,omitzero"`
+	// A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+	Cursor optionalnullable.OptionalNullable[string] `json:"cursor,omitzero"`
 }
 
 func (p PutWebinarsIDResponseBody) MarshalJSON() ([]byte, error) {
@@ -176,6 +257,13 @@ func (p *PutWebinarsIDResponseBody) GetEventDuration() optionalnullable.Optional
 		return nil
 	}
 	return p.EventDuration
+}
+
+func (p *PutWebinarsIDResponseBody) GetTimeZone() string {
+	if p == nil {
+		return ""
+	}
+	return p.TimeZone
 }
 
 func (p *PutWebinarsIDResponseBody) GetLifecycleStatus() string {
@@ -225,6 +313,20 @@ func (p *PutWebinarsIDResponseBody) GetPanelistLink() string {
 		return ""
 	}
 	return p.PanelistLink
+}
+
+func (p *PutWebinarsIDResponseBody) GetFolder() optionalnullable.OptionalNullable[PutWebinarsIDFolder] {
+	if p == nil {
+		return nil
+	}
+	return p.Folder
+}
+
+func (p *PutWebinarsIDResponseBody) GetCursor() optionalnullable.OptionalNullable[string] {
+	if p == nil {
+		return nil
+	}
+	return p.Cursor
 }
 
 type PutWebinarsIDResponse struct {

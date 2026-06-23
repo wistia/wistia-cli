@@ -40,7 +40,7 @@ func (e *GetAllowedDomainsEnabled) UnmarshalJSON(data []byte) error {
 	}
 }
 
-// GetAllowedDomainsCursor - If `cursor[enabled]` is set to 1 than cursor pagination is enabled and the
+// GetAllowedDomainsCursor - If `cursor[enabled]` is set to 1 then cursor pagination is enabled and the
 // first set of records are fetched up to the `per_page`. Cursor
 // pagination will also be turned on if `cursor[before]` or `cursor[after]`
 // are set. Records returned will have a `cursor` property set which can be used to fetch more records in the same `sort_by` ordering.
@@ -48,20 +48,20 @@ func (e *GetAllowedDomainsEnabled) UnmarshalJSON(data []byte) error {
 // the cursor of the first record can be used to fetch records before the result set.
 //
 // NOTE: a cursor value is only valid if the `sort_by` value hasn't changed from the
-// last fetch. For example, you cannot fetch using `sort_by` id and than pass that
+// last fetch. For example, you cannot fetch using `sort_by` id and then pass that
 // cursor value to a `sort_by` name.
 type GetAllowedDomainsCursor struct {
 	// If `cursor[enabled]` is set to 1, the first result set will be fetched with cursor pagination enabled. This
 	// values is ignored if `cursor[before]` or `cursor[after]` are set.
 	//
 	Enabled *GetAllowedDomainsEnabled `queryParam:"name=enabled"`
-	// If `cursor[before]` is set than cursor pagination is enabled and all records
+	// If `cursor[before]` is set then cursor pagination is enabled and all records
 	// before the cursor up to the `per_page` are returned. This feature is useful for
 	// fetching "new records", for example, in a "pull to refersh" feature when showing records in a descending
 	// order.
 	//
 	Before *string `queryParam:"name=before"`
-	// If `cursor[after]` is set than cursor pagination is enabled and all records
+	// If `cursor[after]` is set then cursor pagination is enabled and all records
 	// after the cursor up to the `per_page` are returned.
 	//
 	After *string `queryParam:"name=after"`
@@ -150,7 +150,7 @@ type GetAllowedDomainsRequest struct {
 	Page *int64 `queryParam:"style=form,explode=true,name=page"`
 	// The number of medias per page. Use this for both offset pagination and cursor pagination.
 	PerPage *int64 `queryParam:"style=form,explode=true,name=per_page"`
-	// If `cursor[enabled]` is set to 1 than cursor pagination is enabled and the
+	// If `cursor[enabled]` is set to 1 then cursor pagination is enabled and the
 	// first set of records are fetched up to the `per_page`. Cursor
 	// pagination will also be turned on if `cursor[before]` or `cursor[after]`
 	// are set. Records returned will have a `cursor` property set which can be used to fetch more records in the same `sort_by` ordering.
@@ -158,7 +158,7 @@ type GetAllowedDomainsRequest struct {
 	// the cursor of the first record can be used to fetch records before the result set.
 	//
 	// NOTE: a cursor value is only valid if the `sort_by` value hasn't changed from the
-	// last fetch. For example, you cannot fetch using `sort_by` id and than pass that
+	// last fetch. For example, you cannot fetch using `sort_by` id and then pass that
 	// cursor value to a `sort_by` name.
 	//
 	Cursor *GetAllowedDomainsCursor `queryParam:"style=deepObject,explode=true,name=cursor"`
@@ -214,6 +214,31 @@ func (g *GetAllowedDomainsRequest) GetSortDirection() *GetAllowedDomainsSortDire
 		return nil
 	}
 	return g.SortDirection
+}
+
+// GetAllowedDomainsCode - A machine-readable identifier for the specific authorization failure.
+type GetAllowedDomainsCode string
+
+const (
+	GetAllowedDomainsCodeUnauthorizedCredentials GetAllowedDomainsCode = "unauthorized_credentials"
+	GetAllowedDomainsCodeAccountInactive         GetAllowedDomainsCode = "account_inactive"
+	GetAllowedDomainsCodeUnauthorizedScope       GetAllowedDomainsCode = "unauthorized_scope"
+	GetAllowedDomainsCodeUnauthorizedParams      GetAllowedDomainsCode = "unauthorized_params"
+)
+
+func (e GetAllowedDomainsCode) ToPointer() *GetAllowedDomainsCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetAllowedDomainsCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
 }
 
 // GetAllowedDomainsResponseBody - An allowed domain represents a domain where a Wistia video can be embedded. Account

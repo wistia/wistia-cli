@@ -5,476 +5,11 @@ package operations
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
 	"github.com/wistia/wistia-cli/internal/sdk/optionalnullable"
 	"github.com/wistia/wistia-cli/internal/sdk/sdkinternal/utils"
 )
-
-// RequirePasswordEnum - Default is "1". Set to "0" to allow access without a password.
-type RequirePasswordEnum string
-
-const (
-	RequirePasswordEnumZero RequirePasswordEnum = "0"
-	RequirePasswordEnumOne  RequirePasswordEnum = "1"
-)
-
-func (e RequirePasswordEnum) ToPointer() *RequirePasswordEnum {
-	return &e
-}
-func (e *RequirePasswordEnum) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	switch v {
-	case "0":
-		fallthrough
-	case "1":
-		*e = RequirePasswordEnum(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for RequirePasswordEnum: %v", v)
-	}
-}
-
-type RequirePasswordType string
-
-const (
-	RequirePasswordTypeRequirePasswordEnum RequirePasswordType = "requirePassword_enum"
-	RequirePasswordTypeBoolean             RequirePasswordType = "boolean"
-)
-
-type RequirePassword struct {
-	RequirePasswordEnum *RequirePasswordEnum `queryParam:"inline" union:"member"`
-	Boolean             *bool                `queryParam:"inline" union:"member"`
-
-	Type RequirePasswordType
-}
-
-func CreateRequirePasswordRequirePasswordEnum(requirePasswordEnum RequirePasswordEnum) RequirePassword {
-	typ := RequirePasswordTypeRequirePasswordEnum
-
-	return RequirePassword{
-		RequirePasswordEnum: &requirePasswordEnum,
-		Type:                typ,
-	}
-}
-
-func CreateRequirePasswordBoolean(boolean bool) RequirePassword {
-	typ := RequirePasswordTypeBoolean
-
-	return RequirePassword{
-		Boolean: &boolean,
-		Type:    typ,
-	}
-}
-
-func (u *RequirePassword) UnmarshalJSON(data []byte) error {
-
-	var candidates []utils.UnionCandidate
-
-	// Collect all valid candidates
-	var requirePasswordEnum RequirePasswordEnum = RequirePasswordEnum("")
-	if err := utils.UnmarshalJSON(data, &requirePasswordEnum, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  RequirePasswordTypeRequirePasswordEnum,
-			Value: &requirePasswordEnum,
-		})
-	}
-
-	var boolean bool = false
-	if err := utils.UnmarshalJSON(data, &boolean, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  RequirePasswordTypeBoolean,
-			Value: &boolean,
-		})
-	}
-
-	if len(candidates) == 0 {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for RequirePassword", string(data))
-	}
-
-	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestUnionCandidate(candidates, data)
-	if best == nil {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for RequirePassword", string(data))
-	}
-
-	// Set the union type and value based on the best candidate
-	u.Type = best.Type.(RequirePasswordType)
-	switch best.Type {
-	case RequirePasswordTypeRequirePasswordEnum:
-		u.RequirePasswordEnum = best.Value.(*RequirePasswordEnum)
-		return nil
-	case RequirePasswordTypeBoolean:
-		u.Boolean = best.Value.(*bool)
-		return nil
-	}
-
-	return fmt.Errorf("could not unmarshal `%s` into any supported union types for RequirePassword", string(data))
-}
-
-func (u RequirePassword) MarshalJSON() ([]byte, error) {
-	if u.RequirePasswordEnum != nil {
-		return utils.MarshalJSON(u.RequirePasswordEnum, "", true)
-	}
-
-	if u.Boolean != nil {
-		return utils.MarshalJSON(u.Boolean, "", true)
-	}
-
-	return nil, errors.New("could not marshal union type RequirePassword: all fields are null")
-}
-
-// CanShareEnum - Default is "0". Set to "1" to allow the user to share the folder with others.
-type CanShareEnum string
-
-const (
-	CanShareEnumZero CanShareEnum = "0"
-	CanShareEnumOne  CanShareEnum = "1"
-)
-
-func (e CanShareEnum) ToPointer() *CanShareEnum {
-	return &e
-}
-func (e *CanShareEnum) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	switch v {
-	case "0":
-		fallthrough
-	case "1":
-		*e = CanShareEnum(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for CanShareEnum: %v", v)
-	}
-}
-
-type CanShareType string
-
-const (
-	CanShareTypeCanShareEnum CanShareType = "canShare_enum"
-	CanShareTypeBoolean      CanShareType = "boolean"
-)
-
-type CanShare struct {
-	CanShareEnum *CanShareEnum `queryParam:"inline" union:"member"`
-	Boolean      *bool         `queryParam:"inline" union:"member"`
-
-	Type CanShareType
-}
-
-func CreateCanShareCanShareEnum(canShareEnum CanShareEnum) CanShare {
-	typ := CanShareTypeCanShareEnum
-
-	return CanShare{
-		CanShareEnum: &canShareEnum,
-		Type:         typ,
-	}
-}
-
-func CreateCanShareBoolean(boolean bool) CanShare {
-	typ := CanShareTypeBoolean
-
-	return CanShare{
-		Boolean: &boolean,
-		Type:    typ,
-	}
-}
-
-func (u *CanShare) UnmarshalJSON(data []byte) error {
-
-	var candidates []utils.UnionCandidate
-
-	// Collect all valid candidates
-	var canShareEnum CanShareEnum = CanShareEnum("")
-	if err := utils.UnmarshalJSON(data, &canShareEnum, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  CanShareTypeCanShareEnum,
-			Value: &canShareEnum,
-		})
-	}
-
-	var boolean bool = false
-	if err := utils.UnmarshalJSON(data, &boolean, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  CanShareTypeBoolean,
-			Value: &boolean,
-		})
-	}
-
-	if len(candidates) == 0 {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for CanShare", string(data))
-	}
-
-	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestUnionCandidate(candidates, data)
-	if best == nil {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for CanShare", string(data))
-	}
-
-	// Set the union type and value based on the best candidate
-	u.Type = best.Type.(CanShareType)
-	switch best.Type {
-	case CanShareTypeCanShareEnum:
-		u.CanShareEnum = best.Value.(*CanShareEnum)
-		return nil
-	case CanShareTypeBoolean:
-		u.Boolean = best.Value.(*bool)
-		return nil
-	}
-
-	return fmt.Errorf("could not unmarshal `%s` into any supported union types for CanShare", string(data))
-}
-
-func (u CanShare) MarshalJSON() ([]byte, error) {
-	if u.CanShareEnum != nil {
-		return utils.MarshalJSON(u.CanShareEnum, "", true)
-	}
-
-	if u.Boolean != nil {
-		return utils.MarshalJSON(u.Boolean, "", true)
-	}
-
-	return nil, errors.New("could not marshal union type CanShare: all fields are null")
-}
-
-// CanDownloadEnum - Default is "0". Set to "1" to allow the user to download files from the folder.
-type CanDownloadEnum string
-
-const (
-	CanDownloadEnumZero CanDownloadEnum = "0"
-	CanDownloadEnumOne  CanDownloadEnum = "1"
-)
-
-func (e CanDownloadEnum) ToPointer() *CanDownloadEnum {
-	return &e
-}
-func (e *CanDownloadEnum) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	switch v {
-	case "0":
-		fallthrough
-	case "1":
-		*e = CanDownloadEnum(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for CanDownloadEnum: %v", v)
-	}
-}
-
-type CanDownloadType string
-
-const (
-	CanDownloadTypeCanDownloadEnum CanDownloadType = "canDownload_enum"
-	CanDownloadTypeBoolean         CanDownloadType = "boolean"
-)
-
-type CanDownload struct {
-	CanDownloadEnum *CanDownloadEnum `queryParam:"inline" union:"member"`
-	Boolean         *bool            `queryParam:"inline" union:"member"`
-
-	Type CanDownloadType
-}
-
-func CreateCanDownloadCanDownloadEnum(canDownloadEnum CanDownloadEnum) CanDownload {
-	typ := CanDownloadTypeCanDownloadEnum
-
-	return CanDownload{
-		CanDownloadEnum: &canDownloadEnum,
-		Type:            typ,
-	}
-}
-
-func CreateCanDownloadBoolean(boolean bool) CanDownload {
-	typ := CanDownloadTypeBoolean
-
-	return CanDownload{
-		Boolean: &boolean,
-		Type:    typ,
-	}
-}
-
-func (u *CanDownload) UnmarshalJSON(data []byte) error {
-
-	var candidates []utils.UnionCandidate
-
-	// Collect all valid candidates
-	var canDownloadEnum CanDownloadEnum = CanDownloadEnum("")
-	if err := utils.UnmarshalJSON(data, &canDownloadEnum, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  CanDownloadTypeCanDownloadEnum,
-			Value: &canDownloadEnum,
-		})
-	}
-
-	var boolean bool = false
-	if err := utils.UnmarshalJSON(data, &boolean, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  CanDownloadTypeBoolean,
-			Value: &boolean,
-		})
-	}
-
-	if len(candidates) == 0 {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for CanDownload", string(data))
-	}
-
-	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestUnionCandidate(candidates, data)
-	if best == nil {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for CanDownload", string(data))
-	}
-
-	// Set the union type and value based on the best candidate
-	u.Type = best.Type.(CanDownloadType)
-	switch best.Type {
-	case CanDownloadTypeCanDownloadEnum:
-		u.CanDownloadEnum = best.Value.(*CanDownloadEnum)
-		return nil
-	case CanDownloadTypeBoolean:
-		u.Boolean = best.Value.(*bool)
-		return nil
-	}
-
-	return fmt.Errorf("could not unmarshal `%s` into any supported union types for CanDownload", string(data))
-}
-
-func (u CanDownload) MarshalJSON() ([]byte, error) {
-	if u.CanDownloadEnum != nil {
-		return utils.MarshalJSON(u.CanDownloadEnum, "", true)
-	}
-
-	if u.Boolean != nil {
-		return utils.MarshalJSON(u.Boolean, "", true)
-	}
-
-	return nil, errors.New("could not marshal union type CanDownload: all fields are null")
-}
-
-// CanUploadEnum - Default is "0". Set to "1" to allow the user to upload files to the folder.
-type CanUploadEnum string
-
-const (
-	CanUploadEnumZero CanUploadEnum = "0"
-	CanUploadEnumOne  CanUploadEnum = "1"
-)
-
-func (e CanUploadEnum) ToPointer() *CanUploadEnum {
-	return &e
-}
-func (e *CanUploadEnum) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	switch v {
-	case "0":
-		fallthrough
-	case "1":
-		*e = CanUploadEnum(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for CanUploadEnum: %v", v)
-	}
-}
-
-type CanUploadType string
-
-const (
-	CanUploadTypeCanUploadEnum CanUploadType = "canUpload_enum"
-	CanUploadTypeBoolean       CanUploadType = "boolean"
-)
-
-type CanUpload struct {
-	CanUploadEnum *CanUploadEnum `queryParam:"inline" union:"member"`
-	Boolean       *bool          `queryParam:"inline" union:"member"`
-
-	Type CanUploadType
-}
-
-func CreateCanUploadCanUploadEnum(canUploadEnum CanUploadEnum) CanUpload {
-	typ := CanUploadTypeCanUploadEnum
-
-	return CanUpload{
-		CanUploadEnum: &canUploadEnum,
-		Type:          typ,
-	}
-}
-
-func CreateCanUploadBoolean(boolean bool) CanUpload {
-	typ := CanUploadTypeBoolean
-
-	return CanUpload{
-		Boolean: &boolean,
-		Type:    typ,
-	}
-}
-
-func (u *CanUpload) UnmarshalJSON(data []byte) error {
-
-	var candidates []utils.UnionCandidate
-
-	// Collect all valid candidates
-	var canUploadEnum CanUploadEnum = CanUploadEnum("")
-	if err := utils.UnmarshalJSON(data, &canUploadEnum, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  CanUploadTypeCanUploadEnum,
-			Value: &canUploadEnum,
-		})
-	}
-
-	var boolean bool = false
-	if err := utils.UnmarshalJSON(data, &boolean, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  CanUploadTypeBoolean,
-			Value: &boolean,
-		})
-	}
-
-	if len(candidates) == 0 {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for CanUpload", string(data))
-	}
-
-	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestUnionCandidate(candidates, data)
-	if best == nil {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for CanUpload", string(data))
-	}
-
-	// Set the union type and value based on the best candidate
-	u.Type = best.Type.(CanUploadType)
-	switch best.Type {
-	case CanUploadTypeCanUploadEnum:
-		u.CanUploadEnum = best.Value.(*CanUploadEnum)
-		return nil
-	case CanUploadTypeBoolean:
-		u.Boolean = best.Value.(*bool)
-		return nil
-	}
-
-	return fmt.Errorf("could not unmarshal `%s` into any supported union types for CanUpload", string(data))
-}
-
-func (u CanUpload) MarshalJSON() ([]byte, error) {
-	if u.CanUploadEnum != nil {
-		return utils.MarshalJSON(u.CanUploadEnum, "", true)
-	}
-
-	if u.Boolean != nil {
-		return utils.MarshalJSON(u.Boolean, "", true)
-	}
-
-	return nil, errors.New("could not marshal union type CanUpload: all fields are null")
-}
 
 // SendEmailNotification - Deprecated! Email notifications are always sent now.
 //
@@ -507,11 +42,15 @@ func (e *SendEmailNotification) UnmarshalJSON(data []byte) error {
 
 type PostFoldersFolderIDSharingsSharingRequest struct {
 	// The email address of the person with whom you want to share the folder.
-	With            string           `json:"with"`
-	RequirePassword *RequirePassword `json:"requirePassword,omitzero"`
-	CanShare        *CanShare        `json:"canShare,omitzero"`
-	CanDownload     *CanDownload     `json:"canDownload,omitzero"`
-	CanUpload       *CanUpload       `json:"canUpload,omitzero"`
+	With string `json:"with"`
+	// A flag indicating whether or not a password is required. Defaults to true.
+	RequirePassword *bool `json:"requirePassword,omitzero"`
+	// Whether the user is allowed to share the folder with others. Defaults to false.
+	CanShare *bool `json:"canShare,omitzero"`
+	// Whether the user is allowed to download files from the folder. Defaults to false.
+	CanDownload *bool `json:"canDownload,omitzero"`
+	// Whether the user is allowed to upload files to the folder. Defaults to false.
+	CanUpload *bool `json:"canUpload,omitzero"`
 	// Deprecated! Email notifications are always sent now.
 	//
 	// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
@@ -525,28 +64,28 @@ func (p *PostFoldersFolderIDSharingsSharingRequest) GetWith() string {
 	return p.With
 }
 
-func (p *PostFoldersFolderIDSharingsSharingRequest) GetRequirePassword() *RequirePassword {
+func (p *PostFoldersFolderIDSharingsSharingRequest) GetRequirePassword() *bool {
 	if p == nil {
 		return nil
 	}
 	return p.RequirePassword
 }
 
-func (p *PostFoldersFolderIDSharingsSharingRequest) GetCanShare() *CanShare {
+func (p *PostFoldersFolderIDSharingsSharingRequest) GetCanShare() *bool {
 	if p == nil {
 		return nil
 	}
 	return p.CanShare
 }
 
-func (p *PostFoldersFolderIDSharingsSharingRequest) GetCanDownload() *CanDownload {
+func (p *PostFoldersFolderIDSharingsSharingRequest) GetCanDownload() *bool {
 	if p == nil {
 		return nil
 	}
 	return p.CanDownload
 }
 
-func (p *PostFoldersFolderIDSharingsSharingRequest) GetCanUpload() *CanUpload {
+func (p *PostFoldersFolderIDSharingsSharingRequest) GetCanUpload() *bool {
 	if p == nil {
 		return nil
 	}
@@ -589,6 +128,31 @@ func (p *PostFoldersFolderIDSharingsRequest) GetBody() PostFoldersFolderIDSharin
 		return PostFoldersFolderIDSharingsRequestBody{}
 	}
 	return p.Body
+}
+
+// PostFoldersFolderIDSharingsCode - A machine-readable identifier for the specific authorization failure.
+type PostFoldersFolderIDSharingsCode string
+
+const (
+	PostFoldersFolderIDSharingsCodeUnauthorizedCredentials PostFoldersFolderIDSharingsCode = "unauthorized_credentials"
+	PostFoldersFolderIDSharingsCodeAccountInactive         PostFoldersFolderIDSharingsCode = "account_inactive"
+	PostFoldersFolderIDSharingsCodeUnauthorizedScope       PostFoldersFolderIDSharingsCode = "unauthorized_scope"
+	PostFoldersFolderIDSharingsCodeUnauthorizedParams      PostFoldersFolderIDSharingsCode = "unauthorized_params"
+)
+
+func (e PostFoldersFolderIDSharingsCode) ToPointer() *PostFoldersFolderIDSharingsCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *PostFoldersFolderIDSharingsCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
 }
 
 type PostFoldersFolderIDSharingsShare struct {
@@ -716,7 +280,8 @@ func (s *SharingResponse) GetCursor() optionalnullable.OptionalNullable[string] 
 
 // PostFoldersFolderIDSharingsResponseBody - The response includes a link for the user to access the folder.
 type PostFoldersFolderIDSharingsResponseBody struct {
-	Folder *string `json:"folder,omitzero"`
+	// The URL of the folder that was shared.
+	Project *string `json:"project,omitzero"`
 	// A sharing is an object that links either a contact or a contact group to a folder, including information about the contacts' permissions to that folder.
 	//
 	Sharing *SharingResponse `json:"sharing,omitzero"`
@@ -733,11 +298,11 @@ func (p *PostFoldersFolderIDSharingsResponseBody) UnmarshalJSON(data []byte) err
 	return nil
 }
 
-func (p *PostFoldersFolderIDSharingsResponseBody) GetFolder() *string {
+func (p *PostFoldersFolderIDSharingsResponseBody) GetProject() *string {
 	if p == nil {
 		return nil
 	}
-	return p.Folder
+	return p.Project
 }
 
 func (p *PostFoldersFolderIDSharingsResponseBody) GetSharing() *SharingResponse {

@@ -29,6 +29,31 @@ func (p *PutMediasRestoreRequest) GetFolderID() string {
 	return p.FolderID
 }
 
+// PutMediasRestoreCode - A machine-readable identifier for the specific authorization failure.
+type PutMediasRestoreCode string
+
+const (
+	PutMediasRestoreCodeUnauthorizedCredentials PutMediasRestoreCode = "unauthorized_credentials"
+	PutMediasRestoreCodeAccountInactive         PutMediasRestoreCode = "account_inactive"
+	PutMediasRestoreCodeUnauthorizedScope       PutMediasRestoreCode = "unauthorized_scope"
+	PutMediasRestoreCodeUnauthorizedParams      PutMediasRestoreCode = "unauthorized_params"
+)
+
+func (e PutMediasRestoreCode) ToPointer() *PutMediasRestoreCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *PutMediasRestoreCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 type Container struct {
 	// The type of container the medias will be restored to.
 	Type *string `json:"type,omitzero"`
@@ -89,6 +114,8 @@ func (e *PutMediasRestoreStatus) IsExact() bool {
 type PutMediasRestoreBackgroundJobStatus struct {
 	// The ID of the background job that's been queued for the request.
 	ID int64 `json:"id"`
+	// The unguessable hashed ID of the background job. Prefer this over the numeric ID when polling for status.
+	HashedID string `json:"hashed_id"`
 	// The status of the background job that's been queued for the request.
 	Status PutMediasRestoreStatus `json:"status"`
 }
@@ -98,6 +125,13 @@ func (p *PutMediasRestoreBackgroundJobStatus) GetID() int64 {
 		return 0
 	}
 	return p.ID
+}
+
+func (p *PutMediasRestoreBackgroundJobStatus) GetHashedID() string {
+	if p == nil {
+		return ""
+	}
+	return p.HashedID
 }
 
 func (p *PutMediasRestoreBackgroundJobStatus) GetStatus() PutMediasRestoreStatus {

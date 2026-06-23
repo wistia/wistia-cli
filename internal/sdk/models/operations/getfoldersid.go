@@ -22,228 +22,69 @@ func (g *GetFoldersIDRequest) GetID() string {
 	return g.ID
 }
 
-// GetFoldersIDType - A string representing what type of media this is.
-type GetFoldersIDType string
+// GetFoldersIDCode - A machine-readable identifier for the specific authorization failure.
+type GetFoldersIDCode string
 
 const (
-	GetFoldersIDTypeVideo                   GetFoldersIDType = "Video"
-	GetFoldersIDTypeAudio                   GetFoldersIDType = "Audio"
-	GetFoldersIDTypeImage                   GetFoldersIDType = "Image"
-	GetFoldersIDTypePdfDocument             GetFoldersIDType = "PdfDocument"
-	GetFoldersIDTypeMicrosoftOfficeDocument GetFoldersIDType = "MicrosoftOfficeDocument"
-	GetFoldersIDTypeSwf                     GetFoldersIDType = "Swf"
-	GetFoldersIDTypeUnknownType             GetFoldersIDType = "UnknownType"
+	GetFoldersIDCodeUnauthorizedCredentials GetFoldersIDCode = "unauthorized_credentials"
+	GetFoldersIDCodeAccountInactive         GetFoldersIDCode = "account_inactive"
+	GetFoldersIDCodeUnauthorizedScope       GetFoldersIDCode = "unauthorized_scope"
+	GetFoldersIDCodeUnauthorizedParams      GetFoldersIDCode = "unauthorized_params"
 )
 
-func (e GetFoldersIDType) ToPointer() *GetFoldersIDType {
+func (e GetFoldersIDCode) ToPointer() *GetFoldersIDCode {
 	return &e
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *GetFoldersIDType) IsExact() bool {
+func (e *GetFoldersIDCode) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Video", "Audio", "Image", "PdfDocument", "MicrosoftOfficeDocument", "Swf", "UnknownType":
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
 			return true
 		}
 	}
 	return false
 }
 
-// GetFoldersIDStatus - Post upload processing status. - `queued`: the file is waiting in the queue to be processed. - `processing`: the file is actively being processed. - `ready`: the file has been fully processed and is ready for embedding and viewing. - `failed`: the file was unable to be processed (usually a format or size error).
-type GetFoldersIDStatus string
-
-const (
-	GetFoldersIDStatusQueued     GetFoldersIDStatus = "queued"
-	GetFoldersIDStatusProcessing GetFoldersIDStatus = "processing"
-	GetFoldersIDStatusReady      GetFoldersIDStatus = "ready"
-	GetFoldersIDStatusFailed     GetFoldersIDStatus = "failed"
-)
-
-func (e GetFoldersIDStatus) ToPointer() *GetFoldersIDStatus {
-	return &e
+// GetFoldersIDMedias - A link to where you can fetch the medias for this folder.
+type GetFoldersIDMedias struct {
+	// A URL for fetching all child records of the parent record.
+	URL *string `json:"url,omitzero"`
 }
 
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *GetFoldersIDStatus) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "queued", "processing", "ready", "failed":
-			return true
-		}
-	}
-	return false
-}
-
-type GetFoldersIDThumbnail struct {
-	URL    *string `json:"url,omitzero"`
-	Width  *int64  `json:"width,omitzero"`
-	Height *int64  `json:"height,omitzero"`
-}
-
-func (g *GetFoldersIDThumbnail) GetURL() *string {
+func (g *GetFoldersIDMedias) GetURL() *string {
 	if g == nil {
 		return nil
 	}
 	return g.URL
 }
 
-func (g *GetFoldersIDThumbnail) GetWidth() *int64 {
-	if g == nil {
-		return nil
+// GetFoldersIDKind - Indicates the folder's access scope, relative to the requesting user. One of:
+// - `library`: a library the requester owns. Libraries can still be shared with specific contacts or contact groups; the only restriction is that they cannot be shared with the whole account.
+// - `shared`: a folder the requester has access to via a Contact or ContactGroup sharing — this includes both shared folders and another contact's library that the requester has been granted access to.
+// - `account`: a folder shared with the whole account (everyone in the company can see it).
+type GetFoldersIDKind string
+
+const (
+	GetFoldersIDKindLibrary GetFoldersIDKind = "library"
+	GetFoldersIDKindShared  GetFoldersIDKind = "shared"
+	GetFoldersIDKindAccount GetFoldersIDKind = "account"
+)
+
+func (e GetFoldersIDKind) ToPointer() *GetFoldersIDKind {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetFoldersIDKind) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "library", "shared", "account":
+			return true
+		}
 	}
-	return g.Width
-}
-
-func (g *GetFoldersIDThumbnail) GetHeight() *int64 {
-	if g == nil {
-		return nil
-	}
-	return g.Height
-}
-
-// GetFoldersIDMedias - A link to where you can fetch the medias for this folder.
-type GetFoldersIDMedias struct {
-	// A unique numeric identifier for the media within the system.
-	ID *int64 `json:"id,omitzero"`
-	// The display name of the media.
-	Name *string `json:"name,omitzero"`
-	// A string representing what type of media this is.
-	Type *GetFoldersIDType `json:"type,omitzero"`
-	// Whether or not the media is archived, either true or false.
-	Archived *bool `json:"archived,omitzero"`
-	// The date when the media was originally uploaded.
-	Created *time.Time `json:"created,omitzero"`
-	// The date when the media was last changed.
-	Updated *time.Time `json:"updated,omitzero"`
-	// Specifies the length (in seconds) for audio and video files. Specifies number of pages in the document. Omitted for other types of media.
-	Duration optionalnullable.OptionalNullable[float64] `json:"duration,omitzero"`
-	// DEPRECATED: If you want to programmatically embed videos, follow the construct an embed code guide.
-	//
-	//
-	// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
-	EmbedCode *string `json:"embedCode,omitzero"`
-	// A unique alphanumeric identifier for this media.
-	HashedID *string `json:"hashed_id,omitzero"`
-	// A description for the media which usually appears near the top of the sidebar on the media's page.
-	Description *string `json:"description,omitzero"`
-	// A floating point value between 0 and 1 that indicates the progress of the processing for this file.
-	Progress *float64 `json:"progress,omitzero"`
-	// Post upload processing status. - `queued`: the file is waiting in the queue to be processed. - `processing`: the file is actively being processed. - `ready`: the file has been fully processed and is ready for embedding and viewing. - `failed`: the file was unable to be processed (usually a format or size error).
-	//
-	Status *GetFoldersIDStatus `json:"status,omitzero"`
-	// The title of the section in which the media appears. This attribute is omitted if the media is not in a section (default).
-	Section   optionalnullable.OptionalNullable[string] `json:"section,omitzero"`
-	Thumbnail *GetFoldersIDThumbnail                    `json:"thumbnail,omitzero"`
-}
-
-func (g GetFoldersIDMedias) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(g, "", false)
-}
-
-func (g *GetFoldersIDMedias) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &g, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (g *GetFoldersIDMedias) GetID() *int64 {
-	if g == nil {
-		return nil
-	}
-	return g.ID
-}
-
-func (g *GetFoldersIDMedias) GetName() *string {
-	if g == nil {
-		return nil
-	}
-	return g.Name
-}
-
-func (g *GetFoldersIDMedias) GetType() *GetFoldersIDType {
-	if g == nil {
-		return nil
-	}
-	return g.Type
-}
-
-func (g *GetFoldersIDMedias) GetArchived() *bool {
-	if g == nil {
-		return nil
-	}
-	return g.Archived
-}
-
-func (g *GetFoldersIDMedias) GetCreated() *time.Time {
-	if g == nil {
-		return nil
-	}
-	return g.Created
-}
-
-func (g *GetFoldersIDMedias) GetUpdated() *time.Time {
-	if g == nil {
-		return nil
-	}
-	return g.Updated
-}
-
-func (g *GetFoldersIDMedias) GetDuration() optionalnullable.OptionalNullable[float64] {
-	if g == nil {
-		return nil
-	}
-	return g.Duration
-}
-
-func (g *GetFoldersIDMedias) GetEmbedCode() *string {
-	if g == nil {
-		return nil
-	}
-	return g.EmbedCode
-}
-
-func (g *GetFoldersIDMedias) GetHashedID() *string {
-	if g == nil {
-		return nil
-	}
-	return g.HashedID
-}
-
-func (g *GetFoldersIDMedias) GetDescription() *string {
-	if g == nil {
-		return nil
-	}
-	return g.Description
-}
-
-func (g *GetFoldersIDMedias) GetProgress() *float64 {
-	if g == nil {
-		return nil
-	}
-	return g.Progress
-}
-
-func (g *GetFoldersIDMedias) GetStatus() *GetFoldersIDStatus {
-	if g == nil {
-		return nil
-	}
-	return g.Status
-}
-
-func (g *GetFoldersIDMedias) GetSection() optionalnullable.OptionalNullable[string] {
-	if g == nil {
-		return nil
-	}
-	return g.Section
-}
-
-func (g *GetFoldersIDMedias) GetThumbnail() *GetFoldersIDThumbnail {
-	if g == nil {
-		return nil
-	}
-	return g.Thumbnail
+	return false
 }
 
 // GetFoldersIDResponseBody - A folder (previously called a project) is a container in which to organize media into. It can be
@@ -272,6 +113,15 @@ type GetFoldersIDResponseBody struct {
 	PublicID             *string `json:"public_id"`
 	AnonymousCanUpload   *bool   `json:"anonymous_can_upload,omitzero"`
 	AnonymousCanDownload *bool   `json:"anonymous_can_download,omitzero"`
+	// Indicates the folder's access scope, relative to the requesting user. One of:
+	// - `library`: a library the requester owns. Libraries can still be shared with specific contacts or contact groups; the only restriction is that they cannot be shared with the whole account.
+	// - `shared`: a folder the requester has access to via a Contact or ContactGroup sharing — this includes both shared folders and another contact's library that the requester has been granted access to.
+	// - `account`: a folder shared with the whole account (everyone in the company can see it).
+	//
+	Kind GetFoldersIDKind `json:"kind"`
+	// Whether this folder is someone's personal library ("My Library"). Unlike `kind`, this is a property of the folder itself and does not depend on who is requesting — it is `true` for a personal library even when that library has been shared with you (where `kind` would read `shared`). Use this, not `kind`, to tell whether a folder is a personal library.
+	//
+	PersonalLibrary bool `json:"personal_library"`
 	// A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
 	Cursor optionalnullable.OptionalNullable[string] `json:"cursor,omitzero"`
 }
@@ -369,6 +219,20 @@ func (g *GetFoldersIDResponseBody) GetAnonymousCanDownload() *bool {
 		return nil
 	}
 	return g.AnonymousCanDownload
+}
+
+func (g *GetFoldersIDResponseBody) GetKind() GetFoldersIDKind {
+	if g == nil {
+		return GetFoldersIDKind("")
+	}
+	return g.Kind
+}
+
+func (g *GetFoldersIDResponseBody) GetPersonalLibrary() bool {
+	if g == nil {
+		return false
+	}
+	return g.PersonalLibrary
 }
 
 func (g *GetFoldersIDResponseBody) GetCursor() optionalnullable.OptionalNullable[string] {

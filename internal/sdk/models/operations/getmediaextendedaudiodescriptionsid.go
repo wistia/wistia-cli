@@ -5,6 +5,7 @@ package operations
 
 import (
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
+	"github.com/wistia/wistia-cli/internal/sdk/optionalnullable"
 	"github.com/wistia/wistia-cli/internal/sdk/sdkinternal/utils"
 	"time"
 )
@@ -19,6 +20,31 @@ func (g *GetMediaExtendedAudioDescriptionsIDRequest) GetID() string {
 		return ""
 	}
 	return g.ID
+}
+
+// GetMediaExtendedAudioDescriptionsIDCode - A machine-readable identifier for the specific authorization failure.
+type GetMediaExtendedAudioDescriptionsIDCode string
+
+const (
+	GetMediaExtendedAudioDescriptionsIDCodeUnauthorizedCredentials GetMediaExtendedAudioDescriptionsIDCode = "unauthorized_credentials"
+	GetMediaExtendedAudioDescriptionsIDCodeAccountInactive         GetMediaExtendedAudioDescriptionsIDCode = "account_inactive"
+	GetMediaExtendedAudioDescriptionsIDCodeUnauthorizedScope       GetMediaExtendedAudioDescriptionsIDCode = "unauthorized_scope"
+	GetMediaExtendedAudioDescriptionsIDCodeUnauthorizedParams      GetMediaExtendedAudioDescriptionsIDCode = "unauthorized_params"
+)
+
+func (e GetMediaExtendedAudioDescriptionsIDCode) ToPointer() *GetMediaExtendedAudioDescriptionsIDCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetMediaExtendedAudioDescriptionsIDCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
 }
 
 type GetMediaExtendedAudioDescriptionsIDMedia struct {
@@ -162,6 +188,8 @@ type GetMediaExtendedAudioDescriptionsIDResponseBody struct {
 	Media             *GetMediaExtendedAudioDescriptionsIDMedia             `json:"media,omitzero"`
 	ProvidedMediaFile *GetMediaExtendedAudioDescriptionsIDProvidedMediaFile `json:"provided_media_file,omitzero"`
 	Contact           *GetMediaExtendedAudioDescriptionsIDContact           `json:"contact,omitzero"`
+	// A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+	Cursor optionalnullable.OptionalNullable[string] `json:"cursor,omitzero"`
 	// Download links for the audio description files.
 	Assets *Assets `json:"assets,omitzero"`
 }
@@ -224,6 +252,13 @@ func (g *GetMediaExtendedAudioDescriptionsIDResponseBody) GetContact() *GetMedia
 		return nil
 	}
 	return g.Contact
+}
+
+func (g *GetMediaExtendedAudioDescriptionsIDResponseBody) GetCursor() optionalnullable.OptionalNullable[string] {
+	if g == nil {
+		return nil
+	}
+	return g.Cursor
 }
 
 func (g *GetMediaExtendedAudioDescriptionsIDResponseBody) GetAssets() *Assets {

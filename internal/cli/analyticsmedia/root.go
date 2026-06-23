@@ -34,6 +34,10 @@ func InitAnalyticsMediaRoot(parent *cobra.Command) error {
 		return err
 	}
 
+	if err := initGetEmbedLocationsTimeseriesCmd(AnalyticsMediaCmd); err != nil {
+		return err
+	}
+
 	if err := initGetTrafficCmd(AnalyticsMediaCmd); err != nil {
 		return err
 	}

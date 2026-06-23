@@ -20,6 +20,31 @@ func (g *GetMediasMediaIDCustomizationsRequest) GetMediaID() string {
 	return g.MediaID
 }
 
+// GetMediasMediaIDCustomizationsCode - A machine-readable identifier for the specific authorization failure.
+type GetMediasMediaIDCustomizationsCode string
+
+const (
+	GetMediasMediaIDCustomizationsCodeUnauthorizedCredentials GetMediasMediaIDCustomizationsCode = "unauthorized_credentials"
+	GetMediasMediaIDCustomizationsCodeAccountInactive         GetMediasMediaIDCustomizationsCode = "account_inactive"
+	GetMediasMediaIDCustomizationsCodeUnauthorizedScope       GetMediasMediaIDCustomizationsCode = "unauthorized_scope"
+	GetMediasMediaIDCustomizationsCodeUnauthorizedParams      GetMediasMediaIDCustomizationsCode = "unauthorized_params"
+)
+
+func (e GetMediasMediaIDCustomizationsCode) ToPointer() *GetMediasMediaIDCustomizationsCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetMediasMediaIDCustomizationsCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 type GetMediasMediaIDCustomizationsPasswordProtectedVideo struct {
 	On        *string `json:"on,omitzero"`
 	Src       *string `json:"src,omitzero"`
@@ -312,6 +337,9 @@ func (g *GetMediasMediaIDCustomizationsCaptionsV1) GetOnByDefault() *string {
 // #region class-body-getmediasmediaidcustomizationscaptionsv1
 // #endregion class-body-getmediasmediaidcustomizationscaptionsv1
 
+// GetMediasMediaIDCustomizationsPlugin - Container for player plugin configurations. Plugin keys are extensible and
+// not strictly validated; the documented sub-objects represent the most
+// common plugins.
 type GetMediasMediaIDCustomizationsPlugin struct {
 	PasswordProtectedVideo *GetMediasMediaIDCustomizationsPasswordProtectedVideo `json:"passwordProtectedVideo,omitzero"`
 	VideoThumbnail         *GetMediasMediaIDCustomizationsVideoThumbnail         `json:"videoThumbnail,omitzero"`
@@ -452,10 +480,14 @@ type GetMediasMediaIDCustomizationsResponseBody struct {
 	Volume                        *string `json:"volume,omitzero"`
 	Wmode                         *string `json:"wmode,omitzero"`
 	// String representation of whether the key moments feature is enabled.
-	KeyMoments *string                                  `json:"keyMoments,omitzero"`
-	Plugin     *GetMediasMediaIDCustomizationsPlugin    `json:"plugin,omitzero"`
-	Private    *GetMediasMediaIDCustomizationsPrivate   `json:"private,omitzero"`
-	Encrypted  *GetMediasMediaIDCustomizationsEncrypted `json:"encrypted,omitzero"`
+	KeyMoments *string `json:"keyMoments,omitzero"`
+	// Container for player plugin configurations. Plugin keys are extensible and
+	// not strictly validated; the documented sub-objects represent the most
+	// common plugins.
+	//
+	Plugin    *GetMediasMediaIDCustomizationsPlugin    `json:"plugin,omitzero"`
+	Private   *GetMediasMediaIDCustomizationsPrivate   `json:"private,omitzero"`
+	Encrypted *GetMediasMediaIDCustomizationsEncrypted `json:"encrypted,omitzero"`
 }
 
 func (g GetMediasMediaIDCustomizationsResponseBody) MarshalJSON() ([]byte, error) {

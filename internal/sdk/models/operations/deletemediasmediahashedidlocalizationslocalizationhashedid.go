@@ -31,6 +31,31 @@ func (d *DeleteMediasMediaHashedIDLocalizationsLocalizationHashedIDRequest) GetL
 	return d.LocalizationHashedID
 }
 
+// DeleteMediasMediaHashedIDLocalizationsLocalizationHashedIDCode - A machine-readable identifier for the specific authorization failure.
+type DeleteMediasMediaHashedIDLocalizationsLocalizationHashedIDCode string
+
+const (
+	DeleteMediasMediaHashedIDLocalizationsLocalizationHashedIDCodeUnauthorizedCredentials DeleteMediasMediaHashedIDLocalizationsLocalizationHashedIDCode = "unauthorized_credentials"
+	DeleteMediasMediaHashedIDLocalizationsLocalizationHashedIDCodeAccountInactive         DeleteMediasMediaHashedIDLocalizationsLocalizationHashedIDCode = "account_inactive"
+	DeleteMediasMediaHashedIDLocalizationsLocalizationHashedIDCodeUnauthorizedScope       DeleteMediasMediaHashedIDLocalizationsLocalizationHashedIDCode = "unauthorized_scope"
+	DeleteMediasMediaHashedIDLocalizationsLocalizationHashedIDCodeUnauthorizedParams      DeleteMediasMediaHashedIDLocalizationsLocalizationHashedIDCode = "unauthorized_params"
+)
+
+func (e DeleteMediasMediaHashedIDLocalizationsLocalizationHashedIDCode) ToPointer() *DeleteMediasMediaHashedIDLocalizationsLocalizationHashedIDCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *DeleteMediasMediaHashedIDLocalizationsLocalizationHashedIDCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 // DeleteMediasMediaHashedIDLocalizationsLocalizationHashedIDSourceMedia - The media that the localization is associated with.
 type DeleteMediasMediaHashedIDLocalizationsLocalizationHashedIDSourceMedia struct {
 	// A unique alphanumeric identifier for this media.

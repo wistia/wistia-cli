@@ -38,6 +38,11 @@ func newRemix(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks *hooks.H
 // Remix uses AI to analyze video transcripts and create edited versions
 // (highlight reels, trailers, cut-downs, etc.) based on your instructions.
 //
+// The remix is automatically exported (rendered) upon completion. When the
+// status reaches "completed", the output media is available in the
+// destination folder. If no `folder_id` is provided, the remix is exported
+// to the source media's folder.
+//
 // <!--- HIDE-MCP -->
 // ## Requires api token with one of the following permissions
 // ```
@@ -126,7 +131,7 @@ func (s *Remix) PostRemixes(ctx context.Context, request *operations.PostRemixes
 
 		_, err = s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
 		return nil, err
-	} else if utils.MatchStatusCodes([]string{"401", "422", "4XX", "500", "5XX"}, httpRes.StatusCode) {
+	} else if utils.MatchStatusCodes([]string{"4XX", "5XX"}, httpRes.StatusCode) {
 		_httpRes, err := s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
 		if err != nil {
 			return nil, err
@@ -355,7 +360,7 @@ func (s *Remix) GetRemixesRemixHashedID(ctx context.Context, request operations.
 
 		_, err = s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
 		return nil, err
-	} else if utils.MatchStatusCodes([]string{"401", "404", "4XX", "500", "5XX"}, httpRes.StatusCode) {
+	} else if utils.MatchStatusCodes([]string{"4XX", "5XX"}, httpRes.StatusCode) {
 		_httpRes, err := s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
 		if err != nil {
 			return nil, err
@@ -504,6 +509,10 @@ func (s *Remix) GetRemixesRemixHashedID(ctx context.Context, request operations.
 // in the same conversation. The previous remix is preserved and can be
 // referenced later.
 //
+// The new remix version is automatically exported (rendered) upon completion.
+// If `folder_id` is provided, the output is exported to that folder. Otherwise,
+// it defaults to the same folder as the previous remix version's output.
+//
 // <!--- HIDE-MCP -->
 // ## Requires api token with one of the following permissions
 // ```
@@ -592,7 +601,7 @@ func (s *Remix) PostRemixesRemixHashedIDContinue(ctx context.Context, request op
 
 		_, err = s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
 		return nil, err
-	} else if utils.MatchStatusCodes([]string{"401", "404", "422", "4XX", "500", "5XX"}, httpRes.StatusCode) {
+	} else if utils.MatchStatusCodes([]string{"4XX", "5XX"}, httpRes.StatusCode) {
 		_httpRes, err := s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
 		if err != nil {
 			return nil, err
@@ -855,7 +864,7 @@ func (s *Remix) PostRemixesRemixHashedIDExport(ctx context.Context, request oper
 
 		_, err = s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
 		return nil, err
-	} else if utils.MatchStatusCodes([]string{"401", "404", "422", "4XX", "500", "5XX"}, httpRes.StatusCode) {
+	} else if utils.MatchStatusCodes([]string{"4XX", "5XX"}, httpRes.StatusCode) {
 		_httpRes, err := s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
 		if err != nil {
 			return nil, err
@@ -1108,7 +1117,7 @@ func (s *Remix) GetRemixAccountStatus(ctx context.Context, opts ...operations.Op
 
 		_, err = s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
 		return nil, err
-	} else if utils.MatchStatusCodes([]string{"401", "4XX", "500", "5XX"}, httpRes.StatusCode) {
+	} else if utils.MatchStatusCodes([]string{"4XX", "5XX"}, httpRes.StatusCode) {
 		_httpRes, err := s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
 		if err != nil {
 			return nil, err

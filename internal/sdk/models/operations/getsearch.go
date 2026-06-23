@@ -109,228 +109,69 @@ func (g *GetSearchRequest) GetCreatedBefore() *time.Time {
 	return g.CreatedBefore
 }
 
-// FolderType - A string representing what type of media this is.
-type FolderType string
+// GetSearchCode - A machine-readable identifier for the specific authorization failure.
+type GetSearchCode string
 
 const (
-	FolderTypeVideo                   FolderType = "Video"
-	FolderTypeAudio                   FolderType = "Audio"
-	FolderTypeImage                   FolderType = "Image"
-	FolderTypePdfDocument             FolderType = "PdfDocument"
-	FolderTypeMicrosoftOfficeDocument FolderType = "MicrosoftOfficeDocument"
-	FolderTypeSwf                     FolderType = "Swf"
-	FolderTypeUnknownType             FolderType = "UnknownType"
+	GetSearchCodeUnauthorizedCredentials GetSearchCode = "unauthorized_credentials"
+	GetSearchCodeAccountInactive         GetSearchCode = "account_inactive"
+	GetSearchCodeUnauthorizedScope       GetSearchCode = "unauthorized_scope"
+	GetSearchCodeUnauthorizedParams      GetSearchCode = "unauthorized_params"
 )
 
-func (e FolderType) ToPointer() *FolderType {
+func (e GetSearchCode) ToPointer() *GetSearchCode {
 	return &e
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *FolderType) IsExact() bool {
+func (e *GetSearchCode) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Video", "Audio", "Image", "PdfDocument", "MicrosoftOfficeDocument", "Swf", "UnknownType":
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
 			return true
 		}
 	}
 	return false
-}
-
-// FolderStatus - Post upload processing status. - `queued`: the file is waiting in the queue to be processed. - `processing`: the file is actively being processed. - `ready`: the file has been fully processed and is ready for embedding and viewing. - `failed`: the file was unable to be processed (usually a format or size error).
-type FolderStatus string
-
-const (
-	FolderStatusQueued     FolderStatus = "queued"
-	FolderStatusProcessing FolderStatus = "processing"
-	FolderStatusReady      FolderStatus = "ready"
-	FolderStatusFailed     FolderStatus = "failed"
-)
-
-func (e FolderStatus) ToPointer() *FolderStatus {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *FolderStatus) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "queued", "processing", "ready", "failed":
-			return true
-		}
-	}
-	return false
-}
-
-type FolderThumbnail struct {
-	URL    *string `json:"url,omitzero"`
-	Width  *int64  `json:"width,omitzero"`
-	Height *int64  `json:"height,omitzero"`
-}
-
-func (f *FolderThumbnail) GetURL() *string {
-	if f == nil {
-		return nil
-	}
-	return f.URL
-}
-
-func (f *FolderThumbnail) GetWidth() *int64 {
-	if f == nil {
-		return nil
-	}
-	return f.Width
-}
-
-func (f *FolderThumbnail) GetHeight() *int64 {
-	if f == nil {
-		return nil
-	}
-	return f.Height
 }
 
 // GetSearchMedias - A link to where you can fetch the medias for this folder.
 type GetSearchMedias struct {
-	// A unique numeric identifier for the media within the system.
-	ID *int64 `json:"id,omitzero"`
-	// The display name of the media.
-	Name *string `json:"name,omitzero"`
-	// A string representing what type of media this is.
-	Type *FolderType `json:"type,omitzero"`
-	// Whether or not the media is archived, either true or false.
-	Archived *bool `json:"archived,omitzero"`
-	// The date when the media was originally uploaded.
-	Created *time.Time `json:"created,omitzero"`
-	// The date when the media was last changed.
-	Updated *time.Time `json:"updated,omitzero"`
-	// Specifies the length (in seconds) for audio and video files. Specifies number of pages in the document. Omitted for other types of media.
-	Duration optionalnullable.OptionalNullable[float64] `json:"duration,omitzero"`
-	// DEPRECATED: If you want to programmatically embed videos, follow the construct an embed code guide.
-	//
-	//
-	// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
-	EmbedCode *string `json:"embedCode,omitzero"`
-	// A unique alphanumeric identifier for this media.
-	HashedID *string `json:"hashed_id,omitzero"`
-	// A description for the media which usually appears near the top of the sidebar on the media's page.
-	Description *string `json:"description,omitzero"`
-	// A floating point value between 0 and 1 that indicates the progress of the processing for this file.
-	Progress *float64 `json:"progress,omitzero"`
-	// Post upload processing status. - `queued`: the file is waiting in the queue to be processed. - `processing`: the file is actively being processed. - `ready`: the file has been fully processed and is ready for embedding and viewing. - `failed`: the file was unable to be processed (usually a format or size error).
-	//
-	Status *FolderStatus `json:"status,omitzero"`
-	// The title of the section in which the media appears. This attribute is omitted if the media is not in a section (default).
-	Section   optionalnullable.OptionalNullable[string] `json:"section,omitzero"`
-	Thumbnail *FolderThumbnail                          `json:"thumbnail,omitzero"`
+	// A URL for fetching all child records of the parent record.
+	URL *string `json:"url,omitzero"`
 }
 
-func (g GetSearchMedias) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(g, "", false)
-}
-
-func (g *GetSearchMedias) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &g, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (g *GetSearchMedias) GetID() *int64 {
+func (g *GetSearchMedias) GetURL() *string {
 	if g == nil {
 		return nil
 	}
-	return g.ID
+	return g.URL
 }
 
-func (g *GetSearchMedias) GetName() *string {
-	if g == nil {
-		return nil
-	}
-	return g.Name
+// GetSearchKind - Indicates the folder's access scope, relative to the requesting user. One of:
+// - `library`: a library the requester owns. Libraries can still be shared with specific contacts or contact groups; the only restriction is that they cannot be shared with the whole account.
+// - `shared`: a folder the requester has access to via a Contact or ContactGroup sharing — this includes both shared folders and another contact's library that the requester has been granted access to.
+// - `account`: a folder shared with the whole account (everyone in the company can see it).
+type GetSearchKind string
+
+const (
+	GetSearchKindLibrary GetSearchKind = "library"
+	GetSearchKindShared  GetSearchKind = "shared"
+	GetSearchKindAccount GetSearchKind = "account"
+)
+
+func (e GetSearchKind) ToPointer() *GetSearchKind {
+	return &e
 }
 
-func (g *GetSearchMedias) GetType() *FolderType {
-	if g == nil {
-		return nil
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetSearchKind) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "library", "shared", "account":
+			return true
+		}
 	}
-	return g.Type
-}
-
-func (g *GetSearchMedias) GetArchived() *bool {
-	if g == nil {
-		return nil
-	}
-	return g.Archived
-}
-
-func (g *GetSearchMedias) GetCreated() *time.Time {
-	if g == nil {
-		return nil
-	}
-	return g.Created
-}
-
-func (g *GetSearchMedias) GetUpdated() *time.Time {
-	if g == nil {
-		return nil
-	}
-	return g.Updated
-}
-
-func (g *GetSearchMedias) GetDuration() optionalnullable.OptionalNullable[float64] {
-	if g == nil {
-		return nil
-	}
-	return g.Duration
-}
-
-func (g *GetSearchMedias) GetEmbedCode() *string {
-	if g == nil {
-		return nil
-	}
-	return g.EmbedCode
-}
-
-func (g *GetSearchMedias) GetHashedID() *string {
-	if g == nil {
-		return nil
-	}
-	return g.HashedID
-}
-
-func (g *GetSearchMedias) GetDescription() *string {
-	if g == nil {
-		return nil
-	}
-	return g.Description
-}
-
-func (g *GetSearchMedias) GetProgress() *float64 {
-	if g == nil {
-		return nil
-	}
-	return g.Progress
-}
-
-func (g *GetSearchMedias) GetStatus() *FolderStatus {
-	if g == nil {
-		return nil
-	}
-	return g.Status
-}
-
-func (g *GetSearchMedias) GetSection() optionalnullable.OptionalNullable[string] {
-	if g == nil {
-		return nil
-	}
-	return g.Section
-}
-
-func (g *GetSearchMedias) GetThumbnail() *FolderThumbnail {
-	if g == nil {
-		return nil
-	}
-	return g.Thumbnail
+	return false
 }
 
 // GetSearchFolder - A folder (previously called a project) is a container in which to organize media into. It can be
@@ -359,6 +200,15 @@ type GetSearchFolder struct {
 	PublicID             *string `json:"public_id"`
 	AnonymousCanUpload   *bool   `json:"anonymous_can_upload,omitzero"`
 	AnonymousCanDownload *bool   `json:"anonymous_can_download,omitzero"`
+	// Indicates the folder's access scope, relative to the requesting user. One of:
+	// - `library`: a library the requester owns. Libraries can still be shared with specific contacts or contact groups; the only restriction is that they cannot be shared with the whole account.
+	// - `shared`: a folder the requester has access to via a Contact or ContactGroup sharing — this includes both shared folders and another contact's library that the requester has been granted access to.
+	// - `account`: a folder shared with the whole account (everyone in the company can see it).
+	//
+	Kind GetSearchKind `json:"kind"`
+	// Whether this folder is someone's personal library ("My Library"). Unlike `kind`, this is a property of the folder itself and does not depend on who is requesting — it is `true` for a personal library even when that library has been shared with you (where `kind` would read `shared`). Use this, not `kind`, to tell whether a folder is a personal library.
+	//
+	PersonalLibrary bool `json:"personal_library"`
 	// A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
 	Cursor optionalnullable.OptionalNullable[string] `json:"cursor,omitzero"`
 }
@@ -458,6 +308,20 @@ func (g *GetSearchFolder) GetAnonymousCanDownload() *bool {
 	return g.AnonymousCanDownload
 }
 
+func (g *GetSearchFolder) GetKind() GetSearchKind {
+	if g == nil {
+		return GetSearchKind("")
+	}
+	return g.Kind
+}
+
+func (g *GetSearchFolder) GetPersonalLibrary() bool {
+	if g == nil {
+		return false
+	}
+	return g.PersonalLibrary
+}
+
 func (g *GetSearchFolder) GetCursor() optionalnullable.OptionalNullable[string] {
 	if g == nil {
 		return nil
@@ -543,25 +407,25 @@ func (g *GetSearchSubfolder) GetCursor() optionalnullable.OptionalNullable[strin
 	return g.Cursor
 }
 
-// GetSearchMediaType - A string representing what type of media this is.
-type GetSearchMediaType string
+// GetSearchType - A string representing what type of media this is.
+type GetSearchType string
 
 const (
-	GetSearchMediaTypeVideo                   GetSearchMediaType = "Video"
-	GetSearchMediaTypeAudio                   GetSearchMediaType = "Audio"
-	GetSearchMediaTypeImage                   GetSearchMediaType = "Image"
-	GetSearchMediaTypePdfDocument             GetSearchMediaType = "PdfDocument"
-	GetSearchMediaTypeMicrosoftOfficeDocument GetSearchMediaType = "MicrosoftOfficeDocument"
-	GetSearchMediaTypeSwf                     GetSearchMediaType = "Swf"
-	GetSearchMediaTypeUnknownType             GetSearchMediaType = "UnknownType"
+	GetSearchTypeVideo                   GetSearchType = "Video"
+	GetSearchTypeAudio                   GetSearchType = "Audio"
+	GetSearchTypeImage                   GetSearchType = "Image"
+	GetSearchTypePdfDocument             GetSearchType = "PdfDocument"
+	GetSearchTypeMicrosoftOfficeDocument GetSearchType = "MicrosoftOfficeDocument"
+	GetSearchTypeSwf                     GetSearchType = "Swf"
+	GetSearchTypeUnknownType             GetSearchType = "UnknownType"
 )
 
-func (e GetSearchMediaType) ToPointer() *GetSearchMediaType {
+func (e GetSearchType) ToPointer() *GetSearchType {
 	return &e
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *GetSearchMediaType) IsExact() bool {
+func (e *GetSearchType) IsExact() bool {
 	if e != nil {
 		switch *e {
 		case "Video", "Audio", "Image", "PdfDocument", "MicrosoftOfficeDocument", "Swf", "UnknownType":
@@ -571,22 +435,22 @@ func (e *GetSearchMediaType) IsExact() bool {
 	return false
 }
 
-// GetSearchMediaStatus - Post upload processing status. - `queued`: the file is waiting in the queue to be processed. - `processing`: the file is actively being processed. - `ready`: the file has been fully processed and is ready for embedding and viewing. - `failed`: the file was unable to be processed (usually a format or size error).
-type GetSearchMediaStatus string
+// GetSearchStatus - Post upload processing status. - `queued`: the file is waiting in the queue to be processed. - `processing`: the file is actively being processed. - `ready`: the file has been fully processed and is ready for embedding and viewing. - `failed`: the file was unable to be processed (usually a format or size error).
+type GetSearchStatus string
 
 const (
-	GetSearchMediaStatusQueued     GetSearchMediaStatus = "queued"
-	GetSearchMediaStatusProcessing GetSearchMediaStatus = "processing"
-	GetSearchMediaStatusReady      GetSearchMediaStatus = "ready"
-	GetSearchMediaStatusFailed     GetSearchMediaStatus = "failed"
+	GetSearchStatusQueued     GetSearchStatus = "queued"
+	GetSearchStatusProcessing GetSearchStatus = "processing"
+	GetSearchStatusReady      GetSearchStatus = "ready"
+	GetSearchStatusFailed     GetSearchStatus = "failed"
 )
 
-func (e GetSearchMediaStatus) ToPointer() *GetSearchMediaStatus {
+func (e GetSearchStatus) ToPointer() *GetSearchStatus {
 	return &e
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *GetSearchMediaStatus) IsExact() bool {
+func (e *GetSearchStatus) IsExact() bool {
 	if e != nil {
 		switch *e {
 		case "queued", "processing", "ready", "failed":
@@ -596,27 +460,27 @@ func (e *GetSearchMediaStatus) IsExact() bool {
 	return false
 }
 
-type GetSearchMediaThumbnail struct {
+type GetSearchThumbnail struct {
 	URL    *string `json:"url,omitzero"`
 	Width  *int64  `json:"width,omitzero"`
 	Height *int64  `json:"height,omitzero"`
 }
 
-func (g *GetSearchMediaThumbnail) GetURL() *string {
+func (g *GetSearchThumbnail) GetURL() *string {
 	if g == nil {
 		return nil
 	}
 	return g.URL
 }
 
-func (g *GetSearchMediaThumbnail) GetWidth() *int64 {
+func (g *GetSearchThumbnail) GetWidth() *int64 {
 	if g == nil {
 		return nil
 	}
 	return g.Width
 }
 
-func (g *GetSearchMediaThumbnail) GetHeight() *int64 {
+func (g *GetSearchThumbnail) GetHeight() *int64 {
 	if g == nil {
 		return nil
 	}
@@ -672,7 +536,7 @@ type GetSearchMedia struct {
 	// The display name of the media.
 	Name *string `json:"name,omitzero"`
 	// A string representing what type of media this is.
-	Type *GetSearchMediaType `json:"type,omitzero"`
+	Type *GetSearchType `json:"type,omitzero"`
 	// Whether or not the media is archived, either true or false.
 	Archived *bool `json:"archived,omitzero"`
 	// The date when the media was originally uploaded.
@@ -694,10 +558,12 @@ type GetSearchMedia struct {
 	Progress *float64 `json:"progress,omitzero"`
 	// Post upload processing status. - `queued`: the file is waiting in the queue to be processed. - `processing`: the file is actively being processed. - `ready`: the file has been fully processed and is ready for embedding and viewing. - `failed`: the file was unable to be processed (usually a format or size error).
 	//
-	Status *GetSearchMediaStatus `json:"status,omitzero"`
+	Status *GetSearchStatus `json:"status,omitzero"`
 	// The title of the section in which the media appears. This attribute is omitted if the media is not in a section (default).
 	Section   optionalnullable.OptionalNullable[string] `json:"section,omitzero"`
-	Thumbnail *GetSearchMediaThumbnail                  `json:"thumbnail,omitzero"`
+	Thumbnail *GetSearchThumbnail                       `json:"thumbnail,omitzero"`
+	// Whether the media is protected (e.g. requires a password or other authentication to view). Null if the media is not protected.
+	Protected optionalnullable.OptionalNullable[bool] `json:"protected,omitzero"`
 	// The hashed ID of the folder this media belongs to
 	FolderHashedID *string `json:"folder_hashed_id"`
 	// Array of transcript matches with timestamps
@@ -729,7 +595,7 @@ func (g *GetSearchMedia) GetName() *string {
 	return g.Name
 }
 
-func (g *GetSearchMedia) GetType() *GetSearchMediaType {
+func (g *GetSearchMedia) GetType() *GetSearchType {
 	if g == nil {
 		return nil
 	}
@@ -792,7 +658,7 @@ func (g *GetSearchMedia) GetProgress() *float64 {
 	return g.Progress
 }
 
-func (g *GetSearchMedia) GetStatus() *GetSearchMediaStatus {
+func (g *GetSearchMedia) GetStatus() *GetSearchStatus {
 	if g == nil {
 		return nil
 	}
@@ -806,11 +672,18 @@ func (g *GetSearchMedia) GetSection() optionalnullable.OptionalNullable[string] 
 	return g.Section
 }
 
-func (g *GetSearchMedia) GetThumbnail() *GetSearchMediaThumbnail {
+func (g *GetSearchMedia) GetThumbnail() *GetSearchThumbnail {
 	if g == nil {
 		return nil
 	}
 	return g.Thumbnail
+}
+
+func (g *GetSearchMedia) GetProtected() optionalnullable.OptionalNullable[bool] {
+	if g == nil {
+		return nil
+	}
+	return g.Protected
 }
 
 func (g *GetSearchMedia) GetFolderHashedID() *string {
@@ -842,6 +715,14 @@ type Channel struct {
 	Created time.Time `json:"created"`
 	// The date when the channel was last updated.
 	Updated time.Time `json:"updated"`
+	// The number of live stream events in the channel.
+	LiveStreamEventCount *int64 `json:"live_stream_event_count,omitzero"`
+	// Whether episodes are automatically published when added to the channel.
+	AutoPublishEnabled optionalnullable.OptionalNullable[bool] `json:"auto_publish_enabled,omitzero"`
+	// Whether podcasting is enabled for the channel.
+	PodcastEnabled optionalnullable.OptionalNullable[bool] `json:"podcast_enabled,omitzero"`
+	// The custom URL used when embedding the channel on your own site. Null if no custom URL is set.
+	CustomURL optionalnullable.OptionalNullable[string] `json:"custom_url,omitzero"`
 }
 
 func (c Channel) MarshalJSON() ([]byte, error) {
@@ -904,6 +785,34 @@ func (c *Channel) GetUpdated() time.Time {
 	return c.Updated
 }
 
+func (c *Channel) GetLiveStreamEventCount() *int64 {
+	if c == nil {
+		return nil
+	}
+	return c.LiveStreamEventCount
+}
+
+func (c *Channel) GetAutoPublishEnabled() optionalnullable.OptionalNullable[bool] {
+	if c == nil {
+		return nil
+	}
+	return c.AutoPublishEnabled
+}
+
+func (c *Channel) GetPodcastEnabled() optionalnullable.OptionalNullable[bool] {
+	if c == nil {
+		return nil
+	}
+	return c.PodcastEnabled
+}
+
+func (c *Channel) GetCustomURL() optionalnullable.OptionalNullable[string] {
+	if c == nil {
+		return nil
+	}
+	return c.CustomURL
+}
+
 type ChannelEpisode struct {
 	// A unique numeric identifier for the channel episode within the system.
 	ID int64 `json:"id"`
@@ -919,6 +828,8 @@ type ChannelEpisode struct {
 	ChannelHashedID *string `json:"channel_hashed_id"`
 	// The hashed ID of the media associated with this channel episode.
 	MediaHashedID *string `json:"media_hashed_id"`
+	// The hashed ID of the live stream event associated with this channel episode, if any.
+	LiveStreamEventHashedID optionalnullable.OptionalNullable[string] `json:"live_stream_event_hashed_id,omitzero"`
 	// Whether the channel episode is published.
 	Published bool `json:"published"`
 	// The date when the channel episode was originally created.
@@ -989,6 +900,13 @@ func (c *ChannelEpisode) GetMediaHashedID() *string {
 	return c.MediaHashedID
 }
 
+func (c *ChannelEpisode) GetLiveStreamEventHashedID() optionalnullable.OptionalNullable[string] {
+	if c == nil {
+		return nil
+	}
+	return c.LiveStreamEventHashedID
+}
+
 func (c *ChannelEpisode) GetPublished() bool {
 	if c == nil {
 		return false
@@ -1017,6 +935,38 @@ func (c *ChannelEpisode) GetPublishAt() optionalnullable.OptionalNullable[time.T
 	return c.PublishAt
 }
 
+type WebinarFolder struct {
+	// A unique alphanumeric identifier for the record.
+	ID string `json:"id"`
+	// A URL for fetching all the records of the given record type. You can pass hashed_ids as a param with multiple values
+	// to do a batch fetch for this records type.
+	//
+	IndexURL string `json:"index_url"`
+	// A URL that can be used to fetch this record.
+	URL string `json:"url"`
+}
+
+func (w *WebinarFolder) GetID() string {
+	if w == nil {
+		return ""
+	}
+	return w.ID
+}
+
+func (w *WebinarFolder) GetIndexURL() string {
+	if w == nil {
+		return ""
+	}
+	return w.IndexURL
+}
+
+func (w *WebinarFolder) GetURL() string {
+	if w == nil {
+		return ""
+	}
+	return w.URL
+}
+
 // GetSearchWebinar - A webinar is an event which allows you to stream a video
 // to multiple participants. See our [Webinars Guide](https://support.wistia.com/en/articles/8288501-getting-started-with-webinars)
 // for more info.
@@ -1031,6 +981,8 @@ type GetSearchWebinar struct {
 	ScheduledFor optionalnullable.OptionalNullable[time.Time] `json:"scheduled_for,omitzero"`
 	// Duration of the webinar in minutes
 	EventDuration optionalnullable.OptionalNullable[int64] `json:"event_duration,omitzero"`
+	// The IANA time zone identifier the webinar is scheduled in
+	TimeZone string `json:"time_zone"`
 	// Current lifecycle status of the event
 	LifecycleStatus string `json:"lifecycle_status"`
 	// Registration status of the event
@@ -1045,6 +997,10 @@ type GetSearchWebinar struct {
 	HostLink string `json:"host_link"`
 	// Link for panelists to join the event
 	PanelistLink string `json:"panelist_link"`
+	// The folder (project) this webinar belongs to
+	Folder optionalnullable.OptionalNullable[WebinarFolder] `json:"folder,omitzero"`
+	// A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+	Cursor optionalnullable.OptionalNullable[string] `json:"cursor,omitzero"`
 }
 
 func (g GetSearchWebinar) MarshalJSON() ([]byte, error) {
@@ -1091,6 +1047,13 @@ func (g *GetSearchWebinar) GetEventDuration() optionalnullable.OptionalNullable[
 		return nil
 	}
 	return g.EventDuration
+}
+
+func (g *GetSearchWebinar) GetTimeZone() string {
+	if g == nil {
+		return ""
+	}
+	return g.TimeZone
 }
 
 func (g *GetSearchWebinar) GetLifecycleStatus() string {
@@ -1140,6 +1103,20 @@ func (g *GetSearchWebinar) GetPanelistLink() string {
 		return ""
 	}
 	return g.PanelistLink
+}
+
+func (g *GetSearchWebinar) GetFolder() optionalnullable.OptionalNullable[WebinarFolder] {
+	if g == nil {
+		return nil
+	}
+	return g.Folder
+}
+
+func (g *GetSearchWebinar) GetCursor() optionalnullable.OptionalNullable[string] {
+	if g == nil {
+		return nil
+	}
+	return g.Cursor
 }
 
 type GetSearchData struct {

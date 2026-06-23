@@ -5,6 +5,7 @@ package operations
 
 import (
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
+	"github.com/wistia/wistia-cli/internal/sdk/optionalnullable"
 	"github.com/wistia/wistia-cli/internal/sdk/sdkinternal/utils"
 	"time"
 )
@@ -19,6 +20,31 @@ func (d *DeleteMediaExtendedAudioDescriptionsIDRequest) GetID() string {
 		return ""
 	}
 	return d.ID
+}
+
+// DeleteMediaExtendedAudioDescriptionsIDCode - A machine-readable identifier for the specific authorization failure.
+type DeleteMediaExtendedAudioDescriptionsIDCode string
+
+const (
+	DeleteMediaExtendedAudioDescriptionsIDCodeUnauthorizedCredentials DeleteMediaExtendedAudioDescriptionsIDCode = "unauthorized_credentials"
+	DeleteMediaExtendedAudioDescriptionsIDCodeAccountInactive         DeleteMediaExtendedAudioDescriptionsIDCode = "account_inactive"
+	DeleteMediaExtendedAudioDescriptionsIDCodeUnauthorizedScope       DeleteMediaExtendedAudioDescriptionsIDCode = "unauthorized_scope"
+	DeleteMediaExtendedAudioDescriptionsIDCodeUnauthorizedParams      DeleteMediaExtendedAudioDescriptionsIDCode = "unauthorized_params"
+)
+
+func (e DeleteMediaExtendedAudioDescriptionsIDCode) ToPointer() *DeleteMediaExtendedAudioDescriptionsIDCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *DeleteMediaExtendedAudioDescriptionsIDCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
 }
 
 type DeleteMediaExtendedAudioDescriptionsIDMedia struct {
@@ -126,6 +152,8 @@ type DeleteMediaExtendedAudioDescriptionsIDResponseBody struct {
 	Media             *DeleteMediaExtendedAudioDescriptionsIDMedia             `json:"media,omitzero"`
 	ProvidedMediaFile *DeleteMediaExtendedAudioDescriptionsIDProvidedMediaFile `json:"provided_media_file,omitzero"`
 	Contact           *DeleteMediaExtendedAudioDescriptionsIDContact           `json:"contact,omitzero"`
+	// A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+	Cursor optionalnullable.OptionalNullable[string] `json:"cursor,omitzero"`
 }
 
 func (d DeleteMediaExtendedAudioDescriptionsIDResponseBody) MarshalJSON() ([]byte, error) {
@@ -186,6 +214,13 @@ func (d *DeleteMediaExtendedAudioDescriptionsIDResponseBody) GetContact() *Delet
 		return nil
 	}
 	return d.Contact
+}
+
+func (d *DeleteMediaExtendedAudioDescriptionsIDResponseBody) GetCursor() optionalnullable.OptionalNullable[string] {
+	if d == nil {
+		return nil
+	}
+	return d.Cursor
 }
 
 type DeleteMediaExtendedAudioDescriptionsIDResponse struct {

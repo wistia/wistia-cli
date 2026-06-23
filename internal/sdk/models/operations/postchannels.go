@@ -12,19 +12,19 @@ import (
 	"time"
 )
 
-// PostChannelsEpisodeFormat - The format for episodes for the podcast channel. This parameter only takes effect if podcasting is enabled for the channel.
-type PostChannelsEpisodeFormat string
+// PostChannelsEpisodeFormatRequest - The format for episodes for the podcast channel.
+type PostChannelsEpisodeFormatRequest string
 
 const (
-	PostChannelsEpisodeFormatEpisodic            PostChannelsEpisodeFormat = "episodic"
-	PostChannelsEpisodeFormatEpisodicWithSeasons PostChannelsEpisodeFormat = "episodic_with_seasons"
-	PostChannelsEpisodeFormatSerial              PostChannelsEpisodeFormat = "serial"
+	PostChannelsEpisodeFormatRequestEpisodic            PostChannelsEpisodeFormatRequest = "episodic"
+	PostChannelsEpisodeFormatRequestEpisodicWithSeasons PostChannelsEpisodeFormatRequest = "episodic_with_seasons"
+	PostChannelsEpisodeFormatRequestSerial              PostChannelsEpisodeFormatRequest = "serial"
 )
 
-func (e PostChannelsEpisodeFormat) ToPointer() *PostChannelsEpisodeFormat {
+func (e PostChannelsEpisodeFormatRequest) ToPointer() *PostChannelsEpisodeFormatRequest {
 	return &e
 }
-func (e *PostChannelsEpisodeFormat) UnmarshalJSON(data []byte) error {
+func (e *PostChannelsEpisodeFormatRequest) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
 		return err
@@ -35,114 +35,114 @@ func (e *PostChannelsEpisodeFormat) UnmarshalJSON(data []byte) error {
 	case "episodic_with_seasons":
 		fallthrough
 	case "serial":
-		*e = PostChannelsEpisodeFormat(v)
+		*e = PostChannelsEpisodeFormatRequest(v)
 		return nil
 	default:
-		return fmt.Errorf("invalid value for PostChannelsEpisodeFormat: %v", v)
+		return fmt.Errorf("invalid value for PostChannelsEpisodeFormatRequest: %v", v)
 	}
 }
 
-// PostChannelsCategory1 - The primary category for the channel. This parameter only takes effect if podcasting is enabled for the channel.
-type PostChannelsCategory1 string
+// PostChannelsCategory1Request - The primary category for the channel.
+type PostChannelsCategory1Request string
 
 const (
-	PostChannelsCategory1ArtsGreaterThanBooks                           PostChannelsCategory1 = "arts > books"
-	PostChannelsCategory1ArtsGreaterThanDesign                          PostChannelsCategory1 = "arts > design"
-	PostChannelsCategory1ArtsGreaterThanFashionAndBeauty                PostChannelsCategory1 = "arts > fashion_and_beauty"
-	PostChannelsCategory1ArtsGreaterThanFood                            PostChannelsCategory1 = "arts > food"
-	PostChannelsCategory1ArtsGreaterThanPerformingArts                  PostChannelsCategory1 = "arts > performing_arts"
-	PostChannelsCategory1ArtsGreaterThanVisualArts                      PostChannelsCategory1 = "arts > visual_arts"
-	PostChannelsCategory1BusinessGreaterThanCareers                     PostChannelsCategory1 = "business > careers"
-	PostChannelsCategory1BusinessGreaterThanEntrepreneurship            PostChannelsCategory1 = "business > entrepreneurship"
-	PostChannelsCategory1BusinessGreaterThanInvesting                   PostChannelsCategory1 = "business > investing"
-	PostChannelsCategory1BusinessGreaterThanManagement                  PostChannelsCategory1 = "business > management"
-	PostChannelsCategory1BusinessGreaterThanMarketing                   PostChannelsCategory1 = "business > marketing"
-	PostChannelsCategory1BusinessGreaterThanNonProfit                   PostChannelsCategory1 = "business > non_profit"
-	PostChannelsCategory1ComedyGreaterThanComedyInterviews              PostChannelsCategory1 = "comedy > comedy_interviews"
-	PostChannelsCategory1ComedyGreaterThanImprov                        PostChannelsCategory1 = "comedy > improv"
-	PostChannelsCategory1ComedyGreaterThanStandUp                       PostChannelsCategory1 = "comedy > stand_up"
-	PostChannelsCategory1EducationGreaterThanCourses                    PostChannelsCategory1 = "education > courses"
-	PostChannelsCategory1EducationGreaterThanHowTo                      PostChannelsCategory1 = "education > how_to"
-	PostChannelsCategory1EducationGreaterThanLanguageLearning           PostChannelsCategory1 = "education > language_learning"
-	PostChannelsCategory1EducationGreaterThanSelfImprovement            PostChannelsCategory1 = "education > self_improvement"
-	PostChannelsCategory1FictionGreaterThanComedyFiction                PostChannelsCategory1 = "fiction > comedy_fiction"
-	PostChannelsCategory1FictionGreaterThanDrama                        PostChannelsCategory1 = "fiction > drama"
-	PostChannelsCategory1FictionGreaterThanScienceFiction               PostChannelsCategory1 = "fiction > science_fiction"
-	PostChannelsCategory1HealthAndFitnessGreaterThanAlternativeHealth   PostChannelsCategory1 = "health_and_fitness > alternative_health"
-	PostChannelsCategory1HealthAndFitnessGreaterThanFitness             PostChannelsCategory1 = "health_and_fitness > fitness"
-	PostChannelsCategory1HealthAndFitnessGreaterThanMedicine            PostChannelsCategory1 = "health_and_fitness > medicine"
-	PostChannelsCategory1HealthAndFitnessGreaterThanMentalHealth        PostChannelsCategory1 = "health_and_fitness > mental_health"
-	PostChannelsCategory1HealthAndFitnessGreaterThanNutrition           PostChannelsCategory1 = "health_and_fitness > nutrition"
-	PostChannelsCategory1HealthAndFitnessGreaterThanSexuality           PostChannelsCategory1 = "health_and_fitness > sexuality"
-	PostChannelsCategory1KidsAndFamilyGreaterThanEducationForKids       PostChannelsCategory1 = "kids_and_family > education_for_kids"
-	PostChannelsCategory1KidsAndFamilyGreaterThanParenting              PostChannelsCategory1 = "kids_and_family > parenting"
-	PostChannelsCategory1KidsAndFamilyGreaterThanPetsAndAnimals         PostChannelsCategory1 = "kids_and_family > pets_and_animals"
-	PostChannelsCategory1KidsAndFamilyGreaterThanStoriesForKids         PostChannelsCategory1 = "kids_and_family > stories_for_kids"
-	PostChannelsCategory1LeisureGreaterThanAnimationAndManga            PostChannelsCategory1 = "leisure > animation_and_manga"
-	PostChannelsCategory1LeisureGreaterThanAutomotive                   PostChannelsCategory1 = "leisure > automotive"
-	PostChannelsCategory1LeisureGreaterThanAviation                     PostChannelsCategory1 = "leisure > aviation"
-	PostChannelsCategory1LeisureGreaterThanCrafts                       PostChannelsCategory1 = "leisure > crafts"
-	PostChannelsCategory1LeisureGreaterThanGames                        PostChannelsCategory1 = "leisure > games"
-	PostChannelsCategory1LeisureGreaterThanHobbies                      PostChannelsCategory1 = "leisure > hobbies"
-	PostChannelsCategory1LeisureGreaterThanHomeAndGarden                PostChannelsCategory1 = "leisure > home_and_garden"
-	PostChannelsCategory1LeisureGreaterThanVideoGames                   PostChannelsCategory1 = "leisure > video_games"
-	PostChannelsCategory1MusicGreaterThanMusicCommentary                PostChannelsCategory1 = "music > music_commentary"
-	PostChannelsCategory1MusicGreaterThanMusicHistory                   PostChannelsCategory1 = "music > music_history"
-	PostChannelsCategory1MusicGreaterThanMusicInterviews                PostChannelsCategory1 = "music > music_interviews"
-	PostChannelsCategory1NewsGreaterThanBusinessNews                    PostChannelsCategory1 = "news > business_news"
-	PostChannelsCategory1NewsGreaterThanDailyNews                       PostChannelsCategory1 = "news > daily_news"
-	PostChannelsCategory1NewsGreaterThanEntertainmentNews               PostChannelsCategory1 = "news > entertainment_news"
-	PostChannelsCategory1NewsGreaterThanNewsCommentary                  PostChannelsCategory1 = "news > news_commentary"
-	PostChannelsCategory1NewsGreaterThanPolitics                        PostChannelsCategory1 = "news > politics"
-	PostChannelsCategory1NewsGreaterThanSportsNews                      PostChannelsCategory1 = "news > sports_news"
-	PostChannelsCategory1NewsGreaterThanTechNews                        PostChannelsCategory1 = "news > tech_news"
-	PostChannelsCategory1ReligionAndSpiritualityGreaterThanBuddhism     PostChannelsCategory1 = "religion_and_spirituality > buddhism"
-	PostChannelsCategory1ReligionAndSpiritualityGreaterThanChristianity PostChannelsCategory1 = "religion_and_spirituality > christianity"
-	PostChannelsCategory1ReligionAndSpiritualityGreaterThanHinduism     PostChannelsCategory1 = "religion_and_spirituality > hinduism"
-	PostChannelsCategory1ReligionAndSpiritualityGreaterThanIslam        PostChannelsCategory1 = "religion_and_spirituality > islam"
-	PostChannelsCategory1ReligionAndSpiritualityGreaterThanJudaism      PostChannelsCategory1 = "religion_and_spirituality > judaism"
-	PostChannelsCategory1ReligionAndSpiritualityGreaterThanReligion     PostChannelsCategory1 = "religion_and_spirituality > religion"
-	PostChannelsCategory1ReligionAndSpiritualityGreaterThanSpirituality PostChannelsCategory1 = "religion_and_spirituality > spirituality"
-	PostChannelsCategory1ScienceGreaterThanAstronomy                    PostChannelsCategory1 = "science > astronomy"
-	PostChannelsCategory1ScienceGreaterThanChemistry                    PostChannelsCategory1 = "science > chemistry"
-	PostChannelsCategory1ScienceGreaterThanEarthSciences                PostChannelsCategory1 = "science > earth_sciences"
-	PostChannelsCategory1ScienceGreaterThanLifeSciences                 PostChannelsCategory1 = "science > life_sciences"
-	PostChannelsCategory1ScienceGreaterThanMathematics                  PostChannelsCategory1 = "science > mathematics"
-	PostChannelsCategory1ScienceGreaterThanNaturalSciences              PostChannelsCategory1 = "science > natural_sciences"
-	PostChannelsCategory1ScienceGreaterThanNature                       PostChannelsCategory1 = "science > nature"
-	PostChannelsCategory1ScienceGreaterThanPhysics                      PostChannelsCategory1 = "science > physics"
-	PostChannelsCategory1ScienceGreaterThanSocialSciences               PostChannelsCategory1 = "science > social_sciences"
-	PostChannelsCategory1SocietyAndCultureGreaterThanDocumentary        PostChannelsCategory1 = "society_and_culture > documentary"
-	PostChannelsCategory1SocietyAndCultureGreaterThanPersonalJournals   PostChannelsCategory1 = "society_and_culture > personal_journals"
-	PostChannelsCategory1SocietyAndCultureGreaterThanPhilosophy         PostChannelsCategory1 = "society_and_culture > philosophy"
-	PostChannelsCategory1SocietyAndCultureGreaterThanPlacesAndTravel    PostChannelsCategory1 = "society_and_culture > places_and_travel"
-	PostChannelsCategory1SocietyAndCultureGreaterThanRelationships      PostChannelsCategory1 = "society_and_culture > relationships"
-	PostChannelsCategory1SportsGreaterThanBaseball                      PostChannelsCategory1 = "sports > baseball"
-	PostChannelsCategory1SportsGreaterThanBasketball                    PostChannelsCategory1 = "sports > basketball"
-	PostChannelsCategory1SportsGreaterThanCricket                       PostChannelsCategory1 = "sports > cricket"
-	PostChannelsCategory1SportsGreaterThanFantasySports                 PostChannelsCategory1 = "sports > fantasy_sports"
-	PostChannelsCategory1SportsGreaterThanFootball                      PostChannelsCategory1 = "sports > football"
-	PostChannelsCategory1SportsGreaterThanGolf                          PostChannelsCategory1 = "sports > golf"
-	PostChannelsCategory1SportsGreaterThanHockey                        PostChannelsCategory1 = "sports > hockey"
-	PostChannelsCategory1SportsGreaterThanRugby                         PostChannelsCategory1 = "sports > rugby"
-	PostChannelsCategory1SportsGreaterThanRunning                       PostChannelsCategory1 = "sports > running"
-	PostChannelsCategory1SportsGreaterThanSoccer                        PostChannelsCategory1 = "sports > soccer"
-	PostChannelsCategory1SportsGreaterThanSwimming                      PostChannelsCategory1 = "sports > swimming"
-	PostChannelsCategory1SportsGreaterThanTennis                        PostChannelsCategory1 = "sports > tennis"
-	PostChannelsCategory1SportsGreaterThanVolleyball                    PostChannelsCategory1 = "sports > volleyball"
-	PostChannelsCategory1SportsGreaterThanWilderness                    PostChannelsCategory1 = "sports > wilderness"
-	PostChannelsCategory1SportsGreaterThanWrestling                     PostChannelsCategory1 = "sports > wrestling"
-	PostChannelsCategory1TvAndFilmGreaterThanAfterShows                 PostChannelsCategory1 = "tv_and_film > after_shows"
-	PostChannelsCategory1TvAndFilmGreaterThanFilmHistory                PostChannelsCategory1 = "tv_and_film > film_history"
-	PostChannelsCategory1TvAndFilmGreaterThanFilmInterviews             PostChannelsCategory1 = "tv_and_film > film_interviews"
-	PostChannelsCategory1TvAndFilmGreaterThanFilmReviews                PostChannelsCategory1 = "tv_and_film > film_reviews"
-	PostChannelsCategory1TvAndFilmGreaterThanTvReviews                  PostChannelsCategory1 = "tv_and_film > tv_reviews"
+	PostChannelsCategory1RequestArtsGreaterThanBooks                           PostChannelsCategory1Request = "arts > books"
+	PostChannelsCategory1RequestArtsGreaterThanDesign                          PostChannelsCategory1Request = "arts > design"
+	PostChannelsCategory1RequestArtsGreaterThanFashionAndBeauty                PostChannelsCategory1Request = "arts > fashion_and_beauty"
+	PostChannelsCategory1RequestArtsGreaterThanFood                            PostChannelsCategory1Request = "arts > food"
+	PostChannelsCategory1RequestArtsGreaterThanPerformingArts                  PostChannelsCategory1Request = "arts > performing_arts"
+	PostChannelsCategory1RequestArtsGreaterThanVisualArts                      PostChannelsCategory1Request = "arts > visual_arts"
+	PostChannelsCategory1RequestBusinessGreaterThanCareers                     PostChannelsCategory1Request = "business > careers"
+	PostChannelsCategory1RequestBusinessGreaterThanEntrepreneurship            PostChannelsCategory1Request = "business > entrepreneurship"
+	PostChannelsCategory1RequestBusinessGreaterThanInvesting                   PostChannelsCategory1Request = "business > investing"
+	PostChannelsCategory1RequestBusinessGreaterThanManagement                  PostChannelsCategory1Request = "business > management"
+	PostChannelsCategory1RequestBusinessGreaterThanMarketing                   PostChannelsCategory1Request = "business > marketing"
+	PostChannelsCategory1RequestBusinessGreaterThanNonProfit                   PostChannelsCategory1Request = "business > non_profit"
+	PostChannelsCategory1RequestComedyGreaterThanComedyInterviews              PostChannelsCategory1Request = "comedy > comedy_interviews"
+	PostChannelsCategory1RequestComedyGreaterThanImprov                        PostChannelsCategory1Request = "comedy > improv"
+	PostChannelsCategory1RequestComedyGreaterThanStandUp                       PostChannelsCategory1Request = "comedy > stand_up"
+	PostChannelsCategory1RequestEducationGreaterThanCourses                    PostChannelsCategory1Request = "education > courses"
+	PostChannelsCategory1RequestEducationGreaterThanHowTo                      PostChannelsCategory1Request = "education > how_to"
+	PostChannelsCategory1RequestEducationGreaterThanLanguageLearning           PostChannelsCategory1Request = "education > language_learning"
+	PostChannelsCategory1RequestEducationGreaterThanSelfImprovement            PostChannelsCategory1Request = "education > self_improvement"
+	PostChannelsCategory1RequestFictionGreaterThanComedyFiction                PostChannelsCategory1Request = "fiction > comedy_fiction"
+	PostChannelsCategory1RequestFictionGreaterThanDrama                        PostChannelsCategory1Request = "fiction > drama"
+	PostChannelsCategory1RequestFictionGreaterThanScienceFiction               PostChannelsCategory1Request = "fiction > science_fiction"
+	PostChannelsCategory1RequestHealthAndFitnessGreaterThanAlternativeHealth   PostChannelsCategory1Request = "health_and_fitness > alternative_health"
+	PostChannelsCategory1RequestHealthAndFitnessGreaterThanFitness             PostChannelsCategory1Request = "health_and_fitness > fitness"
+	PostChannelsCategory1RequestHealthAndFitnessGreaterThanMedicine            PostChannelsCategory1Request = "health_and_fitness > medicine"
+	PostChannelsCategory1RequestHealthAndFitnessGreaterThanMentalHealth        PostChannelsCategory1Request = "health_and_fitness > mental_health"
+	PostChannelsCategory1RequestHealthAndFitnessGreaterThanNutrition           PostChannelsCategory1Request = "health_and_fitness > nutrition"
+	PostChannelsCategory1RequestHealthAndFitnessGreaterThanSexuality           PostChannelsCategory1Request = "health_and_fitness > sexuality"
+	PostChannelsCategory1RequestKidsAndFamilyGreaterThanEducationForKids       PostChannelsCategory1Request = "kids_and_family > education_for_kids"
+	PostChannelsCategory1RequestKidsAndFamilyGreaterThanParenting              PostChannelsCategory1Request = "kids_and_family > parenting"
+	PostChannelsCategory1RequestKidsAndFamilyGreaterThanPetsAndAnimals         PostChannelsCategory1Request = "kids_and_family > pets_and_animals"
+	PostChannelsCategory1RequestKidsAndFamilyGreaterThanStoriesForKids         PostChannelsCategory1Request = "kids_and_family > stories_for_kids"
+	PostChannelsCategory1RequestLeisureGreaterThanAnimationAndManga            PostChannelsCategory1Request = "leisure > animation_and_manga"
+	PostChannelsCategory1RequestLeisureGreaterThanAutomotive                   PostChannelsCategory1Request = "leisure > automotive"
+	PostChannelsCategory1RequestLeisureGreaterThanAviation                     PostChannelsCategory1Request = "leisure > aviation"
+	PostChannelsCategory1RequestLeisureGreaterThanCrafts                       PostChannelsCategory1Request = "leisure > crafts"
+	PostChannelsCategory1RequestLeisureGreaterThanGames                        PostChannelsCategory1Request = "leisure > games"
+	PostChannelsCategory1RequestLeisureGreaterThanHobbies                      PostChannelsCategory1Request = "leisure > hobbies"
+	PostChannelsCategory1RequestLeisureGreaterThanHomeAndGarden                PostChannelsCategory1Request = "leisure > home_and_garden"
+	PostChannelsCategory1RequestLeisureGreaterThanVideoGames                   PostChannelsCategory1Request = "leisure > video_games"
+	PostChannelsCategory1RequestMusicGreaterThanMusicCommentary                PostChannelsCategory1Request = "music > music_commentary"
+	PostChannelsCategory1RequestMusicGreaterThanMusicHistory                   PostChannelsCategory1Request = "music > music_history"
+	PostChannelsCategory1RequestMusicGreaterThanMusicInterviews                PostChannelsCategory1Request = "music > music_interviews"
+	PostChannelsCategory1RequestNewsGreaterThanBusinessNews                    PostChannelsCategory1Request = "news > business_news"
+	PostChannelsCategory1RequestNewsGreaterThanDailyNews                       PostChannelsCategory1Request = "news > daily_news"
+	PostChannelsCategory1RequestNewsGreaterThanEntertainmentNews               PostChannelsCategory1Request = "news > entertainment_news"
+	PostChannelsCategory1RequestNewsGreaterThanNewsCommentary                  PostChannelsCategory1Request = "news > news_commentary"
+	PostChannelsCategory1RequestNewsGreaterThanPolitics                        PostChannelsCategory1Request = "news > politics"
+	PostChannelsCategory1RequestNewsGreaterThanSportsNews                      PostChannelsCategory1Request = "news > sports_news"
+	PostChannelsCategory1RequestNewsGreaterThanTechNews                        PostChannelsCategory1Request = "news > tech_news"
+	PostChannelsCategory1RequestReligionAndSpiritualityGreaterThanBuddhism     PostChannelsCategory1Request = "religion_and_spirituality > buddhism"
+	PostChannelsCategory1RequestReligionAndSpiritualityGreaterThanChristianity PostChannelsCategory1Request = "religion_and_spirituality > christianity"
+	PostChannelsCategory1RequestReligionAndSpiritualityGreaterThanHinduism     PostChannelsCategory1Request = "religion_and_spirituality > hinduism"
+	PostChannelsCategory1RequestReligionAndSpiritualityGreaterThanIslam        PostChannelsCategory1Request = "religion_and_spirituality > islam"
+	PostChannelsCategory1RequestReligionAndSpiritualityGreaterThanJudaism      PostChannelsCategory1Request = "religion_and_spirituality > judaism"
+	PostChannelsCategory1RequestReligionAndSpiritualityGreaterThanReligion     PostChannelsCategory1Request = "religion_and_spirituality > religion"
+	PostChannelsCategory1RequestReligionAndSpiritualityGreaterThanSpirituality PostChannelsCategory1Request = "religion_and_spirituality > spirituality"
+	PostChannelsCategory1RequestScienceGreaterThanAstronomy                    PostChannelsCategory1Request = "science > astronomy"
+	PostChannelsCategory1RequestScienceGreaterThanChemistry                    PostChannelsCategory1Request = "science > chemistry"
+	PostChannelsCategory1RequestScienceGreaterThanEarthSciences                PostChannelsCategory1Request = "science > earth_sciences"
+	PostChannelsCategory1RequestScienceGreaterThanLifeSciences                 PostChannelsCategory1Request = "science > life_sciences"
+	PostChannelsCategory1RequestScienceGreaterThanMathematics                  PostChannelsCategory1Request = "science > mathematics"
+	PostChannelsCategory1RequestScienceGreaterThanNaturalSciences              PostChannelsCategory1Request = "science > natural_sciences"
+	PostChannelsCategory1RequestScienceGreaterThanNature                       PostChannelsCategory1Request = "science > nature"
+	PostChannelsCategory1RequestScienceGreaterThanPhysics                      PostChannelsCategory1Request = "science > physics"
+	PostChannelsCategory1RequestScienceGreaterThanSocialSciences               PostChannelsCategory1Request = "science > social_sciences"
+	PostChannelsCategory1RequestSocietyAndCultureGreaterThanDocumentary        PostChannelsCategory1Request = "society_and_culture > documentary"
+	PostChannelsCategory1RequestSocietyAndCultureGreaterThanPersonalJournals   PostChannelsCategory1Request = "society_and_culture > personal_journals"
+	PostChannelsCategory1RequestSocietyAndCultureGreaterThanPhilosophy         PostChannelsCategory1Request = "society_and_culture > philosophy"
+	PostChannelsCategory1RequestSocietyAndCultureGreaterThanPlacesAndTravel    PostChannelsCategory1Request = "society_and_culture > places_and_travel"
+	PostChannelsCategory1RequestSocietyAndCultureGreaterThanRelationships      PostChannelsCategory1Request = "society_and_culture > relationships"
+	PostChannelsCategory1RequestSportsGreaterThanBaseball                      PostChannelsCategory1Request = "sports > baseball"
+	PostChannelsCategory1RequestSportsGreaterThanBasketball                    PostChannelsCategory1Request = "sports > basketball"
+	PostChannelsCategory1RequestSportsGreaterThanCricket                       PostChannelsCategory1Request = "sports > cricket"
+	PostChannelsCategory1RequestSportsGreaterThanFantasySports                 PostChannelsCategory1Request = "sports > fantasy_sports"
+	PostChannelsCategory1RequestSportsGreaterThanFootball                      PostChannelsCategory1Request = "sports > football"
+	PostChannelsCategory1RequestSportsGreaterThanGolf                          PostChannelsCategory1Request = "sports > golf"
+	PostChannelsCategory1RequestSportsGreaterThanHockey                        PostChannelsCategory1Request = "sports > hockey"
+	PostChannelsCategory1RequestSportsGreaterThanRugby                         PostChannelsCategory1Request = "sports > rugby"
+	PostChannelsCategory1RequestSportsGreaterThanRunning                       PostChannelsCategory1Request = "sports > running"
+	PostChannelsCategory1RequestSportsGreaterThanSoccer                        PostChannelsCategory1Request = "sports > soccer"
+	PostChannelsCategory1RequestSportsGreaterThanSwimming                      PostChannelsCategory1Request = "sports > swimming"
+	PostChannelsCategory1RequestSportsGreaterThanTennis                        PostChannelsCategory1Request = "sports > tennis"
+	PostChannelsCategory1RequestSportsGreaterThanVolleyball                    PostChannelsCategory1Request = "sports > volleyball"
+	PostChannelsCategory1RequestSportsGreaterThanWilderness                    PostChannelsCategory1Request = "sports > wilderness"
+	PostChannelsCategory1RequestSportsGreaterThanWrestling                     PostChannelsCategory1Request = "sports > wrestling"
+	PostChannelsCategory1RequestTvAndFilmGreaterThanAfterShows                 PostChannelsCategory1Request = "tv_and_film > after_shows"
+	PostChannelsCategory1RequestTvAndFilmGreaterThanFilmHistory                PostChannelsCategory1Request = "tv_and_film > film_history"
+	PostChannelsCategory1RequestTvAndFilmGreaterThanFilmInterviews             PostChannelsCategory1Request = "tv_and_film > film_interviews"
+	PostChannelsCategory1RequestTvAndFilmGreaterThanFilmReviews                PostChannelsCategory1Request = "tv_and_film > film_reviews"
+	PostChannelsCategory1RequestTvAndFilmGreaterThanTvReviews                  PostChannelsCategory1Request = "tv_and_film > tv_reviews"
 )
 
-func (e PostChannelsCategory1) ToPointer() *PostChannelsCategory1 {
+func (e PostChannelsCategory1Request) ToPointer() *PostChannelsCategory1Request {
 	return &e
 }
-func (e *PostChannelsCategory1) UnmarshalJSON(data []byte) error {
+func (e *PostChannelsCategory1Request) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
 		return err
@@ -329,114 +329,114 @@ func (e *PostChannelsCategory1) UnmarshalJSON(data []byte) error {
 	case "tv_and_film > film_reviews":
 		fallthrough
 	case "tv_and_film > tv_reviews":
-		*e = PostChannelsCategory1(v)
+		*e = PostChannelsCategory1Request(v)
 		return nil
 	default:
-		return fmt.Errorf("invalid value for PostChannelsCategory1: %v", v)
+		return fmt.Errorf("invalid value for PostChannelsCategory1Request: %v", v)
 	}
 }
 
-// PostChannelsCategory2 - The secondary category for the channel. This parameter only takes effect if podcasting is enabled for the channel.
-type PostChannelsCategory2 string
+// PostChannelsCategory2Request - The secondary category for the channel.
+type PostChannelsCategory2Request string
 
 const (
-	PostChannelsCategory2ArtsGreaterThanBooks                           PostChannelsCategory2 = "arts > books"
-	PostChannelsCategory2ArtsGreaterThanDesign                          PostChannelsCategory2 = "arts > design"
-	PostChannelsCategory2ArtsGreaterThanFashionAndBeauty                PostChannelsCategory2 = "arts > fashion_and_beauty"
-	PostChannelsCategory2ArtsGreaterThanFood                            PostChannelsCategory2 = "arts > food"
-	PostChannelsCategory2ArtsGreaterThanPerformingArts                  PostChannelsCategory2 = "arts > performing_arts"
-	PostChannelsCategory2ArtsGreaterThanVisualArts                      PostChannelsCategory2 = "arts > visual_arts"
-	PostChannelsCategory2BusinessGreaterThanCareers                     PostChannelsCategory2 = "business > careers"
-	PostChannelsCategory2BusinessGreaterThanEntrepreneurship            PostChannelsCategory2 = "business > entrepreneurship"
-	PostChannelsCategory2BusinessGreaterThanInvesting                   PostChannelsCategory2 = "business > investing"
-	PostChannelsCategory2BusinessGreaterThanManagement                  PostChannelsCategory2 = "business > management"
-	PostChannelsCategory2BusinessGreaterThanMarketing                   PostChannelsCategory2 = "business > marketing"
-	PostChannelsCategory2BusinessGreaterThanNonProfit                   PostChannelsCategory2 = "business > non_profit"
-	PostChannelsCategory2ComedyGreaterThanComedyInterviews              PostChannelsCategory2 = "comedy > comedy_interviews"
-	PostChannelsCategory2ComedyGreaterThanImprov                        PostChannelsCategory2 = "comedy > improv"
-	PostChannelsCategory2ComedyGreaterThanStandUp                       PostChannelsCategory2 = "comedy > stand_up"
-	PostChannelsCategory2EducationGreaterThanCourses                    PostChannelsCategory2 = "education > courses"
-	PostChannelsCategory2EducationGreaterThanHowTo                      PostChannelsCategory2 = "education > how_to"
-	PostChannelsCategory2EducationGreaterThanLanguageLearning           PostChannelsCategory2 = "education > language_learning"
-	PostChannelsCategory2EducationGreaterThanSelfImprovement            PostChannelsCategory2 = "education > self_improvement"
-	PostChannelsCategory2FictionGreaterThanComedyFiction                PostChannelsCategory2 = "fiction > comedy_fiction"
-	PostChannelsCategory2FictionGreaterThanDrama                        PostChannelsCategory2 = "fiction > drama"
-	PostChannelsCategory2FictionGreaterThanScienceFiction               PostChannelsCategory2 = "fiction > science_fiction"
-	PostChannelsCategory2HealthAndFitnessGreaterThanAlternativeHealth   PostChannelsCategory2 = "health_and_fitness > alternative_health"
-	PostChannelsCategory2HealthAndFitnessGreaterThanFitness             PostChannelsCategory2 = "health_and_fitness > fitness"
-	PostChannelsCategory2HealthAndFitnessGreaterThanMedicine            PostChannelsCategory2 = "health_and_fitness > medicine"
-	PostChannelsCategory2HealthAndFitnessGreaterThanMentalHealth        PostChannelsCategory2 = "health_and_fitness > mental_health"
-	PostChannelsCategory2HealthAndFitnessGreaterThanNutrition           PostChannelsCategory2 = "health_and_fitness > nutrition"
-	PostChannelsCategory2HealthAndFitnessGreaterThanSexuality           PostChannelsCategory2 = "health_and_fitness > sexuality"
-	PostChannelsCategory2KidsAndFamilyGreaterThanEducationForKids       PostChannelsCategory2 = "kids_and_family > education_for_kids"
-	PostChannelsCategory2KidsAndFamilyGreaterThanParenting              PostChannelsCategory2 = "kids_and_family > parenting"
-	PostChannelsCategory2KidsAndFamilyGreaterThanPetsAndAnimals         PostChannelsCategory2 = "kids_and_family > pets_and_animals"
-	PostChannelsCategory2KidsAndFamilyGreaterThanStoriesForKids         PostChannelsCategory2 = "kids_and_family > stories_for_kids"
-	PostChannelsCategory2LeisureGreaterThanAnimationAndManga            PostChannelsCategory2 = "leisure > animation_and_manga"
-	PostChannelsCategory2LeisureGreaterThanAutomotive                   PostChannelsCategory2 = "leisure > automotive"
-	PostChannelsCategory2LeisureGreaterThanAviation                     PostChannelsCategory2 = "leisure > aviation"
-	PostChannelsCategory2LeisureGreaterThanCrafts                       PostChannelsCategory2 = "leisure > crafts"
-	PostChannelsCategory2LeisureGreaterThanGames                        PostChannelsCategory2 = "leisure > games"
-	PostChannelsCategory2LeisureGreaterThanHobbies                      PostChannelsCategory2 = "leisure > hobbies"
-	PostChannelsCategory2LeisureGreaterThanHomeAndGarden                PostChannelsCategory2 = "leisure > home_and_garden"
-	PostChannelsCategory2LeisureGreaterThanVideoGames                   PostChannelsCategory2 = "leisure > video_games"
-	PostChannelsCategory2MusicGreaterThanMusicCommentary                PostChannelsCategory2 = "music > music_commentary"
-	PostChannelsCategory2MusicGreaterThanMusicHistory                   PostChannelsCategory2 = "music > music_history"
-	PostChannelsCategory2MusicGreaterThanMusicInterviews                PostChannelsCategory2 = "music > music_interviews"
-	PostChannelsCategory2NewsGreaterThanBusinessNews                    PostChannelsCategory2 = "news > business_news"
-	PostChannelsCategory2NewsGreaterThanDailyNews                       PostChannelsCategory2 = "news > daily_news"
-	PostChannelsCategory2NewsGreaterThanEntertainmentNews               PostChannelsCategory2 = "news > entertainment_news"
-	PostChannelsCategory2NewsGreaterThanNewsCommentary                  PostChannelsCategory2 = "news > news_commentary"
-	PostChannelsCategory2NewsGreaterThanPolitics                        PostChannelsCategory2 = "news > politics"
-	PostChannelsCategory2NewsGreaterThanSportsNews                      PostChannelsCategory2 = "news > sports_news"
-	PostChannelsCategory2NewsGreaterThanTechNews                        PostChannelsCategory2 = "news > tech_news"
-	PostChannelsCategory2ReligionAndSpiritualityGreaterThanBuddhism     PostChannelsCategory2 = "religion_and_spirituality > buddhism"
-	PostChannelsCategory2ReligionAndSpiritualityGreaterThanChristianity PostChannelsCategory2 = "religion_and_spirituality > christianity"
-	PostChannelsCategory2ReligionAndSpiritualityGreaterThanHinduism     PostChannelsCategory2 = "religion_and_spirituality > hinduism"
-	PostChannelsCategory2ReligionAndSpiritualityGreaterThanIslam        PostChannelsCategory2 = "religion_and_spirituality > islam"
-	PostChannelsCategory2ReligionAndSpiritualityGreaterThanJudaism      PostChannelsCategory2 = "religion_and_spirituality > judaism"
-	PostChannelsCategory2ReligionAndSpiritualityGreaterThanReligion     PostChannelsCategory2 = "religion_and_spirituality > religion"
-	PostChannelsCategory2ReligionAndSpiritualityGreaterThanSpirituality PostChannelsCategory2 = "religion_and_spirituality > spirituality"
-	PostChannelsCategory2ScienceGreaterThanAstronomy                    PostChannelsCategory2 = "science > astronomy"
-	PostChannelsCategory2ScienceGreaterThanChemistry                    PostChannelsCategory2 = "science > chemistry"
-	PostChannelsCategory2ScienceGreaterThanEarthSciences                PostChannelsCategory2 = "science > earth_sciences"
-	PostChannelsCategory2ScienceGreaterThanLifeSciences                 PostChannelsCategory2 = "science > life_sciences"
-	PostChannelsCategory2ScienceGreaterThanMathematics                  PostChannelsCategory2 = "science > mathematics"
-	PostChannelsCategory2ScienceGreaterThanNaturalSciences              PostChannelsCategory2 = "science > natural_sciences"
-	PostChannelsCategory2ScienceGreaterThanNature                       PostChannelsCategory2 = "science > nature"
-	PostChannelsCategory2ScienceGreaterThanPhysics                      PostChannelsCategory2 = "science > physics"
-	PostChannelsCategory2ScienceGreaterThanSocialSciences               PostChannelsCategory2 = "science > social_sciences"
-	PostChannelsCategory2SocietyAndCultureGreaterThanDocumentary        PostChannelsCategory2 = "society_and_culture > documentary"
-	PostChannelsCategory2SocietyAndCultureGreaterThanPersonalJournals   PostChannelsCategory2 = "society_and_culture > personal_journals"
-	PostChannelsCategory2SocietyAndCultureGreaterThanPhilosophy         PostChannelsCategory2 = "society_and_culture > philosophy"
-	PostChannelsCategory2SocietyAndCultureGreaterThanPlacesAndTravel    PostChannelsCategory2 = "society_and_culture > places_and_travel"
-	PostChannelsCategory2SocietyAndCultureGreaterThanRelationships      PostChannelsCategory2 = "society_and_culture > relationships"
-	PostChannelsCategory2SportsGreaterThanBaseball                      PostChannelsCategory2 = "sports > baseball"
-	PostChannelsCategory2SportsGreaterThanBasketball                    PostChannelsCategory2 = "sports > basketball"
-	PostChannelsCategory2SportsGreaterThanCricket                       PostChannelsCategory2 = "sports > cricket"
-	PostChannelsCategory2SportsGreaterThanFantasySports                 PostChannelsCategory2 = "sports > fantasy_sports"
-	PostChannelsCategory2SportsGreaterThanFootball                      PostChannelsCategory2 = "sports > football"
-	PostChannelsCategory2SportsGreaterThanGolf                          PostChannelsCategory2 = "sports > golf"
-	PostChannelsCategory2SportsGreaterThanHockey                        PostChannelsCategory2 = "sports > hockey"
-	PostChannelsCategory2SportsGreaterThanRugby                         PostChannelsCategory2 = "sports > rugby"
-	PostChannelsCategory2SportsGreaterThanRunning                       PostChannelsCategory2 = "sports > running"
-	PostChannelsCategory2SportsGreaterThanSoccer                        PostChannelsCategory2 = "sports > soccer"
-	PostChannelsCategory2SportsGreaterThanSwimming                      PostChannelsCategory2 = "sports > swimming"
-	PostChannelsCategory2SportsGreaterThanTennis                        PostChannelsCategory2 = "sports > tennis"
-	PostChannelsCategory2SportsGreaterThanVolleyball                    PostChannelsCategory2 = "sports > volleyball"
-	PostChannelsCategory2SportsGreaterThanWilderness                    PostChannelsCategory2 = "sports > wilderness"
-	PostChannelsCategory2SportsGreaterThanWrestling                     PostChannelsCategory2 = "sports > wrestling"
-	PostChannelsCategory2TvAndFilmGreaterThanAfterShows                 PostChannelsCategory2 = "tv_and_film > after_shows"
-	PostChannelsCategory2TvAndFilmGreaterThanFilmHistory                PostChannelsCategory2 = "tv_and_film > film_history"
-	PostChannelsCategory2TvAndFilmGreaterThanFilmInterviews             PostChannelsCategory2 = "tv_and_film > film_interviews"
-	PostChannelsCategory2TvAndFilmGreaterThanFilmReviews                PostChannelsCategory2 = "tv_and_film > film_reviews"
-	PostChannelsCategory2TvAndFilmGreaterThanTvReviews                  PostChannelsCategory2 = "tv_and_film > tv_reviews"
+	PostChannelsCategory2RequestArtsGreaterThanBooks                           PostChannelsCategory2Request = "arts > books"
+	PostChannelsCategory2RequestArtsGreaterThanDesign                          PostChannelsCategory2Request = "arts > design"
+	PostChannelsCategory2RequestArtsGreaterThanFashionAndBeauty                PostChannelsCategory2Request = "arts > fashion_and_beauty"
+	PostChannelsCategory2RequestArtsGreaterThanFood                            PostChannelsCategory2Request = "arts > food"
+	PostChannelsCategory2RequestArtsGreaterThanPerformingArts                  PostChannelsCategory2Request = "arts > performing_arts"
+	PostChannelsCategory2RequestArtsGreaterThanVisualArts                      PostChannelsCategory2Request = "arts > visual_arts"
+	PostChannelsCategory2RequestBusinessGreaterThanCareers                     PostChannelsCategory2Request = "business > careers"
+	PostChannelsCategory2RequestBusinessGreaterThanEntrepreneurship            PostChannelsCategory2Request = "business > entrepreneurship"
+	PostChannelsCategory2RequestBusinessGreaterThanInvesting                   PostChannelsCategory2Request = "business > investing"
+	PostChannelsCategory2RequestBusinessGreaterThanManagement                  PostChannelsCategory2Request = "business > management"
+	PostChannelsCategory2RequestBusinessGreaterThanMarketing                   PostChannelsCategory2Request = "business > marketing"
+	PostChannelsCategory2RequestBusinessGreaterThanNonProfit                   PostChannelsCategory2Request = "business > non_profit"
+	PostChannelsCategory2RequestComedyGreaterThanComedyInterviews              PostChannelsCategory2Request = "comedy > comedy_interviews"
+	PostChannelsCategory2RequestComedyGreaterThanImprov                        PostChannelsCategory2Request = "comedy > improv"
+	PostChannelsCategory2RequestComedyGreaterThanStandUp                       PostChannelsCategory2Request = "comedy > stand_up"
+	PostChannelsCategory2RequestEducationGreaterThanCourses                    PostChannelsCategory2Request = "education > courses"
+	PostChannelsCategory2RequestEducationGreaterThanHowTo                      PostChannelsCategory2Request = "education > how_to"
+	PostChannelsCategory2RequestEducationGreaterThanLanguageLearning           PostChannelsCategory2Request = "education > language_learning"
+	PostChannelsCategory2RequestEducationGreaterThanSelfImprovement            PostChannelsCategory2Request = "education > self_improvement"
+	PostChannelsCategory2RequestFictionGreaterThanComedyFiction                PostChannelsCategory2Request = "fiction > comedy_fiction"
+	PostChannelsCategory2RequestFictionGreaterThanDrama                        PostChannelsCategory2Request = "fiction > drama"
+	PostChannelsCategory2RequestFictionGreaterThanScienceFiction               PostChannelsCategory2Request = "fiction > science_fiction"
+	PostChannelsCategory2RequestHealthAndFitnessGreaterThanAlternativeHealth   PostChannelsCategory2Request = "health_and_fitness > alternative_health"
+	PostChannelsCategory2RequestHealthAndFitnessGreaterThanFitness             PostChannelsCategory2Request = "health_and_fitness > fitness"
+	PostChannelsCategory2RequestHealthAndFitnessGreaterThanMedicine            PostChannelsCategory2Request = "health_and_fitness > medicine"
+	PostChannelsCategory2RequestHealthAndFitnessGreaterThanMentalHealth        PostChannelsCategory2Request = "health_and_fitness > mental_health"
+	PostChannelsCategory2RequestHealthAndFitnessGreaterThanNutrition           PostChannelsCategory2Request = "health_and_fitness > nutrition"
+	PostChannelsCategory2RequestHealthAndFitnessGreaterThanSexuality           PostChannelsCategory2Request = "health_and_fitness > sexuality"
+	PostChannelsCategory2RequestKidsAndFamilyGreaterThanEducationForKids       PostChannelsCategory2Request = "kids_and_family > education_for_kids"
+	PostChannelsCategory2RequestKidsAndFamilyGreaterThanParenting              PostChannelsCategory2Request = "kids_and_family > parenting"
+	PostChannelsCategory2RequestKidsAndFamilyGreaterThanPetsAndAnimals         PostChannelsCategory2Request = "kids_and_family > pets_and_animals"
+	PostChannelsCategory2RequestKidsAndFamilyGreaterThanStoriesForKids         PostChannelsCategory2Request = "kids_and_family > stories_for_kids"
+	PostChannelsCategory2RequestLeisureGreaterThanAnimationAndManga            PostChannelsCategory2Request = "leisure > animation_and_manga"
+	PostChannelsCategory2RequestLeisureGreaterThanAutomotive                   PostChannelsCategory2Request = "leisure > automotive"
+	PostChannelsCategory2RequestLeisureGreaterThanAviation                     PostChannelsCategory2Request = "leisure > aviation"
+	PostChannelsCategory2RequestLeisureGreaterThanCrafts                       PostChannelsCategory2Request = "leisure > crafts"
+	PostChannelsCategory2RequestLeisureGreaterThanGames                        PostChannelsCategory2Request = "leisure > games"
+	PostChannelsCategory2RequestLeisureGreaterThanHobbies                      PostChannelsCategory2Request = "leisure > hobbies"
+	PostChannelsCategory2RequestLeisureGreaterThanHomeAndGarden                PostChannelsCategory2Request = "leisure > home_and_garden"
+	PostChannelsCategory2RequestLeisureGreaterThanVideoGames                   PostChannelsCategory2Request = "leisure > video_games"
+	PostChannelsCategory2RequestMusicGreaterThanMusicCommentary                PostChannelsCategory2Request = "music > music_commentary"
+	PostChannelsCategory2RequestMusicGreaterThanMusicHistory                   PostChannelsCategory2Request = "music > music_history"
+	PostChannelsCategory2RequestMusicGreaterThanMusicInterviews                PostChannelsCategory2Request = "music > music_interviews"
+	PostChannelsCategory2RequestNewsGreaterThanBusinessNews                    PostChannelsCategory2Request = "news > business_news"
+	PostChannelsCategory2RequestNewsGreaterThanDailyNews                       PostChannelsCategory2Request = "news > daily_news"
+	PostChannelsCategory2RequestNewsGreaterThanEntertainmentNews               PostChannelsCategory2Request = "news > entertainment_news"
+	PostChannelsCategory2RequestNewsGreaterThanNewsCommentary                  PostChannelsCategory2Request = "news > news_commentary"
+	PostChannelsCategory2RequestNewsGreaterThanPolitics                        PostChannelsCategory2Request = "news > politics"
+	PostChannelsCategory2RequestNewsGreaterThanSportsNews                      PostChannelsCategory2Request = "news > sports_news"
+	PostChannelsCategory2RequestNewsGreaterThanTechNews                        PostChannelsCategory2Request = "news > tech_news"
+	PostChannelsCategory2RequestReligionAndSpiritualityGreaterThanBuddhism     PostChannelsCategory2Request = "religion_and_spirituality > buddhism"
+	PostChannelsCategory2RequestReligionAndSpiritualityGreaterThanChristianity PostChannelsCategory2Request = "religion_and_spirituality > christianity"
+	PostChannelsCategory2RequestReligionAndSpiritualityGreaterThanHinduism     PostChannelsCategory2Request = "religion_and_spirituality > hinduism"
+	PostChannelsCategory2RequestReligionAndSpiritualityGreaterThanIslam        PostChannelsCategory2Request = "religion_and_spirituality > islam"
+	PostChannelsCategory2RequestReligionAndSpiritualityGreaterThanJudaism      PostChannelsCategory2Request = "religion_and_spirituality > judaism"
+	PostChannelsCategory2RequestReligionAndSpiritualityGreaterThanReligion     PostChannelsCategory2Request = "religion_and_spirituality > religion"
+	PostChannelsCategory2RequestReligionAndSpiritualityGreaterThanSpirituality PostChannelsCategory2Request = "religion_and_spirituality > spirituality"
+	PostChannelsCategory2RequestScienceGreaterThanAstronomy                    PostChannelsCategory2Request = "science > astronomy"
+	PostChannelsCategory2RequestScienceGreaterThanChemistry                    PostChannelsCategory2Request = "science > chemistry"
+	PostChannelsCategory2RequestScienceGreaterThanEarthSciences                PostChannelsCategory2Request = "science > earth_sciences"
+	PostChannelsCategory2RequestScienceGreaterThanLifeSciences                 PostChannelsCategory2Request = "science > life_sciences"
+	PostChannelsCategory2RequestScienceGreaterThanMathematics                  PostChannelsCategory2Request = "science > mathematics"
+	PostChannelsCategory2RequestScienceGreaterThanNaturalSciences              PostChannelsCategory2Request = "science > natural_sciences"
+	PostChannelsCategory2RequestScienceGreaterThanNature                       PostChannelsCategory2Request = "science > nature"
+	PostChannelsCategory2RequestScienceGreaterThanPhysics                      PostChannelsCategory2Request = "science > physics"
+	PostChannelsCategory2RequestScienceGreaterThanSocialSciences               PostChannelsCategory2Request = "science > social_sciences"
+	PostChannelsCategory2RequestSocietyAndCultureGreaterThanDocumentary        PostChannelsCategory2Request = "society_and_culture > documentary"
+	PostChannelsCategory2RequestSocietyAndCultureGreaterThanPersonalJournals   PostChannelsCategory2Request = "society_and_culture > personal_journals"
+	PostChannelsCategory2RequestSocietyAndCultureGreaterThanPhilosophy         PostChannelsCategory2Request = "society_and_culture > philosophy"
+	PostChannelsCategory2RequestSocietyAndCultureGreaterThanPlacesAndTravel    PostChannelsCategory2Request = "society_and_culture > places_and_travel"
+	PostChannelsCategory2RequestSocietyAndCultureGreaterThanRelationships      PostChannelsCategory2Request = "society_and_culture > relationships"
+	PostChannelsCategory2RequestSportsGreaterThanBaseball                      PostChannelsCategory2Request = "sports > baseball"
+	PostChannelsCategory2RequestSportsGreaterThanBasketball                    PostChannelsCategory2Request = "sports > basketball"
+	PostChannelsCategory2RequestSportsGreaterThanCricket                       PostChannelsCategory2Request = "sports > cricket"
+	PostChannelsCategory2RequestSportsGreaterThanFantasySports                 PostChannelsCategory2Request = "sports > fantasy_sports"
+	PostChannelsCategory2RequestSportsGreaterThanFootball                      PostChannelsCategory2Request = "sports > football"
+	PostChannelsCategory2RequestSportsGreaterThanGolf                          PostChannelsCategory2Request = "sports > golf"
+	PostChannelsCategory2RequestSportsGreaterThanHockey                        PostChannelsCategory2Request = "sports > hockey"
+	PostChannelsCategory2RequestSportsGreaterThanRugby                         PostChannelsCategory2Request = "sports > rugby"
+	PostChannelsCategory2RequestSportsGreaterThanRunning                       PostChannelsCategory2Request = "sports > running"
+	PostChannelsCategory2RequestSportsGreaterThanSoccer                        PostChannelsCategory2Request = "sports > soccer"
+	PostChannelsCategory2RequestSportsGreaterThanSwimming                      PostChannelsCategory2Request = "sports > swimming"
+	PostChannelsCategory2RequestSportsGreaterThanTennis                        PostChannelsCategory2Request = "sports > tennis"
+	PostChannelsCategory2RequestSportsGreaterThanVolleyball                    PostChannelsCategory2Request = "sports > volleyball"
+	PostChannelsCategory2RequestSportsGreaterThanWilderness                    PostChannelsCategory2Request = "sports > wilderness"
+	PostChannelsCategory2RequestSportsGreaterThanWrestling                     PostChannelsCategory2Request = "sports > wrestling"
+	PostChannelsCategory2RequestTvAndFilmGreaterThanAfterShows                 PostChannelsCategory2Request = "tv_and_film > after_shows"
+	PostChannelsCategory2RequestTvAndFilmGreaterThanFilmHistory                PostChannelsCategory2Request = "tv_and_film > film_history"
+	PostChannelsCategory2RequestTvAndFilmGreaterThanFilmInterviews             PostChannelsCategory2Request = "tv_and_film > film_interviews"
+	PostChannelsCategory2RequestTvAndFilmGreaterThanFilmReviews                PostChannelsCategory2Request = "tv_and_film > film_reviews"
+	PostChannelsCategory2RequestTvAndFilmGreaterThanTvReviews                  PostChannelsCategory2Request = "tv_and_film > tv_reviews"
 )
 
-func (e PostChannelsCategory2) ToPointer() *PostChannelsCategory2 {
+func (e PostChannelsCategory2Request) ToPointer() *PostChannelsCategory2Request {
 	return &e
 }
-func (e *PostChannelsCategory2) UnmarshalJSON(data []byte) error {
+func (e *PostChannelsCategory2Request) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
 		return err
@@ -623,114 +623,114 @@ func (e *PostChannelsCategory2) UnmarshalJSON(data []byte) error {
 	case "tv_and_film > film_reviews":
 		fallthrough
 	case "tv_and_film > tv_reviews":
-		*e = PostChannelsCategory2(v)
+		*e = PostChannelsCategory2Request(v)
 		return nil
 	default:
-		return fmt.Errorf("invalid value for PostChannelsCategory2: %v", v)
+		return fmt.Errorf("invalid value for PostChannelsCategory2Request: %v", v)
 	}
 }
 
-// PostChannelsCategory3 - The third category for the channel. This parameter only takes effect if podcasting is enabled for the channel.
-type PostChannelsCategory3 string
+// PostChannelsCategory3Request - The third category for the channel.
+type PostChannelsCategory3Request string
 
 const (
-	PostChannelsCategory3ArtsGreaterThanBooks                           PostChannelsCategory3 = "arts > books"
-	PostChannelsCategory3ArtsGreaterThanDesign                          PostChannelsCategory3 = "arts > design"
-	PostChannelsCategory3ArtsGreaterThanFashionAndBeauty                PostChannelsCategory3 = "arts > fashion_and_beauty"
-	PostChannelsCategory3ArtsGreaterThanFood                            PostChannelsCategory3 = "arts > food"
-	PostChannelsCategory3ArtsGreaterThanPerformingArts                  PostChannelsCategory3 = "arts > performing_arts"
-	PostChannelsCategory3ArtsGreaterThanVisualArts                      PostChannelsCategory3 = "arts > visual_arts"
-	PostChannelsCategory3BusinessGreaterThanCareers                     PostChannelsCategory3 = "business > careers"
-	PostChannelsCategory3BusinessGreaterThanEntrepreneurship            PostChannelsCategory3 = "business > entrepreneurship"
-	PostChannelsCategory3BusinessGreaterThanInvesting                   PostChannelsCategory3 = "business > investing"
-	PostChannelsCategory3BusinessGreaterThanManagement                  PostChannelsCategory3 = "business > management"
-	PostChannelsCategory3BusinessGreaterThanMarketing                   PostChannelsCategory3 = "business > marketing"
-	PostChannelsCategory3BusinessGreaterThanNonProfit                   PostChannelsCategory3 = "business > non_profit"
-	PostChannelsCategory3ComedyGreaterThanComedyInterviews              PostChannelsCategory3 = "comedy > comedy_interviews"
-	PostChannelsCategory3ComedyGreaterThanImprov                        PostChannelsCategory3 = "comedy > improv"
-	PostChannelsCategory3ComedyGreaterThanStandUp                       PostChannelsCategory3 = "comedy > stand_up"
-	PostChannelsCategory3EducationGreaterThanCourses                    PostChannelsCategory3 = "education > courses"
-	PostChannelsCategory3EducationGreaterThanHowTo                      PostChannelsCategory3 = "education > how_to"
-	PostChannelsCategory3EducationGreaterThanLanguageLearning           PostChannelsCategory3 = "education > language_learning"
-	PostChannelsCategory3EducationGreaterThanSelfImprovement            PostChannelsCategory3 = "education > self_improvement"
-	PostChannelsCategory3FictionGreaterThanComedyFiction                PostChannelsCategory3 = "fiction > comedy_fiction"
-	PostChannelsCategory3FictionGreaterThanDrama                        PostChannelsCategory3 = "fiction > drama"
-	PostChannelsCategory3FictionGreaterThanScienceFiction               PostChannelsCategory3 = "fiction > science_fiction"
-	PostChannelsCategory3HealthAndFitnessGreaterThanAlternativeHealth   PostChannelsCategory3 = "health_and_fitness > alternative_health"
-	PostChannelsCategory3HealthAndFitnessGreaterThanFitness             PostChannelsCategory3 = "health_and_fitness > fitness"
-	PostChannelsCategory3HealthAndFitnessGreaterThanMedicine            PostChannelsCategory3 = "health_and_fitness > medicine"
-	PostChannelsCategory3HealthAndFitnessGreaterThanMentalHealth        PostChannelsCategory3 = "health_and_fitness > mental_health"
-	PostChannelsCategory3HealthAndFitnessGreaterThanNutrition           PostChannelsCategory3 = "health_and_fitness > nutrition"
-	PostChannelsCategory3HealthAndFitnessGreaterThanSexuality           PostChannelsCategory3 = "health_and_fitness > sexuality"
-	PostChannelsCategory3KidsAndFamilyGreaterThanEducationForKids       PostChannelsCategory3 = "kids_and_family > education_for_kids"
-	PostChannelsCategory3KidsAndFamilyGreaterThanParenting              PostChannelsCategory3 = "kids_and_family > parenting"
-	PostChannelsCategory3KidsAndFamilyGreaterThanPetsAndAnimals         PostChannelsCategory3 = "kids_and_family > pets_and_animals"
-	PostChannelsCategory3KidsAndFamilyGreaterThanStoriesForKids         PostChannelsCategory3 = "kids_and_family > stories_for_kids"
-	PostChannelsCategory3LeisureGreaterThanAnimationAndManga            PostChannelsCategory3 = "leisure > animation_and_manga"
-	PostChannelsCategory3LeisureGreaterThanAutomotive                   PostChannelsCategory3 = "leisure > automotive"
-	PostChannelsCategory3LeisureGreaterThanAviation                     PostChannelsCategory3 = "leisure > aviation"
-	PostChannelsCategory3LeisureGreaterThanCrafts                       PostChannelsCategory3 = "leisure > crafts"
-	PostChannelsCategory3LeisureGreaterThanGames                        PostChannelsCategory3 = "leisure > games"
-	PostChannelsCategory3LeisureGreaterThanHobbies                      PostChannelsCategory3 = "leisure > hobbies"
-	PostChannelsCategory3LeisureGreaterThanHomeAndGarden                PostChannelsCategory3 = "leisure > home_and_garden"
-	PostChannelsCategory3LeisureGreaterThanVideoGames                   PostChannelsCategory3 = "leisure > video_games"
-	PostChannelsCategory3MusicGreaterThanMusicCommentary                PostChannelsCategory3 = "music > music_commentary"
-	PostChannelsCategory3MusicGreaterThanMusicHistory                   PostChannelsCategory3 = "music > music_history"
-	PostChannelsCategory3MusicGreaterThanMusicInterviews                PostChannelsCategory3 = "music > music_interviews"
-	PostChannelsCategory3NewsGreaterThanBusinessNews                    PostChannelsCategory3 = "news > business_news"
-	PostChannelsCategory3NewsGreaterThanDailyNews                       PostChannelsCategory3 = "news > daily_news"
-	PostChannelsCategory3NewsGreaterThanEntertainmentNews               PostChannelsCategory3 = "news > entertainment_news"
-	PostChannelsCategory3NewsGreaterThanNewsCommentary                  PostChannelsCategory3 = "news > news_commentary"
-	PostChannelsCategory3NewsGreaterThanPolitics                        PostChannelsCategory3 = "news > politics"
-	PostChannelsCategory3NewsGreaterThanSportsNews                      PostChannelsCategory3 = "news > sports_news"
-	PostChannelsCategory3NewsGreaterThanTechNews                        PostChannelsCategory3 = "news > tech_news"
-	PostChannelsCategory3ReligionAndSpiritualityGreaterThanBuddhism     PostChannelsCategory3 = "religion_and_spirituality > buddhism"
-	PostChannelsCategory3ReligionAndSpiritualityGreaterThanChristianity PostChannelsCategory3 = "religion_and_spirituality > christianity"
-	PostChannelsCategory3ReligionAndSpiritualityGreaterThanHinduism     PostChannelsCategory3 = "religion_and_spirituality > hinduism"
-	PostChannelsCategory3ReligionAndSpiritualityGreaterThanIslam        PostChannelsCategory3 = "religion_and_spirituality > islam"
-	PostChannelsCategory3ReligionAndSpiritualityGreaterThanJudaism      PostChannelsCategory3 = "religion_and_spirituality > judaism"
-	PostChannelsCategory3ReligionAndSpiritualityGreaterThanReligion     PostChannelsCategory3 = "religion_and_spirituality > religion"
-	PostChannelsCategory3ReligionAndSpiritualityGreaterThanSpirituality PostChannelsCategory3 = "religion_and_spirituality > spirituality"
-	PostChannelsCategory3ScienceGreaterThanAstronomy                    PostChannelsCategory3 = "science > astronomy"
-	PostChannelsCategory3ScienceGreaterThanChemistry                    PostChannelsCategory3 = "science > chemistry"
-	PostChannelsCategory3ScienceGreaterThanEarthSciences                PostChannelsCategory3 = "science > earth_sciences"
-	PostChannelsCategory3ScienceGreaterThanLifeSciences                 PostChannelsCategory3 = "science > life_sciences"
-	PostChannelsCategory3ScienceGreaterThanMathematics                  PostChannelsCategory3 = "science > mathematics"
-	PostChannelsCategory3ScienceGreaterThanNaturalSciences              PostChannelsCategory3 = "science > natural_sciences"
-	PostChannelsCategory3ScienceGreaterThanNature                       PostChannelsCategory3 = "science > nature"
-	PostChannelsCategory3ScienceGreaterThanPhysics                      PostChannelsCategory3 = "science > physics"
-	PostChannelsCategory3ScienceGreaterThanSocialSciences               PostChannelsCategory3 = "science > social_sciences"
-	PostChannelsCategory3SocietyAndCultureGreaterThanDocumentary        PostChannelsCategory3 = "society_and_culture > documentary"
-	PostChannelsCategory3SocietyAndCultureGreaterThanPersonalJournals   PostChannelsCategory3 = "society_and_culture > personal_journals"
-	PostChannelsCategory3SocietyAndCultureGreaterThanPhilosophy         PostChannelsCategory3 = "society_and_culture > philosophy"
-	PostChannelsCategory3SocietyAndCultureGreaterThanPlacesAndTravel    PostChannelsCategory3 = "society_and_culture > places_and_travel"
-	PostChannelsCategory3SocietyAndCultureGreaterThanRelationships      PostChannelsCategory3 = "society_and_culture > relationships"
-	PostChannelsCategory3SportsGreaterThanBaseball                      PostChannelsCategory3 = "sports > baseball"
-	PostChannelsCategory3SportsGreaterThanBasketball                    PostChannelsCategory3 = "sports > basketball"
-	PostChannelsCategory3SportsGreaterThanCricket                       PostChannelsCategory3 = "sports > cricket"
-	PostChannelsCategory3SportsGreaterThanFantasySports                 PostChannelsCategory3 = "sports > fantasy_sports"
-	PostChannelsCategory3SportsGreaterThanFootball                      PostChannelsCategory3 = "sports > football"
-	PostChannelsCategory3SportsGreaterThanGolf                          PostChannelsCategory3 = "sports > golf"
-	PostChannelsCategory3SportsGreaterThanHockey                        PostChannelsCategory3 = "sports > hockey"
-	PostChannelsCategory3SportsGreaterThanRugby                         PostChannelsCategory3 = "sports > rugby"
-	PostChannelsCategory3SportsGreaterThanRunning                       PostChannelsCategory3 = "sports > running"
-	PostChannelsCategory3SportsGreaterThanSoccer                        PostChannelsCategory3 = "sports > soccer"
-	PostChannelsCategory3SportsGreaterThanSwimming                      PostChannelsCategory3 = "sports > swimming"
-	PostChannelsCategory3SportsGreaterThanTennis                        PostChannelsCategory3 = "sports > tennis"
-	PostChannelsCategory3SportsGreaterThanVolleyball                    PostChannelsCategory3 = "sports > volleyball"
-	PostChannelsCategory3SportsGreaterThanWilderness                    PostChannelsCategory3 = "sports > wilderness"
-	PostChannelsCategory3SportsGreaterThanWrestling                     PostChannelsCategory3 = "sports > wrestling"
-	PostChannelsCategory3TvAndFilmGreaterThanAfterShows                 PostChannelsCategory3 = "tv_and_film > after_shows"
-	PostChannelsCategory3TvAndFilmGreaterThanFilmHistory                PostChannelsCategory3 = "tv_and_film > film_history"
-	PostChannelsCategory3TvAndFilmGreaterThanFilmInterviews             PostChannelsCategory3 = "tv_and_film > film_interviews"
-	PostChannelsCategory3TvAndFilmGreaterThanFilmReviews                PostChannelsCategory3 = "tv_and_film > film_reviews"
-	PostChannelsCategory3TvAndFilmGreaterThanTvReviews                  PostChannelsCategory3 = "tv_and_film > tv_reviews"
+	PostChannelsCategory3RequestArtsGreaterThanBooks                           PostChannelsCategory3Request = "arts > books"
+	PostChannelsCategory3RequestArtsGreaterThanDesign                          PostChannelsCategory3Request = "arts > design"
+	PostChannelsCategory3RequestArtsGreaterThanFashionAndBeauty                PostChannelsCategory3Request = "arts > fashion_and_beauty"
+	PostChannelsCategory3RequestArtsGreaterThanFood                            PostChannelsCategory3Request = "arts > food"
+	PostChannelsCategory3RequestArtsGreaterThanPerformingArts                  PostChannelsCategory3Request = "arts > performing_arts"
+	PostChannelsCategory3RequestArtsGreaterThanVisualArts                      PostChannelsCategory3Request = "arts > visual_arts"
+	PostChannelsCategory3RequestBusinessGreaterThanCareers                     PostChannelsCategory3Request = "business > careers"
+	PostChannelsCategory3RequestBusinessGreaterThanEntrepreneurship            PostChannelsCategory3Request = "business > entrepreneurship"
+	PostChannelsCategory3RequestBusinessGreaterThanInvesting                   PostChannelsCategory3Request = "business > investing"
+	PostChannelsCategory3RequestBusinessGreaterThanManagement                  PostChannelsCategory3Request = "business > management"
+	PostChannelsCategory3RequestBusinessGreaterThanMarketing                   PostChannelsCategory3Request = "business > marketing"
+	PostChannelsCategory3RequestBusinessGreaterThanNonProfit                   PostChannelsCategory3Request = "business > non_profit"
+	PostChannelsCategory3RequestComedyGreaterThanComedyInterviews              PostChannelsCategory3Request = "comedy > comedy_interviews"
+	PostChannelsCategory3RequestComedyGreaterThanImprov                        PostChannelsCategory3Request = "comedy > improv"
+	PostChannelsCategory3RequestComedyGreaterThanStandUp                       PostChannelsCategory3Request = "comedy > stand_up"
+	PostChannelsCategory3RequestEducationGreaterThanCourses                    PostChannelsCategory3Request = "education > courses"
+	PostChannelsCategory3RequestEducationGreaterThanHowTo                      PostChannelsCategory3Request = "education > how_to"
+	PostChannelsCategory3RequestEducationGreaterThanLanguageLearning           PostChannelsCategory3Request = "education > language_learning"
+	PostChannelsCategory3RequestEducationGreaterThanSelfImprovement            PostChannelsCategory3Request = "education > self_improvement"
+	PostChannelsCategory3RequestFictionGreaterThanComedyFiction                PostChannelsCategory3Request = "fiction > comedy_fiction"
+	PostChannelsCategory3RequestFictionGreaterThanDrama                        PostChannelsCategory3Request = "fiction > drama"
+	PostChannelsCategory3RequestFictionGreaterThanScienceFiction               PostChannelsCategory3Request = "fiction > science_fiction"
+	PostChannelsCategory3RequestHealthAndFitnessGreaterThanAlternativeHealth   PostChannelsCategory3Request = "health_and_fitness > alternative_health"
+	PostChannelsCategory3RequestHealthAndFitnessGreaterThanFitness             PostChannelsCategory3Request = "health_and_fitness > fitness"
+	PostChannelsCategory3RequestHealthAndFitnessGreaterThanMedicine            PostChannelsCategory3Request = "health_and_fitness > medicine"
+	PostChannelsCategory3RequestHealthAndFitnessGreaterThanMentalHealth        PostChannelsCategory3Request = "health_and_fitness > mental_health"
+	PostChannelsCategory3RequestHealthAndFitnessGreaterThanNutrition           PostChannelsCategory3Request = "health_and_fitness > nutrition"
+	PostChannelsCategory3RequestHealthAndFitnessGreaterThanSexuality           PostChannelsCategory3Request = "health_and_fitness > sexuality"
+	PostChannelsCategory3RequestKidsAndFamilyGreaterThanEducationForKids       PostChannelsCategory3Request = "kids_and_family > education_for_kids"
+	PostChannelsCategory3RequestKidsAndFamilyGreaterThanParenting              PostChannelsCategory3Request = "kids_and_family > parenting"
+	PostChannelsCategory3RequestKidsAndFamilyGreaterThanPetsAndAnimals         PostChannelsCategory3Request = "kids_and_family > pets_and_animals"
+	PostChannelsCategory3RequestKidsAndFamilyGreaterThanStoriesForKids         PostChannelsCategory3Request = "kids_and_family > stories_for_kids"
+	PostChannelsCategory3RequestLeisureGreaterThanAnimationAndManga            PostChannelsCategory3Request = "leisure > animation_and_manga"
+	PostChannelsCategory3RequestLeisureGreaterThanAutomotive                   PostChannelsCategory3Request = "leisure > automotive"
+	PostChannelsCategory3RequestLeisureGreaterThanAviation                     PostChannelsCategory3Request = "leisure > aviation"
+	PostChannelsCategory3RequestLeisureGreaterThanCrafts                       PostChannelsCategory3Request = "leisure > crafts"
+	PostChannelsCategory3RequestLeisureGreaterThanGames                        PostChannelsCategory3Request = "leisure > games"
+	PostChannelsCategory3RequestLeisureGreaterThanHobbies                      PostChannelsCategory3Request = "leisure > hobbies"
+	PostChannelsCategory3RequestLeisureGreaterThanHomeAndGarden                PostChannelsCategory3Request = "leisure > home_and_garden"
+	PostChannelsCategory3RequestLeisureGreaterThanVideoGames                   PostChannelsCategory3Request = "leisure > video_games"
+	PostChannelsCategory3RequestMusicGreaterThanMusicCommentary                PostChannelsCategory3Request = "music > music_commentary"
+	PostChannelsCategory3RequestMusicGreaterThanMusicHistory                   PostChannelsCategory3Request = "music > music_history"
+	PostChannelsCategory3RequestMusicGreaterThanMusicInterviews                PostChannelsCategory3Request = "music > music_interviews"
+	PostChannelsCategory3RequestNewsGreaterThanBusinessNews                    PostChannelsCategory3Request = "news > business_news"
+	PostChannelsCategory3RequestNewsGreaterThanDailyNews                       PostChannelsCategory3Request = "news > daily_news"
+	PostChannelsCategory3RequestNewsGreaterThanEntertainmentNews               PostChannelsCategory3Request = "news > entertainment_news"
+	PostChannelsCategory3RequestNewsGreaterThanNewsCommentary                  PostChannelsCategory3Request = "news > news_commentary"
+	PostChannelsCategory3RequestNewsGreaterThanPolitics                        PostChannelsCategory3Request = "news > politics"
+	PostChannelsCategory3RequestNewsGreaterThanSportsNews                      PostChannelsCategory3Request = "news > sports_news"
+	PostChannelsCategory3RequestNewsGreaterThanTechNews                        PostChannelsCategory3Request = "news > tech_news"
+	PostChannelsCategory3RequestReligionAndSpiritualityGreaterThanBuddhism     PostChannelsCategory3Request = "religion_and_spirituality > buddhism"
+	PostChannelsCategory3RequestReligionAndSpiritualityGreaterThanChristianity PostChannelsCategory3Request = "religion_and_spirituality > christianity"
+	PostChannelsCategory3RequestReligionAndSpiritualityGreaterThanHinduism     PostChannelsCategory3Request = "religion_and_spirituality > hinduism"
+	PostChannelsCategory3RequestReligionAndSpiritualityGreaterThanIslam        PostChannelsCategory3Request = "religion_and_spirituality > islam"
+	PostChannelsCategory3RequestReligionAndSpiritualityGreaterThanJudaism      PostChannelsCategory3Request = "religion_and_spirituality > judaism"
+	PostChannelsCategory3RequestReligionAndSpiritualityGreaterThanReligion     PostChannelsCategory3Request = "religion_and_spirituality > religion"
+	PostChannelsCategory3RequestReligionAndSpiritualityGreaterThanSpirituality PostChannelsCategory3Request = "religion_and_spirituality > spirituality"
+	PostChannelsCategory3RequestScienceGreaterThanAstronomy                    PostChannelsCategory3Request = "science > astronomy"
+	PostChannelsCategory3RequestScienceGreaterThanChemistry                    PostChannelsCategory3Request = "science > chemistry"
+	PostChannelsCategory3RequestScienceGreaterThanEarthSciences                PostChannelsCategory3Request = "science > earth_sciences"
+	PostChannelsCategory3RequestScienceGreaterThanLifeSciences                 PostChannelsCategory3Request = "science > life_sciences"
+	PostChannelsCategory3RequestScienceGreaterThanMathematics                  PostChannelsCategory3Request = "science > mathematics"
+	PostChannelsCategory3RequestScienceGreaterThanNaturalSciences              PostChannelsCategory3Request = "science > natural_sciences"
+	PostChannelsCategory3RequestScienceGreaterThanNature                       PostChannelsCategory3Request = "science > nature"
+	PostChannelsCategory3RequestScienceGreaterThanPhysics                      PostChannelsCategory3Request = "science > physics"
+	PostChannelsCategory3RequestScienceGreaterThanSocialSciences               PostChannelsCategory3Request = "science > social_sciences"
+	PostChannelsCategory3RequestSocietyAndCultureGreaterThanDocumentary        PostChannelsCategory3Request = "society_and_culture > documentary"
+	PostChannelsCategory3RequestSocietyAndCultureGreaterThanPersonalJournals   PostChannelsCategory3Request = "society_and_culture > personal_journals"
+	PostChannelsCategory3RequestSocietyAndCultureGreaterThanPhilosophy         PostChannelsCategory3Request = "society_and_culture > philosophy"
+	PostChannelsCategory3RequestSocietyAndCultureGreaterThanPlacesAndTravel    PostChannelsCategory3Request = "society_and_culture > places_and_travel"
+	PostChannelsCategory3RequestSocietyAndCultureGreaterThanRelationships      PostChannelsCategory3Request = "society_and_culture > relationships"
+	PostChannelsCategory3RequestSportsGreaterThanBaseball                      PostChannelsCategory3Request = "sports > baseball"
+	PostChannelsCategory3RequestSportsGreaterThanBasketball                    PostChannelsCategory3Request = "sports > basketball"
+	PostChannelsCategory3RequestSportsGreaterThanCricket                       PostChannelsCategory3Request = "sports > cricket"
+	PostChannelsCategory3RequestSportsGreaterThanFantasySports                 PostChannelsCategory3Request = "sports > fantasy_sports"
+	PostChannelsCategory3RequestSportsGreaterThanFootball                      PostChannelsCategory3Request = "sports > football"
+	PostChannelsCategory3RequestSportsGreaterThanGolf                          PostChannelsCategory3Request = "sports > golf"
+	PostChannelsCategory3RequestSportsGreaterThanHockey                        PostChannelsCategory3Request = "sports > hockey"
+	PostChannelsCategory3RequestSportsGreaterThanRugby                         PostChannelsCategory3Request = "sports > rugby"
+	PostChannelsCategory3RequestSportsGreaterThanRunning                       PostChannelsCategory3Request = "sports > running"
+	PostChannelsCategory3RequestSportsGreaterThanSoccer                        PostChannelsCategory3Request = "sports > soccer"
+	PostChannelsCategory3RequestSportsGreaterThanSwimming                      PostChannelsCategory3Request = "sports > swimming"
+	PostChannelsCategory3RequestSportsGreaterThanTennis                        PostChannelsCategory3Request = "sports > tennis"
+	PostChannelsCategory3RequestSportsGreaterThanVolleyball                    PostChannelsCategory3Request = "sports > volleyball"
+	PostChannelsCategory3RequestSportsGreaterThanWilderness                    PostChannelsCategory3Request = "sports > wilderness"
+	PostChannelsCategory3RequestSportsGreaterThanWrestling                     PostChannelsCategory3Request = "sports > wrestling"
+	PostChannelsCategory3RequestTvAndFilmGreaterThanAfterShows                 PostChannelsCategory3Request = "tv_and_film > after_shows"
+	PostChannelsCategory3RequestTvAndFilmGreaterThanFilmHistory                PostChannelsCategory3Request = "tv_and_film > film_history"
+	PostChannelsCategory3RequestTvAndFilmGreaterThanFilmInterviews             PostChannelsCategory3Request = "tv_and_film > film_interviews"
+	PostChannelsCategory3RequestTvAndFilmGreaterThanFilmReviews                PostChannelsCategory3Request = "tv_and_film > film_reviews"
+	PostChannelsCategory3RequestTvAndFilmGreaterThanTvReviews                  PostChannelsCategory3Request = "tv_and_film > tv_reviews"
 )
 
-func (e PostChannelsCategory3) ToPointer() *PostChannelsCategory3 {
+func (e PostChannelsCategory3Request) ToPointer() *PostChannelsCategory3Request {
 	return &e
 }
-func (e *PostChannelsCategory3) UnmarshalJSON(data []byte) error {
+func (e *PostChannelsCategory3Request) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
 		return err
@@ -917,119 +917,119 @@ func (e *PostChannelsCategory3) UnmarshalJSON(data []byte) error {
 	case "tv_and_film > film_reviews":
 		fallthrough
 	case "tv_and_film > tv_reviews":
-		*e = PostChannelsCategory3(v)
+		*e = PostChannelsCategory3Request(v)
 		return nil
 	default:
-		return fmt.Errorf("invalid value for PostChannelsCategory3: %v", v)
+		return fmt.Errorf("invalid value for PostChannelsCategory3Request: %v", v)
 	}
 }
 
-// PostChannelsLanguage - The ISO 639-1 language code for the channel. This parameter only takes effect if podcasting is enabled for the channel.
-type PostChannelsLanguage string
+// PostChannelsLanguageRequest - The ISO 639-1 language code for the channel.
+type PostChannelsLanguageRequest string
 
 const (
-	PostChannelsLanguageAf   PostChannelsLanguage = "af"
-	PostChannelsLanguageBe   PostChannelsLanguage = "be"
-	PostChannelsLanguageBg   PostChannelsLanguage = "bg"
-	PostChannelsLanguageCa   PostChannelsLanguage = "ca"
-	PostChannelsLanguageCs   PostChannelsLanguage = "cs"
-	PostChannelsLanguageDa   PostChannelsLanguage = "da"
-	PostChannelsLanguageDeAt PostChannelsLanguage = "de-at"
-	PostChannelsLanguageDeCh PostChannelsLanguage = "de-ch"
-	PostChannelsLanguageDeDe PostChannelsLanguage = "de-de"
-	PostChannelsLanguageDeLi PostChannelsLanguage = "de-li"
-	PostChannelsLanguageDeLu PostChannelsLanguage = "de-lu"
-	PostChannelsLanguageDe   PostChannelsLanguage = "de"
-	PostChannelsLanguageEl   PostChannelsLanguage = "el"
-	PostChannelsLanguageEnAu PostChannelsLanguage = "en-au"
-	PostChannelsLanguageEnBz PostChannelsLanguage = "en-bz"
-	PostChannelsLanguageEnCa PostChannelsLanguage = "en-ca"
-	PostChannelsLanguageEnGb PostChannelsLanguage = "en-gb"
-	PostChannelsLanguageEnIe PostChannelsLanguage = "en-ie"
-	PostChannelsLanguageEnJm PostChannelsLanguage = "en-jm"
-	PostChannelsLanguageEnNz PostChannelsLanguage = "en-nz"
-	PostChannelsLanguageEnPh PostChannelsLanguage = "en-ph"
-	PostChannelsLanguageEnTt PostChannelsLanguage = "en-tt"
-	PostChannelsLanguageEnUs PostChannelsLanguage = "en-us"
-	PostChannelsLanguageEnZa PostChannelsLanguage = "en-za"
-	PostChannelsLanguageEnZw PostChannelsLanguage = "en-zw"
-	PostChannelsLanguageEn   PostChannelsLanguage = "en"
-	PostChannelsLanguageEsAr PostChannelsLanguage = "es-ar"
-	PostChannelsLanguageEsBo PostChannelsLanguage = "es-bo"
-	PostChannelsLanguageEsCl PostChannelsLanguage = "es-cl"
-	PostChannelsLanguageEsCo PostChannelsLanguage = "es-co"
-	PostChannelsLanguageEsCr PostChannelsLanguage = "es-cr"
-	PostChannelsLanguageEsDo PostChannelsLanguage = "es-do"
-	PostChannelsLanguageEsEc PostChannelsLanguage = "es-ec"
-	PostChannelsLanguageEsEs PostChannelsLanguage = "es-es"
-	PostChannelsLanguageEsGt PostChannelsLanguage = "es-gt"
-	PostChannelsLanguageEsHn PostChannelsLanguage = "es-hn"
-	PostChannelsLanguageEsMx PostChannelsLanguage = "es-mx"
-	PostChannelsLanguageEsNi PostChannelsLanguage = "es-ni"
-	PostChannelsLanguageEsPa PostChannelsLanguage = "es-pa"
-	PostChannelsLanguageEsPe PostChannelsLanguage = "es-pe"
-	PostChannelsLanguageEsPr PostChannelsLanguage = "es-pr"
-	PostChannelsLanguageEsPy PostChannelsLanguage = "es-py"
-	PostChannelsLanguageEsSv PostChannelsLanguage = "es-sv"
-	PostChannelsLanguageEsUy PostChannelsLanguage = "es-uy"
-	PostChannelsLanguageEsVe PostChannelsLanguage = "es-ve"
-	PostChannelsLanguageEs   PostChannelsLanguage = "es"
-	PostChannelsLanguageEt   PostChannelsLanguage = "et"
-	PostChannelsLanguageEu   PostChannelsLanguage = "eu"
-	PostChannelsLanguageFi   PostChannelsLanguage = "fi"
-	PostChannelsLanguageFo   PostChannelsLanguage = "fo"
-	PostChannelsLanguageFrBe PostChannelsLanguage = "fr-be"
-	PostChannelsLanguageFrCa PostChannelsLanguage = "fr-ca"
-	PostChannelsLanguageFrCh PostChannelsLanguage = "fr-ch"
-	PostChannelsLanguageFrFr PostChannelsLanguage = "fr-fr"
-	PostChannelsLanguageFrLu PostChannelsLanguage = "fr-lu"
-	PostChannelsLanguageFrMc PostChannelsLanguage = "fr-mc"
-	PostChannelsLanguageFr   PostChannelsLanguage = "fr"
-	PostChannelsLanguageGa   PostChannelsLanguage = "ga"
-	PostChannelsLanguageGd   PostChannelsLanguage = "gd"
-	PostChannelsLanguageGl   PostChannelsLanguage = "gl"
-	PostChannelsLanguageHaw  PostChannelsLanguage = "haw"
-	PostChannelsLanguageHr   PostChannelsLanguage = "hr"
-	PostChannelsLanguageHu   PostChannelsLanguage = "hu"
-	PostChannelsLanguageIn   PostChannelsLanguage = "in"
-	PostChannelsLanguageIs   PostChannelsLanguage = "is"
-	PostChannelsLanguageItCh PostChannelsLanguage = "it-ch"
-	PostChannelsLanguageItIt PostChannelsLanguage = "it-it"
-	PostChannelsLanguageIt   PostChannelsLanguage = "it"
-	PostChannelsLanguageJa   PostChannelsLanguage = "ja"
-	PostChannelsLanguageKo   PostChannelsLanguage = "ko"
-	PostChannelsLanguageMk   PostChannelsLanguage = "mk"
-	PostChannelsLanguageNlBe PostChannelsLanguage = "nl-be"
-	PostChannelsLanguageNlNl PostChannelsLanguage = "nl-nl"
-	PostChannelsLanguageNl   PostChannelsLanguage = "nl"
-	PostChannelsLanguageNo   PostChannelsLanguage = "no"
-	PostChannelsLanguagePl   PostChannelsLanguage = "pl"
-	PostChannelsLanguagePtBr PostChannelsLanguage = "pt-br"
-	PostChannelsLanguagePtPt PostChannelsLanguage = "pt-pt"
-	PostChannelsLanguagePt   PostChannelsLanguage = "pt"
-	PostChannelsLanguageRoMo PostChannelsLanguage = "ro-mo"
-	PostChannelsLanguageRoRo PostChannelsLanguage = "ro-ro"
-	PostChannelsLanguageRo   PostChannelsLanguage = "ro"
-	PostChannelsLanguageRuMo PostChannelsLanguage = "ru-mo"
-	PostChannelsLanguageRuRu PostChannelsLanguage = "ru-ru"
-	PostChannelsLanguageRu   PostChannelsLanguage = "ru"
-	PostChannelsLanguageSk   PostChannelsLanguage = "sk"
-	PostChannelsLanguageSl   PostChannelsLanguage = "sl"
-	PostChannelsLanguageSq   PostChannelsLanguage = "sq"
-	PostChannelsLanguageSr   PostChannelsLanguage = "sr"
-	PostChannelsLanguageSvFi PostChannelsLanguage = "sv-fi"
-	PostChannelsLanguageSvSe PostChannelsLanguage = "sv-se"
-	PostChannelsLanguageSv   PostChannelsLanguage = "sv"
-	PostChannelsLanguageTr   PostChannelsLanguage = "tr"
-	PostChannelsLanguageUk   PostChannelsLanguage = "uk"
-	PostChannelsLanguageZhCn PostChannelsLanguage = "zh-cn"
-	PostChannelsLanguageZhTw PostChannelsLanguage = "zh-tw"
+	PostChannelsLanguageRequestAf   PostChannelsLanguageRequest = "af"
+	PostChannelsLanguageRequestBe   PostChannelsLanguageRequest = "be"
+	PostChannelsLanguageRequestBg   PostChannelsLanguageRequest = "bg"
+	PostChannelsLanguageRequestCa   PostChannelsLanguageRequest = "ca"
+	PostChannelsLanguageRequestCs   PostChannelsLanguageRequest = "cs"
+	PostChannelsLanguageRequestDa   PostChannelsLanguageRequest = "da"
+	PostChannelsLanguageRequestDeAt PostChannelsLanguageRequest = "de-at"
+	PostChannelsLanguageRequestDeCh PostChannelsLanguageRequest = "de-ch"
+	PostChannelsLanguageRequestDeDe PostChannelsLanguageRequest = "de-de"
+	PostChannelsLanguageRequestDeLi PostChannelsLanguageRequest = "de-li"
+	PostChannelsLanguageRequestDeLu PostChannelsLanguageRequest = "de-lu"
+	PostChannelsLanguageRequestDe   PostChannelsLanguageRequest = "de"
+	PostChannelsLanguageRequestEl   PostChannelsLanguageRequest = "el"
+	PostChannelsLanguageRequestEnAu PostChannelsLanguageRequest = "en-au"
+	PostChannelsLanguageRequestEnBz PostChannelsLanguageRequest = "en-bz"
+	PostChannelsLanguageRequestEnCa PostChannelsLanguageRequest = "en-ca"
+	PostChannelsLanguageRequestEnGb PostChannelsLanguageRequest = "en-gb"
+	PostChannelsLanguageRequestEnIe PostChannelsLanguageRequest = "en-ie"
+	PostChannelsLanguageRequestEnJm PostChannelsLanguageRequest = "en-jm"
+	PostChannelsLanguageRequestEnNz PostChannelsLanguageRequest = "en-nz"
+	PostChannelsLanguageRequestEnPh PostChannelsLanguageRequest = "en-ph"
+	PostChannelsLanguageRequestEnTt PostChannelsLanguageRequest = "en-tt"
+	PostChannelsLanguageRequestEnUs PostChannelsLanguageRequest = "en-us"
+	PostChannelsLanguageRequestEnZa PostChannelsLanguageRequest = "en-za"
+	PostChannelsLanguageRequestEnZw PostChannelsLanguageRequest = "en-zw"
+	PostChannelsLanguageRequestEn   PostChannelsLanguageRequest = "en"
+	PostChannelsLanguageRequestEsAr PostChannelsLanguageRequest = "es-ar"
+	PostChannelsLanguageRequestEsBo PostChannelsLanguageRequest = "es-bo"
+	PostChannelsLanguageRequestEsCl PostChannelsLanguageRequest = "es-cl"
+	PostChannelsLanguageRequestEsCo PostChannelsLanguageRequest = "es-co"
+	PostChannelsLanguageRequestEsCr PostChannelsLanguageRequest = "es-cr"
+	PostChannelsLanguageRequestEsDo PostChannelsLanguageRequest = "es-do"
+	PostChannelsLanguageRequestEsEc PostChannelsLanguageRequest = "es-ec"
+	PostChannelsLanguageRequestEsEs PostChannelsLanguageRequest = "es-es"
+	PostChannelsLanguageRequestEsGt PostChannelsLanguageRequest = "es-gt"
+	PostChannelsLanguageRequestEsHn PostChannelsLanguageRequest = "es-hn"
+	PostChannelsLanguageRequestEsMx PostChannelsLanguageRequest = "es-mx"
+	PostChannelsLanguageRequestEsNi PostChannelsLanguageRequest = "es-ni"
+	PostChannelsLanguageRequestEsPa PostChannelsLanguageRequest = "es-pa"
+	PostChannelsLanguageRequestEsPe PostChannelsLanguageRequest = "es-pe"
+	PostChannelsLanguageRequestEsPr PostChannelsLanguageRequest = "es-pr"
+	PostChannelsLanguageRequestEsPy PostChannelsLanguageRequest = "es-py"
+	PostChannelsLanguageRequestEsSv PostChannelsLanguageRequest = "es-sv"
+	PostChannelsLanguageRequestEsUy PostChannelsLanguageRequest = "es-uy"
+	PostChannelsLanguageRequestEsVe PostChannelsLanguageRequest = "es-ve"
+	PostChannelsLanguageRequestEs   PostChannelsLanguageRequest = "es"
+	PostChannelsLanguageRequestEt   PostChannelsLanguageRequest = "et"
+	PostChannelsLanguageRequestEu   PostChannelsLanguageRequest = "eu"
+	PostChannelsLanguageRequestFi   PostChannelsLanguageRequest = "fi"
+	PostChannelsLanguageRequestFo   PostChannelsLanguageRequest = "fo"
+	PostChannelsLanguageRequestFrBe PostChannelsLanguageRequest = "fr-be"
+	PostChannelsLanguageRequestFrCa PostChannelsLanguageRequest = "fr-ca"
+	PostChannelsLanguageRequestFrCh PostChannelsLanguageRequest = "fr-ch"
+	PostChannelsLanguageRequestFrFr PostChannelsLanguageRequest = "fr-fr"
+	PostChannelsLanguageRequestFrLu PostChannelsLanguageRequest = "fr-lu"
+	PostChannelsLanguageRequestFrMc PostChannelsLanguageRequest = "fr-mc"
+	PostChannelsLanguageRequestFr   PostChannelsLanguageRequest = "fr"
+	PostChannelsLanguageRequestGa   PostChannelsLanguageRequest = "ga"
+	PostChannelsLanguageRequestGd   PostChannelsLanguageRequest = "gd"
+	PostChannelsLanguageRequestGl   PostChannelsLanguageRequest = "gl"
+	PostChannelsLanguageRequestHaw  PostChannelsLanguageRequest = "haw"
+	PostChannelsLanguageRequestHr   PostChannelsLanguageRequest = "hr"
+	PostChannelsLanguageRequestHu   PostChannelsLanguageRequest = "hu"
+	PostChannelsLanguageRequestIn   PostChannelsLanguageRequest = "in"
+	PostChannelsLanguageRequestIs   PostChannelsLanguageRequest = "is"
+	PostChannelsLanguageRequestItCh PostChannelsLanguageRequest = "it-ch"
+	PostChannelsLanguageRequestItIt PostChannelsLanguageRequest = "it-it"
+	PostChannelsLanguageRequestIt   PostChannelsLanguageRequest = "it"
+	PostChannelsLanguageRequestJa   PostChannelsLanguageRequest = "ja"
+	PostChannelsLanguageRequestKo   PostChannelsLanguageRequest = "ko"
+	PostChannelsLanguageRequestMk   PostChannelsLanguageRequest = "mk"
+	PostChannelsLanguageRequestNlBe PostChannelsLanguageRequest = "nl-be"
+	PostChannelsLanguageRequestNlNl PostChannelsLanguageRequest = "nl-nl"
+	PostChannelsLanguageRequestNl   PostChannelsLanguageRequest = "nl"
+	PostChannelsLanguageRequestNo   PostChannelsLanguageRequest = "no"
+	PostChannelsLanguageRequestPl   PostChannelsLanguageRequest = "pl"
+	PostChannelsLanguageRequestPtBr PostChannelsLanguageRequest = "pt-br"
+	PostChannelsLanguageRequestPtPt PostChannelsLanguageRequest = "pt-pt"
+	PostChannelsLanguageRequestPt   PostChannelsLanguageRequest = "pt"
+	PostChannelsLanguageRequestRoMo PostChannelsLanguageRequest = "ro-mo"
+	PostChannelsLanguageRequestRoRo PostChannelsLanguageRequest = "ro-ro"
+	PostChannelsLanguageRequestRo   PostChannelsLanguageRequest = "ro"
+	PostChannelsLanguageRequestRuMo PostChannelsLanguageRequest = "ru-mo"
+	PostChannelsLanguageRequestRuRu PostChannelsLanguageRequest = "ru-ru"
+	PostChannelsLanguageRequestRu   PostChannelsLanguageRequest = "ru"
+	PostChannelsLanguageRequestSk   PostChannelsLanguageRequest = "sk"
+	PostChannelsLanguageRequestSl   PostChannelsLanguageRequest = "sl"
+	PostChannelsLanguageRequestSq   PostChannelsLanguageRequest = "sq"
+	PostChannelsLanguageRequestSr   PostChannelsLanguageRequest = "sr"
+	PostChannelsLanguageRequestSvFi PostChannelsLanguageRequest = "sv-fi"
+	PostChannelsLanguageRequestSvSe PostChannelsLanguageRequest = "sv-se"
+	PostChannelsLanguageRequestSv   PostChannelsLanguageRequest = "sv"
+	PostChannelsLanguageRequestTr   PostChannelsLanguageRequest = "tr"
+	PostChannelsLanguageRequestUk   PostChannelsLanguageRequest = "uk"
+	PostChannelsLanguageRequestZhCn PostChannelsLanguageRequest = "zh-cn"
+	PostChannelsLanguageRequestZhTw PostChannelsLanguageRequest = "zh-tw"
 )
 
-func (e PostChannelsLanguage) ToPointer() *PostChannelsLanguage {
+func (e PostChannelsLanguageRequest) ToPointer() *PostChannelsLanguageRequest {
 	return &e
 }
-func (e *PostChannelsLanguage) UnmarshalJSON(data []byte) error {
+func (e *PostChannelsLanguageRequest) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
 		return err
@@ -1226,11 +1226,106 @@ func (e *PostChannelsLanguage) UnmarshalJSON(data []byte) error {
 	case "zh-cn":
 		fallthrough
 	case "zh-tw":
-		*e = PostChannelsLanguage(v)
+		*e = PostChannelsLanguageRequest(v)
 		return nil
 	default:
-		return fmt.Errorf("invalid value for PostChannelsLanguage: %v", v)
+		return fmt.Errorf("invalid value for PostChannelsLanguageRequest: %v", v)
 	}
+}
+
+// PostChannelsPodcastSettingsRequest - Podcast specific settings for a channel. These settings only take effect if
+// podcasting is enabled for the channel.
+type PostChannelsPodcastSettingsRequest struct {
+	// The channel's copyright information.
+	Copyright optionalnullable.OptionalNullable[string] `json:"copyright,omitzero"`
+	// The format for episodes for the podcast channel.
+	EpisodeFormat optionalnullable.OptionalNullable[PostChannelsEpisodeFormatRequest] `json:"episode_format,omitzero"`
+	// The name of the author(s) for the channel.
+	AuthorName optionalnullable.OptionalNullable[string] `json:"author_name,omitzero"`
+	// Whether the channel contains explicit content.
+	Explicit optionalnullable.OptionalNullable[bool] `json:"explicit,omitzero"`
+	// The name of the owner for the channel.
+	OwnerName optionalnullable.OptionalNullable[string] `json:"owner_name,omitzero"`
+	// The email of the owner for the channel.
+	OwnerEmail optionalnullable.OptionalNullable[string] `json:"owner_email,omitzero"`
+	// The primary category for the channel.
+	Category1 optionalnullable.OptionalNullable[PostChannelsCategory1Request] `json:"category1,omitzero"`
+	// The secondary category for the channel.
+	Category2 optionalnullable.OptionalNullable[PostChannelsCategory2Request] `json:"category2,omitzero"`
+	// The third category for the channel.
+	Category3 optionalnullable.OptionalNullable[PostChannelsCategory3Request] `json:"category3,omitzero"`
+	// The ISO 639-1 language code for the channel.
+	Language optionalnullable.OptionalNullable[PostChannelsLanguageRequest] `json:"language,omitzero"`
+}
+
+func (p *PostChannelsPodcastSettingsRequest) GetCopyright() optionalnullable.OptionalNullable[string] {
+	if p == nil {
+		return nil
+	}
+	return p.Copyright
+}
+
+func (p *PostChannelsPodcastSettingsRequest) GetEpisodeFormat() optionalnullable.OptionalNullable[PostChannelsEpisodeFormatRequest] {
+	if p == nil {
+		return nil
+	}
+	return p.EpisodeFormat
+}
+
+func (p *PostChannelsPodcastSettingsRequest) GetAuthorName() optionalnullable.OptionalNullable[string] {
+	if p == nil {
+		return nil
+	}
+	return p.AuthorName
+}
+
+func (p *PostChannelsPodcastSettingsRequest) GetExplicit() optionalnullable.OptionalNullable[bool] {
+	if p == nil {
+		return nil
+	}
+	return p.Explicit
+}
+
+func (p *PostChannelsPodcastSettingsRequest) GetOwnerName() optionalnullable.OptionalNullable[string] {
+	if p == nil {
+		return nil
+	}
+	return p.OwnerName
+}
+
+func (p *PostChannelsPodcastSettingsRequest) GetOwnerEmail() optionalnullable.OptionalNullable[string] {
+	if p == nil {
+		return nil
+	}
+	return p.OwnerEmail
+}
+
+func (p *PostChannelsPodcastSettingsRequest) GetCategory1() optionalnullable.OptionalNullable[PostChannelsCategory1Request] {
+	if p == nil {
+		return nil
+	}
+	return p.Category1
+}
+
+func (p *PostChannelsPodcastSettingsRequest) GetCategory2() optionalnullable.OptionalNullable[PostChannelsCategory2Request] {
+	if p == nil {
+		return nil
+	}
+	return p.Category2
+}
+
+func (p *PostChannelsPodcastSettingsRequest) GetCategory3() optionalnullable.OptionalNullable[PostChannelsCategory3Request] {
+	if p == nil {
+		return nil
+	}
+	return p.Category3
+}
+
+func (p *PostChannelsPodcastSettingsRequest) GetLanguage() optionalnullable.OptionalNullable[PostChannelsLanguageRequest] {
+	if p == nil {
+		return nil
+	}
+	return p.Language
 }
 
 type PostChannelsRequest struct {
@@ -1244,26 +1339,21 @@ type PostChannelsRequest struct {
 	PodcastEnabled *bool `json:"podcast_enabled,omitzero"`
 	// Use if embedding the channel on your own site. The custom URL ensures links always direct to your page and not Wistia's.
 	CustomURL optionalnullable.OptionalNullable[string] `json:"custom_url,omitzero"`
-	// The channel's copyright information. This parameter only takes effect if podcasting is enabled for the channel.
-	Copyright optionalnullable.OptionalNullable[string] `json:"copyright,omitzero"`
-	// The format for episodes for the podcast channel. This parameter only takes effect if podcasting is enabled for the channel.
-	EpisodeFormat optionalnullable.OptionalNullable[PostChannelsEpisodeFormat] `json:"episode_format,omitzero"`
-	// The name of the author(s) for the channel. This parameter only takes effect if podcasting is enabled for the channel.
-	AuthorName optionalnullable.OptionalNullable[string] `json:"author_name,omitzero"`
-	// Whether the channel contains explicit content. This parameter only takes effect if podcasting is enabled for the channel.
-	Explicit optionalnullable.OptionalNullable[bool] `json:"explicit,omitzero"`
-	// The name of the owner for the channel. This parameter only takes effect if podcasting is enabled for the channel.
-	OwnerName optionalnullable.OptionalNullable[string] `json:"owner_name,omitzero"`
-	// The email of the owner for the channel. This parameter only takes effect if podcasting is enabled for the channel.
-	OwnerEmail optionalnullable.OptionalNullable[string] `json:"owner_email,omitzero"`
-	// The primary category for the channel. This parameter only takes effect if podcasting is enabled for the channel.
-	Category1 optionalnullable.OptionalNullable[PostChannelsCategory1] `json:"category1,omitzero"`
-	// The secondary category for the channel. This parameter only takes effect if podcasting is enabled for the channel.
-	Category2 optionalnullable.OptionalNullable[PostChannelsCategory2] `json:"category2,omitzero"`
-	// The third category for the channel. This parameter only takes effect if podcasting is enabled for the channel.
-	Category3 optionalnullable.OptionalNullable[PostChannelsCategory3] `json:"category3,omitzero"`
-	// The ISO 639-1 language code for the channel. This parameter only takes effect if podcasting is enabled for the channel.
-	Language optionalnullable.OptionalNullable[PostChannelsLanguage] `json:"language,omitzero"`
+	// Podcast specific settings for a channel. These settings only take effect if
+	// podcasting is enabled for the channel.
+	//
+	PodcastSettings *PostChannelsPodcastSettingsRequest `json:"podcast_settings,omitzero"`
+}
+
+func (p PostChannelsRequest) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(p, "", false)
+}
+
+func (p *PostChannelsRequest) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &p, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (p *PostChannelsRequest) GetName() optionalnullable.OptionalNullable[string] {
@@ -1301,70 +1391,604 @@ func (p *PostChannelsRequest) GetCustomURL() optionalnullable.OptionalNullable[s
 	return p.CustomURL
 }
 
-func (p *PostChannelsRequest) GetCopyright() optionalnullable.OptionalNullable[string] {
+func (p *PostChannelsRequest) GetPodcastSettings() *PostChannelsPodcastSettingsRequest {
+	if p == nil {
+		return nil
+	}
+	return p.PodcastSettings
+}
+
+// PostChannelsCode - A machine-readable identifier for the specific authorization failure.
+type PostChannelsCode string
+
+const (
+	PostChannelsCodeUnauthorizedCredentials PostChannelsCode = "unauthorized_credentials"
+	PostChannelsCodeAccountInactive         PostChannelsCode = "account_inactive"
+	PostChannelsCodeUnauthorizedScope       PostChannelsCode = "unauthorized_scope"
+	PostChannelsCodeUnauthorizedParams      PostChannelsCode = "unauthorized_params"
+)
+
+func (e PostChannelsCode) ToPointer() *PostChannelsCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *PostChannelsCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
+// PostChannelsEpisodeFormatResponse - The format for episodes for the podcast channel.
+type PostChannelsEpisodeFormatResponse string
+
+const (
+	PostChannelsEpisodeFormatResponseEpisodic            PostChannelsEpisodeFormatResponse = "episodic"
+	PostChannelsEpisodeFormatResponseEpisodicWithSeasons PostChannelsEpisodeFormatResponse = "episodic_with_seasons"
+	PostChannelsEpisodeFormatResponseSerial              PostChannelsEpisodeFormatResponse = "serial"
+)
+
+func (e PostChannelsEpisodeFormatResponse) ToPointer() *PostChannelsEpisodeFormatResponse {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *PostChannelsEpisodeFormatResponse) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "episodic", "episodic_with_seasons", "serial":
+			return true
+		}
+	}
+	return false
+}
+
+// PostChannelsCategory1Response - The primary category for the channel.
+type PostChannelsCategory1Response string
+
+const (
+	PostChannelsCategory1ResponseArtsGreaterThanBooks                           PostChannelsCategory1Response = "arts > books"
+	PostChannelsCategory1ResponseArtsGreaterThanDesign                          PostChannelsCategory1Response = "arts > design"
+	PostChannelsCategory1ResponseArtsGreaterThanFashionAndBeauty                PostChannelsCategory1Response = "arts > fashion_and_beauty"
+	PostChannelsCategory1ResponseArtsGreaterThanFood                            PostChannelsCategory1Response = "arts > food"
+	PostChannelsCategory1ResponseArtsGreaterThanPerformingArts                  PostChannelsCategory1Response = "arts > performing_arts"
+	PostChannelsCategory1ResponseArtsGreaterThanVisualArts                      PostChannelsCategory1Response = "arts > visual_arts"
+	PostChannelsCategory1ResponseBusinessGreaterThanCareers                     PostChannelsCategory1Response = "business > careers"
+	PostChannelsCategory1ResponseBusinessGreaterThanEntrepreneurship            PostChannelsCategory1Response = "business > entrepreneurship"
+	PostChannelsCategory1ResponseBusinessGreaterThanInvesting                   PostChannelsCategory1Response = "business > investing"
+	PostChannelsCategory1ResponseBusinessGreaterThanManagement                  PostChannelsCategory1Response = "business > management"
+	PostChannelsCategory1ResponseBusinessGreaterThanMarketing                   PostChannelsCategory1Response = "business > marketing"
+	PostChannelsCategory1ResponseBusinessGreaterThanNonProfit                   PostChannelsCategory1Response = "business > non_profit"
+	PostChannelsCategory1ResponseComedyGreaterThanComedyInterviews              PostChannelsCategory1Response = "comedy > comedy_interviews"
+	PostChannelsCategory1ResponseComedyGreaterThanImprov                        PostChannelsCategory1Response = "comedy > improv"
+	PostChannelsCategory1ResponseComedyGreaterThanStandUp                       PostChannelsCategory1Response = "comedy > stand_up"
+	PostChannelsCategory1ResponseEducationGreaterThanCourses                    PostChannelsCategory1Response = "education > courses"
+	PostChannelsCategory1ResponseEducationGreaterThanHowTo                      PostChannelsCategory1Response = "education > how_to"
+	PostChannelsCategory1ResponseEducationGreaterThanLanguageLearning           PostChannelsCategory1Response = "education > language_learning"
+	PostChannelsCategory1ResponseEducationGreaterThanSelfImprovement            PostChannelsCategory1Response = "education > self_improvement"
+	PostChannelsCategory1ResponseFictionGreaterThanComedyFiction                PostChannelsCategory1Response = "fiction > comedy_fiction"
+	PostChannelsCategory1ResponseFictionGreaterThanDrama                        PostChannelsCategory1Response = "fiction > drama"
+	PostChannelsCategory1ResponseFictionGreaterThanScienceFiction               PostChannelsCategory1Response = "fiction > science_fiction"
+	PostChannelsCategory1ResponseHealthAndFitnessGreaterThanAlternativeHealth   PostChannelsCategory1Response = "health_and_fitness > alternative_health"
+	PostChannelsCategory1ResponseHealthAndFitnessGreaterThanFitness             PostChannelsCategory1Response = "health_and_fitness > fitness"
+	PostChannelsCategory1ResponseHealthAndFitnessGreaterThanMedicine            PostChannelsCategory1Response = "health_and_fitness > medicine"
+	PostChannelsCategory1ResponseHealthAndFitnessGreaterThanMentalHealth        PostChannelsCategory1Response = "health_and_fitness > mental_health"
+	PostChannelsCategory1ResponseHealthAndFitnessGreaterThanNutrition           PostChannelsCategory1Response = "health_and_fitness > nutrition"
+	PostChannelsCategory1ResponseHealthAndFitnessGreaterThanSexuality           PostChannelsCategory1Response = "health_and_fitness > sexuality"
+	PostChannelsCategory1ResponseKidsAndFamilyGreaterThanEducationForKids       PostChannelsCategory1Response = "kids_and_family > education_for_kids"
+	PostChannelsCategory1ResponseKidsAndFamilyGreaterThanParenting              PostChannelsCategory1Response = "kids_and_family > parenting"
+	PostChannelsCategory1ResponseKidsAndFamilyGreaterThanPetsAndAnimals         PostChannelsCategory1Response = "kids_and_family > pets_and_animals"
+	PostChannelsCategory1ResponseKidsAndFamilyGreaterThanStoriesForKids         PostChannelsCategory1Response = "kids_and_family > stories_for_kids"
+	PostChannelsCategory1ResponseLeisureGreaterThanAnimationAndManga            PostChannelsCategory1Response = "leisure > animation_and_manga"
+	PostChannelsCategory1ResponseLeisureGreaterThanAutomotive                   PostChannelsCategory1Response = "leisure > automotive"
+	PostChannelsCategory1ResponseLeisureGreaterThanAviation                     PostChannelsCategory1Response = "leisure > aviation"
+	PostChannelsCategory1ResponseLeisureGreaterThanCrafts                       PostChannelsCategory1Response = "leisure > crafts"
+	PostChannelsCategory1ResponseLeisureGreaterThanGames                        PostChannelsCategory1Response = "leisure > games"
+	PostChannelsCategory1ResponseLeisureGreaterThanHobbies                      PostChannelsCategory1Response = "leisure > hobbies"
+	PostChannelsCategory1ResponseLeisureGreaterThanHomeAndGarden                PostChannelsCategory1Response = "leisure > home_and_garden"
+	PostChannelsCategory1ResponseLeisureGreaterThanVideoGames                   PostChannelsCategory1Response = "leisure > video_games"
+	PostChannelsCategory1ResponseMusicGreaterThanMusicCommentary                PostChannelsCategory1Response = "music > music_commentary"
+	PostChannelsCategory1ResponseMusicGreaterThanMusicHistory                   PostChannelsCategory1Response = "music > music_history"
+	PostChannelsCategory1ResponseMusicGreaterThanMusicInterviews                PostChannelsCategory1Response = "music > music_interviews"
+	PostChannelsCategory1ResponseNewsGreaterThanBusinessNews                    PostChannelsCategory1Response = "news > business_news"
+	PostChannelsCategory1ResponseNewsGreaterThanDailyNews                       PostChannelsCategory1Response = "news > daily_news"
+	PostChannelsCategory1ResponseNewsGreaterThanEntertainmentNews               PostChannelsCategory1Response = "news > entertainment_news"
+	PostChannelsCategory1ResponseNewsGreaterThanNewsCommentary                  PostChannelsCategory1Response = "news > news_commentary"
+	PostChannelsCategory1ResponseNewsGreaterThanPolitics                        PostChannelsCategory1Response = "news > politics"
+	PostChannelsCategory1ResponseNewsGreaterThanSportsNews                      PostChannelsCategory1Response = "news > sports_news"
+	PostChannelsCategory1ResponseNewsGreaterThanTechNews                        PostChannelsCategory1Response = "news > tech_news"
+	PostChannelsCategory1ResponseReligionAndSpiritualityGreaterThanBuddhism     PostChannelsCategory1Response = "religion_and_spirituality > buddhism"
+	PostChannelsCategory1ResponseReligionAndSpiritualityGreaterThanChristianity PostChannelsCategory1Response = "religion_and_spirituality > christianity"
+	PostChannelsCategory1ResponseReligionAndSpiritualityGreaterThanHinduism     PostChannelsCategory1Response = "religion_and_spirituality > hinduism"
+	PostChannelsCategory1ResponseReligionAndSpiritualityGreaterThanIslam        PostChannelsCategory1Response = "religion_and_spirituality > islam"
+	PostChannelsCategory1ResponseReligionAndSpiritualityGreaterThanJudaism      PostChannelsCategory1Response = "religion_and_spirituality > judaism"
+	PostChannelsCategory1ResponseReligionAndSpiritualityGreaterThanReligion     PostChannelsCategory1Response = "religion_and_spirituality > religion"
+	PostChannelsCategory1ResponseReligionAndSpiritualityGreaterThanSpirituality PostChannelsCategory1Response = "religion_and_spirituality > spirituality"
+	PostChannelsCategory1ResponseScienceGreaterThanAstronomy                    PostChannelsCategory1Response = "science > astronomy"
+	PostChannelsCategory1ResponseScienceGreaterThanChemistry                    PostChannelsCategory1Response = "science > chemistry"
+	PostChannelsCategory1ResponseScienceGreaterThanEarthSciences                PostChannelsCategory1Response = "science > earth_sciences"
+	PostChannelsCategory1ResponseScienceGreaterThanLifeSciences                 PostChannelsCategory1Response = "science > life_sciences"
+	PostChannelsCategory1ResponseScienceGreaterThanMathematics                  PostChannelsCategory1Response = "science > mathematics"
+	PostChannelsCategory1ResponseScienceGreaterThanNaturalSciences              PostChannelsCategory1Response = "science > natural_sciences"
+	PostChannelsCategory1ResponseScienceGreaterThanNature                       PostChannelsCategory1Response = "science > nature"
+	PostChannelsCategory1ResponseScienceGreaterThanPhysics                      PostChannelsCategory1Response = "science > physics"
+	PostChannelsCategory1ResponseScienceGreaterThanSocialSciences               PostChannelsCategory1Response = "science > social_sciences"
+	PostChannelsCategory1ResponseSocietyAndCultureGreaterThanDocumentary        PostChannelsCategory1Response = "society_and_culture > documentary"
+	PostChannelsCategory1ResponseSocietyAndCultureGreaterThanPersonalJournals   PostChannelsCategory1Response = "society_and_culture > personal_journals"
+	PostChannelsCategory1ResponseSocietyAndCultureGreaterThanPhilosophy         PostChannelsCategory1Response = "society_and_culture > philosophy"
+	PostChannelsCategory1ResponseSocietyAndCultureGreaterThanPlacesAndTravel    PostChannelsCategory1Response = "society_and_culture > places_and_travel"
+	PostChannelsCategory1ResponseSocietyAndCultureGreaterThanRelationships      PostChannelsCategory1Response = "society_and_culture > relationships"
+	PostChannelsCategory1ResponseSportsGreaterThanBaseball                      PostChannelsCategory1Response = "sports > baseball"
+	PostChannelsCategory1ResponseSportsGreaterThanBasketball                    PostChannelsCategory1Response = "sports > basketball"
+	PostChannelsCategory1ResponseSportsGreaterThanCricket                       PostChannelsCategory1Response = "sports > cricket"
+	PostChannelsCategory1ResponseSportsGreaterThanFantasySports                 PostChannelsCategory1Response = "sports > fantasy_sports"
+	PostChannelsCategory1ResponseSportsGreaterThanFootball                      PostChannelsCategory1Response = "sports > football"
+	PostChannelsCategory1ResponseSportsGreaterThanGolf                          PostChannelsCategory1Response = "sports > golf"
+	PostChannelsCategory1ResponseSportsGreaterThanHockey                        PostChannelsCategory1Response = "sports > hockey"
+	PostChannelsCategory1ResponseSportsGreaterThanRugby                         PostChannelsCategory1Response = "sports > rugby"
+	PostChannelsCategory1ResponseSportsGreaterThanRunning                       PostChannelsCategory1Response = "sports > running"
+	PostChannelsCategory1ResponseSportsGreaterThanSoccer                        PostChannelsCategory1Response = "sports > soccer"
+	PostChannelsCategory1ResponseSportsGreaterThanSwimming                      PostChannelsCategory1Response = "sports > swimming"
+	PostChannelsCategory1ResponseSportsGreaterThanTennis                        PostChannelsCategory1Response = "sports > tennis"
+	PostChannelsCategory1ResponseSportsGreaterThanVolleyball                    PostChannelsCategory1Response = "sports > volleyball"
+	PostChannelsCategory1ResponseSportsGreaterThanWilderness                    PostChannelsCategory1Response = "sports > wilderness"
+	PostChannelsCategory1ResponseSportsGreaterThanWrestling                     PostChannelsCategory1Response = "sports > wrestling"
+	PostChannelsCategory1ResponseTvAndFilmGreaterThanAfterShows                 PostChannelsCategory1Response = "tv_and_film > after_shows"
+	PostChannelsCategory1ResponseTvAndFilmGreaterThanFilmHistory                PostChannelsCategory1Response = "tv_and_film > film_history"
+	PostChannelsCategory1ResponseTvAndFilmGreaterThanFilmInterviews             PostChannelsCategory1Response = "tv_and_film > film_interviews"
+	PostChannelsCategory1ResponseTvAndFilmGreaterThanFilmReviews                PostChannelsCategory1Response = "tv_and_film > film_reviews"
+	PostChannelsCategory1ResponseTvAndFilmGreaterThanTvReviews                  PostChannelsCategory1Response = "tv_and_film > tv_reviews"
+)
+
+func (e PostChannelsCategory1Response) ToPointer() *PostChannelsCategory1Response {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *PostChannelsCategory1Response) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "arts > books", "arts > design", "arts > fashion_and_beauty", "arts > food", "arts > performing_arts", "arts > visual_arts", "business > careers", "business > entrepreneurship", "business > investing", "business > management", "business > marketing", "business > non_profit", "comedy > comedy_interviews", "comedy > improv", "comedy > stand_up", "education > courses", "education > how_to", "education > language_learning", "education > self_improvement", "fiction > comedy_fiction", "fiction > drama", "fiction > science_fiction", "health_and_fitness > alternative_health", "health_and_fitness > fitness", "health_and_fitness > medicine", "health_and_fitness > mental_health", "health_and_fitness > nutrition", "health_and_fitness > sexuality", "kids_and_family > education_for_kids", "kids_and_family > parenting", "kids_and_family > pets_and_animals", "kids_and_family > stories_for_kids", "leisure > animation_and_manga", "leisure > automotive", "leisure > aviation", "leisure > crafts", "leisure > games", "leisure > hobbies", "leisure > home_and_garden", "leisure > video_games", "music > music_commentary", "music > music_history", "music > music_interviews", "news > business_news", "news > daily_news", "news > entertainment_news", "news > news_commentary", "news > politics", "news > sports_news", "news > tech_news", "religion_and_spirituality > buddhism", "religion_and_spirituality > christianity", "religion_and_spirituality > hinduism", "religion_and_spirituality > islam", "religion_and_spirituality > judaism", "religion_and_spirituality > religion", "religion_and_spirituality > spirituality", "science > astronomy", "science > chemistry", "science > earth_sciences", "science > life_sciences", "science > mathematics", "science > natural_sciences", "science > nature", "science > physics", "science > social_sciences", "society_and_culture > documentary", "society_and_culture > personal_journals", "society_and_culture > philosophy", "society_and_culture > places_and_travel", "society_and_culture > relationships", "sports > baseball", "sports > basketball", "sports > cricket", "sports > fantasy_sports", "sports > football", "sports > golf", "sports > hockey", "sports > rugby", "sports > running", "sports > soccer", "sports > swimming", "sports > tennis", "sports > volleyball", "sports > wilderness", "sports > wrestling", "tv_and_film > after_shows", "tv_and_film > film_history", "tv_and_film > film_interviews", "tv_and_film > film_reviews", "tv_and_film > tv_reviews":
+			return true
+		}
+	}
+	return false
+}
+
+// PostChannelsCategory2Response - The secondary category for the channel.
+type PostChannelsCategory2Response string
+
+const (
+	PostChannelsCategory2ResponseArtsGreaterThanBooks                           PostChannelsCategory2Response = "arts > books"
+	PostChannelsCategory2ResponseArtsGreaterThanDesign                          PostChannelsCategory2Response = "arts > design"
+	PostChannelsCategory2ResponseArtsGreaterThanFashionAndBeauty                PostChannelsCategory2Response = "arts > fashion_and_beauty"
+	PostChannelsCategory2ResponseArtsGreaterThanFood                            PostChannelsCategory2Response = "arts > food"
+	PostChannelsCategory2ResponseArtsGreaterThanPerformingArts                  PostChannelsCategory2Response = "arts > performing_arts"
+	PostChannelsCategory2ResponseArtsGreaterThanVisualArts                      PostChannelsCategory2Response = "arts > visual_arts"
+	PostChannelsCategory2ResponseBusinessGreaterThanCareers                     PostChannelsCategory2Response = "business > careers"
+	PostChannelsCategory2ResponseBusinessGreaterThanEntrepreneurship            PostChannelsCategory2Response = "business > entrepreneurship"
+	PostChannelsCategory2ResponseBusinessGreaterThanInvesting                   PostChannelsCategory2Response = "business > investing"
+	PostChannelsCategory2ResponseBusinessGreaterThanManagement                  PostChannelsCategory2Response = "business > management"
+	PostChannelsCategory2ResponseBusinessGreaterThanMarketing                   PostChannelsCategory2Response = "business > marketing"
+	PostChannelsCategory2ResponseBusinessGreaterThanNonProfit                   PostChannelsCategory2Response = "business > non_profit"
+	PostChannelsCategory2ResponseComedyGreaterThanComedyInterviews              PostChannelsCategory2Response = "comedy > comedy_interviews"
+	PostChannelsCategory2ResponseComedyGreaterThanImprov                        PostChannelsCategory2Response = "comedy > improv"
+	PostChannelsCategory2ResponseComedyGreaterThanStandUp                       PostChannelsCategory2Response = "comedy > stand_up"
+	PostChannelsCategory2ResponseEducationGreaterThanCourses                    PostChannelsCategory2Response = "education > courses"
+	PostChannelsCategory2ResponseEducationGreaterThanHowTo                      PostChannelsCategory2Response = "education > how_to"
+	PostChannelsCategory2ResponseEducationGreaterThanLanguageLearning           PostChannelsCategory2Response = "education > language_learning"
+	PostChannelsCategory2ResponseEducationGreaterThanSelfImprovement            PostChannelsCategory2Response = "education > self_improvement"
+	PostChannelsCategory2ResponseFictionGreaterThanComedyFiction                PostChannelsCategory2Response = "fiction > comedy_fiction"
+	PostChannelsCategory2ResponseFictionGreaterThanDrama                        PostChannelsCategory2Response = "fiction > drama"
+	PostChannelsCategory2ResponseFictionGreaterThanScienceFiction               PostChannelsCategory2Response = "fiction > science_fiction"
+	PostChannelsCategory2ResponseHealthAndFitnessGreaterThanAlternativeHealth   PostChannelsCategory2Response = "health_and_fitness > alternative_health"
+	PostChannelsCategory2ResponseHealthAndFitnessGreaterThanFitness             PostChannelsCategory2Response = "health_and_fitness > fitness"
+	PostChannelsCategory2ResponseHealthAndFitnessGreaterThanMedicine            PostChannelsCategory2Response = "health_and_fitness > medicine"
+	PostChannelsCategory2ResponseHealthAndFitnessGreaterThanMentalHealth        PostChannelsCategory2Response = "health_and_fitness > mental_health"
+	PostChannelsCategory2ResponseHealthAndFitnessGreaterThanNutrition           PostChannelsCategory2Response = "health_and_fitness > nutrition"
+	PostChannelsCategory2ResponseHealthAndFitnessGreaterThanSexuality           PostChannelsCategory2Response = "health_and_fitness > sexuality"
+	PostChannelsCategory2ResponseKidsAndFamilyGreaterThanEducationForKids       PostChannelsCategory2Response = "kids_and_family > education_for_kids"
+	PostChannelsCategory2ResponseKidsAndFamilyGreaterThanParenting              PostChannelsCategory2Response = "kids_and_family > parenting"
+	PostChannelsCategory2ResponseKidsAndFamilyGreaterThanPetsAndAnimals         PostChannelsCategory2Response = "kids_and_family > pets_and_animals"
+	PostChannelsCategory2ResponseKidsAndFamilyGreaterThanStoriesForKids         PostChannelsCategory2Response = "kids_and_family > stories_for_kids"
+	PostChannelsCategory2ResponseLeisureGreaterThanAnimationAndManga            PostChannelsCategory2Response = "leisure > animation_and_manga"
+	PostChannelsCategory2ResponseLeisureGreaterThanAutomotive                   PostChannelsCategory2Response = "leisure > automotive"
+	PostChannelsCategory2ResponseLeisureGreaterThanAviation                     PostChannelsCategory2Response = "leisure > aviation"
+	PostChannelsCategory2ResponseLeisureGreaterThanCrafts                       PostChannelsCategory2Response = "leisure > crafts"
+	PostChannelsCategory2ResponseLeisureGreaterThanGames                        PostChannelsCategory2Response = "leisure > games"
+	PostChannelsCategory2ResponseLeisureGreaterThanHobbies                      PostChannelsCategory2Response = "leisure > hobbies"
+	PostChannelsCategory2ResponseLeisureGreaterThanHomeAndGarden                PostChannelsCategory2Response = "leisure > home_and_garden"
+	PostChannelsCategory2ResponseLeisureGreaterThanVideoGames                   PostChannelsCategory2Response = "leisure > video_games"
+	PostChannelsCategory2ResponseMusicGreaterThanMusicCommentary                PostChannelsCategory2Response = "music > music_commentary"
+	PostChannelsCategory2ResponseMusicGreaterThanMusicHistory                   PostChannelsCategory2Response = "music > music_history"
+	PostChannelsCategory2ResponseMusicGreaterThanMusicInterviews                PostChannelsCategory2Response = "music > music_interviews"
+	PostChannelsCategory2ResponseNewsGreaterThanBusinessNews                    PostChannelsCategory2Response = "news > business_news"
+	PostChannelsCategory2ResponseNewsGreaterThanDailyNews                       PostChannelsCategory2Response = "news > daily_news"
+	PostChannelsCategory2ResponseNewsGreaterThanEntertainmentNews               PostChannelsCategory2Response = "news > entertainment_news"
+	PostChannelsCategory2ResponseNewsGreaterThanNewsCommentary                  PostChannelsCategory2Response = "news > news_commentary"
+	PostChannelsCategory2ResponseNewsGreaterThanPolitics                        PostChannelsCategory2Response = "news > politics"
+	PostChannelsCategory2ResponseNewsGreaterThanSportsNews                      PostChannelsCategory2Response = "news > sports_news"
+	PostChannelsCategory2ResponseNewsGreaterThanTechNews                        PostChannelsCategory2Response = "news > tech_news"
+	PostChannelsCategory2ResponseReligionAndSpiritualityGreaterThanBuddhism     PostChannelsCategory2Response = "religion_and_spirituality > buddhism"
+	PostChannelsCategory2ResponseReligionAndSpiritualityGreaterThanChristianity PostChannelsCategory2Response = "religion_and_spirituality > christianity"
+	PostChannelsCategory2ResponseReligionAndSpiritualityGreaterThanHinduism     PostChannelsCategory2Response = "religion_and_spirituality > hinduism"
+	PostChannelsCategory2ResponseReligionAndSpiritualityGreaterThanIslam        PostChannelsCategory2Response = "religion_and_spirituality > islam"
+	PostChannelsCategory2ResponseReligionAndSpiritualityGreaterThanJudaism      PostChannelsCategory2Response = "religion_and_spirituality > judaism"
+	PostChannelsCategory2ResponseReligionAndSpiritualityGreaterThanReligion     PostChannelsCategory2Response = "religion_and_spirituality > religion"
+	PostChannelsCategory2ResponseReligionAndSpiritualityGreaterThanSpirituality PostChannelsCategory2Response = "religion_and_spirituality > spirituality"
+	PostChannelsCategory2ResponseScienceGreaterThanAstronomy                    PostChannelsCategory2Response = "science > astronomy"
+	PostChannelsCategory2ResponseScienceGreaterThanChemistry                    PostChannelsCategory2Response = "science > chemistry"
+	PostChannelsCategory2ResponseScienceGreaterThanEarthSciences                PostChannelsCategory2Response = "science > earth_sciences"
+	PostChannelsCategory2ResponseScienceGreaterThanLifeSciences                 PostChannelsCategory2Response = "science > life_sciences"
+	PostChannelsCategory2ResponseScienceGreaterThanMathematics                  PostChannelsCategory2Response = "science > mathematics"
+	PostChannelsCategory2ResponseScienceGreaterThanNaturalSciences              PostChannelsCategory2Response = "science > natural_sciences"
+	PostChannelsCategory2ResponseScienceGreaterThanNature                       PostChannelsCategory2Response = "science > nature"
+	PostChannelsCategory2ResponseScienceGreaterThanPhysics                      PostChannelsCategory2Response = "science > physics"
+	PostChannelsCategory2ResponseScienceGreaterThanSocialSciences               PostChannelsCategory2Response = "science > social_sciences"
+	PostChannelsCategory2ResponseSocietyAndCultureGreaterThanDocumentary        PostChannelsCategory2Response = "society_and_culture > documentary"
+	PostChannelsCategory2ResponseSocietyAndCultureGreaterThanPersonalJournals   PostChannelsCategory2Response = "society_and_culture > personal_journals"
+	PostChannelsCategory2ResponseSocietyAndCultureGreaterThanPhilosophy         PostChannelsCategory2Response = "society_and_culture > philosophy"
+	PostChannelsCategory2ResponseSocietyAndCultureGreaterThanPlacesAndTravel    PostChannelsCategory2Response = "society_and_culture > places_and_travel"
+	PostChannelsCategory2ResponseSocietyAndCultureGreaterThanRelationships      PostChannelsCategory2Response = "society_and_culture > relationships"
+	PostChannelsCategory2ResponseSportsGreaterThanBaseball                      PostChannelsCategory2Response = "sports > baseball"
+	PostChannelsCategory2ResponseSportsGreaterThanBasketball                    PostChannelsCategory2Response = "sports > basketball"
+	PostChannelsCategory2ResponseSportsGreaterThanCricket                       PostChannelsCategory2Response = "sports > cricket"
+	PostChannelsCategory2ResponseSportsGreaterThanFantasySports                 PostChannelsCategory2Response = "sports > fantasy_sports"
+	PostChannelsCategory2ResponseSportsGreaterThanFootball                      PostChannelsCategory2Response = "sports > football"
+	PostChannelsCategory2ResponseSportsGreaterThanGolf                          PostChannelsCategory2Response = "sports > golf"
+	PostChannelsCategory2ResponseSportsGreaterThanHockey                        PostChannelsCategory2Response = "sports > hockey"
+	PostChannelsCategory2ResponseSportsGreaterThanRugby                         PostChannelsCategory2Response = "sports > rugby"
+	PostChannelsCategory2ResponseSportsGreaterThanRunning                       PostChannelsCategory2Response = "sports > running"
+	PostChannelsCategory2ResponseSportsGreaterThanSoccer                        PostChannelsCategory2Response = "sports > soccer"
+	PostChannelsCategory2ResponseSportsGreaterThanSwimming                      PostChannelsCategory2Response = "sports > swimming"
+	PostChannelsCategory2ResponseSportsGreaterThanTennis                        PostChannelsCategory2Response = "sports > tennis"
+	PostChannelsCategory2ResponseSportsGreaterThanVolleyball                    PostChannelsCategory2Response = "sports > volleyball"
+	PostChannelsCategory2ResponseSportsGreaterThanWilderness                    PostChannelsCategory2Response = "sports > wilderness"
+	PostChannelsCategory2ResponseSportsGreaterThanWrestling                     PostChannelsCategory2Response = "sports > wrestling"
+	PostChannelsCategory2ResponseTvAndFilmGreaterThanAfterShows                 PostChannelsCategory2Response = "tv_and_film > after_shows"
+	PostChannelsCategory2ResponseTvAndFilmGreaterThanFilmHistory                PostChannelsCategory2Response = "tv_and_film > film_history"
+	PostChannelsCategory2ResponseTvAndFilmGreaterThanFilmInterviews             PostChannelsCategory2Response = "tv_and_film > film_interviews"
+	PostChannelsCategory2ResponseTvAndFilmGreaterThanFilmReviews                PostChannelsCategory2Response = "tv_and_film > film_reviews"
+	PostChannelsCategory2ResponseTvAndFilmGreaterThanTvReviews                  PostChannelsCategory2Response = "tv_and_film > tv_reviews"
+)
+
+func (e PostChannelsCategory2Response) ToPointer() *PostChannelsCategory2Response {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *PostChannelsCategory2Response) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "arts > books", "arts > design", "arts > fashion_and_beauty", "arts > food", "arts > performing_arts", "arts > visual_arts", "business > careers", "business > entrepreneurship", "business > investing", "business > management", "business > marketing", "business > non_profit", "comedy > comedy_interviews", "comedy > improv", "comedy > stand_up", "education > courses", "education > how_to", "education > language_learning", "education > self_improvement", "fiction > comedy_fiction", "fiction > drama", "fiction > science_fiction", "health_and_fitness > alternative_health", "health_and_fitness > fitness", "health_and_fitness > medicine", "health_and_fitness > mental_health", "health_and_fitness > nutrition", "health_and_fitness > sexuality", "kids_and_family > education_for_kids", "kids_and_family > parenting", "kids_and_family > pets_and_animals", "kids_and_family > stories_for_kids", "leisure > animation_and_manga", "leisure > automotive", "leisure > aviation", "leisure > crafts", "leisure > games", "leisure > hobbies", "leisure > home_and_garden", "leisure > video_games", "music > music_commentary", "music > music_history", "music > music_interviews", "news > business_news", "news > daily_news", "news > entertainment_news", "news > news_commentary", "news > politics", "news > sports_news", "news > tech_news", "religion_and_spirituality > buddhism", "religion_and_spirituality > christianity", "religion_and_spirituality > hinduism", "religion_and_spirituality > islam", "religion_and_spirituality > judaism", "religion_and_spirituality > religion", "religion_and_spirituality > spirituality", "science > astronomy", "science > chemistry", "science > earth_sciences", "science > life_sciences", "science > mathematics", "science > natural_sciences", "science > nature", "science > physics", "science > social_sciences", "society_and_culture > documentary", "society_and_culture > personal_journals", "society_and_culture > philosophy", "society_and_culture > places_and_travel", "society_and_culture > relationships", "sports > baseball", "sports > basketball", "sports > cricket", "sports > fantasy_sports", "sports > football", "sports > golf", "sports > hockey", "sports > rugby", "sports > running", "sports > soccer", "sports > swimming", "sports > tennis", "sports > volleyball", "sports > wilderness", "sports > wrestling", "tv_and_film > after_shows", "tv_and_film > film_history", "tv_and_film > film_interviews", "tv_and_film > film_reviews", "tv_and_film > tv_reviews":
+			return true
+		}
+	}
+	return false
+}
+
+// PostChannelsCategory3Response - The third category for the channel.
+type PostChannelsCategory3Response string
+
+const (
+	PostChannelsCategory3ResponseArtsGreaterThanBooks                           PostChannelsCategory3Response = "arts > books"
+	PostChannelsCategory3ResponseArtsGreaterThanDesign                          PostChannelsCategory3Response = "arts > design"
+	PostChannelsCategory3ResponseArtsGreaterThanFashionAndBeauty                PostChannelsCategory3Response = "arts > fashion_and_beauty"
+	PostChannelsCategory3ResponseArtsGreaterThanFood                            PostChannelsCategory3Response = "arts > food"
+	PostChannelsCategory3ResponseArtsGreaterThanPerformingArts                  PostChannelsCategory3Response = "arts > performing_arts"
+	PostChannelsCategory3ResponseArtsGreaterThanVisualArts                      PostChannelsCategory3Response = "arts > visual_arts"
+	PostChannelsCategory3ResponseBusinessGreaterThanCareers                     PostChannelsCategory3Response = "business > careers"
+	PostChannelsCategory3ResponseBusinessGreaterThanEntrepreneurship            PostChannelsCategory3Response = "business > entrepreneurship"
+	PostChannelsCategory3ResponseBusinessGreaterThanInvesting                   PostChannelsCategory3Response = "business > investing"
+	PostChannelsCategory3ResponseBusinessGreaterThanManagement                  PostChannelsCategory3Response = "business > management"
+	PostChannelsCategory3ResponseBusinessGreaterThanMarketing                   PostChannelsCategory3Response = "business > marketing"
+	PostChannelsCategory3ResponseBusinessGreaterThanNonProfit                   PostChannelsCategory3Response = "business > non_profit"
+	PostChannelsCategory3ResponseComedyGreaterThanComedyInterviews              PostChannelsCategory3Response = "comedy > comedy_interviews"
+	PostChannelsCategory3ResponseComedyGreaterThanImprov                        PostChannelsCategory3Response = "comedy > improv"
+	PostChannelsCategory3ResponseComedyGreaterThanStandUp                       PostChannelsCategory3Response = "comedy > stand_up"
+	PostChannelsCategory3ResponseEducationGreaterThanCourses                    PostChannelsCategory3Response = "education > courses"
+	PostChannelsCategory3ResponseEducationGreaterThanHowTo                      PostChannelsCategory3Response = "education > how_to"
+	PostChannelsCategory3ResponseEducationGreaterThanLanguageLearning           PostChannelsCategory3Response = "education > language_learning"
+	PostChannelsCategory3ResponseEducationGreaterThanSelfImprovement            PostChannelsCategory3Response = "education > self_improvement"
+	PostChannelsCategory3ResponseFictionGreaterThanComedyFiction                PostChannelsCategory3Response = "fiction > comedy_fiction"
+	PostChannelsCategory3ResponseFictionGreaterThanDrama                        PostChannelsCategory3Response = "fiction > drama"
+	PostChannelsCategory3ResponseFictionGreaterThanScienceFiction               PostChannelsCategory3Response = "fiction > science_fiction"
+	PostChannelsCategory3ResponseHealthAndFitnessGreaterThanAlternativeHealth   PostChannelsCategory3Response = "health_and_fitness > alternative_health"
+	PostChannelsCategory3ResponseHealthAndFitnessGreaterThanFitness             PostChannelsCategory3Response = "health_and_fitness > fitness"
+	PostChannelsCategory3ResponseHealthAndFitnessGreaterThanMedicine            PostChannelsCategory3Response = "health_and_fitness > medicine"
+	PostChannelsCategory3ResponseHealthAndFitnessGreaterThanMentalHealth        PostChannelsCategory3Response = "health_and_fitness > mental_health"
+	PostChannelsCategory3ResponseHealthAndFitnessGreaterThanNutrition           PostChannelsCategory3Response = "health_and_fitness > nutrition"
+	PostChannelsCategory3ResponseHealthAndFitnessGreaterThanSexuality           PostChannelsCategory3Response = "health_and_fitness > sexuality"
+	PostChannelsCategory3ResponseKidsAndFamilyGreaterThanEducationForKids       PostChannelsCategory3Response = "kids_and_family > education_for_kids"
+	PostChannelsCategory3ResponseKidsAndFamilyGreaterThanParenting              PostChannelsCategory3Response = "kids_and_family > parenting"
+	PostChannelsCategory3ResponseKidsAndFamilyGreaterThanPetsAndAnimals         PostChannelsCategory3Response = "kids_and_family > pets_and_animals"
+	PostChannelsCategory3ResponseKidsAndFamilyGreaterThanStoriesForKids         PostChannelsCategory3Response = "kids_and_family > stories_for_kids"
+	PostChannelsCategory3ResponseLeisureGreaterThanAnimationAndManga            PostChannelsCategory3Response = "leisure > animation_and_manga"
+	PostChannelsCategory3ResponseLeisureGreaterThanAutomotive                   PostChannelsCategory3Response = "leisure > automotive"
+	PostChannelsCategory3ResponseLeisureGreaterThanAviation                     PostChannelsCategory3Response = "leisure > aviation"
+	PostChannelsCategory3ResponseLeisureGreaterThanCrafts                       PostChannelsCategory3Response = "leisure > crafts"
+	PostChannelsCategory3ResponseLeisureGreaterThanGames                        PostChannelsCategory3Response = "leisure > games"
+	PostChannelsCategory3ResponseLeisureGreaterThanHobbies                      PostChannelsCategory3Response = "leisure > hobbies"
+	PostChannelsCategory3ResponseLeisureGreaterThanHomeAndGarden                PostChannelsCategory3Response = "leisure > home_and_garden"
+	PostChannelsCategory3ResponseLeisureGreaterThanVideoGames                   PostChannelsCategory3Response = "leisure > video_games"
+	PostChannelsCategory3ResponseMusicGreaterThanMusicCommentary                PostChannelsCategory3Response = "music > music_commentary"
+	PostChannelsCategory3ResponseMusicGreaterThanMusicHistory                   PostChannelsCategory3Response = "music > music_history"
+	PostChannelsCategory3ResponseMusicGreaterThanMusicInterviews                PostChannelsCategory3Response = "music > music_interviews"
+	PostChannelsCategory3ResponseNewsGreaterThanBusinessNews                    PostChannelsCategory3Response = "news > business_news"
+	PostChannelsCategory3ResponseNewsGreaterThanDailyNews                       PostChannelsCategory3Response = "news > daily_news"
+	PostChannelsCategory3ResponseNewsGreaterThanEntertainmentNews               PostChannelsCategory3Response = "news > entertainment_news"
+	PostChannelsCategory3ResponseNewsGreaterThanNewsCommentary                  PostChannelsCategory3Response = "news > news_commentary"
+	PostChannelsCategory3ResponseNewsGreaterThanPolitics                        PostChannelsCategory3Response = "news > politics"
+	PostChannelsCategory3ResponseNewsGreaterThanSportsNews                      PostChannelsCategory3Response = "news > sports_news"
+	PostChannelsCategory3ResponseNewsGreaterThanTechNews                        PostChannelsCategory3Response = "news > tech_news"
+	PostChannelsCategory3ResponseReligionAndSpiritualityGreaterThanBuddhism     PostChannelsCategory3Response = "religion_and_spirituality > buddhism"
+	PostChannelsCategory3ResponseReligionAndSpiritualityGreaterThanChristianity PostChannelsCategory3Response = "religion_and_spirituality > christianity"
+	PostChannelsCategory3ResponseReligionAndSpiritualityGreaterThanHinduism     PostChannelsCategory3Response = "religion_and_spirituality > hinduism"
+	PostChannelsCategory3ResponseReligionAndSpiritualityGreaterThanIslam        PostChannelsCategory3Response = "religion_and_spirituality > islam"
+	PostChannelsCategory3ResponseReligionAndSpiritualityGreaterThanJudaism      PostChannelsCategory3Response = "religion_and_spirituality > judaism"
+	PostChannelsCategory3ResponseReligionAndSpiritualityGreaterThanReligion     PostChannelsCategory3Response = "religion_and_spirituality > religion"
+	PostChannelsCategory3ResponseReligionAndSpiritualityGreaterThanSpirituality PostChannelsCategory3Response = "religion_and_spirituality > spirituality"
+	PostChannelsCategory3ResponseScienceGreaterThanAstronomy                    PostChannelsCategory3Response = "science > astronomy"
+	PostChannelsCategory3ResponseScienceGreaterThanChemistry                    PostChannelsCategory3Response = "science > chemistry"
+	PostChannelsCategory3ResponseScienceGreaterThanEarthSciences                PostChannelsCategory3Response = "science > earth_sciences"
+	PostChannelsCategory3ResponseScienceGreaterThanLifeSciences                 PostChannelsCategory3Response = "science > life_sciences"
+	PostChannelsCategory3ResponseScienceGreaterThanMathematics                  PostChannelsCategory3Response = "science > mathematics"
+	PostChannelsCategory3ResponseScienceGreaterThanNaturalSciences              PostChannelsCategory3Response = "science > natural_sciences"
+	PostChannelsCategory3ResponseScienceGreaterThanNature                       PostChannelsCategory3Response = "science > nature"
+	PostChannelsCategory3ResponseScienceGreaterThanPhysics                      PostChannelsCategory3Response = "science > physics"
+	PostChannelsCategory3ResponseScienceGreaterThanSocialSciences               PostChannelsCategory3Response = "science > social_sciences"
+	PostChannelsCategory3ResponseSocietyAndCultureGreaterThanDocumentary        PostChannelsCategory3Response = "society_and_culture > documentary"
+	PostChannelsCategory3ResponseSocietyAndCultureGreaterThanPersonalJournals   PostChannelsCategory3Response = "society_and_culture > personal_journals"
+	PostChannelsCategory3ResponseSocietyAndCultureGreaterThanPhilosophy         PostChannelsCategory3Response = "society_and_culture > philosophy"
+	PostChannelsCategory3ResponseSocietyAndCultureGreaterThanPlacesAndTravel    PostChannelsCategory3Response = "society_and_culture > places_and_travel"
+	PostChannelsCategory3ResponseSocietyAndCultureGreaterThanRelationships      PostChannelsCategory3Response = "society_and_culture > relationships"
+	PostChannelsCategory3ResponseSportsGreaterThanBaseball                      PostChannelsCategory3Response = "sports > baseball"
+	PostChannelsCategory3ResponseSportsGreaterThanBasketball                    PostChannelsCategory3Response = "sports > basketball"
+	PostChannelsCategory3ResponseSportsGreaterThanCricket                       PostChannelsCategory3Response = "sports > cricket"
+	PostChannelsCategory3ResponseSportsGreaterThanFantasySports                 PostChannelsCategory3Response = "sports > fantasy_sports"
+	PostChannelsCategory3ResponseSportsGreaterThanFootball                      PostChannelsCategory3Response = "sports > football"
+	PostChannelsCategory3ResponseSportsGreaterThanGolf                          PostChannelsCategory3Response = "sports > golf"
+	PostChannelsCategory3ResponseSportsGreaterThanHockey                        PostChannelsCategory3Response = "sports > hockey"
+	PostChannelsCategory3ResponseSportsGreaterThanRugby                         PostChannelsCategory3Response = "sports > rugby"
+	PostChannelsCategory3ResponseSportsGreaterThanRunning                       PostChannelsCategory3Response = "sports > running"
+	PostChannelsCategory3ResponseSportsGreaterThanSoccer                        PostChannelsCategory3Response = "sports > soccer"
+	PostChannelsCategory3ResponseSportsGreaterThanSwimming                      PostChannelsCategory3Response = "sports > swimming"
+	PostChannelsCategory3ResponseSportsGreaterThanTennis                        PostChannelsCategory3Response = "sports > tennis"
+	PostChannelsCategory3ResponseSportsGreaterThanVolleyball                    PostChannelsCategory3Response = "sports > volleyball"
+	PostChannelsCategory3ResponseSportsGreaterThanWilderness                    PostChannelsCategory3Response = "sports > wilderness"
+	PostChannelsCategory3ResponseSportsGreaterThanWrestling                     PostChannelsCategory3Response = "sports > wrestling"
+	PostChannelsCategory3ResponseTvAndFilmGreaterThanAfterShows                 PostChannelsCategory3Response = "tv_and_film > after_shows"
+	PostChannelsCategory3ResponseTvAndFilmGreaterThanFilmHistory                PostChannelsCategory3Response = "tv_and_film > film_history"
+	PostChannelsCategory3ResponseTvAndFilmGreaterThanFilmInterviews             PostChannelsCategory3Response = "tv_and_film > film_interviews"
+	PostChannelsCategory3ResponseTvAndFilmGreaterThanFilmReviews                PostChannelsCategory3Response = "tv_and_film > film_reviews"
+	PostChannelsCategory3ResponseTvAndFilmGreaterThanTvReviews                  PostChannelsCategory3Response = "tv_and_film > tv_reviews"
+)
+
+func (e PostChannelsCategory3Response) ToPointer() *PostChannelsCategory3Response {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *PostChannelsCategory3Response) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "arts > books", "arts > design", "arts > fashion_and_beauty", "arts > food", "arts > performing_arts", "arts > visual_arts", "business > careers", "business > entrepreneurship", "business > investing", "business > management", "business > marketing", "business > non_profit", "comedy > comedy_interviews", "comedy > improv", "comedy > stand_up", "education > courses", "education > how_to", "education > language_learning", "education > self_improvement", "fiction > comedy_fiction", "fiction > drama", "fiction > science_fiction", "health_and_fitness > alternative_health", "health_and_fitness > fitness", "health_and_fitness > medicine", "health_and_fitness > mental_health", "health_and_fitness > nutrition", "health_and_fitness > sexuality", "kids_and_family > education_for_kids", "kids_and_family > parenting", "kids_and_family > pets_and_animals", "kids_and_family > stories_for_kids", "leisure > animation_and_manga", "leisure > automotive", "leisure > aviation", "leisure > crafts", "leisure > games", "leisure > hobbies", "leisure > home_and_garden", "leisure > video_games", "music > music_commentary", "music > music_history", "music > music_interviews", "news > business_news", "news > daily_news", "news > entertainment_news", "news > news_commentary", "news > politics", "news > sports_news", "news > tech_news", "religion_and_spirituality > buddhism", "religion_and_spirituality > christianity", "religion_and_spirituality > hinduism", "religion_and_spirituality > islam", "religion_and_spirituality > judaism", "religion_and_spirituality > religion", "religion_and_spirituality > spirituality", "science > astronomy", "science > chemistry", "science > earth_sciences", "science > life_sciences", "science > mathematics", "science > natural_sciences", "science > nature", "science > physics", "science > social_sciences", "society_and_culture > documentary", "society_and_culture > personal_journals", "society_and_culture > philosophy", "society_and_culture > places_and_travel", "society_and_culture > relationships", "sports > baseball", "sports > basketball", "sports > cricket", "sports > fantasy_sports", "sports > football", "sports > golf", "sports > hockey", "sports > rugby", "sports > running", "sports > soccer", "sports > swimming", "sports > tennis", "sports > volleyball", "sports > wilderness", "sports > wrestling", "tv_and_film > after_shows", "tv_and_film > film_history", "tv_and_film > film_interviews", "tv_and_film > film_reviews", "tv_and_film > tv_reviews":
+			return true
+		}
+	}
+	return false
+}
+
+// PostChannelsLanguageResponse - The ISO 639-1 language code for the channel.
+type PostChannelsLanguageResponse string
+
+const (
+	PostChannelsLanguageResponseAf   PostChannelsLanguageResponse = "af"
+	PostChannelsLanguageResponseBe   PostChannelsLanguageResponse = "be"
+	PostChannelsLanguageResponseBg   PostChannelsLanguageResponse = "bg"
+	PostChannelsLanguageResponseCa   PostChannelsLanguageResponse = "ca"
+	PostChannelsLanguageResponseCs   PostChannelsLanguageResponse = "cs"
+	PostChannelsLanguageResponseDa   PostChannelsLanguageResponse = "da"
+	PostChannelsLanguageResponseDeAt PostChannelsLanguageResponse = "de-at"
+	PostChannelsLanguageResponseDeCh PostChannelsLanguageResponse = "de-ch"
+	PostChannelsLanguageResponseDeDe PostChannelsLanguageResponse = "de-de"
+	PostChannelsLanguageResponseDeLi PostChannelsLanguageResponse = "de-li"
+	PostChannelsLanguageResponseDeLu PostChannelsLanguageResponse = "de-lu"
+	PostChannelsLanguageResponseDe   PostChannelsLanguageResponse = "de"
+	PostChannelsLanguageResponseEl   PostChannelsLanguageResponse = "el"
+	PostChannelsLanguageResponseEnAu PostChannelsLanguageResponse = "en-au"
+	PostChannelsLanguageResponseEnBz PostChannelsLanguageResponse = "en-bz"
+	PostChannelsLanguageResponseEnCa PostChannelsLanguageResponse = "en-ca"
+	PostChannelsLanguageResponseEnGb PostChannelsLanguageResponse = "en-gb"
+	PostChannelsLanguageResponseEnIe PostChannelsLanguageResponse = "en-ie"
+	PostChannelsLanguageResponseEnJm PostChannelsLanguageResponse = "en-jm"
+	PostChannelsLanguageResponseEnNz PostChannelsLanguageResponse = "en-nz"
+	PostChannelsLanguageResponseEnPh PostChannelsLanguageResponse = "en-ph"
+	PostChannelsLanguageResponseEnTt PostChannelsLanguageResponse = "en-tt"
+	PostChannelsLanguageResponseEnUs PostChannelsLanguageResponse = "en-us"
+	PostChannelsLanguageResponseEnZa PostChannelsLanguageResponse = "en-za"
+	PostChannelsLanguageResponseEnZw PostChannelsLanguageResponse = "en-zw"
+	PostChannelsLanguageResponseEn   PostChannelsLanguageResponse = "en"
+	PostChannelsLanguageResponseEsAr PostChannelsLanguageResponse = "es-ar"
+	PostChannelsLanguageResponseEsBo PostChannelsLanguageResponse = "es-bo"
+	PostChannelsLanguageResponseEsCl PostChannelsLanguageResponse = "es-cl"
+	PostChannelsLanguageResponseEsCo PostChannelsLanguageResponse = "es-co"
+	PostChannelsLanguageResponseEsCr PostChannelsLanguageResponse = "es-cr"
+	PostChannelsLanguageResponseEsDo PostChannelsLanguageResponse = "es-do"
+	PostChannelsLanguageResponseEsEc PostChannelsLanguageResponse = "es-ec"
+	PostChannelsLanguageResponseEsEs PostChannelsLanguageResponse = "es-es"
+	PostChannelsLanguageResponseEsGt PostChannelsLanguageResponse = "es-gt"
+	PostChannelsLanguageResponseEsHn PostChannelsLanguageResponse = "es-hn"
+	PostChannelsLanguageResponseEsMx PostChannelsLanguageResponse = "es-mx"
+	PostChannelsLanguageResponseEsNi PostChannelsLanguageResponse = "es-ni"
+	PostChannelsLanguageResponseEsPa PostChannelsLanguageResponse = "es-pa"
+	PostChannelsLanguageResponseEsPe PostChannelsLanguageResponse = "es-pe"
+	PostChannelsLanguageResponseEsPr PostChannelsLanguageResponse = "es-pr"
+	PostChannelsLanguageResponseEsPy PostChannelsLanguageResponse = "es-py"
+	PostChannelsLanguageResponseEsSv PostChannelsLanguageResponse = "es-sv"
+	PostChannelsLanguageResponseEsUy PostChannelsLanguageResponse = "es-uy"
+	PostChannelsLanguageResponseEsVe PostChannelsLanguageResponse = "es-ve"
+	PostChannelsLanguageResponseEs   PostChannelsLanguageResponse = "es"
+	PostChannelsLanguageResponseEt   PostChannelsLanguageResponse = "et"
+	PostChannelsLanguageResponseEu   PostChannelsLanguageResponse = "eu"
+	PostChannelsLanguageResponseFi   PostChannelsLanguageResponse = "fi"
+	PostChannelsLanguageResponseFo   PostChannelsLanguageResponse = "fo"
+	PostChannelsLanguageResponseFrBe PostChannelsLanguageResponse = "fr-be"
+	PostChannelsLanguageResponseFrCa PostChannelsLanguageResponse = "fr-ca"
+	PostChannelsLanguageResponseFrCh PostChannelsLanguageResponse = "fr-ch"
+	PostChannelsLanguageResponseFrFr PostChannelsLanguageResponse = "fr-fr"
+	PostChannelsLanguageResponseFrLu PostChannelsLanguageResponse = "fr-lu"
+	PostChannelsLanguageResponseFrMc PostChannelsLanguageResponse = "fr-mc"
+	PostChannelsLanguageResponseFr   PostChannelsLanguageResponse = "fr"
+	PostChannelsLanguageResponseGa   PostChannelsLanguageResponse = "ga"
+	PostChannelsLanguageResponseGd   PostChannelsLanguageResponse = "gd"
+	PostChannelsLanguageResponseGl   PostChannelsLanguageResponse = "gl"
+	PostChannelsLanguageResponseHaw  PostChannelsLanguageResponse = "haw"
+	PostChannelsLanguageResponseHr   PostChannelsLanguageResponse = "hr"
+	PostChannelsLanguageResponseHu   PostChannelsLanguageResponse = "hu"
+	PostChannelsLanguageResponseIn   PostChannelsLanguageResponse = "in"
+	PostChannelsLanguageResponseIs   PostChannelsLanguageResponse = "is"
+	PostChannelsLanguageResponseItCh PostChannelsLanguageResponse = "it-ch"
+	PostChannelsLanguageResponseItIt PostChannelsLanguageResponse = "it-it"
+	PostChannelsLanguageResponseIt   PostChannelsLanguageResponse = "it"
+	PostChannelsLanguageResponseJa   PostChannelsLanguageResponse = "ja"
+	PostChannelsLanguageResponseKo   PostChannelsLanguageResponse = "ko"
+	PostChannelsLanguageResponseMk   PostChannelsLanguageResponse = "mk"
+	PostChannelsLanguageResponseNlBe PostChannelsLanguageResponse = "nl-be"
+	PostChannelsLanguageResponseNlNl PostChannelsLanguageResponse = "nl-nl"
+	PostChannelsLanguageResponseNl   PostChannelsLanguageResponse = "nl"
+	PostChannelsLanguageResponseNo   PostChannelsLanguageResponse = "no"
+	PostChannelsLanguageResponsePl   PostChannelsLanguageResponse = "pl"
+	PostChannelsLanguageResponsePtBr PostChannelsLanguageResponse = "pt-br"
+	PostChannelsLanguageResponsePtPt PostChannelsLanguageResponse = "pt-pt"
+	PostChannelsLanguageResponsePt   PostChannelsLanguageResponse = "pt"
+	PostChannelsLanguageResponseRoMo PostChannelsLanguageResponse = "ro-mo"
+	PostChannelsLanguageResponseRoRo PostChannelsLanguageResponse = "ro-ro"
+	PostChannelsLanguageResponseRo   PostChannelsLanguageResponse = "ro"
+	PostChannelsLanguageResponseRuMo PostChannelsLanguageResponse = "ru-mo"
+	PostChannelsLanguageResponseRuRu PostChannelsLanguageResponse = "ru-ru"
+	PostChannelsLanguageResponseRu   PostChannelsLanguageResponse = "ru"
+	PostChannelsLanguageResponseSk   PostChannelsLanguageResponse = "sk"
+	PostChannelsLanguageResponseSl   PostChannelsLanguageResponse = "sl"
+	PostChannelsLanguageResponseSq   PostChannelsLanguageResponse = "sq"
+	PostChannelsLanguageResponseSr   PostChannelsLanguageResponse = "sr"
+	PostChannelsLanguageResponseSvFi PostChannelsLanguageResponse = "sv-fi"
+	PostChannelsLanguageResponseSvSe PostChannelsLanguageResponse = "sv-se"
+	PostChannelsLanguageResponseSv   PostChannelsLanguageResponse = "sv"
+	PostChannelsLanguageResponseTr   PostChannelsLanguageResponse = "tr"
+	PostChannelsLanguageResponseUk   PostChannelsLanguageResponse = "uk"
+	PostChannelsLanguageResponseZhCn PostChannelsLanguageResponse = "zh-cn"
+	PostChannelsLanguageResponseZhTw PostChannelsLanguageResponse = "zh-tw"
+)
+
+func (e PostChannelsLanguageResponse) ToPointer() *PostChannelsLanguageResponse {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *PostChannelsLanguageResponse) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "af", "be", "bg", "ca", "cs", "da", "de-at", "de-ch", "de-de", "de-li", "de-lu", "de", "el", "en-au", "en-bz", "en-ca", "en-gb", "en-ie", "en-jm", "en-nz", "en-ph", "en-tt", "en-us", "en-za", "en-zw", "en", "es-ar", "es-bo", "es-cl", "es-co", "es-cr", "es-do", "es-ec", "es-es", "es-gt", "es-hn", "es-mx", "es-ni", "es-pa", "es-pe", "es-pr", "es-py", "es-sv", "es-uy", "es-ve", "es", "et", "eu", "fi", "fo", "fr-be", "fr-ca", "fr-ch", "fr-fr", "fr-lu", "fr-mc", "fr", "ga", "gd", "gl", "haw", "hr", "hu", "in", "is", "it-ch", "it-it", "it", "ja", "ko", "mk", "nl-be", "nl-nl", "nl", "no", "pl", "pt-br", "pt-pt", "pt", "ro-mo", "ro-ro", "ro", "ru-mo", "ru-ru", "ru", "sk", "sl", "sq", "sr", "sv-fi", "sv-se", "sv", "tr", "uk", "zh-cn", "zh-tw":
+			return true
+		}
+	}
+	return false
+}
+
+// PostChannelsPodcastSettingsResponse - Podcast specific settings for the channel. Only present when podcasting
+// is enabled for the channel.
+type PostChannelsPodcastSettingsResponse struct {
+	// The channel's copyright information.
+	Copyright optionalnullable.OptionalNullable[string] `json:"copyright,omitzero"`
+	// The format for episodes for the podcast channel.
+	EpisodeFormat optionalnullable.OptionalNullable[PostChannelsEpisodeFormatResponse] `json:"episode_format,omitzero"`
+	// The name of the author(s) for the channel.
+	AuthorName optionalnullable.OptionalNullable[string] `json:"author_name,omitzero"`
+	// Whether the channel contains explicit content.
+	Explicit optionalnullable.OptionalNullable[bool] `json:"explicit,omitzero"`
+	// The name of the owner for the channel.
+	OwnerName optionalnullable.OptionalNullable[string] `json:"owner_name,omitzero"`
+	// The email of the owner for the channel.
+	OwnerEmail optionalnullable.OptionalNullable[string] `json:"owner_email,omitzero"`
+	// The primary category for the channel.
+	Category1 optionalnullable.OptionalNullable[PostChannelsCategory1Response] `json:"category1,omitzero"`
+	// The secondary category for the channel.
+	Category2 optionalnullable.OptionalNullable[PostChannelsCategory2Response] `json:"category2,omitzero"`
+	// The third category for the channel.
+	Category3 optionalnullable.OptionalNullable[PostChannelsCategory3Response] `json:"category3,omitzero"`
+	// The ISO 639-1 language code for the channel.
+	Language optionalnullable.OptionalNullable[PostChannelsLanguageResponse] `json:"language,omitzero"`
+}
+
+func (p *PostChannelsPodcastSettingsResponse) GetCopyright() optionalnullable.OptionalNullable[string] {
 	if p == nil {
 		return nil
 	}
 	return p.Copyright
 }
 
-func (p *PostChannelsRequest) GetEpisodeFormat() optionalnullable.OptionalNullable[PostChannelsEpisodeFormat] {
+func (p *PostChannelsPodcastSettingsResponse) GetEpisodeFormat() optionalnullable.OptionalNullable[PostChannelsEpisodeFormatResponse] {
 	if p == nil {
 		return nil
 	}
 	return p.EpisodeFormat
 }
 
-func (p *PostChannelsRequest) GetAuthorName() optionalnullable.OptionalNullable[string] {
+func (p *PostChannelsPodcastSettingsResponse) GetAuthorName() optionalnullable.OptionalNullable[string] {
 	if p == nil {
 		return nil
 	}
 	return p.AuthorName
 }
 
-func (p *PostChannelsRequest) GetExplicit() optionalnullable.OptionalNullable[bool] {
+func (p *PostChannelsPodcastSettingsResponse) GetExplicit() optionalnullable.OptionalNullable[bool] {
 	if p == nil {
 		return nil
 	}
 	return p.Explicit
 }
 
-func (p *PostChannelsRequest) GetOwnerName() optionalnullable.OptionalNullable[string] {
+func (p *PostChannelsPodcastSettingsResponse) GetOwnerName() optionalnullable.OptionalNullable[string] {
 	if p == nil {
 		return nil
 	}
 	return p.OwnerName
 }
 
-func (p *PostChannelsRequest) GetOwnerEmail() optionalnullable.OptionalNullable[string] {
+func (p *PostChannelsPodcastSettingsResponse) GetOwnerEmail() optionalnullable.OptionalNullable[string] {
 	if p == nil {
 		return nil
 	}
 	return p.OwnerEmail
 }
 
-func (p *PostChannelsRequest) GetCategory1() optionalnullable.OptionalNullable[PostChannelsCategory1] {
+func (p *PostChannelsPodcastSettingsResponse) GetCategory1() optionalnullable.OptionalNullable[PostChannelsCategory1Response] {
 	if p == nil {
 		return nil
 	}
 	return p.Category1
 }
 
-func (p *PostChannelsRequest) GetCategory2() optionalnullable.OptionalNullable[PostChannelsCategory2] {
+func (p *PostChannelsPodcastSettingsResponse) GetCategory2() optionalnullable.OptionalNullable[PostChannelsCategory2Response] {
 	if p == nil {
 		return nil
 	}
 	return p.Category2
 }
 
-func (p *PostChannelsRequest) GetCategory3() optionalnullable.OptionalNullable[PostChannelsCategory3] {
+func (p *PostChannelsPodcastSettingsResponse) GetCategory3() optionalnullable.OptionalNullable[PostChannelsCategory3Response] {
 	if p == nil {
 		return nil
 	}
 	return p.Category3
 }
 
-func (p *PostChannelsRequest) GetLanguage() optionalnullable.OptionalNullable[PostChannelsLanguage] {
+func (p *PostChannelsPodcastSettingsResponse) GetLanguage() optionalnullable.OptionalNullable[PostChannelsLanguageResponse] {
 	if p == nil {
 		return nil
 	}
@@ -1384,10 +2008,22 @@ type PostChannelsResponseBody struct {
 	HashedID string `json:"hashed_id"`
 	// The number of medias in the channel.
 	MediaCount int64 `json:"media_count"`
+	// The number of live stream events in the channel.
+	LiveStreamEventCount *int64 `json:"live_stream_event_count,omitzero"`
 	// The display name for the channel
 	Name string `json:"name"`
 	// The date when the channel was last updated.
 	Updated time.Time `json:"updated"`
+	// Whether episodes are automatically published when added to the channel.
+	AutoPublishEnabled optionalnullable.OptionalNullable[bool] `json:"auto_publish_enabled,omitzero"`
+	// Whether podcasting is enabled for the channel.
+	PodcastEnabled optionalnullable.OptionalNullable[bool] `json:"podcast_enabled,omitzero"`
+	// The custom URL used when embedding the channel on your own site. Null if no custom URL is set.
+	CustomURL optionalnullable.OptionalNullable[string] `json:"custom_url,omitzero"`
+	// Podcast specific settings for the channel. Only present when podcasting
+	// is enabled for the channel.
+	//
+	PodcastSettings *PostChannelsPodcastSettingsResponse `json:"podcast_settings,omitzero"`
 	// A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
 	Cursor optionalnullable.OptionalNullable[string] `json:"cursor,omitzero"`
 }
@@ -1438,6 +2074,13 @@ func (p *PostChannelsResponseBody) GetMediaCount() int64 {
 	return p.MediaCount
 }
 
+func (p *PostChannelsResponseBody) GetLiveStreamEventCount() *int64 {
+	if p == nil {
+		return nil
+	}
+	return p.LiveStreamEventCount
+}
+
 func (p *PostChannelsResponseBody) GetName() string {
 	if p == nil {
 		return ""
@@ -1450,6 +2093,34 @@ func (p *PostChannelsResponseBody) GetUpdated() time.Time {
 		return time.Time{}
 	}
 	return p.Updated
+}
+
+func (p *PostChannelsResponseBody) GetAutoPublishEnabled() optionalnullable.OptionalNullable[bool] {
+	if p == nil {
+		return nil
+	}
+	return p.AutoPublishEnabled
+}
+
+func (p *PostChannelsResponseBody) GetPodcastEnabled() optionalnullable.OptionalNullable[bool] {
+	if p == nil {
+		return nil
+	}
+	return p.PodcastEnabled
+}
+
+func (p *PostChannelsResponseBody) GetCustomURL() optionalnullable.OptionalNullable[string] {
+	if p == nil {
+		return nil
+	}
+	return p.CustomURL
+}
+
+func (p *PostChannelsResponseBody) GetPodcastSettings() *PostChannelsPodcastSettingsResponse {
+	if p == nil {
+		return nil
+	}
+	return p.PodcastSettings
 }
 
 func (p *PostChannelsResponseBody) GetCursor() optionalnullable.OptionalNullable[string] {

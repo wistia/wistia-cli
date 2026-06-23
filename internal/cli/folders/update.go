@@ -21,7 +21,7 @@ var updateCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "description", FieldPath: "Body.Description", Kind: flagutil.FlagKindString, Optional: true, Description: "The folder’s new description."},
 	{FlagName: "anonymous-can-upload", FieldPath: "Body.AnonymousCanUpload", Kind: flagutil.FlagKindBool, Optional: true, Description: "Whether anonymous users can upload media to the folder."},
 	{FlagName: "anonymous-can-download", FieldPath: "Body.AnonymousCanDownload", Kind: flagutil.FlagKindBool, Optional: true, Description: "Whether anonymous users can download media from the folder."},
-	{FlagName: "public", Shorthand: "p", FieldPath: "Body.Public", Kind: flagutil.FlagKindUnion, Union: &flagutil.UnionMeta{Discriminated: false, Optional: true, TypeDescription: "JSON value (one of: put_folders_id__public_enum | boolean)"}},
+	{FlagName: "public", Shorthand: "p", FieldPath: "Body.Public", Kind: flagutil.FlagKindBool, Optional: true, Description: "A flag indicating whether or not the folder is enabled for public access."},
 }
 
 // initUpdateCmd initializes the update command.

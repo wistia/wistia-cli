@@ -40,7 +40,7 @@ func (e *GetFoldersEnabled) UnmarshalJSON(data []byte) error {
 	}
 }
 
-// GetFoldersCursor - If `cursor[enabled]` is set to 1 than cursor pagination is enabled and the
+// GetFoldersCursor - If `cursor[enabled]` is set to 1 then cursor pagination is enabled and the
 // first set of records are fetched up to the `per_page`. Cursor
 // pagination will also be turned on if `cursor[before]` or `cursor[after]`
 // are set. Records returned will have a `cursor` property set which can be used to fetch more records in the same `sort_by` ordering.
@@ -48,20 +48,20 @@ func (e *GetFoldersEnabled) UnmarshalJSON(data []byte) error {
 // the cursor of the first record can be used to fetch records before the result set.
 //
 // NOTE: a cursor value is only valid if the `sort_by` value hasn't changed from the
-// last fetch. For example, you cannot fetch using `sort_by` id and than pass that
+// last fetch. For example, you cannot fetch using `sort_by` id and then pass that
 // cursor value to a `sort_by` name.
 type GetFoldersCursor struct {
 	// If `cursor[enabled]` is set to 1, the first result set will be fetched with cursor pagination enabled. This
 	// values is ignored if `cursor[before]` or `cursor[after]` are set.
 	//
 	Enabled *GetFoldersEnabled `queryParam:"name=enabled"`
-	// If `cursor[before]` is set than cursor pagination is enabled and all records
+	// If `cursor[before]` is set then cursor pagination is enabled and all records
 	// before the cursor up to the `per_page` are returned. This feature is useful for
 	// fetching "new records", for example, in a "pull to refersh" feature when showing records in a descending
 	// order.
 	//
 	Before *string `queryParam:"name=before"`
-	// If `cursor[after]` is set than cursor pagination is enabled and all records
+	// If `cursor[after]` is set then cursor pagination is enabled and all records
 	// after the cursor up to the `per_page` are returned.
 	//
 	After *string `queryParam:"name=after"`
@@ -160,7 +160,7 @@ type GetFoldersRequest struct {
 	Page *int64 `queryParam:"style=form,explode=true,name=page"`
 	// The number of medias per page. Use this for both offset pagination and cursor pagination.
 	PerPage *int64 `queryParam:"style=form,explode=true,name=per_page"`
-	// If `cursor[enabled]` is set to 1 than cursor pagination is enabled and the
+	// If `cursor[enabled]` is set to 1 then cursor pagination is enabled and the
 	// first set of records are fetched up to the `per_page`. Cursor
 	// pagination will also be turned on if `cursor[before]` or `cursor[after]`
 	// are set. Records returned will have a `cursor` property set which can be used to fetch more records in the same `sort_by` ordering.
@@ -168,7 +168,7 @@ type GetFoldersRequest struct {
 	// the cursor of the first record can be used to fetch records before the result set.
 	//
 	// NOTE: a cursor value is only valid if the `sort_by` value hasn't changed from the
-	// last fetch. For example, you cannot fetch using `sort_by` id and than pass that
+	// last fetch. For example, you cannot fetch using `sort_by` id and then pass that
 	// cursor value to a `sort_by` name.
 	//
 	Cursor *GetFoldersCursor `queryParam:"style=deepObject,explode=true,name=cursor"`
@@ -236,228 +236,69 @@ func (g *GetFoldersRequest) GetHashedIds() []string {
 	return g.HashedIds
 }
 
-// GetFoldersType - A string representing what type of media this is.
-type GetFoldersType string
+// GetFoldersCode - A machine-readable identifier for the specific authorization failure.
+type GetFoldersCode string
 
 const (
-	GetFoldersTypeVideo                   GetFoldersType = "Video"
-	GetFoldersTypeAudio                   GetFoldersType = "Audio"
-	GetFoldersTypeImage                   GetFoldersType = "Image"
-	GetFoldersTypePdfDocument             GetFoldersType = "PdfDocument"
-	GetFoldersTypeMicrosoftOfficeDocument GetFoldersType = "MicrosoftOfficeDocument"
-	GetFoldersTypeSwf                     GetFoldersType = "Swf"
-	GetFoldersTypeUnknownType             GetFoldersType = "UnknownType"
+	GetFoldersCodeUnauthorizedCredentials GetFoldersCode = "unauthorized_credentials"
+	GetFoldersCodeAccountInactive         GetFoldersCode = "account_inactive"
+	GetFoldersCodeUnauthorizedScope       GetFoldersCode = "unauthorized_scope"
+	GetFoldersCodeUnauthorizedParams      GetFoldersCode = "unauthorized_params"
 )
 
-func (e GetFoldersType) ToPointer() *GetFoldersType {
+func (e GetFoldersCode) ToPointer() *GetFoldersCode {
 	return &e
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *GetFoldersType) IsExact() bool {
+func (e *GetFoldersCode) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Video", "Audio", "Image", "PdfDocument", "MicrosoftOfficeDocument", "Swf", "UnknownType":
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
 			return true
 		}
 	}
 	return false
 }
 
-// GetFoldersStatus - Post upload processing status. - `queued`: the file is waiting in the queue to be processed. - `processing`: the file is actively being processed. - `ready`: the file has been fully processed and is ready for embedding and viewing. - `failed`: the file was unable to be processed (usually a format or size error).
-type GetFoldersStatus string
-
-const (
-	GetFoldersStatusQueued     GetFoldersStatus = "queued"
-	GetFoldersStatusProcessing GetFoldersStatus = "processing"
-	GetFoldersStatusReady      GetFoldersStatus = "ready"
-	GetFoldersStatusFailed     GetFoldersStatus = "failed"
-)
-
-func (e GetFoldersStatus) ToPointer() *GetFoldersStatus {
-	return &e
+// GetFoldersMedias - A link to where you can fetch the medias for this folder.
+type GetFoldersMedias struct {
+	// A URL for fetching all child records of the parent record.
+	URL *string `json:"url,omitzero"`
 }
 
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *GetFoldersStatus) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "queued", "processing", "ready", "failed":
-			return true
-		}
-	}
-	return false
-}
-
-type GetFoldersThumbnail struct {
-	URL    *string `json:"url,omitzero"`
-	Width  *int64  `json:"width,omitzero"`
-	Height *int64  `json:"height,omitzero"`
-}
-
-func (g *GetFoldersThumbnail) GetURL() *string {
+func (g *GetFoldersMedias) GetURL() *string {
 	if g == nil {
 		return nil
 	}
 	return g.URL
 }
 
-func (g *GetFoldersThumbnail) GetWidth() *int64 {
-	if g == nil {
-		return nil
+// GetFoldersKind - Indicates the folder's access scope, relative to the requesting user. One of:
+// - `library`: a library the requester owns. Libraries can still be shared with specific contacts or contact groups; the only restriction is that they cannot be shared with the whole account.
+// - `shared`: a folder the requester has access to via a Contact or ContactGroup sharing — this includes both shared folders and another contact's library that the requester has been granted access to.
+// - `account`: a folder shared with the whole account (everyone in the company can see it).
+type GetFoldersKind string
+
+const (
+	GetFoldersKindLibrary GetFoldersKind = "library"
+	GetFoldersKindShared  GetFoldersKind = "shared"
+	GetFoldersKindAccount GetFoldersKind = "account"
+)
+
+func (e GetFoldersKind) ToPointer() *GetFoldersKind {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetFoldersKind) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "library", "shared", "account":
+			return true
+		}
 	}
-	return g.Width
-}
-
-func (g *GetFoldersThumbnail) GetHeight() *int64 {
-	if g == nil {
-		return nil
-	}
-	return g.Height
-}
-
-// GetFoldersMedias - A link to where you can fetch the medias for this folder.
-type GetFoldersMedias struct {
-	// A unique numeric identifier for the media within the system.
-	ID *int64 `json:"id,omitzero"`
-	// The display name of the media.
-	Name *string `json:"name,omitzero"`
-	// A string representing what type of media this is.
-	Type *GetFoldersType `json:"type,omitzero"`
-	// Whether or not the media is archived, either true or false.
-	Archived *bool `json:"archived,omitzero"`
-	// The date when the media was originally uploaded.
-	Created *time.Time `json:"created,omitzero"`
-	// The date when the media was last changed.
-	Updated *time.Time `json:"updated,omitzero"`
-	// Specifies the length (in seconds) for audio and video files. Specifies number of pages in the document. Omitted for other types of media.
-	Duration optionalnullable.OptionalNullable[float64] `json:"duration,omitzero"`
-	// DEPRECATED: If you want to programmatically embed videos, follow the construct an embed code guide.
-	//
-	//
-	// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
-	EmbedCode *string `json:"embedCode,omitzero"`
-	// A unique alphanumeric identifier for this media.
-	HashedID *string `json:"hashed_id,omitzero"`
-	// A description for the media which usually appears near the top of the sidebar on the media's page.
-	Description *string `json:"description,omitzero"`
-	// A floating point value between 0 and 1 that indicates the progress of the processing for this file.
-	Progress *float64 `json:"progress,omitzero"`
-	// Post upload processing status. - `queued`: the file is waiting in the queue to be processed. - `processing`: the file is actively being processed. - `ready`: the file has been fully processed and is ready for embedding and viewing. - `failed`: the file was unable to be processed (usually a format or size error).
-	//
-	Status *GetFoldersStatus `json:"status,omitzero"`
-	// The title of the section in which the media appears. This attribute is omitted if the media is not in a section (default).
-	Section   optionalnullable.OptionalNullable[string] `json:"section,omitzero"`
-	Thumbnail *GetFoldersThumbnail                      `json:"thumbnail,omitzero"`
-}
-
-func (g GetFoldersMedias) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(g, "", false)
-}
-
-func (g *GetFoldersMedias) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &g, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (g *GetFoldersMedias) GetID() *int64 {
-	if g == nil {
-		return nil
-	}
-	return g.ID
-}
-
-func (g *GetFoldersMedias) GetName() *string {
-	if g == nil {
-		return nil
-	}
-	return g.Name
-}
-
-func (g *GetFoldersMedias) GetType() *GetFoldersType {
-	if g == nil {
-		return nil
-	}
-	return g.Type
-}
-
-func (g *GetFoldersMedias) GetArchived() *bool {
-	if g == nil {
-		return nil
-	}
-	return g.Archived
-}
-
-func (g *GetFoldersMedias) GetCreated() *time.Time {
-	if g == nil {
-		return nil
-	}
-	return g.Created
-}
-
-func (g *GetFoldersMedias) GetUpdated() *time.Time {
-	if g == nil {
-		return nil
-	}
-	return g.Updated
-}
-
-func (g *GetFoldersMedias) GetDuration() optionalnullable.OptionalNullable[float64] {
-	if g == nil {
-		return nil
-	}
-	return g.Duration
-}
-
-func (g *GetFoldersMedias) GetEmbedCode() *string {
-	if g == nil {
-		return nil
-	}
-	return g.EmbedCode
-}
-
-func (g *GetFoldersMedias) GetHashedID() *string {
-	if g == nil {
-		return nil
-	}
-	return g.HashedID
-}
-
-func (g *GetFoldersMedias) GetDescription() *string {
-	if g == nil {
-		return nil
-	}
-	return g.Description
-}
-
-func (g *GetFoldersMedias) GetProgress() *float64 {
-	if g == nil {
-		return nil
-	}
-	return g.Progress
-}
-
-func (g *GetFoldersMedias) GetStatus() *GetFoldersStatus {
-	if g == nil {
-		return nil
-	}
-	return g.Status
-}
-
-func (g *GetFoldersMedias) GetSection() optionalnullable.OptionalNullable[string] {
-	if g == nil {
-		return nil
-	}
-	return g.Section
-}
-
-func (g *GetFoldersMedias) GetThumbnail() *GetFoldersThumbnail {
-	if g == nil {
-		return nil
-	}
-	return g.Thumbnail
+	return false
 }
 
 // GetFoldersResponseBody - A folder (previously called a project) is a container in which to organize media into. It can be
@@ -486,6 +327,15 @@ type GetFoldersResponseBody struct {
 	PublicID             *string `json:"public_id"`
 	AnonymousCanUpload   *bool   `json:"anonymous_can_upload,omitzero"`
 	AnonymousCanDownload *bool   `json:"anonymous_can_download,omitzero"`
+	// Indicates the folder's access scope, relative to the requesting user. One of:
+	// - `library`: a library the requester owns. Libraries can still be shared with specific contacts or contact groups; the only restriction is that they cannot be shared with the whole account.
+	// - `shared`: a folder the requester has access to via a Contact or ContactGroup sharing — this includes both shared folders and another contact's library that the requester has been granted access to.
+	// - `account`: a folder shared with the whole account (everyone in the company can see it).
+	//
+	Kind GetFoldersKind `json:"kind"`
+	// Whether this folder is someone's personal library ("My Library"). Unlike `kind`, this is a property of the folder itself and does not depend on who is requesting — it is `true` for a personal library even when that library has been shared with you (where `kind` would read `shared`). Use this, not `kind`, to tell whether a folder is a personal library.
+	//
+	PersonalLibrary bool `json:"personal_library"`
 	// A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
 	Cursor optionalnullable.OptionalNullable[string] `json:"cursor,omitzero"`
 }
@@ -583,6 +433,20 @@ func (g *GetFoldersResponseBody) GetAnonymousCanDownload() *bool {
 		return nil
 	}
 	return g.AnonymousCanDownload
+}
+
+func (g *GetFoldersResponseBody) GetKind() GetFoldersKind {
+	if g == nil {
+		return GetFoldersKind("")
+	}
+	return g.Kind
+}
+
+func (g *GetFoldersResponseBody) GetPersonalLibrary() bool {
+	if g == nil {
+		return false
+	}
+	return g.PersonalLibrary
 }
 
 func (g *GetFoldersResponseBody) GetCursor() optionalnullable.OptionalNullable[string] {

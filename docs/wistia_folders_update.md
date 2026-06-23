@@ -31,7 +31,7 @@ wistia folders update [flags]
   -h, --help                     help for update
   -i, --id string                Folder Hashed ID [required]
   -n, --name string              The folder’s new name.
-  -p, --public string            JSON value (one of: put_folders_id__public_enum | boolean)
+  -p, --public                   A flag indicating whether or not the folder is enabled for public access.
 ```
 
 ### Options inherited from parent commands

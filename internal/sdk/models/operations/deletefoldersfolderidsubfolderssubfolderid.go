@@ -31,6 +31,31 @@ func (d *DeleteFoldersFolderIDSubfoldersSubfolderIDRequest) GetSubfolderID() str
 	return d.SubfolderID
 }
 
+// DeleteFoldersFolderIDSubfoldersSubfolderIDCode - A machine-readable identifier for the specific authorization failure.
+type DeleteFoldersFolderIDSubfoldersSubfolderIDCode string
+
+const (
+	DeleteFoldersFolderIDSubfoldersSubfolderIDCodeUnauthorizedCredentials DeleteFoldersFolderIDSubfoldersSubfolderIDCode = "unauthorized_credentials"
+	DeleteFoldersFolderIDSubfoldersSubfolderIDCodeAccountInactive         DeleteFoldersFolderIDSubfoldersSubfolderIDCode = "account_inactive"
+	DeleteFoldersFolderIDSubfoldersSubfolderIDCodeUnauthorizedScope       DeleteFoldersFolderIDSubfoldersSubfolderIDCode = "unauthorized_scope"
+	DeleteFoldersFolderIDSubfoldersSubfolderIDCodeUnauthorizedParams      DeleteFoldersFolderIDSubfoldersSubfolderIDCode = "unauthorized_params"
+)
+
+func (e DeleteFoldersFolderIDSubfoldersSubfolderIDCode) ToPointer() *DeleteFoldersFolderIDSubfoldersSubfolderIDCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *DeleteFoldersFolderIDSubfoldersSubfolderIDCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 // DeleteFoldersFolderIDSubfoldersSubfolderIDResponseBody - A subfolder within a folder that contains media.
 type DeleteFoldersFolderIDSubfoldersSubfolderIDResponseBody struct {
 	// A unique alphanumeric identifier for this subfolder.

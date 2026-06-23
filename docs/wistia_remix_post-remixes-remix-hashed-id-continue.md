@@ -8,6 +8,10 @@ Submit a follow-up edit to an existing remix. Creates a new remix version
 in the same conversation. The previous remix is preserved and can be
 referenced later.
 
+The new remix version is automatically exported (rendered) upon completion.
+If `folder_id` is provided, the output is exported to that folder. Otherwise,
+it defaults to the same folder as the previous remix version's output.
+
 <!--- HIDE-MCP -->
 ## Requires api token with one of the following permissions
 ```
@@ -29,6 +33,7 @@ wistia remix post-remixes-remix-hashed-id-continue [flags]
 
 ```
       --body string              Request body as JSON (alternative to individual flags). Can also be provided via stdin.
+  -f, --folder-id string         Hashed ID of the destination folder for the exported media. Defaults to the same folder as the previous remix version's output.
   -h, --help                     help for post-remixes-remix-hashed-id-continue
   -i, --instructions string      Natural language instructions for the edit (e.g., "cut the first 10 seconds"). [required]
   -r, --remix-hashed-id string   The hashed ID of the current remix version to edit from. [required]

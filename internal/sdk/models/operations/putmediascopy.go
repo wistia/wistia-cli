@@ -29,6 +29,31 @@ func (p *PutMediasCopyRequest) GetFolderID() string {
 	return p.FolderID
 }
 
+// PutMediasCopyCode - A machine-readable identifier for the specific authorization failure.
+type PutMediasCopyCode string
+
+const (
+	PutMediasCopyCodeUnauthorizedCredentials PutMediasCopyCode = "unauthorized_credentials"
+	PutMediasCopyCodeAccountInactive         PutMediasCopyCode = "account_inactive"
+	PutMediasCopyCodeUnauthorizedScope       PutMediasCopyCode = "unauthorized_scope"
+	PutMediasCopyCodeUnauthorizedParams      PutMediasCopyCode = "unauthorized_params"
+)
+
+func (e PutMediasCopyCode) ToPointer() *PutMediasCopyCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *PutMediasCopyCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 type Destination struct {
 	// The type of the destination container.
 	Type *string `json:"type,omitzero"`
@@ -89,6 +114,8 @@ func (e *PutMediasCopyStatus) IsExact() bool {
 type PutMediasCopyBackgroundJobStatus struct {
 	// The ID of the background job that's been queued for the request.
 	ID int64 `json:"id"`
+	// The unguessable hashed ID of the background job. Prefer this over the numeric ID when polling for status.
+	HashedID string `json:"hashed_id"`
 	// The status of the background job that's been queued for the request.
 	Status PutMediasCopyStatus `json:"status"`
 }
@@ -98,6 +125,13 @@ func (p *PutMediasCopyBackgroundJobStatus) GetID() int64 {
 		return 0
 	}
 	return p.ID
+}
+
+func (p *PutMediasCopyBackgroundJobStatus) GetHashedID() string {
+	if p == nil {
+		return ""
+	}
+	return p.HashedID
 }
 
 func (p *PutMediasCopyBackgroundJobStatus) GetStatus() PutMediasCopyStatus {

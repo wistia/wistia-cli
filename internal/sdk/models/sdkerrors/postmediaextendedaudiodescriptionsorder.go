@@ -6,6 +6,7 @@ package sdkerrors
 import (
 	"encoding/json"
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
+	"github.com/wistia/wistia-cli/internal/sdk/models/operations"
 )
 
 // PostMediaExtendedAudioDescriptionsOrderInternalServerError - Internal server error
@@ -49,8 +50,10 @@ func (e *PostMediaExtendedAudioDescriptionsOrderForbiddenError) Error() string {
 
 // PostMediaExtendedAudioDescriptionsOrderUnauthorizedError - Unauthorized, invalid or missing token
 type PostMediaExtendedAudioDescriptionsOrderUnauthorizedError struct {
-	Error_   *string                 `json:"error,omitzero"`
-	HTTPMeta components.HTTPMetadata `json:"-"`
+	// A machine-readable identifier for the specific authorization failure.
+	Code     *operations.PostMediaExtendedAudioDescriptionsOrderCode `json:"code,omitzero"`
+	Error_   *string                                                 `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata                                 `json:"-"`
 }
 
 var _ error = &PostMediaExtendedAudioDescriptionsOrderUnauthorizedError{}
@@ -63,7 +66,9 @@ func (e *PostMediaExtendedAudioDescriptionsOrderUnauthorizedError) Error() strin
 // PostMediaExtendedAudioDescriptionsOrderBadRequestError - Bad request
 type PostMediaExtendedAudioDescriptionsOrderBadRequestError struct {
 	// Error message detailing the reason for the bad request.
-	Error_   *string                 `json:"error,omitzero"`
+	Error_ *string `json:"error,omitzero"`
+	// Array of error messages detailing the reasons for the bad request.
+	Errors   []string                `json:"errors,omitzero"`
 	HTTPMeta components.HTTPMetadata `json:"-"`
 }
 

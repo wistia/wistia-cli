@@ -22,6 +22,31 @@ func (d *DeleteAllowedDomainsDomainRequest) GetDomain() string {
 	return d.Domain
 }
 
+// DeleteAllowedDomainsDomainCode - A machine-readable identifier for the specific authorization failure.
+type DeleteAllowedDomainsDomainCode string
+
+const (
+	DeleteAllowedDomainsDomainCodeUnauthorizedCredentials DeleteAllowedDomainsDomainCode = "unauthorized_credentials"
+	DeleteAllowedDomainsDomainCodeAccountInactive         DeleteAllowedDomainsDomainCode = "account_inactive"
+	DeleteAllowedDomainsDomainCodeUnauthorizedScope       DeleteAllowedDomainsDomainCode = "unauthorized_scope"
+	DeleteAllowedDomainsDomainCodeUnauthorizedParams      DeleteAllowedDomainsDomainCode = "unauthorized_params"
+)
+
+func (e DeleteAllowedDomainsDomainCode) ToPointer() *DeleteAllowedDomainsDomainCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *DeleteAllowedDomainsDomainCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 // DeleteAllowedDomainsDomainResponseBody - An allowed domain represents a domain where a Wistia video can be embedded. Account
 // restrictions need to be enabled for an allowed domain to have an effect. See
 // our [Domain Restrictions](https://support.wistia.com/en/articles/9691672-domain-restrictions)

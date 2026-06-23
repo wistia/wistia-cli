@@ -6,6 +6,7 @@ package sdkerrors
 import (
 	"encoding/json"
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
+	"github.com/wistia/wistia-cli/internal/sdk/models/operations"
 )
 
 // GetMediasMediaHashedIDCaptionsInternalServerError - Internal server error
@@ -23,8 +24,10 @@ func (e *GetMediasMediaHashedIDCaptionsInternalServerError) Error() string {
 
 // GetMediasMediaHashedIDCaptionsUnauthorizedError - Unauthorized, invalid or missing token
 type GetMediasMediaHashedIDCaptionsUnauthorizedError struct {
-	Error_   *string                 `json:"error,omitzero"`
-	HTTPMeta components.HTTPMetadata `json:"-"`
+	// A machine-readable identifier for the specific authorization failure.
+	Code     *operations.GetMediasMediaHashedIDCaptionsCode `json:"code,omitzero"`
+	Error_   *string                                        `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata                        `json:"-"`
 }
 
 var _ error = &GetMediasMediaHashedIDCaptionsUnauthorizedError{}

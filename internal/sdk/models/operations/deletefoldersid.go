@@ -22,228 +22,69 @@ func (d *DeleteFoldersIDRequest) GetID() string {
 	return d.ID
 }
 
-// DeleteFoldersIDType - A string representing what type of media this is.
-type DeleteFoldersIDType string
+// DeleteFoldersIDCode - A machine-readable identifier for the specific authorization failure.
+type DeleteFoldersIDCode string
 
 const (
-	DeleteFoldersIDTypeVideo                   DeleteFoldersIDType = "Video"
-	DeleteFoldersIDTypeAudio                   DeleteFoldersIDType = "Audio"
-	DeleteFoldersIDTypeImage                   DeleteFoldersIDType = "Image"
-	DeleteFoldersIDTypePdfDocument             DeleteFoldersIDType = "PdfDocument"
-	DeleteFoldersIDTypeMicrosoftOfficeDocument DeleteFoldersIDType = "MicrosoftOfficeDocument"
-	DeleteFoldersIDTypeSwf                     DeleteFoldersIDType = "Swf"
-	DeleteFoldersIDTypeUnknownType             DeleteFoldersIDType = "UnknownType"
+	DeleteFoldersIDCodeUnauthorizedCredentials DeleteFoldersIDCode = "unauthorized_credentials"
+	DeleteFoldersIDCodeAccountInactive         DeleteFoldersIDCode = "account_inactive"
+	DeleteFoldersIDCodeUnauthorizedScope       DeleteFoldersIDCode = "unauthorized_scope"
+	DeleteFoldersIDCodeUnauthorizedParams      DeleteFoldersIDCode = "unauthorized_params"
 )
 
-func (e DeleteFoldersIDType) ToPointer() *DeleteFoldersIDType {
+func (e DeleteFoldersIDCode) ToPointer() *DeleteFoldersIDCode {
 	return &e
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *DeleteFoldersIDType) IsExact() bool {
+func (e *DeleteFoldersIDCode) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Video", "Audio", "Image", "PdfDocument", "MicrosoftOfficeDocument", "Swf", "UnknownType":
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
 			return true
 		}
 	}
 	return false
 }
 
-// DeleteFoldersIDStatus - Post upload processing status. - `queued`: the file is waiting in the queue to be processed. - `processing`: the file is actively being processed. - `ready`: the file has been fully processed and is ready for embedding and viewing. - `failed`: the file was unable to be processed (usually a format or size error).
-type DeleteFoldersIDStatus string
-
-const (
-	DeleteFoldersIDStatusQueued     DeleteFoldersIDStatus = "queued"
-	DeleteFoldersIDStatusProcessing DeleteFoldersIDStatus = "processing"
-	DeleteFoldersIDStatusReady      DeleteFoldersIDStatus = "ready"
-	DeleteFoldersIDStatusFailed     DeleteFoldersIDStatus = "failed"
-)
-
-func (e DeleteFoldersIDStatus) ToPointer() *DeleteFoldersIDStatus {
-	return &e
+// DeleteFoldersIDMedias - A link to where you can fetch the medias for this folder.
+type DeleteFoldersIDMedias struct {
+	// A URL for fetching all child records of the parent record.
+	URL *string `json:"url,omitzero"`
 }
 
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *DeleteFoldersIDStatus) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "queued", "processing", "ready", "failed":
-			return true
-		}
-	}
-	return false
-}
-
-type DeleteFoldersIDThumbnail struct {
-	URL    *string `json:"url,omitzero"`
-	Width  *int64  `json:"width,omitzero"`
-	Height *int64  `json:"height,omitzero"`
-}
-
-func (d *DeleteFoldersIDThumbnail) GetURL() *string {
+func (d *DeleteFoldersIDMedias) GetURL() *string {
 	if d == nil {
 		return nil
 	}
 	return d.URL
 }
 
-func (d *DeleteFoldersIDThumbnail) GetWidth() *int64 {
-	if d == nil {
-		return nil
+// DeleteFoldersIDKind - Indicates the folder's access scope, relative to the requesting user. One of:
+// - `library`: a library the requester owns. Libraries can still be shared with specific contacts or contact groups; the only restriction is that they cannot be shared with the whole account.
+// - `shared`: a folder the requester has access to via a Contact or ContactGroup sharing — this includes both shared folders and another contact's library that the requester has been granted access to.
+// - `account`: a folder shared with the whole account (everyone in the company can see it).
+type DeleteFoldersIDKind string
+
+const (
+	DeleteFoldersIDKindLibrary DeleteFoldersIDKind = "library"
+	DeleteFoldersIDKindShared  DeleteFoldersIDKind = "shared"
+	DeleteFoldersIDKindAccount DeleteFoldersIDKind = "account"
+)
+
+func (e DeleteFoldersIDKind) ToPointer() *DeleteFoldersIDKind {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *DeleteFoldersIDKind) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "library", "shared", "account":
+			return true
+		}
 	}
-	return d.Width
-}
-
-func (d *DeleteFoldersIDThumbnail) GetHeight() *int64 {
-	if d == nil {
-		return nil
-	}
-	return d.Height
-}
-
-// DeleteFoldersIDMedias - A link to where you can fetch the medias for this folder.
-type DeleteFoldersIDMedias struct {
-	// A unique numeric identifier for the media within the system.
-	ID *int64 `json:"id,omitzero"`
-	// The display name of the media.
-	Name *string `json:"name,omitzero"`
-	// A string representing what type of media this is.
-	Type *DeleteFoldersIDType `json:"type,omitzero"`
-	// Whether or not the media is archived, either true or false.
-	Archived *bool `json:"archived,omitzero"`
-	// The date when the media was originally uploaded.
-	Created *time.Time `json:"created,omitzero"`
-	// The date when the media was last changed.
-	Updated *time.Time `json:"updated,omitzero"`
-	// Specifies the length (in seconds) for audio and video files. Specifies number of pages in the document. Omitted for other types of media.
-	Duration optionalnullable.OptionalNullable[float64] `json:"duration,omitzero"`
-	// DEPRECATED: If you want to programmatically embed videos, follow the construct an embed code guide.
-	//
-	//
-	// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
-	EmbedCode *string `json:"embedCode,omitzero"`
-	// A unique alphanumeric identifier for this media.
-	HashedID *string `json:"hashed_id,omitzero"`
-	// A description for the media which usually appears near the top of the sidebar on the media's page.
-	Description *string `json:"description,omitzero"`
-	// A floating point value between 0 and 1 that indicates the progress of the processing for this file.
-	Progress *float64 `json:"progress,omitzero"`
-	// Post upload processing status. - `queued`: the file is waiting in the queue to be processed. - `processing`: the file is actively being processed. - `ready`: the file has been fully processed and is ready for embedding and viewing. - `failed`: the file was unable to be processed (usually a format or size error).
-	//
-	Status *DeleteFoldersIDStatus `json:"status,omitzero"`
-	// The title of the section in which the media appears. This attribute is omitted if the media is not in a section (default).
-	Section   optionalnullable.OptionalNullable[string] `json:"section,omitzero"`
-	Thumbnail *DeleteFoldersIDThumbnail                 `json:"thumbnail,omitzero"`
-}
-
-func (d DeleteFoldersIDMedias) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(d, "", false)
-}
-
-func (d *DeleteFoldersIDMedias) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &d, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (d *DeleteFoldersIDMedias) GetID() *int64 {
-	if d == nil {
-		return nil
-	}
-	return d.ID
-}
-
-func (d *DeleteFoldersIDMedias) GetName() *string {
-	if d == nil {
-		return nil
-	}
-	return d.Name
-}
-
-func (d *DeleteFoldersIDMedias) GetType() *DeleteFoldersIDType {
-	if d == nil {
-		return nil
-	}
-	return d.Type
-}
-
-func (d *DeleteFoldersIDMedias) GetArchived() *bool {
-	if d == nil {
-		return nil
-	}
-	return d.Archived
-}
-
-func (d *DeleteFoldersIDMedias) GetCreated() *time.Time {
-	if d == nil {
-		return nil
-	}
-	return d.Created
-}
-
-func (d *DeleteFoldersIDMedias) GetUpdated() *time.Time {
-	if d == nil {
-		return nil
-	}
-	return d.Updated
-}
-
-func (d *DeleteFoldersIDMedias) GetDuration() optionalnullable.OptionalNullable[float64] {
-	if d == nil {
-		return nil
-	}
-	return d.Duration
-}
-
-func (d *DeleteFoldersIDMedias) GetEmbedCode() *string {
-	if d == nil {
-		return nil
-	}
-	return d.EmbedCode
-}
-
-func (d *DeleteFoldersIDMedias) GetHashedID() *string {
-	if d == nil {
-		return nil
-	}
-	return d.HashedID
-}
-
-func (d *DeleteFoldersIDMedias) GetDescription() *string {
-	if d == nil {
-		return nil
-	}
-	return d.Description
-}
-
-func (d *DeleteFoldersIDMedias) GetProgress() *float64 {
-	if d == nil {
-		return nil
-	}
-	return d.Progress
-}
-
-func (d *DeleteFoldersIDMedias) GetStatus() *DeleteFoldersIDStatus {
-	if d == nil {
-		return nil
-	}
-	return d.Status
-}
-
-func (d *DeleteFoldersIDMedias) GetSection() optionalnullable.OptionalNullable[string] {
-	if d == nil {
-		return nil
-	}
-	return d.Section
-}
-
-func (d *DeleteFoldersIDMedias) GetThumbnail() *DeleteFoldersIDThumbnail {
-	if d == nil {
-		return nil
-	}
-	return d.Thumbnail
+	return false
 }
 
 // DeleteFoldersIDResponseBody - A folder (previously called a project) is a container in which to organize media into. It can be
@@ -272,6 +113,15 @@ type DeleteFoldersIDResponseBody struct {
 	PublicID             *string `json:"public_id"`
 	AnonymousCanUpload   *bool   `json:"anonymous_can_upload,omitzero"`
 	AnonymousCanDownload *bool   `json:"anonymous_can_download,omitzero"`
+	// Indicates the folder's access scope, relative to the requesting user. One of:
+	// - `library`: a library the requester owns. Libraries can still be shared with specific contacts or contact groups; the only restriction is that they cannot be shared with the whole account.
+	// - `shared`: a folder the requester has access to via a Contact or ContactGroup sharing — this includes both shared folders and another contact's library that the requester has been granted access to.
+	// - `account`: a folder shared with the whole account (everyone in the company can see it).
+	//
+	Kind DeleteFoldersIDKind `json:"kind"`
+	// Whether this folder is someone's personal library ("My Library"). Unlike `kind`, this is a property of the folder itself and does not depend on who is requesting — it is `true` for a personal library even when that library has been shared with you (where `kind` would read `shared`). Use this, not `kind`, to tell whether a folder is a personal library.
+	//
+	PersonalLibrary bool `json:"personal_library"`
 	// A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
 	Cursor optionalnullable.OptionalNullable[string] `json:"cursor,omitzero"`
 }
@@ -369,6 +219,20 @@ func (d *DeleteFoldersIDResponseBody) GetAnonymousCanDownload() *bool {
 		return nil
 	}
 	return d.AnonymousCanDownload
+}
+
+func (d *DeleteFoldersIDResponseBody) GetKind() DeleteFoldersIDKind {
+	if d == nil {
+		return DeleteFoldersIDKind("")
+	}
+	return d.Kind
+}
+
+func (d *DeleteFoldersIDResponseBody) GetPersonalLibrary() bool {
+	if d == nil {
+		return false
+	}
+	return d.PersonalLibrary
 }
 
 func (d *DeleteFoldersIDResponseBody) GetCursor() optionalnullable.OptionalNullable[string] {

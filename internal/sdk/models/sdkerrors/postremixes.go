@@ -6,6 +6,7 @@ package sdkerrors
 import (
 	"encoding/json"
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
+	"github.com/wistia/wistia-cli/internal/sdk/models/operations"
 	"time"
 )
 
@@ -39,8 +40,10 @@ func (e *PostRemixesUnprocessableEntityError) Error() string {
 
 // PostRemixesUnauthorizedError - Unauthorized, invalid or missing token
 type PostRemixesUnauthorizedError struct {
-	Error_   *string                 `json:"error,omitzero"`
-	HTTPMeta components.HTTPMetadata `json:"-"`
+	// A machine-readable identifier for the specific authorization failure.
+	Code     *operations.PostRemixesCode `json:"code,omitzero"`
+	Error_   *string                     `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata     `json:"-"`
 }
 
 var _ error = &PostRemixesUnauthorizedError{}

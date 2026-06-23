@@ -150,6 +150,31 @@ func (g *GetAnalyticsMediasMediaIDEmbedLocationsRequest) GetPerPage() *int64 {
 	return g.PerPage
 }
 
+// GetAnalyticsMediasMediaIDEmbedLocationsCode - A machine-readable identifier for the specific authorization failure.
+type GetAnalyticsMediasMediaIDEmbedLocationsCode string
+
+const (
+	GetAnalyticsMediasMediaIDEmbedLocationsCodeUnauthorizedCredentials GetAnalyticsMediasMediaIDEmbedLocationsCode = "unauthorized_credentials"
+	GetAnalyticsMediasMediaIDEmbedLocationsCodeAccountInactive         GetAnalyticsMediasMediaIDEmbedLocationsCode = "account_inactive"
+	GetAnalyticsMediasMediaIDEmbedLocationsCodeUnauthorizedScope       GetAnalyticsMediasMediaIDEmbedLocationsCode = "unauthorized_scope"
+	GetAnalyticsMediasMediaIDEmbedLocationsCodeUnauthorizedParams      GetAnalyticsMediasMediaIDEmbedLocationsCode = "unauthorized_params"
+)
+
+func (e GetAnalyticsMediasMediaIDEmbedLocationsCode) ToPointer() *GetAnalyticsMediasMediaIDEmbedLocationsCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetAnalyticsMediasMediaIDEmbedLocationsCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 type GetAnalyticsMediasMediaIDEmbedLocationsResponseBody struct {
 	// The domain where the video is embedded.
 	EmbedDomain *string `json:"embed_domain,omitzero"`

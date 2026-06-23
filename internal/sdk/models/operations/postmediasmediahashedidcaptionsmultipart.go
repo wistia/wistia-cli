@@ -67,6 +67,31 @@ func (p *PostMediasMediaHashedIDCaptionsMultipartRequest) GetBody() PostMediasMe
 	return p.Body
 }
 
+// PostMediasMediaHashedIDCaptionsMultipartCode - A machine-readable identifier for the specific authorization failure.
+type PostMediasMediaHashedIDCaptionsMultipartCode string
+
+const (
+	PostMediasMediaHashedIDCaptionsMultipartCodeUnauthorizedCredentials PostMediasMediaHashedIDCaptionsMultipartCode = "unauthorized_credentials"
+	PostMediasMediaHashedIDCaptionsMultipartCodeAccountInactive         PostMediasMediaHashedIDCaptionsMultipartCode = "account_inactive"
+	PostMediasMediaHashedIDCaptionsMultipartCodeUnauthorizedScope       PostMediasMediaHashedIDCaptionsMultipartCode = "unauthorized_scope"
+	PostMediasMediaHashedIDCaptionsMultipartCodeUnauthorizedParams      PostMediasMediaHashedIDCaptionsMultipartCode = "unauthorized_params"
+)
+
+func (e PostMediasMediaHashedIDCaptionsMultipartCode) ToPointer() *PostMediasMediaHashedIDCaptionsMultipartCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *PostMediasMediaHashedIDCaptionsMultipartCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 type PostMediasMediaHashedIDCaptionsMultipartResponse struct {
 	HTTPMeta components.HTTPMetadata `json:"-"`
 }

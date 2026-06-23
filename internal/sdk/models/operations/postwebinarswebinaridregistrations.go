@@ -58,6 +58,31 @@ func (p *PostWebinarsWebinarIDRegistrationsRequest) GetBody() PostWebinarsWebina
 	return p.Body
 }
 
+// PostWebinarsWebinarIDRegistrationsCode - A machine-readable identifier for the specific authorization failure.
+type PostWebinarsWebinarIDRegistrationsCode string
+
+const (
+	PostWebinarsWebinarIDRegistrationsCodeUnauthorizedCredentials PostWebinarsWebinarIDRegistrationsCode = "unauthorized_credentials"
+	PostWebinarsWebinarIDRegistrationsCodeAccountInactive         PostWebinarsWebinarIDRegistrationsCode = "account_inactive"
+	PostWebinarsWebinarIDRegistrationsCodeUnauthorizedScope       PostWebinarsWebinarIDRegistrationsCode = "unauthorized_scope"
+	PostWebinarsWebinarIDRegistrationsCodeUnauthorizedParams      PostWebinarsWebinarIDRegistrationsCode = "unauthorized_params"
+)
+
+func (e PostWebinarsWebinarIDRegistrationsCode) ToPointer() *PostWebinarsWebinarIDRegistrationsCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *PostWebinarsWebinarIDRegistrationsCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 // PostWebinarsWebinarIDRegistrationsResponseBody - Registration created successfully
 type PostWebinarsWebinarIDRegistrationsResponseBody struct {
 	// Unique visitor key generated for the registrant

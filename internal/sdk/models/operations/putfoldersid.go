@@ -4,130 +4,11 @@
 package operations
 
 import (
-	"encoding/json"
-	"errors"
-	"fmt"
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
 	"github.com/wistia/wistia-cli/internal/sdk/optionalnullable"
 	"github.com/wistia/wistia-cli/internal/sdk/sdkinternal/utils"
 	"time"
 )
-
-// PutFoldersIDPublicEnum - A flag indicating whether or not the folder is enabled for public access. Set to “1” to enable and “0” to disable.
-type PutFoldersIDPublicEnum string
-
-const (
-	PutFoldersIDPublicEnumZero PutFoldersIDPublicEnum = "0"
-	PutFoldersIDPublicEnumOne  PutFoldersIDPublicEnum = "1"
-)
-
-func (e PutFoldersIDPublicEnum) ToPointer() *PutFoldersIDPublicEnum {
-	return &e
-}
-func (e *PutFoldersIDPublicEnum) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	switch v {
-	case "0":
-		fallthrough
-	case "1":
-		*e = PutFoldersIDPublicEnum(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for PutFoldersIDPublicEnum: %v", v)
-	}
-}
-
-type PutFoldersIDPublicUnionType string
-
-const (
-	PutFoldersIDPublicUnionTypePutFoldersIDPublicEnum PutFoldersIDPublicUnionType = "put_folders_id__public_enum"
-	PutFoldersIDPublicUnionTypeBoolean                PutFoldersIDPublicUnionType = "boolean"
-)
-
-type PutFoldersIDPublicUnion struct {
-	PutFoldersIDPublicEnum *PutFoldersIDPublicEnum `queryParam:"inline" union:"member"`
-	Boolean                *bool                   `queryParam:"inline" union:"member"`
-
-	Type PutFoldersIDPublicUnionType
-}
-
-func CreatePutFoldersIDPublicUnionPutFoldersIDPublicEnum(putFoldersIDPublicEnum PutFoldersIDPublicEnum) PutFoldersIDPublicUnion {
-	typ := PutFoldersIDPublicUnionTypePutFoldersIDPublicEnum
-
-	return PutFoldersIDPublicUnion{
-		PutFoldersIDPublicEnum: &putFoldersIDPublicEnum,
-		Type:                   typ,
-	}
-}
-
-func CreatePutFoldersIDPublicUnionBoolean(boolean bool) PutFoldersIDPublicUnion {
-	typ := PutFoldersIDPublicUnionTypeBoolean
-
-	return PutFoldersIDPublicUnion{
-		Boolean: &boolean,
-		Type:    typ,
-	}
-}
-
-func (u *PutFoldersIDPublicUnion) UnmarshalJSON(data []byte) error {
-
-	var candidates []utils.UnionCandidate
-
-	// Collect all valid candidates
-	var putFoldersIDPublicEnum PutFoldersIDPublicEnum = PutFoldersIDPublicEnum("")
-	if err := utils.UnmarshalJSON(data, &putFoldersIDPublicEnum, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  PutFoldersIDPublicUnionTypePutFoldersIDPublicEnum,
-			Value: &putFoldersIDPublicEnum,
-		})
-	}
-
-	var boolean bool = false
-	if err := utils.UnmarshalJSON(data, &boolean, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  PutFoldersIDPublicUnionTypeBoolean,
-			Value: &boolean,
-		})
-	}
-
-	if len(candidates) == 0 {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for PutFoldersIDPublicUnion", string(data))
-	}
-
-	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestUnionCandidate(candidates, data)
-	if best == nil {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for PutFoldersIDPublicUnion", string(data))
-	}
-
-	// Set the union type and value based on the best candidate
-	u.Type = best.Type.(PutFoldersIDPublicUnionType)
-	switch best.Type {
-	case PutFoldersIDPublicUnionTypePutFoldersIDPublicEnum:
-		u.PutFoldersIDPublicEnum = best.Value.(*PutFoldersIDPublicEnum)
-		return nil
-	case PutFoldersIDPublicUnionTypeBoolean:
-		u.Boolean = best.Value.(*bool)
-		return nil
-	}
-
-	return fmt.Errorf("could not unmarshal `%s` into any supported union types for PutFoldersIDPublicUnion", string(data))
-}
-
-func (u PutFoldersIDPublicUnion) MarshalJSON() ([]byte, error) {
-	if u.PutFoldersIDPublicEnum != nil {
-		return utils.MarshalJSON(u.PutFoldersIDPublicEnum, "", true)
-	}
-
-	if u.Boolean != nil {
-		return utils.MarshalJSON(u.Boolean, "", true)
-	}
-
-	return nil, errors.New("could not marshal union type PutFoldersIDPublicUnion: all fields are null")
-}
 
 type PutFoldersIDRequestBody struct {
 	// The folder’s new name.
@@ -137,8 +18,9 @@ type PutFoldersIDRequestBody struct {
 	// Whether anonymous users can upload media to the folder.
 	AnonymousCanUpload *bool `json:"anonymousCanUpload,omitzero"`
 	// Whether anonymous users can download media from the folder.
-	AnonymousCanDownload *bool                    `json:"anonymousCanDownload,omitzero"`
-	Public               *PutFoldersIDPublicUnion `json:"public,omitzero"`
+	AnonymousCanDownload *bool `json:"anonymousCanDownload,omitzero"`
+	// A flag indicating whether or not the folder is enabled for public access.
+	Public *bool `json:"public,omitzero"`
 }
 
 func (p *PutFoldersIDRequestBody) GetName() *string {
@@ -169,7 +51,7 @@ func (p *PutFoldersIDRequestBody) GetAnonymousCanDownload() *bool {
 	return p.AnonymousCanDownload
 }
 
-func (p *PutFoldersIDRequestBody) GetPublic() *PutFoldersIDPublicUnion {
+func (p *PutFoldersIDRequestBody) GetPublic() *bool {
 	if p == nil {
 		return nil
 	}
@@ -207,228 +89,69 @@ func (p *PutFoldersIDRequest) GetBody() *PutFoldersIDRequestBody {
 	return p.Body
 }
 
-// PutFoldersIDType - A string representing what type of media this is.
-type PutFoldersIDType string
+// PutFoldersIDCode - A machine-readable identifier for the specific authorization failure.
+type PutFoldersIDCode string
 
 const (
-	PutFoldersIDTypeVideo                   PutFoldersIDType = "Video"
-	PutFoldersIDTypeAudio                   PutFoldersIDType = "Audio"
-	PutFoldersIDTypeImage                   PutFoldersIDType = "Image"
-	PutFoldersIDTypePdfDocument             PutFoldersIDType = "PdfDocument"
-	PutFoldersIDTypeMicrosoftOfficeDocument PutFoldersIDType = "MicrosoftOfficeDocument"
-	PutFoldersIDTypeSwf                     PutFoldersIDType = "Swf"
-	PutFoldersIDTypeUnknownType             PutFoldersIDType = "UnknownType"
+	PutFoldersIDCodeUnauthorizedCredentials PutFoldersIDCode = "unauthorized_credentials"
+	PutFoldersIDCodeAccountInactive         PutFoldersIDCode = "account_inactive"
+	PutFoldersIDCodeUnauthorizedScope       PutFoldersIDCode = "unauthorized_scope"
+	PutFoldersIDCodeUnauthorizedParams      PutFoldersIDCode = "unauthorized_params"
 )
 
-func (e PutFoldersIDType) ToPointer() *PutFoldersIDType {
+func (e PutFoldersIDCode) ToPointer() *PutFoldersIDCode {
 	return &e
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *PutFoldersIDType) IsExact() bool {
+func (e *PutFoldersIDCode) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Video", "Audio", "Image", "PdfDocument", "MicrosoftOfficeDocument", "Swf", "UnknownType":
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
 			return true
 		}
 	}
 	return false
 }
 
-// PutFoldersIDStatus - Post upload processing status. - `queued`: the file is waiting in the queue to be processed. - `processing`: the file is actively being processed. - `ready`: the file has been fully processed and is ready for embedding and viewing. - `failed`: the file was unable to be processed (usually a format or size error).
-type PutFoldersIDStatus string
-
-const (
-	PutFoldersIDStatusQueued     PutFoldersIDStatus = "queued"
-	PutFoldersIDStatusProcessing PutFoldersIDStatus = "processing"
-	PutFoldersIDStatusReady      PutFoldersIDStatus = "ready"
-	PutFoldersIDStatusFailed     PutFoldersIDStatus = "failed"
-)
-
-func (e PutFoldersIDStatus) ToPointer() *PutFoldersIDStatus {
-	return &e
+// PutFoldersIDMedias - A link to where you can fetch the medias for this folder.
+type PutFoldersIDMedias struct {
+	// A URL for fetching all child records of the parent record.
+	URL *string `json:"url,omitzero"`
 }
 
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *PutFoldersIDStatus) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "queued", "processing", "ready", "failed":
-			return true
-		}
-	}
-	return false
-}
-
-type PutFoldersIDThumbnail struct {
-	URL    *string `json:"url,omitzero"`
-	Width  *int64  `json:"width,omitzero"`
-	Height *int64  `json:"height,omitzero"`
-}
-
-func (p *PutFoldersIDThumbnail) GetURL() *string {
+func (p *PutFoldersIDMedias) GetURL() *string {
 	if p == nil {
 		return nil
 	}
 	return p.URL
 }
 
-func (p *PutFoldersIDThumbnail) GetWidth() *int64 {
-	if p == nil {
-		return nil
+// PutFoldersIDKind - Indicates the folder's access scope, relative to the requesting user. One of:
+// - `library`: a library the requester owns. Libraries can still be shared with specific contacts or contact groups; the only restriction is that they cannot be shared with the whole account.
+// - `shared`: a folder the requester has access to via a Contact or ContactGroup sharing — this includes both shared folders and another contact's library that the requester has been granted access to.
+// - `account`: a folder shared with the whole account (everyone in the company can see it).
+type PutFoldersIDKind string
+
+const (
+	PutFoldersIDKindLibrary PutFoldersIDKind = "library"
+	PutFoldersIDKindShared  PutFoldersIDKind = "shared"
+	PutFoldersIDKindAccount PutFoldersIDKind = "account"
+)
+
+func (e PutFoldersIDKind) ToPointer() *PutFoldersIDKind {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *PutFoldersIDKind) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "library", "shared", "account":
+			return true
+		}
 	}
-	return p.Width
-}
-
-func (p *PutFoldersIDThumbnail) GetHeight() *int64 {
-	if p == nil {
-		return nil
-	}
-	return p.Height
-}
-
-// PutFoldersIDMedias - A link to where you can fetch the medias for this folder.
-type PutFoldersIDMedias struct {
-	// A unique numeric identifier for the media within the system.
-	ID *int64 `json:"id,omitzero"`
-	// The display name of the media.
-	Name *string `json:"name,omitzero"`
-	// A string representing what type of media this is.
-	Type *PutFoldersIDType `json:"type,omitzero"`
-	// Whether or not the media is archived, either true or false.
-	Archived *bool `json:"archived,omitzero"`
-	// The date when the media was originally uploaded.
-	Created *time.Time `json:"created,omitzero"`
-	// The date when the media was last changed.
-	Updated *time.Time `json:"updated,omitzero"`
-	// Specifies the length (in seconds) for audio and video files. Specifies number of pages in the document. Omitted for other types of media.
-	Duration optionalnullable.OptionalNullable[float64] `json:"duration,omitzero"`
-	// DEPRECATED: If you want to programmatically embed videos, follow the construct an embed code guide.
-	//
-	//
-	// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
-	EmbedCode *string `json:"embedCode,omitzero"`
-	// A unique alphanumeric identifier for this media.
-	HashedID *string `json:"hashed_id,omitzero"`
-	// A description for the media which usually appears near the top of the sidebar on the media's page.
-	Description *string `json:"description,omitzero"`
-	// A floating point value between 0 and 1 that indicates the progress of the processing for this file.
-	Progress *float64 `json:"progress,omitzero"`
-	// Post upload processing status. - `queued`: the file is waiting in the queue to be processed. - `processing`: the file is actively being processed. - `ready`: the file has been fully processed and is ready for embedding and viewing. - `failed`: the file was unable to be processed (usually a format or size error).
-	//
-	Status *PutFoldersIDStatus `json:"status,omitzero"`
-	// The title of the section in which the media appears. This attribute is omitted if the media is not in a section (default).
-	Section   optionalnullable.OptionalNullable[string] `json:"section,omitzero"`
-	Thumbnail *PutFoldersIDThumbnail                    `json:"thumbnail,omitzero"`
-}
-
-func (p PutFoldersIDMedias) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(p, "", false)
-}
-
-func (p *PutFoldersIDMedias) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &p, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (p *PutFoldersIDMedias) GetID() *int64 {
-	if p == nil {
-		return nil
-	}
-	return p.ID
-}
-
-func (p *PutFoldersIDMedias) GetName() *string {
-	if p == nil {
-		return nil
-	}
-	return p.Name
-}
-
-func (p *PutFoldersIDMedias) GetType() *PutFoldersIDType {
-	if p == nil {
-		return nil
-	}
-	return p.Type
-}
-
-func (p *PutFoldersIDMedias) GetArchived() *bool {
-	if p == nil {
-		return nil
-	}
-	return p.Archived
-}
-
-func (p *PutFoldersIDMedias) GetCreated() *time.Time {
-	if p == nil {
-		return nil
-	}
-	return p.Created
-}
-
-func (p *PutFoldersIDMedias) GetUpdated() *time.Time {
-	if p == nil {
-		return nil
-	}
-	return p.Updated
-}
-
-func (p *PutFoldersIDMedias) GetDuration() optionalnullable.OptionalNullable[float64] {
-	if p == nil {
-		return nil
-	}
-	return p.Duration
-}
-
-func (p *PutFoldersIDMedias) GetEmbedCode() *string {
-	if p == nil {
-		return nil
-	}
-	return p.EmbedCode
-}
-
-func (p *PutFoldersIDMedias) GetHashedID() *string {
-	if p == nil {
-		return nil
-	}
-	return p.HashedID
-}
-
-func (p *PutFoldersIDMedias) GetDescription() *string {
-	if p == nil {
-		return nil
-	}
-	return p.Description
-}
-
-func (p *PutFoldersIDMedias) GetProgress() *float64 {
-	if p == nil {
-		return nil
-	}
-	return p.Progress
-}
-
-func (p *PutFoldersIDMedias) GetStatus() *PutFoldersIDStatus {
-	if p == nil {
-		return nil
-	}
-	return p.Status
-}
-
-func (p *PutFoldersIDMedias) GetSection() optionalnullable.OptionalNullable[string] {
-	if p == nil {
-		return nil
-	}
-	return p.Section
-}
-
-func (p *PutFoldersIDMedias) GetThumbnail() *PutFoldersIDThumbnail {
-	if p == nil {
-		return nil
-	}
-	return p.Thumbnail
+	return false
 }
 
 // PutFoldersIDResponseBody - A folder (previously called a project) is a container in which to organize media into. It can be
@@ -457,6 +180,15 @@ type PutFoldersIDResponseBody struct {
 	PublicID             *string `json:"public_id"`
 	AnonymousCanUpload   *bool   `json:"anonymous_can_upload,omitzero"`
 	AnonymousCanDownload *bool   `json:"anonymous_can_download,omitzero"`
+	// Indicates the folder's access scope, relative to the requesting user. One of:
+	// - `library`: a library the requester owns. Libraries can still be shared with specific contacts or contact groups; the only restriction is that they cannot be shared with the whole account.
+	// - `shared`: a folder the requester has access to via a Contact or ContactGroup sharing — this includes both shared folders and another contact's library that the requester has been granted access to.
+	// - `account`: a folder shared with the whole account (everyone in the company can see it).
+	//
+	Kind PutFoldersIDKind `json:"kind"`
+	// Whether this folder is someone's personal library ("My Library"). Unlike `kind`, this is a property of the folder itself and does not depend on who is requesting — it is `true` for a personal library even when that library has been shared with you (where `kind` would read `shared`). Use this, not `kind`, to tell whether a folder is a personal library.
+	//
+	PersonalLibrary bool `json:"personal_library"`
 	// A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
 	Cursor optionalnullable.OptionalNullable[string] `json:"cursor,omitzero"`
 }
@@ -554,6 +286,20 @@ func (p *PutFoldersIDResponseBody) GetAnonymousCanDownload() *bool {
 		return nil
 	}
 	return p.AnonymousCanDownload
+}
+
+func (p *PutFoldersIDResponseBody) GetKind() PutFoldersIDKind {
+	if p == nil {
+		return PutFoldersIDKind("")
+	}
+	return p.Kind
+}
+
+func (p *PutFoldersIDResponseBody) GetPersonalLibrary() bool {
+	if p == nil {
+		return false
+	}
+	return p.PersonalLibrary
 }
 
 func (p *PutFoldersIDResponseBody) GetCursor() optionalnullable.OptionalNullable[string] {

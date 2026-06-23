@@ -48,7 +48,15 @@ iwr -useb https://raw.githubusercontent.com/wistia/wistia-cli/main/scripts/insta
 ### Homebrew (macOS/Linux)
 
 ```bash
-brew install wistia/wistia-cli/wistia-cli
+brew install wistia/wistia-cli/wistia
+```
+
+### Go Install
+
+Alternatively, install directly via Go:
+
+```bash
+go install github.com/wistia/wistia-cli/cmd/wistia@latest
 ```
 
 ### Manual Download
@@ -166,40 +174,6 @@ Configuration is stored in `~/.config/wistia/config.yaml`.
 * [`post-form`](docs/wistia_upload-or-import-media_post-form.md) - Upload or Import Media
 * [`post-multipart`](docs/wistia_upload-or-import-media_post-multipart.md) - Upload or Import Media
 
-### [media-extended-audio-descriptions](docs/wistia_media-extended-audio-descriptions.md)
-
-* [`get`](docs/wistia_media-extended-audio-descriptions_get.md) - List Media Extended Audio Descriptions
-* [`get-media-extended-audio-descriptions-id`](docs/wistia_media-extended-audio-descriptions_get-media-extended-audio-descriptions-id.md) - Show Media Extended Audio Description
-* [`delete-media-extended-audio-descriptions-id`](docs/wistia_media-extended-audio-descriptions_delete-media-extended-audio-descriptions-id.md) - Delete Media Extended Audio Description
-* [`post-media-extended-audio-descriptions-order`](docs/wistia_media-extended-audio-descriptions_post-media-extended-audio-descriptions-order.md) - Order Extended Audio Description
-* [`get-media-extended-audio-descriptions-order-status-id`](docs/wistia_media-extended-audio-descriptions_get-media-extended-audio-descriptions-order-status-id.md) - Get Order Status
-
-### [folders](docs/wistia_folders.md)
-
-* [`list`](docs/wistia_folders_list.md) - List Folders
-* [`create`](docs/wistia_folders_create.md) - Create Folder
-* [`get`](docs/wistia_folders_get.md) - Show Folder
-* [`update`](docs/wistia_folders_update.md) - Update Folder
-* [`delete`](docs/wistia_folders_delete.md) - Delete Folder
-* [`copy`](docs/wistia_folders_copy.md) - Copy Folder
-
-### [subfolders](docs/wistia_subfolders.md)
-
-* [`list`](docs/wistia_subfolders_list.md) - List Subfolders
-* [`create`](docs/wistia_subfolders_create.md) - Create Subfolder
-* [`get`](docs/wistia_subfolders_get.md) - Show Subfolder
-* [`update`](docs/wistia_subfolders_update.md) - Update Subfolder
-* [`delete`](docs/wistia_subfolders_delete.md) - Delete Subfolder
-* [`bulk-delete`](docs/wistia_subfolders_bulk-delete.md) - Bulk Delete Subfolders
-
-### [folder-sharings](docs/wistia_folder-sharings.md)
-
-* [`list`](docs/wistia_folder-sharings_list.md) - List Folder Sharings
-* [`create`](docs/wistia_folder-sharings_create.md) - Create Folder Sharing
-* [`get`](docs/wistia_folder-sharings_get.md) - Show Folder Sharing
-* [`update`](docs/wistia_folder-sharings_update.md) - Update Folder Sharing
-* [`delete`](docs/wistia_folder-sharings_delete.md) - Delete Folder Sharing
-
 ### [media](docs/wistia_media.md)
 
 * [`list`](docs/wistia_media_list.md) - List Media
@@ -216,32 +190,18 @@ Configuration is stored in `~/.config/wistia/config.yaml`.
 * [`restore`](docs/wistia_media_restore.md) - Restore Media
 * [`bulk-copy`](docs/wistia_media_bulk-copy.md) - Bulk Copy Media
 
-### [taggings](docs/wistia_taggings.md)
-
-* [`bulk-create`](docs/wistia_taggings_bulk-create.md) - Bulk Tag Media
-
-### [account](docs/wistia_account.md)
-
-* [`get`](docs/wistia_account_get.md) - Get Current Account
-* [`get-token-details`](docs/wistia_account_get-token-details.md) - Get Current Token
-
-### [allowed-domains](docs/wistia_allowed-domains.md)
-
-* [`list`](docs/wistia_allowed-domains_list.md) - List Allowed Domains
-* [`create`](docs/wistia_allowed-domains_create.md) - Create Allowed Domain
-* [`get`](docs/wistia_allowed-domains_get.md) - Show Allowed Domain
-* [`delete`](docs/wistia_allowed-domains_delete.md) - Delete Allowed Domain
-
-### [background-job-status](docs/wistia_background-job-status.md)
-
-* [`get`](docs/wistia_background-job-status_get.md) - Show Background Job Status
-
 ### [customizations](docs/wistia_customizations.md)
 
 * [`get`](docs/wistia_customizations_get.md) - Show Customizations
 * [`create`](docs/wistia_customizations_create.md) - Create Customizations
 * [`update`](docs/wistia_customizations_update.md) - Update Customizations
 * [`delete`](docs/wistia_customizations_delete.md) - Delete Customizations
+
+### [share-links](docs/wistia_share-links.md)
+
+* [`get`](docs/wistia_share-links_get.md) - Show share link
+* [`update`](docs/wistia_share-links_update.md) - Update share link
+* [`delete`](docs/wistia_share-links_delete.md) - Delete share link
 
 ### [captions](docs/wistia_captions.md)
 
@@ -255,10 +215,6 @@ Configuration is stored in `~/.config/wistia/config.yaml`.
 * [`update-multipart`](docs/wistia_captions_update-multipart.md) - Update Captions
 * [`delete`](docs/wistia_captions_delete.md) - Delete Captions
 
-### [trims](docs/wistia_trims.md)
-
-* [`create`](docs/wistia_trims_create.md) - Create Media from Trims
-
 ### [localizations](docs/wistia_localizations.md)
 
 * [`list`](docs/wistia_localizations_list.md) - List Localizations
@@ -266,15 +222,53 @@ Configuration is stored in `~/.config/wistia/config.yaml`.
 * [`get`](docs/wistia_localizations_get.md) - Show Localization
 * [`delete`](docs/wistia_localizations_delete.md) - Delete Localization
 
+### [trims](docs/wistia_trims.md)
+
+* [`create`](docs/wistia_trims_create.md) - Create Media from Trims
+
+### [media-extended-audio-descriptions](docs/wistia_media-extended-audio-descriptions.md)
+
+* [`get`](docs/wistia_media-extended-audio-descriptions_get.md) - List Media Extended Audio Descriptions
+* [`get-media-extended-audio-descriptions-id`](docs/wistia_media-extended-audio-descriptions_get-media-extended-audio-descriptions-id.md) - Show Media Extended Audio Description
+* [`delete-media-extended-audio-descriptions-id`](docs/wistia_media-extended-audio-descriptions_delete-media-extended-audio-descriptions-id.md) - Delete Media Extended Audio Description
+* [`post-media-extended-audio-descriptions-order`](docs/wistia_media-extended-audio-descriptions_post-media-extended-audio-descriptions-order.md) - Order Extended Audio Description
+* [`get-media-extended-audio-descriptions-order-status-id`](docs/wistia_media-extended-audio-descriptions_get-media-extended-audio-descriptions-order-status-id.md) - Get Order Status
+
 ### [tags](docs/wistia_tags.md)
 
 * [`list`](docs/wistia_tags_list.md) - List Tags
 * [`create`](docs/wistia_tags_create.md) - Create Tags
 * [`delete`](docs/wistia_tags_delete.md) - Delete Tag
 
-### [search](docs/wistia_search.md)
+### [taggings](docs/wistia_taggings.md)
 
-* [`search`](docs/wistia_search_search.md) - Search
+* [`bulk-create`](docs/wistia_taggings_bulk-create.md) - Bulk Tag Media
+
+### [folders](docs/wistia_folders.md)
+
+* [`list`](docs/wistia_folders_list.md) - List Folders
+* [`create`](docs/wistia_folders_create.md) - Create Folder
+* [`get`](docs/wistia_folders_get.md) - Show Folder
+* [`update`](docs/wistia_folders_update.md) - Update Folder
+* [`delete`](docs/wistia_folders_delete.md) - Delete Folder
+* [`copy`](docs/wistia_folders_copy.md) - Copy Folder
+
+### [folder-sharings](docs/wistia_folder-sharings.md)
+
+* [`list`](docs/wistia_folder-sharings_list.md) - List Folder Sharings
+* [`create`](docs/wistia_folder-sharings_create.md) - Create Folder Sharing
+* [`get`](docs/wistia_folder-sharings_get.md) - Show Folder Sharing
+* [`update`](docs/wistia_folder-sharings_update.md) - Update Folder Sharing
+* [`delete`](docs/wistia_folder-sharings_delete.md) - Delete Folder Sharing
+
+### [subfolders](docs/wistia_subfolders.md)
+
+* [`list`](docs/wistia_subfolders_list.md) - List Subfolders
+* [`create`](docs/wistia_subfolders_create.md) - Create Subfolder
+* [`get`](docs/wistia_subfolders_get.md) - Show Subfolder
+* [`update`](docs/wistia_subfolders_update.md) - Update Subfolder
+* [`delete`](docs/wistia_subfolders_delete.md) - Delete Subfolder
+* [`bulk-delete`](docs/wistia_subfolders_bulk-delete.md) - Bulk Delete Subfolders
 
 ### [channels](docs/wistia_channels.md)
 
@@ -298,10 +292,6 @@ Configuration is stored in `~/.config/wistia/config.yaml`.
 * [`publish`](docs/wistia_channel-episodes_publish.md) - Publish Channel Episode
 * [`unpublish`](docs/wistia_channel-episodes_unpublish.md) - Un-publish Channel Episode
 
-### [expiring-access-tokens](docs/wistia_expiring-access-tokens.md)
-
-* [`create`](docs/wistia_expiring-access-tokens_create.md) - Create Expiring Access Token
-
 ### [webinars](docs/wistia_webinars.md)
 
 * [`list`](docs/wistia_webinars_list.md) - List Webinars
@@ -314,6 +304,31 @@ Configuration is stored in `~/.config/wistia/config.yaml`.
 
 * [`get-webinars-webinar-id-registrations`](docs/wistia_webinar-registrations_get-webinars-webinar-id-registrations.md) - List Webinar Registrations
 * [`create`](docs/wistia_webinar-registrations_create.md) - Create Webinar Registration
+
+### [account](docs/wistia_account.md)
+
+* [`get`](docs/wistia_account_get.md) - Get Current Account
+* [`get-usage`](docs/wistia_account_get-usage.md) - Get Account Usage
+* [`get-token-details`](docs/wistia_account_get-token-details.md) - Get Current Token
+
+### [search](docs/wistia_search.md)
+
+* [`search`](docs/wistia_search_search.md) - Search
+
+### [expiring-access-tokens](docs/wistia_expiring-access-tokens.md)
+
+* [`create`](docs/wistia_expiring-access-tokens_create.md) - Create Expiring Access Token
+
+### [background-job-status](docs/wistia_background-job-status.md)
+
+* [`get`](docs/wistia_background-job-status_get.md) - Show Background Job Status
+
+### [allowed-domains](docs/wistia_allowed-domains.md)
+
+* [`list`](docs/wistia_allowed-domains_list.md) - List Allowed Domains
+* [`create`](docs/wistia_allowed-domains_create.md) - Create Allowed Domain
+* [`get`](docs/wistia_allowed-domains_get.md) - Show Allowed Domain
+* [`delete`](docs/wistia_allowed-domains_delete.md) - Delete Allowed Domain
 
 ### [remix](docs/wistia_remix.md)
 
@@ -353,6 +368,7 @@ Configuration is stored in `~/.config/wistia/config.yaml`.
 * [`get`](docs/wistia_analytics-media_get.md) - Show Media Analytics
 * [`get-timeseries`](docs/wistia_analytics-media_get-timeseries.md) - Show Media Analytics Timeseries
 * [`get-embed-locations`](docs/wistia_analytics-media_get-embed-locations.md) - Show Media Embed Locations
+* [`get-embed-locations-timeseries`](docs/wistia_analytics-media_get-embed-locations-timeseries.md) - Show Media Embed Locations Timeseries
 * [`get-traffic`](docs/wistia_analytics-media_get-traffic.md) - Show Media Traffic Breakdown
 * [`get-conversions`](docs/wistia_analytics-media_get-conversions.md) - Show Media Form Conversions
 * [`get-languages`](docs/wistia_analytics-media_get-languages.md) - Show Media Languages
@@ -499,7 +515,7 @@ The `NO_COLOR` and `FORCE_COLOR` environment variables are also respected.
 
 ### Streaming and pagination
 
-When using streaming operations, output is written incrementally as items arrive:
+When using `--all` (pagination) or streaming operations, output is written incrementally as items arrive:
 
 | Format | Streaming behavior |
 |--------|-------------------|

@@ -13,6 +13,8 @@ import (
 type PostRemixesRemixHashedIDContinueRequestBody struct {
 	// Natural language instructions for the edit (e.g., "cut the first 10 seconds").
 	Instructions string `json:"instructions"`
+	// Hashed ID of the destination folder for the exported media. Defaults to the same folder as the previous remix version's output.
+	FolderID *string `json:"folder_id,omitzero"`
 }
 
 func (p *PostRemixesRemixHashedIDContinueRequestBody) GetInstructions() string {
@@ -20,6 +22,13 @@ func (p *PostRemixesRemixHashedIDContinueRequestBody) GetInstructions() string {
 		return ""
 	}
 	return p.Instructions
+}
+
+func (p *PostRemixesRemixHashedIDContinueRequestBody) GetFolderID() *string {
+	if p == nil {
+		return nil
+	}
+	return p.FolderID
 }
 
 type PostRemixesRemixHashedIDContinueRequest struct {
@@ -51,6 +60,31 @@ func (p *PostRemixesRemixHashedIDContinueRequest) GetBody() *PostRemixesRemixHas
 		return nil
 	}
 	return p.Body
+}
+
+// PostRemixesRemixHashedIDContinueCode - A machine-readable identifier for the specific authorization failure.
+type PostRemixesRemixHashedIDContinueCode string
+
+const (
+	PostRemixesRemixHashedIDContinueCodeUnauthorizedCredentials PostRemixesRemixHashedIDContinueCode = "unauthorized_credentials"
+	PostRemixesRemixHashedIDContinueCodeAccountInactive         PostRemixesRemixHashedIDContinueCode = "account_inactive"
+	PostRemixesRemixHashedIDContinueCodeUnauthorizedScope       PostRemixesRemixHashedIDContinueCode = "unauthorized_scope"
+	PostRemixesRemixHashedIDContinueCodeUnauthorizedParams      PostRemixesRemixHashedIDContinueCode = "unauthorized_params"
+)
+
+func (e PostRemixesRemixHashedIDContinueCode) ToPointer() *PostRemixesRemixHashedIDContinueCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *PostRemixesRemixHashedIDContinueCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
 }
 
 // PostRemixesRemixHashedIDContinueStatus - Status of the new remix version.

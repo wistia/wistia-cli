@@ -28,6 +28,31 @@ func (d *DeleteMediasMediaHashedIDCaptionsLanguageCodeRequest) GetLanguageCode()
 	return d.LanguageCode
 }
 
+// DeleteMediasMediaHashedIDCaptionsLanguageCodeCode - A machine-readable identifier for the specific authorization failure.
+type DeleteMediasMediaHashedIDCaptionsLanguageCodeCode string
+
+const (
+	DeleteMediasMediaHashedIDCaptionsLanguageCodeCodeUnauthorizedCredentials DeleteMediasMediaHashedIDCaptionsLanguageCodeCode = "unauthorized_credentials"
+	DeleteMediasMediaHashedIDCaptionsLanguageCodeCodeAccountInactive         DeleteMediasMediaHashedIDCaptionsLanguageCodeCode = "account_inactive"
+	DeleteMediasMediaHashedIDCaptionsLanguageCodeCodeUnauthorizedScope       DeleteMediasMediaHashedIDCaptionsLanguageCodeCode = "unauthorized_scope"
+	DeleteMediasMediaHashedIDCaptionsLanguageCodeCodeUnauthorizedParams      DeleteMediasMediaHashedIDCaptionsLanguageCodeCode = "unauthorized_params"
+)
+
+func (e DeleteMediasMediaHashedIDCaptionsLanguageCodeCode) ToPointer() *DeleteMediasMediaHashedIDCaptionsLanguageCodeCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *DeleteMediasMediaHashedIDCaptionsLanguageCodeCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 type DeleteMediasMediaHashedIDCaptionsLanguageCodeResponse struct {
 	HTTPMeta components.HTTPMetadata `json:"-"`
 }

@@ -25,7 +25,7 @@ wistia channels list [flags]
 ### Options
 
 ```
-  -c, --cursor cursor[enabled]   If cursor[enabled] is set to 1 than cursor pagination is enabled and the
+  -c, --cursor cursor[enabled]   If cursor[enabled] is set to 1 then cursor pagination is enabled and the
                                  first set of records are fetched up to the `per_page`. Cursor
                                  pagination will also be turned on if `cursor[before]` or `cursor[after]`
                                  are set. Records returned will have a `cursor` property set which can be used to fetch more records in the same `sort_by` ordering.
@@ -33,7 +33,7 @@ wistia channels list [flags]
                                  the cursor of the first record can be used to fetch records before the result set.
                                  
                                  NOTE: a cursor value is only valid if the `sort_by` value hasn't changed from the
-                                 last fetch. For example, you cannot fetch using `sort_by` id and than pass that
+                                 last fetch. For example, you cannot fetch using `sort_by` id and then pass that
                                  cursor value to a `sort_by` name.
                                  
       --hashed-ids stringArray   Find all of the channels limited to these hashed_ids.

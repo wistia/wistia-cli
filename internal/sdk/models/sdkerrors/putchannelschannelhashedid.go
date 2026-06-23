@@ -6,6 +6,7 @@ package sdkerrors
 import (
 	"encoding/json"
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
+	"github.com/wistia/wistia-cli/internal/sdk/models/operations"
 )
 
 // PutChannelsChannelHashedIDInternalServerError - Internal server error
@@ -36,8 +37,10 @@ func (e *PutChannelsChannelHashedIDForbiddenError) Error() string {
 
 // PutChannelsChannelHashedIDUnauthorizedError - Unauthorized, invalid or missing token
 type PutChannelsChannelHashedIDUnauthorizedError struct {
-	Error_   *string                 `json:"error,omitzero"`
-	HTTPMeta components.HTTPMetadata `json:"-"`
+	// A machine-readable identifier for the specific authorization failure.
+	Code     *operations.PutChannelsChannelHashedIDCode `json:"code,omitzero"`
+	Error_   *string                                    `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata                    `json:"-"`
 }
 
 var _ error = &PutChannelsChannelHashedIDUnauthorizedError{}

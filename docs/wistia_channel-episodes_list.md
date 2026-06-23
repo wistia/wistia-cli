@@ -26,7 +26,7 @@ wistia channel-episodes list [flags]
 
 ```
       --channel-id string        The hashed ID of the channel to grab channel episodes from.
-      --cursor cursor[enabled]   If cursor[enabled] is set to 1 than cursor pagination is enabled and the
+      --cursor cursor[enabled]   If cursor[enabled] is set to 1 then cursor pagination is enabled and the
                                  first set of records are fetched up to the `per_page`. Cursor
                                  pagination will also be turned on if `cursor[before]` or `cursor[after]`
                                  are set. Records returned will have a `cursor` property set which can be used to fetch more records in the same `sort_by` ordering.
@@ -34,12 +34,12 @@ wistia channel-episodes list [flags]
                                  the cursor of the first record can be used to fetch records before the result set.
                                  
                                  NOTE: a cursor value is only valid if the `sort_by` value hasn't changed from the
-                                 last fetch. For example, you cannot fetch using `sort_by` id and than pass that
+                                 last fetch. For example, you cannot fetch using `sort_by` id and then pass that
                                  cursor value to a `sort_by` name.
                                  
       --hashed-ids stringArray   Filter by hashed id
   -h, --help                     help for list
-  -m, --media-id stringArray     Filter by media id
+  -m, --media-id stringArray     Filter by media id. Accepts either the numeric id or the hashed id of a media.
       --page cursor              The page number to retrieve. This cannot be combined with cursor,
                                  pagination.
                                  

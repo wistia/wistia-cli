@@ -1,24 +1,26 @@
-speakeasyVersion: 1.761.5
+speakeasyVersion: 1.784.0
 sources:
     Wistia-OAS:
-        sourceNamespace: data-api
-        sourceRevisionDigest: sha256:25f0130c5b99295ab50773e60183aea4a18a76aa1ba0813a3554fc338d3ffa0f
-        sourceBlobDigest: sha256:a07d29efec88bb73b5839a2c10c7a223d30907f733c30208e9a6372cb350bfcf
+        sourceNamespace: wistia-oas
+        sourceRevisionDigest: sha256:3f36d353177eafa85c2ce674c890fd739d6b134143f0cf8829ecb037e6d18d07
+        sourceBlobDigest: sha256:70e67c3b99e0f2b09c0645108df381eb1320c40c97e0c212055dcdec23fff0f8
         tags:
             - latest
+            - edge-version
 targets:
     wistia:
         source: Wistia-OAS
-        sourceNamespace: data-api
-        sourceRevisionDigest: sha256:25f0130c5b99295ab50773e60183aea4a18a76aa1ba0813a3554fc338d3ffa0f
-        sourceBlobDigest: sha256:a07d29efec88bb73b5839a2c10c7a223d30907f733c30208e9a6372cb350bfcf
+        sourceNamespace: wistia-oas
+        sourceRevisionDigest: sha256:3f36d353177eafa85c2ce674c890fd739d6b134143f0cf8829ecb037e6d18d07
+        sourceBlobDigest: sha256:70e67c3b99e0f2b09c0645108df381eb1320c40c97e0c212055dcdec23fff0f8
 workflow:
     workflowVersion: 1.0.0
     speakeasyVersion: latest
     sources:
         Wistia-OAS:
             inputs:
-                - location: registry.speakeasyapi.dev/wistia/wistia/data-api:edge-version
+                - location: https://wistia.github.io/wistia/api/openapi-upload.yaml
+                - location: https://wistia.github.io/wistia/api/openapi-modern.yaml
             output: .speakeasy/out.openapi.yaml
             registry:
                 location: registry.speakeasyapi.dev/wistia/wistia/wistia-oas

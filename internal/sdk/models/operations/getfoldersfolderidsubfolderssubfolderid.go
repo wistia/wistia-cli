@@ -50,6 +50,31 @@ func (g *GetFoldersFolderIDSubfoldersSubfolderIDRequest) GetDescriptionFormat() 
 	return types.Pointer("markdown")
 }
 
+// GetFoldersFolderIDSubfoldersSubfolderIDCode - A machine-readable identifier for the specific authorization failure.
+type GetFoldersFolderIDSubfoldersSubfolderIDCode string
+
+const (
+	GetFoldersFolderIDSubfoldersSubfolderIDCodeUnauthorizedCredentials GetFoldersFolderIDSubfoldersSubfolderIDCode = "unauthorized_credentials"
+	GetFoldersFolderIDSubfoldersSubfolderIDCodeAccountInactive         GetFoldersFolderIDSubfoldersSubfolderIDCode = "account_inactive"
+	GetFoldersFolderIDSubfoldersSubfolderIDCodeUnauthorizedScope       GetFoldersFolderIDSubfoldersSubfolderIDCode = "unauthorized_scope"
+	GetFoldersFolderIDSubfoldersSubfolderIDCodeUnauthorizedParams      GetFoldersFolderIDSubfoldersSubfolderIDCode = "unauthorized_params"
+)
+
+func (e GetFoldersFolderIDSubfoldersSubfolderIDCode) ToPointer() *GetFoldersFolderIDSubfoldersSubfolderIDCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetFoldersFolderIDSubfoldersSubfolderIDCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 // GetFoldersFolderIDSubfoldersSubfolderIDType - A string representing what type of media this is.
 type GetFoldersFolderIDSubfoldersSubfolderIDType string
 
@@ -166,6 +191,8 @@ type GetFoldersFolderIDSubfoldersSubfolderIDMedia struct {
 	// The title of the section in which the media appears. This attribute is omitted if the media is not in a section (default).
 	Section   optionalnullable.OptionalNullable[string]         `json:"section,omitzero"`
 	Thumbnail *GetFoldersFolderIDSubfoldersSubfolderIDThumbnail `json:"thumbnail,omitzero"`
+	// Whether the media is protected (e.g. requires a password or other authentication to view). Null if the media is not protected.
+	Protected optionalnullable.OptionalNullable[bool] `json:"protected,omitzero"`
 }
 
 func (g GetFoldersFolderIDSubfoldersSubfolderIDMedia) MarshalJSON() ([]byte, error) {
@@ -275,6 +302,13 @@ func (g *GetFoldersFolderIDSubfoldersSubfolderIDMedia) GetThumbnail() *GetFolder
 		return nil
 	}
 	return g.Thumbnail
+}
+
+func (g *GetFoldersFolderIDSubfoldersSubfolderIDMedia) GetProtected() optionalnullable.OptionalNullable[bool] {
+	if g == nil {
+		return nil
+	}
+	return g.Protected
 }
 
 // GetFoldersFolderIDSubfoldersSubfolderIDResponseBody - A subfolder with its contained media files.

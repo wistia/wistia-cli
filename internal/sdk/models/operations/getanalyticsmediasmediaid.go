@@ -51,6 +51,31 @@ func (g *GetAnalyticsMediasMediaIDRequest) GetEndDate() types.Date {
 	return g.EndDate
 }
 
+// GetAnalyticsMediasMediaIDCode - A machine-readable identifier for the specific authorization failure.
+type GetAnalyticsMediasMediaIDCode string
+
+const (
+	GetAnalyticsMediasMediaIDCodeUnauthorizedCredentials GetAnalyticsMediasMediaIDCode = "unauthorized_credentials"
+	GetAnalyticsMediasMediaIDCodeAccountInactive         GetAnalyticsMediasMediaIDCode = "account_inactive"
+	GetAnalyticsMediasMediaIDCodeUnauthorizedScope       GetAnalyticsMediasMediaIDCode = "unauthorized_scope"
+	GetAnalyticsMediasMediaIDCodeUnauthorizedParams      GetAnalyticsMediasMediaIDCode = "unauthorized_params"
+)
+
+func (e GetAnalyticsMediasMediaIDCode) ToPointer() *GetAnalyticsMediasMediaIDCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetAnalyticsMediasMediaIDCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 // GetAnalyticsMediasMediaIDResponseBody - Success response with aggregate analytics for the video.
 type GetAnalyticsMediasMediaIDResponseBody struct {
 	// The number of unique video loads.

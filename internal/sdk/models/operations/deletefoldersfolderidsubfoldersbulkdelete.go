@@ -40,6 +40,31 @@ func (d *DeleteFoldersFolderIDSubfoldersBulkDeleteRequest) GetBody() DeleteFolde
 	return d.Body
 }
 
+// DeleteFoldersFolderIDSubfoldersBulkDeleteCode - A machine-readable identifier for the specific authorization failure.
+type DeleteFoldersFolderIDSubfoldersBulkDeleteCode string
+
+const (
+	DeleteFoldersFolderIDSubfoldersBulkDeleteCodeUnauthorizedCredentials DeleteFoldersFolderIDSubfoldersBulkDeleteCode = "unauthorized_credentials"
+	DeleteFoldersFolderIDSubfoldersBulkDeleteCodeAccountInactive         DeleteFoldersFolderIDSubfoldersBulkDeleteCode = "account_inactive"
+	DeleteFoldersFolderIDSubfoldersBulkDeleteCodeUnauthorizedScope       DeleteFoldersFolderIDSubfoldersBulkDeleteCode = "unauthorized_scope"
+	DeleteFoldersFolderIDSubfoldersBulkDeleteCodeUnauthorizedParams      DeleteFoldersFolderIDSubfoldersBulkDeleteCode = "unauthorized_params"
+)
+
+func (e DeleteFoldersFolderIDSubfoldersBulkDeleteCode) ToPointer() *DeleteFoldersFolderIDSubfoldersBulkDeleteCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *DeleteFoldersFolderIDSubfoldersBulkDeleteCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 // DeleteFoldersFolderIDSubfoldersBulkDeleteStatus - The status of the background job that's been queued for the request.
 type DeleteFoldersFolderIDSubfoldersBulkDeleteStatus string
 
@@ -70,6 +95,8 @@ func (e *DeleteFoldersFolderIDSubfoldersBulkDeleteStatus) IsExact() bool {
 type DeleteFoldersFolderIDSubfoldersBulkDeleteBackgroundJobStatus struct {
 	// The ID of the background job that's been queued for the request.
 	ID int64 `json:"id"`
+	// The unguessable hashed ID of the background job. Prefer this over the numeric ID when polling for status.
+	HashedID string `json:"hashed_id"`
 	// The status of the background job that's been queued for the request.
 	Status DeleteFoldersFolderIDSubfoldersBulkDeleteStatus `json:"status"`
 }
@@ -79,6 +106,13 @@ func (d *DeleteFoldersFolderIDSubfoldersBulkDeleteBackgroundJobStatus) GetID() i
 		return 0
 	}
 	return d.ID
+}
+
+func (d *DeleteFoldersFolderIDSubfoldersBulkDeleteBackgroundJobStatus) GetHashedID() string {
+	if d == nil {
+		return ""
+	}
+	return d.HashedID
 }
 
 func (d *DeleteFoldersFolderIDSubfoldersBulkDeleteBackgroundJobStatus) GetStatus() DeleteFoldersFolderIDSubfoldersBulkDeleteStatus {

@@ -92,6 +92,31 @@ func (p *PutMediasMediaHashedIDRequest) GetBody() *PutMediasMediaHashedIDRequest
 	return p.Body
 }
 
+// PutMediasMediaHashedIDCode - A machine-readable identifier for the specific authorization failure.
+type PutMediasMediaHashedIDCode string
+
+const (
+	PutMediasMediaHashedIDCodeUnauthorizedCredentials PutMediasMediaHashedIDCode = "unauthorized_credentials"
+	PutMediasMediaHashedIDCodeAccountInactive         PutMediasMediaHashedIDCode = "account_inactive"
+	PutMediasMediaHashedIDCodeUnauthorizedScope       PutMediasMediaHashedIDCode = "unauthorized_scope"
+	PutMediasMediaHashedIDCodeUnauthorizedParams      PutMediasMediaHashedIDCode = "unauthorized_params"
+)
+
+func (e PutMediasMediaHashedIDCode) ToPointer() *PutMediasMediaHashedIDCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *PutMediasMediaHashedIDCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 // PutMediasMediaHashedIDType - A string representing what type of media this is.
 type PutMediasMediaHashedIDType string
 
@@ -220,6 +245,8 @@ type PutMediasMediaHashedIDResponseBody struct {
 	// The title of the section in which the media appears. This attribute is omitted if the media is not in a section (default).
 	Section   optionalnullable.OptionalNullable[string] `json:"section,omitzero"`
 	Thumbnail *PutMediasMediaHashedIDThumbnail          `json:"thumbnail,omitzero"`
+	// Whether the media is protected (e.g. requires a password or other authentication to view). Null if the media is not protected.
+	Protected optionalnullable.OptionalNullable[bool] `json:"protected,omitzero"`
 	// Tags associated with this media.
 	Tags []PutMediasMediaHashedIDTag `json:"tags,omitzero"`
 }
@@ -331,6 +358,13 @@ func (p *PutMediasMediaHashedIDResponseBody) GetThumbnail() *PutMediasMediaHashe
 		return nil
 	}
 	return p.Thumbnail
+}
+
+func (p *PutMediasMediaHashedIDResponseBody) GetProtected() optionalnullable.OptionalNullable[bool] {
+	if p == nil {
+		return nil
+	}
+	return p.Protected
 }
 
 func (p *PutMediasMediaHashedIDResponseBody) GetTags() []PutMediasMediaHashedIDTag {

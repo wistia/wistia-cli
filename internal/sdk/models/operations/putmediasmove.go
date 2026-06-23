@@ -38,6 +38,31 @@ func (p *PutMediasMoveRequest) GetSubfolderID() *string {
 	return p.SubfolderID
 }
 
+// PutMediasMoveCode - A machine-readable identifier for the specific authorization failure.
+type PutMediasMoveCode string
+
+const (
+	PutMediasMoveCodeUnauthorizedCredentials PutMediasMoveCode = "unauthorized_credentials"
+	PutMediasMoveCodeAccountInactive         PutMediasMoveCode = "account_inactive"
+	PutMediasMoveCodeUnauthorizedScope       PutMediasMoveCode = "unauthorized_scope"
+	PutMediasMoveCodeUnauthorizedParams      PutMediasMoveCode = "unauthorized_params"
+)
+
+func (e PutMediasMoveCode) ToPointer() *PutMediasMoveCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *PutMediasMoveCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 // PutMediasMoveStatus2 - The status of the background job that's been queued for the request.
 type PutMediasMoveStatus2 string
 
@@ -68,6 +93,8 @@ func (e *PutMediasMoveStatus2) IsExact() bool {
 type PutMediasMoveBackgroundJobStatus2 struct {
 	// The ID of the background job that's been queued for the request.
 	ID int64 `json:"id"`
+	// The unguessable hashed ID of the background job. Prefer this over the numeric ID when polling for status.
+	HashedID string `json:"hashed_id"`
 	// The status of the background job that's been queued for the request.
 	Status PutMediasMoveStatus2 `json:"status"`
 }
@@ -77,6 +104,13 @@ func (p *PutMediasMoveBackgroundJobStatus2) GetID() int64 {
 		return 0
 	}
 	return p.ID
+}
+
+func (p *PutMediasMoveBackgroundJobStatus2) GetHashedID() string {
+	if p == nil {
+		return ""
+	}
+	return p.HashedID
 }
 
 func (p *PutMediasMoveBackgroundJobStatus2) GetStatus() PutMediasMoveStatus2 {
@@ -183,6 +217,8 @@ func (e *PutMediasMoveStatus1) IsExact() bool {
 type PutMediasMoveBackgroundJobStatus1 struct {
 	// The ID of the background job that's been queued for the request.
 	ID int64 `json:"id"`
+	// The unguessable hashed ID of the background job. Prefer this over the numeric ID when polling for status.
+	HashedID string `json:"hashed_id"`
 	// The status of the background job that's been queued for the request.
 	Status PutMediasMoveStatus1 `json:"status"`
 }
@@ -192,6 +228,13 @@ func (p *PutMediasMoveBackgroundJobStatus1) GetID() int64 {
 		return 0
 	}
 	return p.ID
+}
+
+func (p *PutMediasMoveBackgroundJobStatus1) GetHashedID() string {
+	if p == nil {
+		return ""
+	}
+	return p.HashedID
 }
 
 func (p *PutMediasMoveBackgroundJobStatus1) GetStatus() PutMediasMoveStatus1 {

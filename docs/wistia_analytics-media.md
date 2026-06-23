@@ -41,6 +41,7 @@ wistia analytics-media [flags]
 * [wistia analytics-media get](wistia_analytics-media_get.md)	 - Show Media Analytics
 * [wistia analytics-media get-conversions](wistia_analytics-media_get-conversions.md)	 - Show Media Form Conversions
 * [wistia analytics-media get-embed-locations](wistia_analytics-media_get-embed-locations.md)	 - Show Media Embed Locations
+* [wistia analytics-media get-embed-locations-timeseries](wistia_analytics-media_get-embed-locations-timeseries.md)	 - Show Media Embed Locations Timeseries
 * [wistia analytics-media get-languages](wistia_analytics-media_get-languages.md)	 - Show Media Languages
 * [wistia analytics-media get-timeseries](wistia_analytics-media_get-timeseries.md)	 - Show Media Analytics Timeseries
 * [wistia analytics-media get-traffic](wistia_analytics-media_get-traffic.md)	 - Show Media Traffic Breakdown

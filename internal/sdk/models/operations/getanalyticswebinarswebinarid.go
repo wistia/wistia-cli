@@ -60,6 +60,31 @@ func (g *GetAnalyticsWebinarsWebinarIDRequest) GetPostEventEndDate() *types.Date
 	return g.PostEventEndDate
 }
 
+// GetAnalyticsWebinarsWebinarIDCode - A machine-readable identifier for the specific authorization failure.
+type GetAnalyticsWebinarsWebinarIDCode string
+
+const (
+	GetAnalyticsWebinarsWebinarIDCodeUnauthorizedCredentials GetAnalyticsWebinarsWebinarIDCode = "unauthorized_credentials"
+	GetAnalyticsWebinarsWebinarIDCodeAccountInactive         GetAnalyticsWebinarsWebinarIDCode = "account_inactive"
+	GetAnalyticsWebinarsWebinarIDCodeUnauthorizedScope       GetAnalyticsWebinarsWebinarIDCode = "unauthorized_scope"
+	GetAnalyticsWebinarsWebinarIDCodeUnauthorizedParams      GetAnalyticsWebinarsWebinarIDCode = "unauthorized_params"
+)
+
+func (e GetAnalyticsWebinarsWebinarIDCode) ToPointer() *GetAnalyticsWebinarsWebinarIDCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetAnalyticsWebinarsWebinarIDCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 type OptionObj struct {
 	// The option ID.
 	ID *int64 `json:"id,omitzero"`

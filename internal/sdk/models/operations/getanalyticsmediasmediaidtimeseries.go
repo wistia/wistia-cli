@@ -93,6 +93,31 @@ func (g *GetAnalyticsMediasMediaIDTimeseriesRequest) GetGranularity() GetAnalyti
 	return g.Granularity
 }
 
+// GetAnalyticsMediasMediaIDTimeseriesCode - A machine-readable identifier for the specific authorization failure.
+type GetAnalyticsMediasMediaIDTimeseriesCode string
+
+const (
+	GetAnalyticsMediasMediaIDTimeseriesCodeUnauthorizedCredentials GetAnalyticsMediasMediaIDTimeseriesCode = "unauthorized_credentials"
+	GetAnalyticsMediasMediaIDTimeseriesCodeAccountInactive         GetAnalyticsMediasMediaIDTimeseriesCode = "account_inactive"
+	GetAnalyticsMediasMediaIDTimeseriesCodeUnauthorizedScope       GetAnalyticsMediasMediaIDTimeseriesCode = "unauthorized_scope"
+	GetAnalyticsMediasMediaIDTimeseriesCodeUnauthorizedParams      GetAnalyticsMediasMediaIDTimeseriesCode = "unauthorized_params"
+)
+
+func (e GetAnalyticsMediasMediaIDTimeseriesCode) ToPointer() *GetAnalyticsMediasMediaIDTimeseriesCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetAnalyticsMediasMediaIDTimeseriesCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 type GetAnalyticsMediasMediaIDTimeseriesResponseBody struct {
 	// The start of the time bucket in ISO 8601 format.
 	Timestamp *time.Time `json:"timestamp,omitzero"`
