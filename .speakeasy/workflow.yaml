@@ -4,7 +4,7 @@ sources:
     Wistia-OAS:
         inputs:
             - location: https://wistia.github.io/wistia/api/openapi-upload.yaml
-            - location: https://wistia.github.io/wistia/api/openapi-modern.yaml
+            - location: https://wistia.github.io/wistia/api/openapi-2026-05.yaml
         output: .speakeasy/out.openapi.yaml
         registry:
             location: registry.speakeasyapi.dev/wistia/wistia/wistia-oas
