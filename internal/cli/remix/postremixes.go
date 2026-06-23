@@ -18,6 +18,7 @@ import (
 var postRemixesCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "media-hashed-ids", Shorthand: "m", FieldPath: "MediaHashedIds", Kind: flagutil.FlagKindStringArray, Required: true, Description: "Array of source media hashed IDs to remix from. [required]"},
 	{FlagName: "instructions", Shorthand: "i", FieldPath: "Instructions", Kind: flagutil.FlagKindString, Required: true, Description: "Natural language instructions describing the desired remix (e.g., \"create a 60-second highlight reel\"). [required]"},
+	{FlagName: "folder-id", Shorthand: "f", FieldPath: "FolderID", Kind: flagutil.FlagKindString, Optional: true, Description: "Hashed ID of the destination folder for the exported media. Defaults to the source media's folder if not specified."},
 }
 
 // initPostRemixesCmd initializes the post-remixes command.
@@ -25,7 +26,7 @@ func initPostRemixesCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "post-remixes",
 		Short:   "Create Remix",
-		Long:    "Start a new video remix job. The remix is processed asynchronously — poll\nthe show endpoint to check status and get preview URLs when ready.\n\nRemix uses AI to analyze video transcripts and create edited versions\n(highlight reels, trailers, cut-downs, etc.) based on your instructions.\n\n<!--- HIDE-MCP -->\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n<!--- /HIDE-MCP -->",
+		Long:    "Start a new video remix job. The remix is processed asynchronously — poll\nthe show endpoint to check status and get preview URLs when ready.\n\nRemix uses AI to analyze video transcripts and create edited versions\n(highlight reels, trailers, cut-downs, etc.) based on your instructions.\n\nThe remix is automatically exported (rendered) upon completion. When the\nstatus reaches \"completed\", the output media is available in the\ndestination folder. If no `folder_id` is provided, the remix is exported\nto the source media's folder.\n\n<!--- HIDE-MCP -->\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n<!--- /HIDE-MCP -->",
 		Example: "  wistia remix post-remixes --media-hashed-ids '[\"abc123\",\"def456\"]' --instructions Create a 60-second highlight reel focusing on the product demo section",
 		RunE:    runPostRemixesCmd,
 		Aliases: []string{"pr"},

@@ -31,9 +31,110 @@ func (g *GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDRequest) GetCh
 	return g.ChannelEpisodeID
 }
 
+// GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDCode - A machine-readable identifier for the specific authorization failure.
+type GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDCode string
+
+const (
+	GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDCodeUnauthorizedCredentials GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDCode = "unauthorized_credentials"
+	GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDCodeAccountInactive         GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDCode = "account_inactive"
+	GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDCodeUnauthorizedScope       GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDCode = "unauthorized_scope"
+	GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDCodeUnauthorizedParams      GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDCode = "unauthorized_params"
+)
+
+func (e GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDCode) ToPointer() *GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
+// GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDEpisodeType - The type of episode.
+type GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDEpisodeType string
+
+const (
+	GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDEpisodeTypeFull    GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDEpisodeType = "full"
+	GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDEpisodeTypeTrailer GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDEpisodeType = "trailer"
+	GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDEpisodeTypeBonus   GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDEpisodeType = "bonus"
+)
+
+func (e GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDEpisodeType) ToPointer() *GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDEpisodeType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDEpisodeType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "full", "trailer", "bonus":
+			return true
+		}
+	}
+	return false
+}
+
+// GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDPodcastSettings - Podcast specific settings for the episode. Only present when podcasting
+// is enabled for the channel.
+type GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDPodcastSettings struct {
+	// The type of episode.
+	EpisodeType *GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDEpisodeType `json:"episode_type,omitzero"`
+	// The number of the episode.
+	EpisodeNumber *int64 `json:"episode_number,omitzero"`
+	// The season number of the episode.
+	SeasonNumber *int64 `json:"season_number,omitzero"`
+	// Whether the episode contains explicit content.
+	ExplicitContent *bool `json:"explicit_content,omitzero"`
+	// Whether to hide the episode from the podcast feed.
+	HideFromFeed *bool `json:"hide_from_feed,omitzero"`
+}
+
+func (g *GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDPodcastSettings) GetEpisodeType() *GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDEpisodeType {
+	if g == nil {
+		return nil
+	}
+	return g.EpisodeType
+}
+
+func (g *GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDPodcastSettings) GetEpisodeNumber() *int64 {
+	if g == nil {
+		return nil
+	}
+	return g.EpisodeNumber
+}
+
+func (g *GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDPodcastSettings) GetSeasonNumber() *int64 {
+	if g == nil {
+		return nil
+	}
+	return g.SeasonNumber
+}
+
+func (g *GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDPodcastSettings) GetExplicitContent() *bool {
+	if g == nil {
+		return nil
+	}
+	return g.ExplicitContent
+}
+
+func (g *GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDPodcastSettings) GetHideFromFeed() *bool {
+	if g == nil {
+		return nil
+	}
+	return g.HideFromFeed
+}
+
 // GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDResponseBody - A channel episode represents a media that has been added to a channel. Only published
 // episodes are displayed in a channel.
 type GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDResponseBody struct {
+	// A unique numeric identifier for the channel episode.
+	ID *int64 `json:"id,omitzero"`
 	// A unique alphanumeric identifier for the channel episode's channel.
 	ChannelHashedID string `json:"channel_hashed_id"`
 	// The date when the channel episode was originally created.
@@ -48,6 +149,8 @@ type GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDResponseBody struc
 	HashedID string `json:"hashed_id"`
 	// A unique alphanumeric identifier for the channel episode's media.
 	MediaHashedID string `json:"media_hashed_id"`
+	// A unique alphanumeric identifier for the channel episode's live stream event, if any. Null when the episode is not linked to a live stream event.
+	LiveStreamEventHashedID optionalnullable.OptionalNullable[string] `json:"live_stream_event_hashed_id,omitzero"`
 	// Whether the channel episode has been published or is still in draft form.
 	Published bool `json:"published"`
 	// The date and time when the episode is scheduled to be published in UTC timezone (only present when publish_status is 'scheduled').
@@ -56,6 +159,10 @@ type GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDResponseBody struc
 	Title *string `json:"title"`
 	// The date when the channel was last updated.
 	Updated time.Time `json:"updated"`
+	// Podcast specific settings for the episode. Only present when podcasting
+	// is enabled for the channel.
+	//
+	PodcastSettings *GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDPodcastSettings `json:"podcast_settings,omitzero"`
 }
 
 func (g GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDResponseBody) MarshalJSON() ([]byte, error) {
@@ -67,6 +174,13 @@ func (g *GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDResponseBody) 
 		return err
 	}
 	return nil
+}
+
+func (g *GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDResponseBody) GetID() *int64 {
+	if g == nil {
+		return nil
+	}
+	return g.ID
 }
 
 func (g *GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDResponseBody) GetChannelHashedID() string {
@@ -118,6 +232,13 @@ func (g *GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDResponseBody) 
 	return g.MediaHashedID
 }
 
+func (g *GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDResponseBody) GetLiveStreamEventHashedID() optionalnullable.OptionalNullable[string] {
+	if g == nil {
+		return nil
+	}
+	return g.LiveStreamEventHashedID
+}
+
 func (g *GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDResponseBody) GetPublished() bool {
 	if g == nil {
 		return false
@@ -144,6 +265,13 @@ func (g *GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDResponseBody) 
 		return time.Time{}
 	}
 	return g.Updated
+}
+
+func (g *GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDResponseBody) GetPodcastSettings() *GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDPodcastSettings {
+	if g == nil {
+		return nil
+	}
+	return g.PodcastSettings
 }
 
 type GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDResponse struct {

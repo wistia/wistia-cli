@@ -99,6 +99,31 @@ func (p *PutFoldersFolderIDSharingsSharingIDRequest) GetBody() PutFoldersFolderI
 	return p.Body
 }
 
+// PutFoldersFolderIDSharingsSharingIDCode - A machine-readable identifier for the specific authorization failure.
+type PutFoldersFolderIDSharingsSharingIDCode string
+
+const (
+	PutFoldersFolderIDSharingsSharingIDCodeUnauthorizedCredentials PutFoldersFolderIDSharingsSharingIDCode = "unauthorized_credentials"
+	PutFoldersFolderIDSharingsSharingIDCodeAccountInactive         PutFoldersFolderIDSharingsSharingIDCode = "account_inactive"
+	PutFoldersFolderIDSharingsSharingIDCodeUnauthorizedScope       PutFoldersFolderIDSharingsSharingIDCode = "unauthorized_scope"
+	PutFoldersFolderIDSharingsSharingIDCodeUnauthorizedParams      PutFoldersFolderIDSharingsSharingIDCode = "unauthorized_params"
+)
+
+func (e PutFoldersFolderIDSharingsSharingIDCode) ToPointer() *PutFoldersFolderIDSharingsSharingIDCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *PutFoldersFolderIDSharingsSharingIDCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 type PutFoldersFolderIDSharingsSharingIDShare struct {
 	ID    int64  `json:"id"`
 	Name  string `json:"name"`

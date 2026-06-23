@@ -18,7 +18,7 @@ import (
 var createCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "name", Shorthand: "n", FieldPath: "Name", Kind: flagutil.FlagKindString, Optional: true, Description: "The name of the folder you want to create."},
 	{FlagName: "admin-email", Shorthand: "a", FieldPath: "AdminEmail", Kind: flagutil.FlagKindString, Optional: true, Description: "The email address of the person you want to set as the owner of this folder. Defaults to the Wistia Account Owner."},
-	{FlagName: "public", Shorthand: "p", FieldPath: "Public", Kind: flagutil.FlagKindUnion, Union: &flagutil.UnionMeta{Discriminated: false, Optional: true, TypeDescription: "JSON value (one of: post_folders_public_enum | boolean)"}},
+	{FlagName: "public", Shorthand: "p", FieldPath: "Public", Kind: flagutil.FlagKindBool, Optional: true, Description: "A flag indicating whether or not the folder is enabled for public access."},
 }
 
 // initCreateCmd initializes the create command.

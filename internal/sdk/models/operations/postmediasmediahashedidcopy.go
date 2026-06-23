@@ -62,6 +62,31 @@ func (p *PostMediasMediaHashedIDCopyRequest) GetBody() *PostMediasMediaHashedIDC
 	return p.Body
 }
 
+// PostMediasMediaHashedIDCopyCode - A machine-readable identifier for the specific authorization failure.
+type PostMediasMediaHashedIDCopyCode string
+
+const (
+	PostMediasMediaHashedIDCopyCodeUnauthorizedCredentials PostMediasMediaHashedIDCopyCode = "unauthorized_credentials"
+	PostMediasMediaHashedIDCopyCodeAccountInactive         PostMediasMediaHashedIDCopyCode = "account_inactive"
+	PostMediasMediaHashedIDCopyCodeUnauthorizedScope       PostMediasMediaHashedIDCopyCode = "unauthorized_scope"
+	PostMediasMediaHashedIDCopyCodeUnauthorizedParams      PostMediasMediaHashedIDCopyCode = "unauthorized_params"
+)
+
+func (e PostMediasMediaHashedIDCopyCode) ToPointer() *PostMediasMediaHashedIDCopyCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *PostMediasMediaHashedIDCopyCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 // PostMediasMediaHashedIDCopyType - A string representing what type of media this is.
 type PostMediasMediaHashedIDCopyType string
 
@@ -148,7 +173,7 @@ type PostMediasMediaHashedIDCopyFolder struct {
 	// The folder’s display name.
 	Name *string `json:"name,omitzero"`
 	// A private hashed id, uniquely identifying the folder within the system.
-	HashedID *string `json:"hashedId,omitzero"`
+	HashedID *string `json:"hashed_id,omitzero"`
 }
 
 func (p *PostMediasMediaHashedIDCopyFolder) GetID() *int64 {
@@ -208,7 +233,9 @@ type PostMediasMediaHashedIDCopyResponseBody struct {
 	// The title of the section in which the media appears. This attribute is omitted if the media is not in a section (default).
 	Section   optionalnullable.OptionalNullable[string] `json:"section,omitzero"`
 	Thumbnail *PostMediasMediaHashedIDCopyThumbnail     `json:"thumbnail,omitzero"`
-	Folder    *PostMediasMediaHashedIDCopyFolder        `json:"folder"`
+	// Whether the media is protected (e.g. requires a password or other authentication to view). Null if the media is not protected.
+	Protected optionalnullable.OptionalNullable[bool] `json:"protected,omitzero"`
+	Folder    *PostMediasMediaHashedIDCopyFolder      `json:"folder"`
 }
 
 func (p PostMediasMediaHashedIDCopyResponseBody) MarshalJSON() ([]byte, error) {
@@ -318,6 +345,13 @@ func (p *PostMediasMediaHashedIDCopyResponseBody) GetThumbnail() *PostMediasMedi
 		return nil
 	}
 	return p.Thumbnail
+}
+
+func (p *PostMediasMediaHashedIDCopyResponseBody) GetProtected() optionalnullable.OptionalNullable[bool] {
+	if p == nil {
+		return nil
+	}
+	return p.Protected
 }
 
 func (p *PostMediasMediaHashedIDCopyResponseBody) GetFolder() *PostMediasMediaHashedIDCopyFolder {

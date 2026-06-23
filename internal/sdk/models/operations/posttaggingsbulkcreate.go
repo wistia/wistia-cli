@@ -29,6 +29,31 @@ func (p *PostTaggingsBulkCreateRequest) GetTagNames() []string {
 	return p.TagNames
 }
 
+// PostTaggingsBulkCreateCode - A machine-readable identifier for the specific authorization failure.
+type PostTaggingsBulkCreateCode string
+
+const (
+	PostTaggingsBulkCreateCodeUnauthorizedCredentials PostTaggingsBulkCreateCode = "unauthorized_credentials"
+	PostTaggingsBulkCreateCodeAccountInactive         PostTaggingsBulkCreateCode = "account_inactive"
+	PostTaggingsBulkCreateCodeUnauthorizedScope       PostTaggingsBulkCreateCode = "unauthorized_scope"
+	PostTaggingsBulkCreateCodeUnauthorizedParams      PostTaggingsBulkCreateCode = "unauthorized_params"
+)
+
+func (e PostTaggingsBulkCreateCode) ToPointer() *PostTaggingsBulkCreateCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *PostTaggingsBulkCreateCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 // PostTaggingsBulkCreateStatus - The status of the background job that's been queued for the request.
 type PostTaggingsBulkCreateStatus string
 
@@ -59,6 +84,8 @@ func (e *PostTaggingsBulkCreateStatus) IsExact() bool {
 type PostTaggingsBulkCreateBackgroundJobStatus struct {
 	// The ID of the background job that's been queued for the request.
 	ID int64 `json:"id"`
+	// The unguessable hashed ID of the background job. Prefer this over the numeric ID when polling for status.
+	HashedID string `json:"hashed_id"`
 	// The status of the background job that's been queued for the request.
 	Status PostTaggingsBulkCreateStatus `json:"status"`
 }
@@ -68,6 +95,13 @@ func (p *PostTaggingsBulkCreateBackgroundJobStatus) GetID() int64 {
 		return 0
 	}
 	return p.ID
+}
+
+func (p *PostTaggingsBulkCreateBackgroundJobStatus) GetHashedID() string {
+	if p == nil {
+		return ""
+	}
+	return p.HashedID
 }
 
 func (p *PostTaggingsBulkCreateBackgroundJobStatus) GetStatus() PostTaggingsBulkCreateStatus {

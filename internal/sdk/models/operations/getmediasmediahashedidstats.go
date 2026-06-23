@@ -20,6 +20,31 @@ func (g *GetMediasMediaHashedIDStatsRequest) GetMediaHashedID() string {
 	return g.MediaHashedID
 }
 
+// GetMediasMediaHashedIDStatsCode - A machine-readable identifier for the specific authorization failure.
+type GetMediasMediaHashedIDStatsCode string
+
+const (
+	GetMediasMediaHashedIDStatsCodeUnauthorizedCredentials GetMediasMediaHashedIDStatsCode = "unauthorized_credentials"
+	GetMediasMediaHashedIDStatsCodeAccountInactive         GetMediasMediaHashedIDStatsCode = "account_inactive"
+	GetMediasMediaHashedIDStatsCodeUnauthorizedScope       GetMediasMediaHashedIDStatsCode = "unauthorized_scope"
+	GetMediasMediaHashedIDStatsCodeUnauthorizedParams      GetMediasMediaHashedIDStatsCode = "unauthorized_params"
+)
+
+func (e GetMediasMediaHashedIDStatsCode) ToPointer() *GetMediasMediaHashedIDStatsCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetMediasMediaHashedIDStatsCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 // Stats - An object representing the aggregated embed statistics for this video.
 type Stats struct {
 	// The total number of times that the page containing the embedded video has been loaded.

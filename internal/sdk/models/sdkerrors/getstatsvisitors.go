@@ -6,6 +6,7 @@ package sdkerrors
 import (
 	"encoding/json"
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
+	"github.com/wistia/wistia-cli/internal/sdk/models/operations"
 )
 
 // GetStatsVisitorsInternalServerError - Internal server error
@@ -36,8 +37,10 @@ func (e *GetStatsVisitorsForbiddenError) Error() string {
 
 // GetStatsVisitorsUnauthorizedError - Unauthorized, invalid or missing token
 type GetStatsVisitorsUnauthorizedError struct {
-	Error_   *string                 `json:"error,omitzero"`
-	HTTPMeta components.HTTPMetadata `json:"-"`
+	// A machine-readable identifier for the specific authorization failure.
+	Code     *operations.GetStatsVisitorsCode `json:"code,omitzero"`
+	Error_   *string                          `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata          `json:"-"`
 }
 
 var _ error = &GetStatsVisitorsUnauthorizedError{}

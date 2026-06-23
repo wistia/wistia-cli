@@ -20,6 +20,31 @@ func (p *PutMediasArchiveRequest) GetHashedIds() []string {
 	return p.HashedIds
 }
 
+// PutMediasArchiveCode - A machine-readable identifier for the specific authorization failure.
+type PutMediasArchiveCode string
+
+const (
+	PutMediasArchiveCodeUnauthorizedCredentials PutMediasArchiveCode = "unauthorized_credentials"
+	PutMediasArchiveCodeAccountInactive         PutMediasArchiveCode = "account_inactive"
+	PutMediasArchiveCodeUnauthorizedScope       PutMediasArchiveCode = "unauthorized_scope"
+	PutMediasArchiveCodeUnauthorizedParams      PutMediasArchiveCode = "unauthorized_params"
+)
+
+func (e PutMediasArchiveCode) ToPointer() *PutMediasArchiveCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *PutMediasArchiveCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 // PutMediasArchiveStatus - The status of the background job that's been queued for the request.
 type PutMediasArchiveStatus string
 
@@ -50,6 +75,8 @@ func (e *PutMediasArchiveStatus) IsExact() bool {
 type PutMediasArchiveBackgroundJobStatus struct {
 	// The ID of the background job that's been queued for the request.
 	ID int64 `json:"id"`
+	// The unguessable hashed ID of the background job. Prefer this over the numeric ID when polling for status.
+	HashedID string `json:"hashed_id"`
 	// The status of the background job that's been queued for the request.
 	Status PutMediasArchiveStatus `json:"status"`
 }
@@ -59,6 +86,13 @@ func (p *PutMediasArchiveBackgroundJobStatus) GetID() int64 {
 		return 0
 	}
 	return p.ID
+}
+
+func (p *PutMediasArchiveBackgroundJobStatus) GetHashedID() string {
+	if p == nil {
+		return ""
+	}
+	return p.HashedID
 }
 
 func (p *PutMediasArchiveBackgroundJobStatus) GetStatus() PutMediasArchiveStatus {

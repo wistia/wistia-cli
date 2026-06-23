@@ -53,6 +53,31 @@ func (p *PutMediasMediaHashedIDSwapRequest) GetBody() *PutMediasMediaHashedIDSwa
 	return p.Body
 }
 
+// PutMediasMediaHashedIDSwapCode - A machine-readable identifier for the specific authorization failure.
+type PutMediasMediaHashedIDSwapCode string
+
+const (
+	PutMediasMediaHashedIDSwapCodeUnauthorizedCredentials PutMediasMediaHashedIDSwapCode = "unauthorized_credentials"
+	PutMediasMediaHashedIDSwapCodeAccountInactive         PutMediasMediaHashedIDSwapCode = "account_inactive"
+	PutMediasMediaHashedIDSwapCodeUnauthorizedScope       PutMediasMediaHashedIDSwapCode = "unauthorized_scope"
+	PutMediasMediaHashedIDSwapCodeUnauthorizedParams      PutMediasMediaHashedIDSwapCode = "unauthorized_params"
+)
+
+func (e PutMediasMediaHashedIDSwapCode) ToPointer() *PutMediasMediaHashedIDSwapCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *PutMediasMediaHashedIDSwapCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 // PutMediasMediaHashedIDSwapType - A string representing what type of media this is.
 type PutMediasMediaHashedIDSwapType string
 
@@ -169,6 +194,8 @@ type PutMediasMediaHashedIDSwapMedia struct {
 	// The title of the section in which the media appears. This attribute is omitted if the media is not in a section (default).
 	Section   optionalnullable.OptionalNullable[string] `json:"section,omitzero"`
 	Thumbnail *PutMediasMediaHashedIDSwapThumbnail      `json:"thumbnail,omitzero"`
+	// Whether the media is protected (e.g. requires a password or other authentication to view). Null if the media is not protected.
+	Protected optionalnullable.OptionalNullable[bool] `json:"protected,omitzero"`
 }
 
 func (p PutMediasMediaHashedIDSwapMedia) MarshalJSON() ([]byte, error) {
@@ -280,6 +307,13 @@ func (p *PutMediasMediaHashedIDSwapMedia) GetThumbnail() *PutMediasMediaHashedID
 	return p.Thumbnail
 }
 
+func (p *PutMediasMediaHashedIDSwapMedia) GetProtected() optionalnullable.OptionalNullable[bool] {
+	if p == nil {
+		return nil
+	}
+	return p.Protected
+}
+
 // PutMediasMediaHashedIDSwapBackgroundJobStatusStatus - The status of the background job that's been queued for the request.
 type PutMediasMediaHashedIDSwapBackgroundJobStatusStatus string
 
@@ -310,6 +344,8 @@ func (e *PutMediasMediaHashedIDSwapBackgroundJobStatusStatus) IsExact() bool {
 type PutMediasMediaHashedIDSwapBackgroundJobStatus struct {
 	// The ID of the background job that's been queued for the request.
 	ID int64 `json:"id"`
+	// The unguessable hashed ID of the background job. Prefer this over the numeric ID when polling for status.
+	HashedID string `json:"hashed_id"`
 	// The status of the background job that's been queued for the request.
 	Status PutMediasMediaHashedIDSwapBackgroundJobStatusStatus `json:"status"`
 }
@@ -321,6 +357,13 @@ func (p *PutMediasMediaHashedIDSwapBackgroundJobStatus) GetID() int64 {
 	return p.ID
 }
 
+func (p *PutMediasMediaHashedIDSwapBackgroundJobStatus) GetHashedID() string {
+	if p == nil {
+		return ""
+	}
+	return p.HashedID
+}
+
 func (p *PutMediasMediaHashedIDSwapBackgroundJobStatus) GetStatus() PutMediasMediaHashedIDSwapBackgroundJobStatusStatus {
 	if p == nil {
 		return PutMediasMediaHashedIDSwapBackgroundJobStatusStatus("")
@@ -330,13 +373,8 @@ func (p *PutMediasMediaHashedIDSwapBackgroundJobStatus) GetStatus() PutMediasMed
 
 // PutMediasMediaHashedIDSwapResponseBody - Successfully queued background job for media swap.
 type PutMediasMediaHashedIDSwapResponseBody struct {
-	Message *string `json:"message,omitzero"`
-	// A media generally represents a video or an audio which can be embedded into your website.
-	//
-	// CDN-backed medias are accessible using this url structure: https://fast.wistia.com/embed/medias/{hashed_id}.m3u8.
-	// For more information, see https://docs.wistia.com/docs/asset-urls#getting-hls-assets.
-	//
-	Media *PutMediasMediaHashedIDSwapMedia `json:"media,omitzero"`
+	Message *string                          `json:"message,omitzero"`
+	Media   *PutMediasMediaHashedIDSwapMedia `json:"media,omitzero"`
 	// A background job keeps track of the progress of an asynchronous task, e.g
 	// bulk archiving media, translating media, etc.
 	//

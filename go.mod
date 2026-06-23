@@ -1,6 +1,6 @@
 module github.com/wistia/wistia-cli
 
-go 1.25
+go 1.25.10
 
 require (
 	github.com/alpkeskin/gotoon v0.1.1

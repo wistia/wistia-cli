@@ -6,6 +6,7 @@ package sdkerrors
 import (
 	"encoding/json"
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
+	"github.com/wistia/wistia-cli/internal/sdk/models/operations"
 )
 
 // PutMediasMediaHashedIDSwapInternalServerError - Internal server error
@@ -49,8 +50,10 @@ func (e *PutMediasMediaHashedIDSwapForbiddenError) Error() string {
 
 // PutMediasMediaHashedIDSwapUnauthorizedError - Unauthorized, invalid or missing token
 type PutMediasMediaHashedIDSwapUnauthorizedError struct {
-	Error_   *string                 `json:"error,omitzero"`
-	HTTPMeta components.HTTPMetadata `json:"-"`
+	// A machine-readable identifier for the specific authorization failure.
+	Code     *operations.PutMediasMediaHashedIDSwapCode `json:"code,omitzero"`
+	Error_   *string                                    `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata                    `json:"-"`
 }
 
 var _ error = &PutMediasMediaHashedIDSwapUnauthorizedError{}

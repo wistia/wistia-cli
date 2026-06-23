@@ -6,6 +6,7 @@ package sdkerrors
 import (
 	"encoding/json"
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
+	"github.com/wistia/wistia-cli/internal/sdk/models/operations"
 )
 
 // GetFoldersFolderIDSharingsInternalServerError - Internal server error
@@ -23,13 +24,31 @@ func (e *GetFoldersFolderIDSharingsInternalServerError) Error() string {
 
 // GetFoldersFolderIDSharingsUnauthorizedError - Unauthorized, invalid or missing token
 type GetFoldersFolderIDSharingsUnauthorizedError struct {
-	Error_   *string                 `json:"error,omitzero"`
-	HTTPMeta components.HTTPMetadata `json:"-"`
+	// A machine-readable identifier for the specific authorization failure.
+	Code     *operations.GetFoldersFolderIDSharingsCode `json:"code,omitzero"`
+	Error_   *string                                    `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata                    `json:"-"`
 }
 
 var _ error = &GetFoldersFolderIDSharingsUnauthorizedError{}
 
 func (e *GetFoldersFolderIDSharingsUnauthorizedError) Error() string {
+	data, _ := json.Marshal(e)
+	return string(data)
+}
+
+// GetFoldersFolderIDSharingsBadRequestError - Bad request
+type GetFoldersFolderIDSharingsBadRequestError struct {
+	// Error message detailing the reason for the bad request.
+	Error_ *string `json:"error,omitzero"`
+	// Array of error messages detailing the reasons for the bad request.
+	Errors   []string                `json:"errors,omitzero"`
+	HTTPMeta components.HTTPMetadata `json:"-"`
+}
+
+var _ error = &GetFoldersFolderIDSharingsBadRequestError{}
+
+func (e *GetFoldersFolderIDSharingsBadRequestError) Error() string {
 	data, _ := json.Marshal(e)
 	return string(data)
 }

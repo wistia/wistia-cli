@@ -19,6 +19,31 @@ func (d *DeleteTagsNameRequest) GetName() string {
 	return d.Name
 }
 
+// DeleteTagsNameCode - A machine-readable identifier for the specific authorization failure.
+type DeleteTagsNameCode string
+
+const (
+	DeleteTagsNameCodeUnauthorizedCredentials DeleteTagsNameCode = "unauthorized_credentials"
+	DeleteTagsNameCodeAccountInactive         DeleteTagsNameCode = "account_inactive"
+	DeleteTagsNameCodeUnauthorizedScope       DeleteTagsNameCode = "unauthorized_scope"
+	DeleteTagsNameCodeUnauthorizedParams      DeleteTagsNameCode = "unauthorized_params"
+)
+
+func (e DeleteTagsNameCode) ToPointer() *DeleteTagsNameCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *DeleteTagsNameCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 type DeleteTagsNameResponse struct {
 	HTTPMeta components.HTTPMetadata `json:"-"`
 }

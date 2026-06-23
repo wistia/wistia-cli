@@ -19,6 +19,31 @@ func (d *DeleteMediasMediaIDCustomizationsRequest) GetMediaID() string {
 	return d.MediaID
 }
 
+// DeleteMediasMediaIDCustomizationsCode - A machine-readable identifier for the specific authorization failure.
+type DeleteMediasMediaIDCustomizationsCode string
+
+const (
+	DeleteMediasMediaIDCustomizationsCodeUnauthorizedCredentials DeleteMediasMediaIDCustomizationsCode = "unauthorized_credentials"
+	DeleteMediasMediaIDCustomizationsCodeAccountInactive         DeleteMediasMediaIDCustomizationsCode = "account_inactive"
+	DeleteMediasMediaIDCustomizationsCodeUnauthorizedScope       DeleteMediasMediaIDCustomizationsCode = "unauthorized_scope"
+	DeleteMediasMediaIDCustomizationsCodeUnauthorizedParams      DeleteMediasMediaIDCustomizationsCode = "unauthorized_params"
+)
+
+func (e DeleteMediasMediaIDCustomizationsCode) ToPointer() *DeleteMediasMediaIDCustomizationsCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *DeleteMediasMediaIDCustomizationsCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 type DeleteMediasMediaIDCustomizationsResponse struct {
 	HTTPMeta components.HTTPMetadata `json:"-"`
 }

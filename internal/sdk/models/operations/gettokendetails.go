@@ -9,6 +9,31 @@ import (
 	"github.com/wistia/wistia-cli/internal/sdk/sdkinternal/utils"
 )
 
+// GetTokenDetailsCode - A machine-readable identifier for the specific authorization failure.
+type GetTokenDetailsCode string
+
+const (
+	GetTokenDetailsCodeUnauthorizedCredentials GetTokenDetailsCode = "unauthorized_credentials"
+	GetTokenDetailsCodeAccountInactive         GetTokenDetailsCode = "account_inactive"
+	GetTokenDetailsCodeUnauthorizedScope       GetTokenDetailsCode = "unauthorized_scope"
+	GetTokenDetailsCodeUnauthorizedParams      GetTokenDetailsCode = "unauthorized_params"
+)
+
+func (e GetTokenDetailsCode) ToPointer() *GetTokenDetailsCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetTokenDetailsCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 // GetTokenDetailsType - The type of token used.
 type GetTokenDetailsType string
 

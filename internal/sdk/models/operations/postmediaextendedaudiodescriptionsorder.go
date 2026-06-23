@@ -60,6 +60,31 @@ func (p *PostMediaExtendedAudioDescriptionsOrderRequest) GetOrderInstructions() 
 	return p.OrderInstructions
 }
 
+// PostMediaExtendedAudioDescriptionsOrderCode - A machine-readable identifier for the specific authorization failure.
+type PostMediaExtendedAudioDescriptionsOrderCode string
+
+const (
+	PostMediaExtendedAudioDescriptionsOrderCodeUnauthorizedCredentials PostMediaExtendedAudioDescriptionsOrderCode = "unauthorized_credentials"
+	PostMediaExtendedAudioDescriptionsOrderCodeAccountInactive         PostMediaExtendedAudioDescriptionsOrderCode = "account_inactive"
+	PostMediaExtendedAudioDescriptionsOrderCodeUnauthorizedScope       PostMediaExtendedAudioDescriptionsOrderCode = "unauthorized_scope"
+	PostMediaExtendedAudioDescriptionsOrderCodeUnauthorizedParams      PostMediaExtendedAudioDescriptionsOrderCode = "unauthorized_params"
+)
+
+func (e PostMediaExtendedAudioDescriptionsOrderCode) ToPointer() *PostMediaExtendedAudioDescriptionsOrderCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *PostMediaExtendedAudioDescriptionsOrderCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 // PostMediaExtendedAudioDescriptionsOrderOrderStatus - The current status of the order.
 type PostMediaExtendedAudioDescriptionsOrderOrderStatus string
 

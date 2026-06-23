@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
+	"github.com/wistia/wistia-cli/internal/sdk/optionalnullable"
 	"github.com/wistia/wistia-cli/internal/sdk/sdkinternal/utils"
 	"time"
 )
@@ -39,7 +40,7 @@ func (e *GetMediaExtendedAudioDescriptionsEnabled) UnmarshalJSON(data []byte) er
 	}
 }
 
-// GetMediaExtendedAudioDescriptionsCursor - If `cursor[enabled]` is set to 1 than cursor pagination is enabled and the
+// GetMediaExtendedAudioDescriptionsCursor - If `cursor[enabled]` is set to 1 then cursor pagination is enabled and the
 // first set of records are fetched up to the `per_page`. Cursor
 // pagination will also be turned on if `cursor[before]` or `cursor[after]`
 // are set. Records returned will have a `cursor` property set which can be used to fetch more records in the same `sort_by` ordering.
@@ -47,20 +48,20 @@ func (e *GetMediaExtendedAudioDescriptionsEnabled) UnmarshalJSON(data []byte) er
 // the cursor of the first record can be used to fetch records before the result set.
 //
 // NOTE: a cursor value is only valid if the `sort_by` value hasn't changed from the
-// last fetch. For example, you cannot fetch using `sort_by` id and than pass that
+// last fetch. For example, you cannot fetch using `sort_by` id and then pass that
 // cursor value to a `sort_by` name.
 type GetMediaExtendedAudioDescriptionsCursor struct {
 	// If `cursor[enabled]` is set to 1, the first result set will be fetched with cursor pagination enabled. This
 	// values is ignored if `cursor[before]` or `cursor[after]` are set.
 	//
 	Enabled *GetMediaExtendedAudioDescriptionsEnabled `queryParam:"name=enabled"`
-	// If `cursor[before]` is set than cursor pagination is enabled and all records
+	// If `cursor[before]` is set then cursor pagination is enabled and all records
 	// before the cursor up to the `per_page` are returned. This feature is useful for
 	// fetching "new records", for example, in a "pull to refersh" feature when showing records in a descending
 	// order.
 	//
 	Before *string `queryParam:"name=before"`
-	// If `cursor[after]` is set than cursor pagination is enabled and all records
+	// If `cursor[after]` is set then cursor pagination is enabled and all records
 	// after the cursor up to the `per_page` are returned.
 	//
 	After *string `queryParam:"name=after"`
@@ -145,7 +146,7 @@ type GetMediaExtendedAudioDescriptionsRequest struct {
 	Page *int64 `queryParam:"style=form,explode=true,name=page"`
 	// The number of medias per page. Use this for both offset pagination and cursor pagination.
 	PerPage *int64 `queryParam:"style=form,explode=true,name=per_page"`
-	// If `cursor[enabled]` is set to 1 than cursor pagination is enabled and the
+	// If `cursor[enabled]` is set to 1 then cursor pagination is enabled and the
 	// first set of records are fetched up to the `per_page`. Cursor
 	// pagination will also be turned on if `cursor[before]` or `cursor[after]`
 	// are set. Records returned will have a `cursor` property set which can be used to fetch more records in the same `sort_by` ordering.
@@ -153,7 +154,7 @@ type GetMediaExtendedAudioDescriptionsRequest struct {
 	// the cursor of the first record can be used to fetch records before the result set.
 	//
 	// NOTE: a cursor value is only valid if the `sort_by` value hasn't changed from the
-	// last fetch. For example, you cannot fetch using `sort_by` id and than pass that
+	// last fetch. For example, you cannot fetch using `sort_by` id and then pass that
 	// cursor value to a `sort_by` name.
 	//
 	Cursor *GetMediaExtendedAudioDescriptionsCursor `queryParam:"style=deepObject,explode=true,name=cursor"`
@@ -216,6 +217,31 @@ func (g *GetMediaExtendedAudioDescriptionsRequest) GetSortDirection() *GetMediaE
 		return nil
 	}
 	return g.SortDirection
+}
+
+// GetMediaExtendedAudioDescriptionsCode - A machine-readable identifier for the specific authorization failure.
+type GetMediaExtendedAudioDescriptionsCode string
+
+const (
+	GetMediaExtendedAudioDescriptionsCodeUnauthorizedCredentials GetMediaExtendedAudioDescriptionsCode = "unauthorized_credentials"
+	GetMediaExtendedAudioDescriptionsCodeAccountInactive         GetMediaExtendedAudioDescriptionsCode = "account_inactive"
+	GetMediaExtendedAudioDescriptionsCodeUnauthorizedScope       GetMediaExtendedAudioDescriptionsCode = "unauthorized_scope"
+	GetMediaExtendedAudioDescriptionsCodeUnauthorizedParams      GetMediaExtendedAudioDescriptionsCode = "unauthorized_params"
+)
+
+func (e GetMediaExtendedAudioDescriptionsCode) ToPointer() *GetMediaExtendedAudioDescriptionsCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetMediaExtendedAudioDescriptionsCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
 }
 
 type GetMediaExtendedAudioDescriptionsMedia struct {
@@ -322,6 +348,8 @@ type GetMediaExtendedAudioDescriptionsResponseBody struct {
 	Media             *GetMediaExtendedAudioDescriptionsMedia             `json:"media,omitzero"`
 	ProvidedMediaFile *GetMediaExtendedAudioDescriptionsProvidedMediaFile `json:"provided_media_file,omitzero"`
 	Contact           *GetMediaExtendedAudioDescriptionsContact           `json:"contact,omitzero"`
+	// A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+	Cursor optionalnullable.OptionalNullable[string] `json:"cursor,omitzero"`
 }
 
 func (g GetMediaExtendedAudioDescriptionsResponseBody) MarshalJSON() ([]byte, error) {
@@ -382,6 +410,13 @@ func (g *GetMediaExtendedAudioDescriptionsResponseBody) GetContact() *GetMediaEx
 		return nil
 	}
 	return g.Contact
+}
+
+func (g *GetMediaExtendedAudioDescriptionsResponseBody) GetCursor() optionalnullable.OptionalNullable[string] {
+	if g == nil {
+		return nil
+	}
+	return g.Cursor
 }
 
 type GetMediaExtendedAudioDescriptionsResponse struct {

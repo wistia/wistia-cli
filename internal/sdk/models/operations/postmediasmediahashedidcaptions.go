@@ -48,6 +48,31 @@ func (p *PostMediasMediaHashedIDCaptionsRequest) GetBody() PostMediasMediaHashed
 	return p.Body
 }
 
+// PostMediasMediaHashedIDCaptionsCode - A machine-readable identifier for the specific authorization failure.
+type PostMediasMediaHashedIDCaptionsCode string
+
+const (
+	PostMediasMediaHashedIDCaptionsCodeUnauthorizedCredentials PostMediasMediaHashedIDCaptionsCode = "unauthorized_credentials"
+	PostMediasMediaHashedIDCaptionsCodeAccountInactive         PostMediasMediaHashedIDCaptionsCode = "account_inactive"
+	PostMediasMediaHashedIDCaptionsCodeUnauthorizedScope       PostMediasMediaHashedIDCaptionsCode = "unauthorized_scope"
+	PostMediasMediaHashedIDCaptionsCodeUnauthorizedParams      PostMediasMediaHashedIDCaptionsCode = "unauthorized_params"
+)
+
+func (e PostMediasMediaHashedIDCaptionsCode) ToPointer() *PostMediasMediaHashedIDCaptionsCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *PostMediasMediaHashedIDCaptionsCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 type PostMediasMediaHashedIDCaptionsResponse struct {
 	HTTPMeta components.HTTPMetadata `json:"-"`
 }

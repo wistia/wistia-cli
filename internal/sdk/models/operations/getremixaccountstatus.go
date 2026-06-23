@@ -8,6 +8,31 @@ import (
 	"github.com/wistia/wistia-cli/internal/sdk/sdkinternal/utils"
 )
 
+// GetRemixAccountStatusCode - A machine-readable identifier for the specific authorization failure.
+type GetRemixAccountStatusCode string
+
+const (
+	GetRemixAccountStatusCodeUnauthorizedCredentials GetRemixAccountStatusCode = "unauthorized_credentials"
+	GetRemixAccountStatusCodeAccountInactive         GetRemixAccountStatusCode = "account_inactive"
+	GetRemixAccountStatusCodeUnauthorizedScope       GetRemixAccountStatusCode = "unauthorized_scope"
+	GetRemixAccountStatusCodeUnauthorizedParams      GetRemixAccountStatusCode = "unauthorized_params"
+)
+
+func (e GetRemixAccountStatusCode) ToPointer() *GetRemixAccountStatusCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetRemixAccountStatusCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 // GetRemixAccountStatusResponseBody - Remix account status.
 type GetRemixAccountStatusResponseBody struct {
 	// Maximum number of remix credits per month.

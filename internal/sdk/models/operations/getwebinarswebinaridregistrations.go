@@ -176,6 +176,31 @@ func (g *GetWebinarsWebinarIDRegistrationsRequest) GetEmails() []string {
 	return g.Emails
 }
 
+// GetWebinarsWebinarIDRegistrationsCode - A machine-readable identifier for the specific authorization failure.
+type GetWebinarsWebinarIDRegistrationsCode string
+
+const (
+	GetWebinarsWebinarIDRegistrationsCodeUnauthorizedCredentials GetWebinarsWebinarIDRegistrationsCode = "unauthorized_credentials"
+	GetWebinarsWebinarIDRegistrationsCodeAccountInactive         GetWebinarsWebinarIDRegistrationsCode = "account_inactive"
+	GetWebinarsWebinarIDRegistrationsCodeUnauthorizedScope       GetWebinarsWebinarIDRegistrationsCode = "unauthorized_scope"
+	GetWebinarsWebinarIDRegistrationsCodeUnauthorizedParams      GetWebinarsWebinarIDRegistrationsCode = "unauthorized_params"
+)
+
+func (e GetWebinarsWebinarIDRegistrationsCode) ToPointer() *GetWebinarsWebinarIDRegistrationsCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetWebinarsWebinarIDRegistrationsCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 // RestrictionStatus - Whether the registrant is restricted or allowed.
 type RestrictionStatus string
 

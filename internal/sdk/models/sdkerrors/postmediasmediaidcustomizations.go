@@ -6,6 +6,7 @@ package sdkerrors
 import (
 	"encoding/json"
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
+	"github.com/wistia/wistia-cli/internal/sdk/models/operations"
 )
 
 // PostMediasMediaIDCustomizationsInternalServerError - Internal server error
@@ -36,8 +37,10 @@ func (e *PostMediasMediaIDCustomizationsForbiddenError) Error() string {
 
 // PostMediasMediaIDCustomizationsUnauthorizedError - Unauthorized, invalid or missing token
 type PostMediasMediaIDCustomizationsUnauthorizedError struct {
-	Error_   *string                 `json:"error,omitzero"`
-	HTTPMeta components.HTTPMetadata `json:"-"`
+	// A machine-readable identifier for the specific authorization failure.
+	Code     *operations.PostMediasMediaIDCustomizationsCode `json:"code,omitzero"`
+	Error_   *string                                         `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata                         `json:"-"`
 }
 
 var _ error = &PostMediasMediaIDCustomizationsUnauthorizedError{}

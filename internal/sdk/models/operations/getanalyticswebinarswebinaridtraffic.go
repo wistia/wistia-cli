@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
+	"github.com/wistia/wistia-cli/internal/sdk/optionalnullable"
 	"github.com/wistia/wistia-cli/internal/sdk/sdkinternal/utils"
 )
 
@@ -150,16 +151,41 @@ func (g *GetAnalyticsWebinarsWebinarIDTrafficRequest) GetSortDirection() *GetAna
 	return g.SortDirection
 }
 
+// GetAnalyticsWebinarsWebinarIDTrafficCode - A machine-readable identifier for the specific authorization failure.
+type GetAnalyticsWebinarsWebinarIDTrafficCode string
+
+const (
+	GetAnalyticsWebinarsWebinarIDTrafficCodeUnauthorizedCredentials GetAnalyticsWebinarsWebinarIDTrafficCode = "unauthorized_credentials"
+	GetAnalyticsWebinarsWebinarIDTrafficCodeAccountInactive         GetAnalyticsWebinarsWebinarIDTrafficCode = "account_inactive"
+	GetAnalyticsWebinarsWebinarIDTrafficCodeUnauthorizedScope       GetAnalyticsWebinarsWebinarIDTrafficCode = "unauthorized_scope"
+	GetAnalyticsWebinarsWebinarIDTrafficCodeUnauthorizedParams      GetAnalyticsWebinarsWebinarIDTrafficCode = "unauthorized_params"
+)
+
+func (e GetAnalyticsWebinarsWebinarIDTrafficCode) ToPointer() *GetAnalyticsWebinarsWebinarIDTrafficCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetAnalyticsWebinarsWebinarIDTrafficCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 // GetAnalyticsWebinarsWebinarIDTrafficResponseBody - Each item contains the group_by field and associated metrics.
 type GetAnalyticsWebinarsWebinarIDTrafficResponseBody struct {
 	// The UTM campaign value (present when group_by is utm_campaign).
-	UtmCampaign *string `json:"utm_campaign,omitzero"`
+	UtmCampaign optionalnullable.OptionalNullable[string] `json:"utm_campaign,omitzero"`
 	// The UTM source value (present when group_by is utm_source).
-	UtmSource *string `json:"utm_source,omitzero"`
+	UtmSource optionalnullable.OptionalNullable[string] `json:"utm_source,omitzero"`
 	// The UTM medium value (present when group_by is utm_medium).
-	UtmMedium *string `json:"utm_medium,omitzero"`
+	UtmMedium optionalnullable.OptionalNullable[string] `json:"utm_medium,omitzero"`
 	// The referrer domain (present when group_by is referrer_domain).
-	ReferrerDomain *string `json:"referrer_domain,omitzero"`
+	ReferrerDomain optionalnullable.OptionalNullable[string] `json:"referrer_domain,omitzero"`
 	// The number of registrations from this traffic source.
 	Registrations *int64 `json:"registrations,omitzero"`
 	// The number of attendees from this traffic source.
@@ -168,28 +194,28 @@ type GetAnalyticsWebinarsWebinarIDTrafficResponseBody struct {
 	Impressions *int64 `json:"impressions,omitzero"`
 }
 
-func (g *GetAnalyticsWebinarsWebinarIDTrafficResponseBody) GetUtmCampaign() *string {
+func (g *GetAnalyticsWebinarsWebinarIDTrafficResponseBody) GetUtmCampaign() optionalnullable.OptionalNullable[string] {
 	if g == nil {
 		return nil
 	}
 	return g.UtmCampaign
 }
 
-func (g *GetAnalyticsWebinarsWebinarIDTrafficResponseBody) GetUtmSource() *string {
+func (g *GetAnalyticsWebinarsWebinarIDTrafficResponseBody) GetUtmSource() optionalnullable.OptionalNullable[string] {
 	if g == nil {
 		return nil
 	}
 	return g.UtmSource
 }
 
-func (g *GetAnalyticsWebinarsWebinarIDTrafficResponseBody) GetUtmMedium() *string {
+func (g *GetAnalyticsWebinarsWebinarIDTrafficResponseBody) GetUtmMedium() optionalnullable.OptionalNullable[string] {
 	if g == nil {
 		return nil
 	}
 	return g.UtmMedium
 }
 
-func (g *GetAnalyticsWebinarsWebinarIDTrafficResponseBody) GetReferrerDomain() *string {
+func (g *GetAnalyticsWebinarsWebinarIDTrafficResponseBody) GetReferrerDomain() optionalnullable.OptionalNullable[string] {
 	if g == nil {
 		return nil
 	}

@@ -41,6 +41,31 @@ func (g *GetMediasMediaHashedIDRequest) GetDescriptionFormat() *string {
 	return types.Pointer("markdown")
 }
 
+// GetMediasMediaHashedIDCode - A machine-readable identifier for the specific authorization failure.
+type GetMediasMediaHashedIDCode string
+
+const (
+	GetMediasMediaHashedIDCodeUnauthorizedCredentials GetMediasMediaHashedIDCode = "unauthorized_credentials"
+	GetMediasMediaHashedIDCodeAccountInactive         GetMediasMediaHashedIDCode = "account_inactive"
+	GetMediasMediaHashedIDCodeUnauthorizedScope       GetMediasMediaHashedIDCode = "unauthorized_scope"
+	GetMediasMediaHashedIDCodeUnauthorizedParams      GetMediasMediaHashedIDCode = "unauthorized_params"
+)
+
+func (e GetMediasMediaHashedIDCode) ToPointer() *GetMediasMediaHashedIDCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetMediasMediaHashedIDCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 // GetMediasMediaHashedIDType - A string representing what type of media this is.
 type GetMediasMediaHashedIDType string
 
@@ -127,7 +152,7 @@ type GetMediasMediaHashedIDFolder struct {
 	// The folder’s display name.
 	Name *string `json:"name,omitzero"`
 	// A private hashed id, uniquely identifying the folder within the system.
-	HashedID *string `json:"hashedId,omitzero"`
+	HashedID *string `json:"hashed_id,omitzero"`
 }
 
 func (g *GetMediasMediaHashedIDFolder) GetID() *int64 {
@@ -209,7 +234,7 @@ func (g *GetMediasMediaHashedIDAsset) GetType() *string {
 	return g.Type
 }
 
-// GetMediasMediaHashedIDSubfolder - A subfolder within a folder that contains media.
+// GetMediasMediaHashedIDSubfolder - The subfolder (media group) in which the media appears. Null if the media is not in a subfolder.
 type GetMediasMediaHashedIDSubfolder struct {
 	// A unique alphanumeric identifier for this subfolder.
 	HashedID string `json:"hashed_id"`
@@ -335,7 +360,9 @@ type GetMediasMediaHashedIDResponseBody struct {
 	// The title of the section in which the media appears. This attribute is omitted if the media is not in a section (default).
 	Section   optionalnullable.OptionalNullable[string] `json:"section,omitzero"`
 	Thumbnail *GetMediasMediaHashedIDThumbnail          `json:"thumbnail,omitzero"`
-	Folder    *GetMediasMediaHashedIDFolder             `json:"folder"`
+	// Whether the media is protected (e.g. requires a password or other authentication to view). Null if the media is not protected.
+	Protected optionalnullable.OptionalNullable[bool] `json:"protected,omitzero"`
+	Folder    *GetMediasMediaHashedIDFolder           `json:"folder"`
 	// An array of the assets available for this media.
 	Assets []GetMediasMediaHashedIDAsset `json:"assets,omitzero"`
 	// The subfolder (media group) in which the media appears. Null if the media is not in a subfolder.
@@ -451,6 +478,13 @@ func (g *GetMediasMediaHashedIDResponseBody) GetThumbnail() *GetMediasMediaHashe
 		return nil
 	}
 	return g.Thumbnail
+}
+
+func (g *GetMediasMediaHashedIDResponseBody) GetProtected() optionalnullable.OptionalNullable[bool] {
+	if g == nil {
+		return nil
+	}
+	return g.Protected
 }
 
 func (g *GetMediasMediaHashedIDResponseBody) GetFolder() *GetMediasMediaHashedIDFolder {

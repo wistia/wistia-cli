@@ -52,6 +52,7 @@ wistia [flags]
 * [wistia media-extended-audio-descriptions](wistia_media-extended-audio-descriptions.md)	 - Operations for media-extended-audio-descriptions
 * [wistia remix](wistia_remix.md)	 - Operations for remix
 * [wistia search](wistia_search.md)	 - Operations for search
+* [wistia share-links](wistia_share-links.md)	 - Operations for share-links
 * [wistia stats-account](wistia_stats-account.md)	 - Operations for stats-account
 * [wistia stats-events](wistia_stats-events.md)	 - Operations for stats-events
 * [wistia stats-media](wistia_stats-media.md)	 - Operations for stats-media

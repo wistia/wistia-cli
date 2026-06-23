@@ -6,6 +6,7 @@ package sdkerrors
 import (
 	"encoding/json"
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
+	"github.com/wistia/wistia-cli/internal/sdk/models/operations"
 )
 
 // GetSearchInternalServerError - Internal server error
@@ -23,8 +24,10 @@ func (e *GetSearchInternalServerError) Error() string {
 
 // GetSearchUnauthorizedError - Unauthorized, invalid or missing token
 type GetSearchUnauthorizedError struct {
-	Error_   *string                 `json:"error,omitzero"`
-	HTTPMeta components.HTTPMetadata `json:"-"`
+	// A machine-readable identifier for the specific authorization failure.
+	Code     *operations.GetSearchCode `json:"code,omitzero"`
+	Error_   *string                   `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata   `json:"-"`
 }
 
 var _ error = &GetSearchUnauthorizedError{}
@@ -37,7 +40,9 @@ func (e *GetSearchUnauthorizedError) Error() string {
 // GetSearchBadRequestError - Bad request
 type GetSearchBadRequestError struct {
 	// Error message detailing the reason for the bad request.
-	Error_   *string                 `json:"error,omitzero"`
+	Error_ *string `json:"error,omitzero"`
+	// Array of error messages detailing the reasons for the bad request.
+	Errors   []string                `json:"errors,omitzero"`
 	HTTPMeta components.HTTPMetadata `json:"-"`
 }
 

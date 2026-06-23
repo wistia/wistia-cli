@@ -6,6 +6,7 @@ package sdkerrors
 import (
 	"encoding/json"
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
+	"github.com/wistia/wistia-cli/internal/sdk/models/operations"
 )
 
 // PostMediasMediaHashedIDCopyInternalServerError - Internal server error
@@ -62,8 +63,10 @@ func (e *PostMediasMediaHashedIDCopyForbiddenError) Error() string {
 
 // PostMediasMediaHashedIDCopyUnauthorizedError - Unauthorized, invalid or missing token
 type PostMediasMediaHashedIDCopyUnauthorizedError struct {
-	Error_   *string                 `json:"error,omitzero"`
-	HTTPMeta components.HTTPMetadata `json:"-"`
+	// A machine-readable identifier for the specific authorization failure.
+	Code     *operations.PostMediasMediaHashedIDCopyCode `json:"code,omitzero"`
+	Error_   *string                                     `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata                     `json:"-"`
 }
 
 var _ error = &PostMediasMediaHashedIDCopyUnauthorizedError{}

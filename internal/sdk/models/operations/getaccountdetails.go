@@ -8,6 +8,31 @@ import (
 	"github.com/wistia/wistia-cli/internal/sdk/sdkinternal/utils"
 )
 
+// GetAccountDetailsCode - A machine-readable identifier for the specific authorization failure.
+type GetAccountDetailsCode string
+
+const (
+	GetAccountDetailsCodeUnauthorizedCredentials GetAccountDetailsCode = "unauthorized_credentials"
+	GetAccountDetailsCodeAccountInactive         GetAccountDetailsCode = "account_inactive"
+	GetAccountDetailsCodeUnauthorizedScope       GetAccountDetailsCode = "unauthorized_scope"
+	GetAccountDetailsCodeUnauthorizedParams      GetAccountDetailsCode = "unauthorized_params"
+)
+
+func (e GetAccountDetailsCode) ToPointer() *GetAccountDetailsCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetAccountDetailsCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 // GetAccountDetailsResponseBody - An account represents a customer at Wistia. Each account can own media, folders
 // channels, etc.
 type GetAccountDetailsResponseBody struct {

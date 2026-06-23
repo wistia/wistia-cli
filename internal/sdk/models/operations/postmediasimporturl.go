@@ -29,6 +29,31 @@ func (p *PostMediasImportURLRequest) GetFolderID() *string {
 	return p.FolderID
 }
 
+// PostMediasImportURLCode - A machine-readable identifier for the specific authorization failure.
+type PostMediasImportURLCode string
+
+const (
+	PostMediasImportURLCodeUnauthorizedCredentials PostMediasImportURLCode = "unauthorized_credentials"
+	PostMediasImportURLCodeAccountInactive         PostMediasImportURLCode = "account_inactive"
+	PostMediasImportURLCodeUnauthorizedScope       PostMediasImportURLCode = "unauthorized_scope"
+	PostMediasImportURLCodeUnauthorizedParams      PostMediasImportURLCode = "unauthorized_params"
+)
+
+func (e PostMediasImportURLCode) ToPointer() *PostMediasImportURLCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *PostMediasImportURLCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 // PostMediasImportURLStatus - The status of the background job that's been queued for the request.
 type PostMediasImportURLStatus string
 
@@ -59,6 +84,8 @@ func (e *PostMediasImportURLStatus) IsExact() bool {
 type PostMediasImportURLBackgroundJobStatus struct {
 	// The ID of the background job that's been queued for the request.
 	ID int64 `json:"id"`
+	// The unguessable hashed ID of the background job. Prefer this over the numeric ID when polling for status.
+	HashedID string `json:"hashed_id"`
 	// The status of the background job that's been queued for the request.
 	Status PostMediasImportURLStatus `json:"status"`
 }
@@ -68,6 +95,13 @@ func (p *PostMediasImportURLBackgroundJobStatus) GetID() int64 {
 		return 0
 	}
 	return p.ID
+}
+
+func (p *PostMediasImportURLBackgroundJobStatus) GetHashedID() string {
+	if p == nil {
+		return ""
+	}
+	return p.HashedID
 }
 
 func (p *PostMediasImportURLBackgroundJobStatus) GetStatus() PostMediasImportURLStatus {

@@ -62,6 +62,31 @@ func (p *PostRemixesRemixHashedIDExportRequest) GetBody() *PostRemixesRemixHashe
 	return p.Body
 }
 
+// PostRemixesRemixHashedIDExportCode - A machine-readable identifier for the specific authorization failure.
+type PostRemixesRemixHashedIDExportCode string
+
+const (
+	PostRemixesRemixHashedIDExportCodeUnauthorizedCredentials PostRemixesRemixHashedIDExportCode = "unauthorized_credentials"
+	PostRemixesRemixHashedIDExportCodeAccountInactive         PostRemixesRemixHashedIDExportCode = "account_inactive"
+	PostRemixesRemixHashedIDExportCodeUnauthorizedScope       PostRemixesRemixHashedIDExportCode = "unauthorized_scope"
+	PostRemixesRemixHashedIDExportCodeUnauthorizedParams      PostRemixesRemixHashedIDExportCode = "unauthorized_params"
+)
+
+func (e PostRemixesRemixHashedIDExportCode) ToPointer() *PostRemixesRemixHashedIDExportCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *PostRemixesRemixHashedIDExportCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 // PostRemixesRemixHashedIDExportStatus - Export status.
 type PostRemixesRemixHashedIDExportStatus string
 

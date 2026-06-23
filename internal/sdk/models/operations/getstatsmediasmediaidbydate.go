@@ -50,6 +50,31 @@ func (g *GetStatsMediasMediaIDByDateRequest) GetEndDate() *types.Date {
 	return g.EndDate
 }
 
+// GetStatsMediasMediaIDByDateCode - A machine-readable identifier for the specific authorization failure.
+type GetStatsMediasMediaIDByDateCode string
+
+const (
+	GetStatsMediasMediaIDByDateCodeUnauthorizedCredentials GetStatsMediasMediaIDByDateCode = "unauthorized_credentials"
+	GetStatsMediasMediaIDByDateCodeAccountInactive         GetStatsMediasMediaIDByDateCode = "account_inactive"
+	GetStatsMediasMediaIDByDateCodeUnauthorizedScope       GetStatsMediasMediaIDByDateCode = "unauthorized_scope"
+	GetStatsMediasMediaIDByDateCodeUnauthorizedParams      GetStatsMediasMediaIDByDateCode = "unauthorized_params"
+)
+
+func (e GetStatsMediasMediaIDByDateCode) ToPointer() *GetStatsMediasMediaIDByDateCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetStatsMediasMediaIDByDateCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 type GetStatsMediasMediaIDByDateResponseBody struct {
 	Date         *types.Date `json:"date,omitzero"`
 	LoadCount    *int64      `json:"load_count,omitzero"`

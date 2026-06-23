@@ -18,6 +18,7 @@ import (
 var postRemixesRemixHashedIDContinueCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "remix-hashed-id", Shorthand: "r", FieldPath: "RemixHashedID", Kind: flagutil.FlagKindString, Required: true, Description: "The hashed ID of the current remix version to edit from. [required]"},
 	{FlagName: "instructions", Shorthand: "i", FieldPath: "Body.Instructions", Kind: flagutil.FlagKindString, Required: true, Description: "Natural language instructions for the edit (e.g., \"cut the first 10 seconds\"). [required]"},
+	{FlagName: "folder-id", Shorthand: "f", FieldPath: "Body.FolderID", Kind: flagutil.FlagKindString, Optional: true, Description: "Hashed ID of the destination folder for the exported media. Defaults to the same folder as the previous remix version's output."},
 }
 
 // initPostRemixesRemixHashedIdContinueCmd initializes the post-remixes-remix-hashed-id-continue command.
@@ -25,7 +26,7 @@ func initPostRemixesRemixHashedIdContinueCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "post-remixes-remix-hashed-id-continue",
 		Short:   "Continue Remix",
-		Long:    "Submit a follow-up edit to an existing remix. Creates a new remix version\nin the same conversation. The previous remix is preserved and can be\nreferenced later.\n\n<!--- HIDE-MCP -->\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n<!--- /HIDE-MCP -->",
+		Long:    "Submit a follow-up edit to an existing remix. Creates a new remix version\nin the same conversation. The previous remix is preserved and can be\nreferenced later.\n\nThe new remix version is automatically exported (rendered) upon completion.\nIf `folder_id` is provided, the output is exported to that folder. Otherwise,\nit defaults to the same folder as the previous remix version's output.\n\n<!--- HIDE-MCP -->\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n<!--- /HIDE-MCP -->",
 		Example: "  wistia remix post-remixes-remix-hashed-id-continue --remix-hashed-id <id> --instructions Cut the intro and add background music",
 		RunE:    runPostRemixesRemixHashedIdContinueCmd,
 		Aliases: []string{"prrhic"},

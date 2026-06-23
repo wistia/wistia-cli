@@ -24,6 +24,7 @@ import (
 	"github.com/wistia/wistia-cli/internal/cli/mediaextendedaudiodescriptions"
 	"github.com/wistia/wistia-cli/internal/cli/remix"
 	"github.com/wistia/wistia-cli/internal/cli/search"
+	"github.com/wistia/wistia-cli/internal/cli/sharelinks"
 	"github.com/wistia/wistia-cli/internal/cli/statsaccount"
 	"github.com/wistia/wistia-cli/internal/cli/statsevents"
 	"github.com/wistia/wistia-cli/internal/cli/statsmedia"
@@ -78,50 +79,41 @@ func NewRootCommand() (*cobra.Command, error) {
 	if err := uploadorimportmedia.InitUploadOrImportMediaRoot(rootCmd); err != nil {
 		return nil, fmt.Errorf("init upload-or-import-media: %w", err)
 	}
-	if err := mediaextendedaudiodescriptions.InitMediaExtendedAudioDescriptionsRoot(rootCmd); err != nil {
-		return nil, fmt.Errorf("init media-extended-audio-descriptions: %w", err)
-	}
-	if err := folders.InitFoldersRoot(rootCmd); err != nil {
-		return nil, fmt.Errorf("init folders: %w", err)
-	}
-	if err := subfolders.InitSubfoldersRoot(rootCmd); err != nil {
-		return nil, fmt.Errorf("init subfolders: %w", err)
-	}
-	if err := foldersharings.InitFolderSharingsRoot(rootCmd); err != nil {
-		return nil, fmt.Errorf("init folder-sharings: %w", err)
-	}
 	if err := media.InitMediaRoot(rootCmd); err != nil {
 		return nil, fmt.Errorf("init media: %w", err)
-	}
-	if err := taggings.InitTaggingsRoot(rootCmd); err != nil {
-		return nil, fmt.Errorf("init taggings: %w", err)
-	}
-	if err := account.InitAccountRoot(rootCmd); err != nil {
-		return nil, fmt.Errorf("init account: %w", err)
-	}
-	if err := alloweddomains.InitAllowedDomainsRoot(rootCmd); err != nil {
-		return nil, fmt.Errorf("init allowed-domains: %w", err)
-	}
-	if err := backgroundjobstatus.InitBackgroundJobStatusRoot(rootCmd); err != nil {
-		return nil, fmt.Errorf("init background-job-status: %w", err)
 	}
 	if err := customizations.InitCustomizationsRoot(rootCmd); err != nil {
 		return nil, fmt.Errorf("init customizations: %w", err)
 	}
+	if err := sharelinks.InitShareLinksRoot(rootCmd); err != nil {
+		return nil, fmt.Errorf("init share-links: %w", err)
+	}
 	if err := captions.InitCaptionsRoot(rootCmd); err != nil {
 		return nil, fmt.Errorf("init captions: %w", err)
-	}
-	if err := trims.InitTrimsRoot(rootCmd); err != nil {
-		return nil, fmt.Errorf("init trims: %w", err)
 	}
 	if err := localizations.InitLocalizationsRoot(rootCmd); err != nil {
 		return nil, fmt.Errorf("init localizations: %w", err)
 	}
+	if err := trims.InitTrimsRoot(rootCmd); err != nil {
+		return nil, fmt.Errorf("init trims: %w", err)
+	}
+	if err := mediaextendedaudiodescriptions.InitMediaExtendedAudioDescriptionsRoot(rootCmd); err != nil {
+		return nil, fmt.Errorf("init media-extended-audio-descriptions: %w", err)
+	}
 	if err := tags.InitTagsRoot(rootCmd); err != nil {
 		return nil, fmt.Errorf("init tags: %w", err)
 	}
-	if err := search.InitSearchRoot(rootCmd); err != nil {
-		return nil, fmt.Errorf("init search: %w", err)
+	if err := taggings.InitTaggingsRoot(rootCmd); err != nil {
+		return nil, fmt.Errorf("init taggings: %w", err)
+	}
+	if err := folders.InitFoldersRoot(rootCmd); err != nil {
+		return nil, fmt.Errorf("init folders: %w", err)
+	}
+	if err := foldersharings.InitFolderSharingsRoot(rootCmd); err != nil {
+		return nil, fmt.Errorf("init folder-sharings: %w", err)
+	}
+	if err := subfolders.InitSubfoldersRoot(rootCmd); err != nil {
+		return nil, fmt.Errorf("init subfolders: %w", err)
 	}
 	if err := channels.InitChannelsRoot(rootCmd); err != nil {
 		return nil, fmt.Errorf("init channels: %w", err)
@@ -129,14 +121,26 @@ func NewRootCommand() (*cobra.Command, error) {
 	if err := channelepisodes.InitChannelEpisodesRoot(rootCmd); err != nil {
 		return nil, fmt.Errorf("init channel-episodes: %w", err)
 	}
-	if err := expiringaccesstokens.InitExpiringAccessTokensRoot(rootCmd); err != nil {
-		return nil, fmt.Errorf("init expiring-access-tokens: %w", err)
-	}
 	if err := webinars.InitWebinarsRoot(rootCmd); err != nil {
 		return nil, fmt.Errorf("init webinars: %w", err)
 	}
 	if err := webinarregistrations.InitWebinarRegistrationsRoot(rootCmd); err != nil {
 		return nil, fmt.Errorf("init webinar-registrations: %w", err)
+	}
+	if err := account.InitAccountRoot(rootCmd); err != nil {
+		return nil, fmt.Errorf("init account: %w", err)
+	}
+	if err := search.InitSearchRoot(rootCmd); err != nil {
+		return nil, fmt.Errorf("init search: %w", err)
+	}
+	if err := expiringaccesstokens.InitExpiringAccessTokensRoot(rootCmd); err != nil {
+		return nil, fmt.Errorf("init expiring-access-tokens: %w", err)
+	}
+	if err := backgroundjobstatus.InitBackgroundJobStatusRoot(rootCmd); err != nil {
+		return nil, fmt.Errorf("init background-job-status: %w", err)
+	}
+	if err := alloweddomains.InitAllowedDomainsRoot(rootCmd); err != nil {
+		return nil, fmt.Errorf("init allowed-domains: %w", err)
 	}
 	if err := remix.InitRemixRoot(rootCmd); err != nil {
 		return nil, fmt.Errorf("init remix: %w", err)

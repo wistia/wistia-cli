@@ -51,6 +51,31 @@ func (p *PostFoldersIDCopyRequest) GetBody() *PostFoldersIDCopyRequestBody {
 	return p.Body
 }
 
+// PostFoldersIDCopyCode - A machine-readable identifier for the specific authorization failure.
+type PostFoldersIDCopyCode string
+
+const (
+	PostFoldersIDCopyCodeUnauthorizedCredentials PostFoldersIDCopyCode = "unauthorized_credentials"
+	PostFoldersIDCopyCodeAccountInactive         PostFoldersIDCopyCode = "account_inactive"
+	PostFoldersIDCopyCodeUnauthorizedScope       PostFoldersIDCopyCode = "unauthorized_scope"
+	PostFoldersIDCopyCodeUnauthorizedParams      PostFoldersIDCopyCode = "unauthorized_params"
+)
+
+func (e PostFoldersIDCopyCode) ToPointer() *PostFoldersIDCopyCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *PostFoldersIDCopyCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 // PostFoldersIDCopyStatus - The status of the background job that's been queued for the request.
 type PostFoldersIDCopyStatus string
 
@@ -76,53 +101,36 @@ func (e *PostFoldersIDCopyStatus) IsExact() bool {
 	return false
 }
 
-// PostFoldersIDCopyBackgroundJobStatus - A background job keeps track of the progress of an asynchronous task, e.g
+// PostFoldersIDCopyResponseBody - A background job keeps track of the progress of an asynchronous task, e.g
 // bulk archiving media, translating media, etc.
-type PostFoldersIDCopyBackgroundJobStatus struct {
+type PostFoldersIDCopyResponseBody struct {
 	// The ID of the background job that's been queued for the request.
 	ID int64 `json:"id"`
+	// The unguessable hashed ID of the background job. Prefer this over the numeric ID when polling for status.
+	HashedID string `json:"hashed_id"`
 	// The status of the background job that's been queued for the request.
 	Status PostFoldersIDCopyStatus `json:"status"`
 }
 
-func (p *PostFoldersIDCopyBackgroundJobStatus) GetID() int64 {
+func (p *PostFoldersIDCopyResponseBody) GetID() int64 {
 	if p == nil {
 		return 0
 	}
 	return p.ID
 }
 
-func (p *PostFoldersIDCopyBackgroundJobStatus) GetStatus() PostFoldersIDCopyStatus {
+func (p *PostFoldersIDCopyResponseBody) GetHashedID() string {
+	if p == nil {
+		return ""
+	}
+	return p.HashedID
+}
+
+func (p *PostFoldersIDCopyResponseBody) GetStatus() PostFoldersIDCopyStatus {
 	if p == nil {
 		return PostFoldersIDCopyStatus("")
 	}
 	return p.Status
-}
-
-// PostFoldersIDCopyResponseBody - Folder queued to be copied
-type PostFoldersIDCopyResponseBody struct {
-	// A background job keeps track of the progress of an asynchronous task, e.g
-	// bulk archiving media, translating media, etc.
-	//
-	BackgroundJobStatus *PostFoldersIDCopyBackgroundJobStatus `json:"background_job_status,omitzero"`
-}
-
-func (p PostFoldersIDCopyResponseBody) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(p, "", false)
-}
-
-func (p *PostFoldersIDCopyResponseBody) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &p, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (p *PostFoldersIDCopyResponseBody) GetBackgroundJobStatus() *PostFoldersIDCopyBackgroundJobStatus {
-	if p == nil {
-		return nil
-	}
-	return p.BackgroundJobStatus
 }
 
 type PostFoldersIDCopyResponse struct {

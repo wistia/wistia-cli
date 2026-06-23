@@ -24,6 +24,31 @@ func (g *GetStatsEventsEventKeyRequest) GetEventKey() string {
 	return g.EventKey
 }
 
+// GetStatsEventsEventKeyCode - A machine-readable identifier for the specific authorization failure.
+type GetStatsEventsEventKeyCode string
+
+const (
+	GetStatsEventsEventKeyCodeUnauthorizedCredentials GetStatsEventsEventKeyCode = "unauthorized_credentials"
+	GetStatsEventsEventKeyCodeAccountInactive         GetStatsEventsEventKeyCode = "account_inactive"
+	GetStatsEventsEventKeyCodeUnauthorizedScope       GetStatsEventsEventKeyCode = "unauthorized_scope"
+	GetStatsEventsEventKeyCodeUnauthorizedParams      GetStatsEventsEventKeyCode = "unauthorized_params"
+)
+
+func (e GetStatsEventsEventKeyCode) ToPointer() *GetStatsEventsEventKeyCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetStatsEventsEventKeyCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 type GetStatsEventsEventKeyThumbnail struct {
 	URL         *string `json:"url,omitzero"`
 	Width       *int64  `json:"width,omitzero"`
@@ -263,6 +288,10 @@ func (g *GetStatsEventsEventKeyUserAgentDetails) GetMobile() *bool {
 	return g.Mobile
 }
 
+// GetStatsEventsEventKeyAttributes - Raw event attributes returned by the underlying analytics store. The keys mirror the top-level event fields.
+type GetStatsEventsEventKeyAttributes struct {
+}
+
 // GetStatsEventsEventKeyResponseBody - Successful response with the details of a single event.
 type GetStatsEventsEventKeyResponseBody struct {
 	// Date and time when the event occurred.
@@ -306,6 +335,8 @@ type GetStatsEventsEventKeyResponseBody struct {
 	ConversionData *GetStatsEventsEventKeyConversionData `json:"conversion_data,omitzero"`
 	// Details about the user agent of the viewer.
 	UserAgentDetails *GetStatsEventsEventKeyUserAgentDetails `json:"user_agent_details,omitzero"`
+	// Raw event attributes returned by the underlying analytics store. The keys mirror the top-level event fields.
+	Attributes *GetStatsEventsEventKeyAttributes `json:"attributes,omitzero"`
 }
 
 func (g GetStatsEventsEventKeyResponseBody) MarshalJSON() ([]byte, error) {
@@ -464,6 +495,13 @@ func (g *GetStatsEventsEventKeyResponseBody) GetUserAgentDetails() *GetStatsEven
 		return nil
 	}
 	return g.UserAgentDetails
+}
+
+func (g *GetStatsEventsEventKeyResponseBody) GetAttributes() *GetStatsEventsEventKeyAttributes {
+	if g == nil {
+		return nil
+	}
+	return g.Attributes
 }
 
 type GetStatsEventsEventKeyResponse struct {

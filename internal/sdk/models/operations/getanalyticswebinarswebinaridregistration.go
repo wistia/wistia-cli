@@ -102,6 +102,31 @@ func (g *GetAnalyticsWebinarsWebinarIDRegistrationRequest) GetPostEventEndDate()
 	return g.PostEventEndDate
 }
 
+// GetAnalyticsWebinarsWebinarIDRegistrationCode - A machine-readable identifier for the specific authorization failure.
+type GetAnalyticsWebinarsWebinarIDRegistrationCode string
+
+const (
+	GetAnalyticsWebinarsWebinarIDRegistrationCodeUnauthorizedCredentials GetAnalyticsWebinarsWebinarIDRegistrationCode = "unauthorized_credentials"
+	GetAnalyticsWebinarsWebinarIDRegistrationCodeAccountInactive         GetAnalyticsWebinarsWebinarIDRegistrationCode = "account_inactive"
+	GetAnalyticsWebinarsWebinarIDRegistrationCodeUnauthorizedScope       GetAnalyticsWebinarsWebinarIDRegistrationCode = "unauthorized_scope"
+	GetAnalyticsWebinarsWebinarIDRegistrationCodeUnauthorizedParams      GetAnalyticsWebinarsWebinarIDRegistrationCode = "unauthorized_params"
+)
+
+func (e GetAnalyticsWebinarsWebinarIDRegistrationCode) ToPointer() *GetAnalyticsWebinarsWebinarIDRegistrationCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetAnalyticsWebinarsWebinarIDRegistrationCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 type GetAnalyticsWebinarsWebinarIDRegistrationResponseBody struct {
 	// The start of the time bucket in ISO 8601 format.
 	Timestamp *time.Time `json:"timestamp,omitzero"`

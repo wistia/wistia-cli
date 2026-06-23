@@ -60,6 +60,31 @@ func (p *PostMediasMediaHashedIDTranslateRequest) GetBody() *PostMediasMediaHash
 	return p.Body
 }
 
+// PostMediasMediaHashedIDTranslateCode - A machine-readable identifier for the specific authorization failure.
+type PostMediasMediaHashedIDTranslateCode string
+
+const (
+	PostMediasMediaHashedIDTranslateCodeUnauthorizedCredentials PostMediasMediaHashedIDTranslateCode = "unauthorized_credentials"
+	PostMediasMediaHashedIDTranslateCodeAccountInactive         PostMediasMediaHashedIDTranslateCode = "account_inactive"
+	PostMediasMediaHashedIDTranslateCodeUnauthorizedScope       PostMediasMediaHashedIDTranslateCode = "unauthorized_scope"
+	PostMediasMediaHashedIDTranslateCodeUnauthorizedParams      PostMediasMediaHashedIDTranslateCode = "unauthorized_params"
+)
+
+func (e PostMediasMediaHashedIDTranslateCode) ToPointer() *PostMediasMediaHashedIDTranslateCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *PostMediasMediaHashedIDTranslateCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
 // PostMediasMediaHashedIDTranslateStatus - The status of the background job that's been queued for the request.
 type PostMediasMediaHashedIDTranslateStatus string
 
@@ -90,6 +115,8 @@ func (e *PostMediasMediaHashedIDTranslateStatus) IsExact() bool {
 type PostMediasMediaHashedIDTranslateBackgroundJobStatus struct {
 	// The ID of the background job that's been queued for the request.
 	ID int64 `json:"id"`
+	// The unguessable hashed ID of the background job. Prefer this over the numeric ID when polling for status.
+	HashedID string `json:"hashed_id"`
 	// The status of the background job that's been queued for the request.
 	Status PostMediasMediaHashedIDTranslateStatus `json:"status"`
 }
@@ -99,6 +126,13 @@ func (p *PostMediasMediaHashedIDTranslateBackgroundJobStatus) GetID() int64 {
 		return 0
 	}
 	return p.ID
+}
+
+func (p *PostMediasMediaHashedIDTranslateBackgroundJobStatus) GetHashedID() string {
+	if p == nil {
+		return ""
+	}
+	return p.HashedID
 }
 
 func (p *PostMediasMediaHashedIDTranslateBackgroundJobStatus) GetStatus() PostMediasMediaHashedIDTranslateStatus {

@@ -22,6 +22,63 @@ func (d *DeleteWebinarsIDRequest) GetID() string {
 	return d.ID
 }
 
+// DeleteWebinarsIDCode - A machine-readable identifier for the specific authorization failure.
+type DeleteWebinarsIDCode string
+
+const (
+	DeleteWebinarsIDCodeUnauthorizedCredentials DeleteWebinarsIDCode = "unauthorized_credentials"
+	DeleteWebinarsIDCodeAccountInactive         DeleteWebinarsIDCode = "account_inactive"
+	DeleteWebinarsIDCodeUnauthorizedScope       DeleteWebinarsIDCode = "unauthorized_scope"
+	DeleteWebinarsIDCodeUnauthorizedParams      DeleteWebinarsIDCode = "unauthorized_params"
+)
+
+func (e DeleteWebinarsIDCode) ToPointer() *DeleteWebinarsIDCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *DeleteWebinarsIDCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "unauthorized_credentials", "account_inactive", "unauthorized_scope", "unauthorized_params":
+			return true
+		}
+	}
+	return false
+}
+
+type DeleteWebinarsIDFolder struct {
+	// A unique alphanumeric identifier for the record.
+	ID string `json:"id"`
+	// A URL for fetching all the records of the given record type. You can pass hashed_ids as a param with multiple values
+	// to do a batch fetch for this records type.
+	//
+	IndexURL string `json:"index_url"`
+	// A URL that can be used to fetch this record.
+	URL string `json:"url"`
+}
+
+func (d *DeleteWebinarsIDFolder) GetID() string {
+	if d == nil {
+		return ""
+	}
+	return d.ID
+}
+
+func (d *DeleteWebinarsIDFolder) GetIndexURL() string {
+	if d == nil {
+		return ""
+	}
+	return d.IndexURL
+}
+
+func (d *DeleteWebinarsIDFolder) GetURL() string {
+	if d == nil {
+		return ""
+	}
+	return d.URL
+}
+
 // DeleteWebinarsIDResponseBody - A webinar is an event which allows you to stream a video
 // to multiple participants. See our [Webinars Guide](https://support.wistia.com/en/articles/8288501-getting-started-with-webinars)
 // for more info.
@@ -36,6 +93,8 @@ type DeleteWebinarsIDResponseBody struct {
 	ScheduledFor optionalnullable.OptionalNullable[time.Time] `json:"scheduled_for,omitzero"`
 	// Duration of the webinar in minutes
 	EventDuration optionalnullable.OptionalNullable[int64] `json:"event_duration,omitzero"`
+	// The IANA time zone identifier the webinar is scheduled in
+	TimeZone string `json:"time_zone"`
 	// Current lifecycle status of the event
 	LifecycleStatus string `json:"lifecycle_status"`
 	// Registration status of the event
@@ -50,6 +109,10 @@ type DeleteWebinarsIDResponseBody struct {
 	HostLink string `json:"host_link"`
 	// Link for panelists to join the event
 	PanelistLink string `json:"panelist_link"`
+	// The folder (project) this webinar belongs to
+	Folder optionalnullable.OptionalNullable[DeleteWebinarsIDFolder] `json:"folder,omitzero"`
+	// A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+	Cursor optionalnullable.OptionalNullable[string] `json:"cursor,omitzero"`
 }
 
 func (d DeleteWebinarsIDResponseBody) MarshalJSON() ([]byte, error) {
@@ -96,6 +159,13 @@ func (d *DeleteWebinarsIDResponseBody) GetEventDuration() optionalnullable.Optio
 		return nil
 	}
 	return d.EventDuration
+}
+
+func (d *DeleteWebinarsIDResponseBody) GetTimeZone() string {
+	if d == nil {
+		return ""
+	}
+	return d.TimeZone
 }
 
 func (d *DeleteWebinarsIDResponseBody) GetLifecycleStatus() string {
@@ -145,6 +215,20 @@ func (d *DeleteWebinarsIDResponseBody) GetPanelistLink() string {
 		return ""
 	}
 	return d.PanelistLink
+}
+
+func (d *DeleteWebinarsIDResponseBody) GetFolder() optionalnullable.OptionalNullable[DeleteWebinarsIDFolder] {
+	if d == nil {
+		return nil
+	}
+	return d.Folder
+}
+
+func (d *DeleteWebinarsIDResponseBody) GetCursor() optionalnullable.OptionalNullable[string] {
+	if d == nil {
+		return nil
+	}
+	return d.Cursor
 }
 
 type DeleteWebinarsIDResponse struct {

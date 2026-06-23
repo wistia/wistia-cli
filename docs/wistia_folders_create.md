@@ -28,7 +28,7 @@ wistia folders create [flags]
       --body string          Request body as JSON (alternative to individual flags). Can also be provided via stdin.
   -h, --help                 help for create
   -n, --name string          The name of the folder you want to create.
-  -p, --public string        JSON value (one of: post_folders_public_enum | boolean)
+  -p, --public               A flag indicating whether or not the folder is enabled for public access.
 ```
 
 ### Options inherited from parent commands
