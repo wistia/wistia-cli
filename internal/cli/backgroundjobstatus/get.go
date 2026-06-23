@@ -16,7 +16,7 @@ import (
 )
 
 var getCmdMeta = []flagutil.FlagMeta{
-	{FlagName: "background-job-status-id", Shorthand: "b", FieldPath: "BackgroundJobStatusID", Kind: flagutil.FlagKindString, Required: true, Description: "The hashed ID or numeric ID of the background job [required]"},
+	{FlagName: "background-job-status-id", Shorthand: "b", FieldPath: "BackgroundJobStatusID", Kind: flagutil.FlagKindInt64, Required: true, Description: "The numeric ID of the background job [required]"},
 }
 
 // initGetCmd initializes the get command.

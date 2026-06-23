@@ -1,7 +1,7 @@
 openapi: 3.1.1
 info:
   title: Data API
-  version: edge-version
+  version: 2026.05.0
   description: Wistia Data API
 paths:
   /:
@@ -572,29 +572,9 @@ paths:
       x-speakeasy-name-override: list
       x-wistia-mcp-tool-name: get-medias
       x-wistia-mcp-description: >
-        List, browse, or fetch media records (videos and audio files) in the account.
+        Lists the media belonging to the account. This endpoint can also be used to
 
-        Use this when someone wants a page of media, all media in a known folder, exact-name
-
-        or exact-ID lookup, or structured filtering by folder, media type, tags, archived status,
-
-        sorting, or pagination. Do not use this as the first step for keyword, topic, title,
-
-        description, or transcript search; use the `search` tool for those content-finding
-
-        requests, then use get-medias only if you need exact media records by hashed_id.
-
-        For "all" or "how many" requests with structured filters, use `per_page: 100` and
-
-        continue with `page` or `cursor` pagination while more results may exist. The default
-
-        page size is 10, so never treat an unpaginated first response as a complete total.
-
-        Returns a list of media records. In MCP responses, `per_page` is only the requested
-
-        limit; use `returned_count` or the actual `content` length as the number of records
-
-        returned in that response.
+        do a batch fetch based off of the hashed id.
 
   /medias/{mediaHashedId}:
     get:
@@ -1143,23 +1123,11 @@ paths:
         destructive_hint: true
         destructive_hint_justification: >-
           Updating replaces existing values and the previous data cannot be recovered.
-        idempotent_hint: true
-        idempotent_hint_justification: >-
-          Re-sending the same update with identical attributes leaves the resource in the same state, so repeating the request has no additional effect.
       x-speakeasy-group: media
       x-speakeasy-name-override: update
       x-wistia-mcp-tool-name: update-media
-      x-wistia-mcp-description: >
-        Update, edit, change, or rename the attributes of a media (a video or audio file) by
-
-        hashed_id. Use this when someone wants to change a video or audio file's name,
-
-        description, tags, or thumbnail/still image. Note that supplying tags replaces all
-
-        existing tags. This edits metadata only — to replace the underlying file use swap-media,
-
-        and to relocate it use move-media.
-
+      x-wistia-mcp-description: |
+        Updates the attributes on a media.
     delete:
       summary: Delete Media
       description: |
@@ -1343,15 +1311,8 @@ paths:
       x-speakeasy-group: media
       x-speakeasy-name-override: delete
       x-wistia-mcp-tool-name: delete-media
-      x-wistia-mcp-description: >
-        Permanently delete a media (a video or audio file) from the account by its hashed_id.
-
-        Use this when someone wants to delete, remove, trash, or destroy a video or audio file
-
-        for good. This cannot be undone — to remove media reversibly use archive-media (and
-
-        restore-media to bring it back), or move-media to relocate it instead.
-
+      x-wistia-mcp-description: |
+        Deletes a media.
   /medias/{mediaHashedId}/copy:
     post:
       summary: Copy Media
@@ -1603,17 +1564,7 @@ paths:
       x-speakeasy-name-override: copy
       x-wistia-mcp-tool-name: copy-media
       x-wistia-mcp-description: >
-        Copy, duplicate, or clone a single media (a video or audio file) and its assets by
-
-        hashed_id, optionally into a destination folder and optionally assigning a new owner.
-
-        Use this when someone wants to duplicate one video or audio file. Defaults the
-
-        destination to the source media's current folder and the owner to the source media's
-
-        owner when omitted. To copy many medias at once use bulk-copy-media; to relocate without
-
-        duplicating use move-media.
+        This endpoint copies a media and its assets to a destination folder (defaults to source media).
 
   /medias/{mediaHashedId}/swap:
     put:
@@ -1759,9 +1710,6 @@ paths:
                       id:
                         type: integer
                         description: The ID of the background job that's been queued for the request.
-                      hashed_id:
-                        type: string
-                        description: The unguessable hashed ID of the background job. Prefer this over the numeric ID when polling for status.
                       status:
                         type: string
                         enum:
@@ -1772,7 +1720,6 @@ paths:
                         description: The status of the background job that's been queued for the request.
                     required:
                       - id
-                      - hashed_id
                       - status
                     description: |
                       A background job keeps track of the progress of an asynchronous task, e.g
@@ -1859,17 +1806,7 @@ paths:
       x-speakeasy-name-override: swap
       x-wistia-mcp-tool-name: swap-media
       x-wistia-mcp-description: >
-        Swap or replace the underlying file of one media (a video or audio file) with another,
-
-        by hashed_id. Use this when someone wants to replace a video or audio file's content while
-
-        keeping its existing embed code, URLs, and hashed_id intact (replacement must be the same
-
-        media type). Runs asynchronously, returning a background_job_status to poll. Unlike
-
-        copy-media this does not create a new media, and unlike update-media it changes the actual
-
-        file rather than just metadata.
+        Swap one media with another media. This operation queues a background job to replace the original media with the replacement media while preserving the original media's hashed ID and URLs.
 
   /medias/{mediaHashedId}/stats:
     get:
@@ -2017,15 +1954,8 @@ paths:
       x-speakeasy-group: media
       x-speakeasy-name-override: getStats
       x-wistia-mcp-tool-name: show-media-aggregated-stats
-      x-wistia-mcp-description: >
-        Get aggregated viewing stats, analytics, and metrics for a single media (a video or audio
-
-        file) embedded on your site, by its hashed_id. Use this when someone wants the plays,
-
-        views, visitors, page loads, play rate, or average percent watched / engagement for one
-
-        video. Returns aggregated totals, not per-visitor or time-series data.
-
+      x-wistia-mcp-description: |
+        Aggregated tracking statistics for a video embedded on your site.
   /medias/{mediaHashedId}/translate:
     post:
       summary: Translate Media
@@ -2083,9 +2013,6 @@ paths:
                       id:
                         type: integer
                         description: The ID of the background job that's been queued for the request.
-                      hashed_id:
-                        type: string
-                        description: The unguessable hashed ID of the background job. Prefer this over the numeric ID when polling for status.
                       status:
                         type: string
                         enum:
@@ -2096,7 +2023,6 @@ paths:
                         description: The status of the background job that's been queued for the request.
                     required:
                       - id
-                      - hashed_id
                       - status
                     description: |
                       A background job keeps track of the progress of an asynchronous task, e.g
@@ -2199,19 +2125,8 @@ paths:
       x-speakeasy-group: media
       x-speakeasy-name-override: translate
       x-wistia-mcp-tool-name: translate-media
-      x-wistia-mcp-description: >
-        Translate the transcript or captions of a media (a video or audio file) into another
-
-        language by hashed_id. Use this when someone wants to translate, localize, or generate
-
-        foreign-language captions/subtitles for a video's transcript. Specify a target_language
-
-        (and optional source_language) as a 3-character IETF language code. Runs asynchronously,
-
-        returning a background_job_status to poll; adds a new translated transcript without
-
-        modifying existing ones.
-
+      x-wistia-mcp-description: |
+        Translates the transcript for a media.
   /medias/import_url:
     post:
       summary: Import Media from URL
@@ -2276,9 +2191,6 @@ paths:
                       id:
                         type: integer
                         description: The ID of the background job that's been queued for the request.
-                      hashed_id:
-                        type: string
-                        description: The unguessable hashed ID of the background job. Prefer this over the numeric ID when polling for status.
                       status:
                         type: string
                         enum:
@@ -2289,7 +2201,6 @@ paths:
                         description: The status of the background job that's been queued for the request.
                     required:
                       - id
-                      - hashed_id
                       - status
                     description: |
                       A background job keeps track of the progress of an asynchronous task, e.g
@@ -2392,22 +2303,6 @@ paths:
       x-speakeasy-group: media
       x-speakeasy-name-override: importUrl
       x-cli-action-override: import
-      x-wistia-mcp-tool-name: import-media-from-url
-      x-wistia-mcp-description: >
-        Import or upload a media (a video or audio file) into the account from a publicly
-
-        accessible URL. Use this when someone wants to import, upload, ingest, or add a video
-
-        or audio file from a remote link. The import runs asynchronously in the background and
-
-        returns a background_job_status to poll for progress rather than a Media object. The URL
-
-        must be publicly fetchable by Wistia's servers; some domains (e.g. vimeo.com, wistia.com)
-
-        are not permitted. If no folder_id is given, a new "Untitled Folder" is created to hold
-
-        the imported media.
-
   /medias/archive:
     put:
       summary: Archive Media
@@ -2456,9 +2351,6 @@ paths:
                       id:
                         type: integer
                         description: The ID of the background job that's been queued for the request.
-                      hashed_id:
-                        type: string
-                        description: The unguessable hashed ID of the background job. Prefer this over the numeric ID when polling for status.
                       status:
                         type: string
                         enum:
@@ -2469,7 +2361,6 @@ paths:
                         description: The status of the background job that's been queued for the request.
                     required:
                       - id
-                      - hashed_id
                       - status
                     description: |
                       A background job keeps track of the progress of an asynchronous task, e.g
@@ -2536,26 +2427,11 @@ paths:
         destructive_hint: true
         destructive_hint_justification: >-
           Archiving removes media from normal use and is only reversible by manually restoring.
-        idempotent_hint: true
-        idempotent_hint_justification: >-
-          Archiving media that is already archived is a no-op, so repeating the request has no additional effect.
       x-speakeasy-group: media
       x-speakeasy-name-override: archive
       x-wistia-mcp-tool-name: archive-media
       x-wistia-mcp-description: >
-        Archive one or more medias (videos or audio files) by hashed_id. Use this when
-
-        someone wants to archive, soft-delete, deactivate, or temporarily remove videos or
-
-        audio without losing them. Archiving is reversible — use restore-media to bring
-
-        archived media back, unlike delete-media which is permanent. Accepts up to 100 medias
-
-        per request and processes asynchronously, returning a background_job_status to poll
-
-        rather than a Media object. Webinar medias and Soapbox videos imported before
-
-        September 1, 2023 cannot be archived.
+        This method accepts a list of up to 100 medias to archive per request. It processes requests asynchronously and will return a background_job_status object rather than the typical Media response object. Note that webinar medias and Soapbox videos imported to Wistia before September 1, 2023 cannot be archived.
 
   /medias/move:
     put:
@@ -2618,9 +2494,6 @@ paths:
                       id:
                         type: integer
                         description: The ID of the background job that's been queued for the request.
-                      hashed_id:
-                        type: string
-                        description: The unguessable hashed ID of the background job. Prefer this over the numeric ID when polling for status.
                       status:
                         type: string
                         enum:
@@ -2631,7 +2504,6 @@ paths:
                         description: The status of the background job that's been queued for the request.
                     required:
                       - id
-                      - hashed_id
                       - status
                     description: |
                       A background job keeps track of the progress of an asynchronous task, e.g
@@ -2653,9 +2525,6 @@ paths:
                       id:
                         type: integer
                         description: The ID of the background job that's been queued for the request.
-                      hashed_id:
-                        type: string
-                        description: The unguessable hashed ID of the background job. Prefer this over the numeric ID when polling for status.
                       status:
                         type: string
                         enum:
@@ -2666,7 +2535,6 @@ paths:
                         description: The status of the background job that's been queued for the request.
                     required:
                       - id
-                      - hashed_id
                       - status
                     description: |
                       A background job keeps track of the progress of an asynchronous task, e.g
@@ -2759,24 +2627,23 @@ paths:
         destructive_hint: true
         destructive_hint_justification: >-
           Moving changes the media's folder and the prior location is not preserved.
-        idempotent_hint: true
-        idempotent_hint_justification: >-
-          Moving media to the same destination folder is a no-op on repeat, so the request has no additional effect.
       x-speakeasy-group: media
       x-speakeasy-name-override: move
       x-wistia-mcp-tool-name: move-media
       x-wistia-mcp-description: >
-        Move or relocate one or many medias (videos or audio files) to a different folder, and
+        Move one or many media to a different folder and optionally to a specific subfolder.
 
-        optionally into a specific subfolder, by their hashed_ids. Use this when someone wants to
+        Max 100 media per request, and max 10 requests in 5 minutes.
 
-        move, relocate, or reorganize videos or audio files between folders without duplicating
+        Note: this is a different rate limit than applies to the rest of the api!
 
-        them. Max 100 medias per request, with a separate rate limit of 10 requests per 5 minutes.
 
-        Runs asynchronously, returning a background_job_status to poll. To duplicate instead of
+        If a subfolder_id is provided, media will be moved to that subfolder. The subfolder
 
-        relocating use copy-media or bulk-copy-media.
+        must belong to the specified folder.
+
+
+        Returns a Background Job as the move is async.
 
   /medias/restore:
     put:
@@ -2843,9 +2710,6 @@ paths:
                       id:
                         type: integer
                         description: The ID of the background job that's been queued for the request.
-                      hashed_id:
-                        type: string
-                        description: The unguessable hashed ID of the background job. Prefer this over the numeric ID when polling for status.
                       status:
                         type: string
                         enum:
@@ -2856,7 +2720,6 @@ paths:
                         description: The status of the background job that's been queued for the request.
                     required:
                       - id
-                      - hashed_id
                       - status
                     description: |
                       A background job keeps track of the progress of an asynchronous task, e.g
@@ -2939,22 +2802,11 @@ paths:
         destructive_hint: true
         destructive_hint_justification: >-
           Restoring changes the media's state from archived back to active. The archived state is lost and is only recoverable by archiving again.
-        idempotent_hint: true
-        idempotent_hint_justification: >-
-          Restoring media that is already active is a no-op, so repeating the request has no additional effect.
       x-speakeasy-group: media
       x-speakeasy-name-override: restore
       x-wistia-mcp-tool-name: restore-media
       x-wistia-mcp-description: >
-        Restore, unarchive, or reactivate previously archived medias (videos or audio files) by
-
-        hashed_id, placing them back into a folder. Use this when someone wants to bring archived
-
-        videos or audio files back into the account — the reverse of archive-media. Accepts up to
-
-        100 medias per request and processes asynchronously, returning a background_job_status to
-
-        poll rather than a Media object. The account must have access to the Archiving feature.
+        Restores archived medias to your account. This method accepts a list of up to 100 medias to restore per request. It processes requests asynchronously and will return a background_job_status object rather than the typical Media response object. Your account must have access to the Archiving feature to use this method.
 
   /medias/copy:
     put:
@@ -3023,9 +2875,6 @@ paths:
                       id:
                         type: integer
                         description: The ID of the background job that's been queued for the request.
-                      hashed_id:
-                        type: string
-                        description: The unguessable hashed ID of the background job. Prefer this over the numeric ID when polling for status.
                       status:
                         type: string
                         enum:
@@ -3036,7 +2885,6 @@ paths:
                         description: The status of the background job that's been queued for the request.
                     required:
                       - id
-                      - hashed_id
                       - status
                     description: |
                       A background job keeps track of the progress of an asynchronous task, e.g
@@ -3109,19 +2957,10 @@ paths:
       x-speakeasy-name-override: bulkCopy
       x-wistia-mcp-tool-name: bulk-copy-media
       x-wistia-mcp-description: >
-        Copy, duplicate, or clone multiple medias (videos or audio files) at once into a
+        This method accepts a list of medias to copy to a destination folder. It processes requests asynchronously and will return a background_job_status object rather than the typical Media response object.
 
-        destination folder by their hashed_ids. Use this when someone wants to batch-copy or
 
-        bulk-duplicate several videos or audio files to another folder. Each media is duplicated
-
-        and the copy placed in the specified destination folder; originals are unaffected.
-
-        Processes asynchronously, returning a background_job_status to poll rather than a Media
-
-        object. For copying a single media use copy-media; to relocate without duplicating use
-
-        move-media.
+        Each media will be duplicated and the copy will be placed in the specified destination folder. The original media files will not be affected.
 
   /medias/{mediaId}/customizations:
     get:
@@ -4561,478 +4400,6 @@ paths:
       x-wistia-mcp-description: >
         Deletes all explicit customizations for a video, making it act as if it has never been customized.
 
-  /medias/{mediaId}/share_link:
-    get:
-      summary: Show share link
-      description: |
-        Fetches the share link for a single media. If the media does not have a
-        share link yet, one is created on first request with a default
-        visibility derived from the parent folder.
-
-        ## Requires api token with one of the following permissions
-        ```
-        Read all folder and media data
-        ```
-      tags:
-        - Share Links
-      security:
-        - BearerAuth: []
-      parameters:
-        - name: mediaId
-          in: path
-          description: The hashed ID of the media.
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: Successful response
-          content:
-            application/json:
-              schema:
-                type: object
-                unevaluatedProperties: false
-                properties:
-                  id:
-                    type: string
-                    description: The hashed ID of the share link. This appears in the link's URL.
-                  media_id:
-                    type: string
-                    description: The hashed ID of the media this share link points to.
-                  url:
-                    type: string
-                    format: uri
-                    description: The full URL viewers can use to view the media via this share link.
-                  visibility:
-                    type: string
-                    enum:
-                      - unlocked
-                      - account
-                      - locked
-                      - domain_verified
-                    description: |
-                      Controls who can view the media via this share link.
-
-                      - `unlocked`: anyone with the link can view the media.
-                      - `account`: only signed-in members of the media's account can view.
-                      - `locked`: only contacts with access to the media's folder can view.
-                      - `domain_verified`: only viewers signed in with an email address at a
-                        domain verified on the media's account can view. Requires the account
-                        to be enrolled in the domain validation gate; otherwise setting this
-                        value returns 400.
-                  created_at:
-                    type: string
-                    format: date-time
-                    description: When the share link was created.
-                  updated_at:
-                    type: string
-                    format: date-time
-                    description: When the share link was last updated.
-                required:
-                  - id
-                  - media_id
-                  - url
-                  - visibility
-                  - created_at
-                  - updated_at
-                description: |
-                  A shareable link for a single media. Each media can have at most one
-                  share link, and the link's `visibility` controls who can view the
-                  media when visiting the link.
-        "401":
-          description: Unauthorized, invalid or missing token
-          content:
-            application/json:
-              schema:
-                type: object
-                unevaluatedProperties: false
-                properties:
-                  code:
-                    type: string
-                    enum:
-                      - unauthorized_credentials
-                      - account_inactive
-                      - unauthorized_scope
-                      - unauthorized_params
-                    description: A machine-readable identifier for the specific authorization failure.
-                  error:
-                    type: string
-                    examples:
-                      - Invalid credentials.
-        "403":
-          description: Forbidden, token is valid but account does not have access to feature
-          content:
-            application/json:
-              schema:
-                type: object
-                unevaluatedProperties: false
-                properties:
-                  error:
-                    type: string
-                    examples:
-                      - Webinars are not available on your current plan
-        "404":
-          description: Resource not found
-          content:
-            application/json:
-              schema:
-                type: object
-                unevaluatedProperties: false
-                properties:
-                  error:
-                    type: string
-                    examples:
-                      - Folder with ID 'fakeid' not found.
-        "500":
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                type: object
-                unevaluatedProperties: false
-                properties:
-                  error:
-                    type: string
-                    examples:
-                      - Internal server error
-      x-wistia-mcp-annotations:
-        read_only_hint: false
-        read_only_hint_justification: >-
-          This tool returns the existing share link for a media, but auto-provisions one with a default visibility derived from the parent folder if none exists yet.
-        open_world_hint: false
-        open_world_hint_justification: >-
-          This tool only operates on records inside the account and does not reach external services.
-        destructive_hint: false
-        destructive_hint_justification: >-
-          This tool only reads or creates a share link; it never modifies an existing one.
-      x-speakeasy-group: shareLinks
-      x-speakeasy-name-override: get
-      x-wistia-mcp-tool-name: show-media-share-link
-      x-wistia-mcp-description: >
-        Show, get, or fetch the share link for a single media — the shareable public
-
-        URL for a video or audio file. If the media has no share link yet, one is
-
-        auto-created on first request with a default visibility derived from the
-
-        parent folder. Use this when someone wants the public sharing URL for a
-
-        media. To change its visibility use update-media-share-link, or
-
-        delete-media-share-link to revoke it.
-
-    put:
-      summary: Update share link
-      description: |
-        Updates the share link for a single media. If the media does not have a
-        share link yet, one is created with the supplied visibility.
-
-        ## Requires api token with one of the following permissions
-        ```
-        Read, update & delete anything
-        ```
-      tags:
-        - Share Links
-      security:
-        - BearerAuth: []
-      parameters:
-        - name: mediaId
-          in: path
-          description: The hashed ID of the media.
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              unevaluatedProperties: false
-              properties:
-                visibility:
-                  type: string
-                  enum:
-                    - unlocked
-                    - account
-                    - locked
-                    - domain_verified
-                  description: |
-                    Controls who can view the media via this share link.
-
-                    - `unlocked`: anyone with the link can view the media.
-                    - `account`: only signed-in members of the media's account can view.
-                    - `locked`: only contacts with access to the media's folder can view.
-                    - `domain_verified`: only viewers signed in with an email address at a
-                      domain verified on the media's account can view. Requires the account
-                      to be enrolled in the domain validation gate; otherwise setting this
-                      value returns 400.
-              required:
-                - visibility
-              description: Fields that can be set when updating a share link.
-        required: true
-      responses:
-        "200":
-          description: Share link update successful
-          content:
-            application/json:
-              schema:
-                type: object
-                unevaluatedProperties: false
-                properties:
-                  id:
-                    type: string
-                    description: The hashed ID of the share link. This appears in the link's URL.
-                  media_id:
-                    type: string
-                    description: The hashed ID of the media this share link points to.
-                  url:
-                    type: string
-                    format: uri
-                    description: The full URL viewers can use to view the media via this share link.
-                  visibility:
-                    type: string
-                    enum:
-                      - unlocked
-                      - account
-                      - locked
-                      - domain_verified
-                    description: |
-                      Controls who can view the media via this share link.
-
-                      - `unlocked`: anyone with the link can view the media.
-                      - `account`: only signed-in members of the media's account can view.
-                      - `locked`: only contacts with access to the media's folder can view.
-                      - `domain_verified`: only viewers signed in with an email address at a
-                        domain verified on the media's account can view. Requires the account
-                        to be enrolled in the domain validation gate; otherwise setting this
-                        value returns 400.
-                  created_at:
-                    type: string
-                    format: date-time
-                    description: When the share link was created.
-                  updated_at:
-                    type: string
-                    format: date-time
-                    description: When the share link was last updated.
-                required:
-                  - id
-                  - media_id
-                  - url
-                  - visibility
-                  - created_at
-                  - updated_at
-                description: |
-                  A shareable link for a single media. Each media can have at most one
-                  share link, and the link's `visibility` controls who can view the
-                  media when visiting the link.
-        "400":
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                type: object
-                unevaluatedProperties: false
-                properties:
-                  error:
-                    type: string
-                    examples:
-                      - Bad request
-                    description: Error message detailing the reason for the bad request.
-                  errors:
-                    type: array
-                    items:
-                      type: string
-                    description: Array of error messages detailing the reasons for the bad request.
-        "401":
-          description: Unauthorized, invalid or missing token
-          content:
-            application/json:
-              schema:
-                type: object
-                unevaluatedProperties: false
-                properties:
-                  code:
-                    type: string
-                    enum:
-                      - unauthorized_credentials
-                      - account_inactive
-                      - unauthorized_scope
-                      - unauthorized_params
-                    description: A machine-readable identifier for the specific authorization failure.
-                  error:
-                    type: string
-                    examples:
-                      - Invalid credentials.
-        "403":
-          description: Forbidden, token is valid but account does not have access to feature
-          content:
-            application/json:
-              schema:
-                type: object
-                unevaluatedProperties: false
-                properties:
-                  error:
-                    type: string
-                    examples:
-                      - Webinars are not available on your current plan
-        "404":
-          description: Resource not found
-          content:
-            application/json:
-              schema:
-                type: object
-                unevaluatedProperties: false
-                properties:
-                  error:
-                    type: string
-                    examples:
-                      - Folder with ID 'fakeid' not found.
-        "500":
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                type: object
-                unevaluatedProperties: false
-                properties:
-                  error:
-                    type: string
-                    examples:
-                      - Internal server error
-      x-wistia-mcp-annotations:
-        read_only_hint: false
-        read_only_hint_justification: >-
-          This tool updates the share link's visibility (or creates the link if none exists), which modifies who can view the media.
-        open_world_hint: false
-        open_world_hint_justification: >-
-          This tool only operates on records inside the account and does not reach external services.
-        destructive_hint: true
-        destructive_hint_justification: >-
-          Changing visibility can broaden or restrict who can view the media via the link.
-        idempotent_hint: true
-        idempotent_hint_justification: >-
-          Re-sending the same share link settings leaves the link in the same state, so repeating the request has no additional effect.
-      x-speakeasy-group: shareLinks
-      x-speakeasy-name-override: update
-      x-wistia-mcp-tool-name: update-media-share-link
-      x-wistia-mcp-description: >
-        Update, edit, or change the visibility of a media's share link — the
-
-        shareable public URL for a video or audio file — controlling who can view
-
-        the media through it. If no share link exists yet, one is created with the
-
-        supplied visibility. Use this when someone wants to make a media's share URL
-
-        more public or more restricted. To just read it use show-media-share-link,
-
-        or delete-media-share-link to revoke it.
-
-    delete:
-      summary: Delete share link
-      description: |
-        Deletes the share link for a media, revoking the URL. A new share link
-        can be created later with a fresh URL by calling the show or update
-        endpoint again.
-
-        ## Requires api token with one of the following permissions
-        ```
-        Read, update & delete anything
-        ```
-      tags:
-        - Share Links
-      security:
-        - BearerAuth: []
-      parameters:
-        - name: mediaId
-          in: path
-          description: The hashed ID of the media.
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: Share link deleted
-        "401":
-          description: Unauthorized, invalid or missing token
-          content:
-            application/json:
-              schema:
-                type: object
-                unevaluatedProperties: false
-                properties:
-                  code:
-                    type: string
-                    enum:
-                      - unauthorized_credentials
-                      - account_inactive
-                      - unauthorized_scope
-                      - unauthorized_params
-                    description: A machine-readable identifier for the specific authorization failure.
-                  error:
-                    type: string
-                    examples:
-                      - Invalid credentials.
-        "403":
-          description: Forbidden, token is valid but account does not have access to feature
-          content:
-            application/json:
-              schema:
-                type: object
-                unevaluatedProperties: false
-                properties:
-                  error:
-                    type: string
-                    examples:
-                      - Webinars are not available on your current plan
-        "404":
-          description: Resource not found
-          content:
-            application/json:
-              schema:
-                type: object
-                unevaluatedProperties: false
-                properties:
-                  error:
-                    type: string
-                    examples:
-                      - Folder with ID 'fakeid' not found.
-        "500":
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                type: object
-                unevaluatedProperties: false
-                properties:
-                  error:
-                    type: string
-                    examples:
-                      - Internal server error
-      x-wistia-mcp-annotations:
-        read_only_hint: false
-        read_only_hint_justification: >-
-          This tool deletes the share link for a media, which modifies the account.
-        open_world_hint: false
-        open_world_hint_justification: >-
-          This tool only operates on records inside the account and does not reach external services.
-        destructive_hint: true
-        destructive_hint_justification: >-
-          Deleting the share link revokes the URL and cannot be undone; a new share link gets a new URL when created.
-      x-speakeasy-group: shareLinks
-      x-speakeasy-name-override: delete
-      x-wistia-mcp-tool-name: delete-media-share-link
-      x-wistia-mcp-description: >
-        Delete, remove, or revoke the share link for a media — the shareable public
-
-        URL that lets people view a single video or audio file. This invalidates the
-
-        existing URL and cannot be undone; a new share link with a fresh URL can be
-
-        created later via show-media-share-link or update-media-share-link. Use this
-
-        when someone wants to revoke or disable a media's public share URL.
-
   /medias/{mediaHashedId}/captions:
     get:
       summary: List Captions by Media
@@ -5243,19 +4610,7 @@ paths:
       x-speakeasy-name-override: create
       x-wistia-mcp-tool-name: create-captions
       x-wistia-mcp-description: >
-        Add or upload captions (subtitles / closed captions / CC / SRT subtitle
-
-        track) to a video for a specific language by supplying an SRT file or its
-
-        contents. The language conforms to ISO-639-2 and is auto-detected if
-
-        omitted. Use this when someone wants to add subtitles or a caption track to
-
-        a media. Use update-captions to replace an existing track, purchase-captions
-
-        to buy Wistia-generated English captions, get-captions to list tracks, or
-
-        delete-captions to remove one.
+        Adds captions to a specified media by providing an SRT file or its contents directly.
 
   /captions:
     get:
@@ -5458,19 +4813,11 @@ paths:
       x-speakeasy-name-override: listAll
       x-wistia-mcp-tool-name: get-captions
       x-wistia-mcp-description: >
-        List, get, or find the caption tracks (subtitles / closed captions / CC /
+        Gets captions belonging to the account. This endpoint can also narrow down results
 
-        SRT subtitle tracks) belonging to the account, optionally narrowed to a
+        to those belonging to a specific media. Each caption returned by this endpoint
 
-        specific media by hashed ID, with each track returned as JSON including its
-
-        language. Use this when someone wants to see which subtitle or caption
-
-        languages exist on a media. Use show-captions-file to fetch one track's text,
-
-        create-captions to add one, or purchase-captions to buy Wistia-generated
-
-        English captions.
+        is represented in JSON.
 
   /medias/{mediaHashedId}/captions/purchase:
     post:
@@ -5600,19 +4947,10 @@ paths:
       x-speakeasy-name-override: purchase
       x-wistia-mcp-tool-name: purchase-captions
       x-wistia-mcp-description: >
-        Purchase, buy, or order Wistia-generated English captions (subtitles /
+        This method is for purchasing English captions for a media. The request will charge the credit card on the account if successful. A saved credit card is required to use this endpoint.
 
-        closed captions / CC) for a video. This incurs a charge: it bills the saved
 
-        credit card on the account (required), with computer-generated captions free
-
-        or human-generated captions priced per minute, processed asynchronously. Use
-
-        this when someone wants Wistia to generate or order English subtitles rather
-
-        than uploading their own. Then call translate-media to get them in another
-
-        language, or use create-captions to upload your own SRT track.
+        You can do a follow up call to the `translate-media` tool to get this in another language.
 
   /medias/{mediaHashedId}/captions/{languageCode}:
     get:
@@ -5734,17 +5072,8 @@ paths:
       x-speakeasy-group: captions
       x-speakeasy-name-override: get
       x-wistia-mcp-tool-name: show-captions-file
-      x-wistia-mcp-description: >
-        Show, get, or fetch a video's caption track (subtitles / closed captions /
-
-        CC) text in a specific ISO-639-2 language as JSON. Use this when someone
-
-        wants to read or retrieve the actual subtitle/caption contents for one
-
-        language. Use get-captions to list which caption tracks exist, or
-
-        create-captions to add a new SRT track.
-
+      x-wistia-mcp-description: |
+        Returns a video's captions in the specified language as JSON.
     put:
       summary: Update Captions
       description: |
@@ -5842,24 +5171,11 @@ paths:
         destructive_hint: true
         destructive_hint_justification: >-
           Updating replaces existing values and the previous data cannot be recovered.
-        idempotent_hint: true
-        idempotent_hint_justification: >-
-          Re-sending the same update with identical attributes leaves the resource in the same state, so repeating the request has no additional effect.
       x-speakeasy-group: captions
       x-speakeasy-name-override: update
       x-wistia-mcp-tool-name: update-captions
       x-wistia-mcp-description: >
-        Update, replace, or edit the captions (subtitles / closed captions / CC /
-
-        SRT subtitle track) on a video for a specified ISO-639-2 language by
-
-        supplying a new SRT file or its contents. Use this when someone wants to
-
-        overwrite or correct an existing subtitle or caption track on a media. Use
-
-        create-captions to add a new track, delete-captions to remove one, or
-
-        get-captions to list tracks.
+        This method is for replacing the captions on a video for the specified language.
 
     delete:
       summary: Delete Captions
@@ -5936,17 +5252,8 @@ paths:
       x-speakeasy-group: captions
       x-speakeasy-name-override: delete
       x-wistia-mcp-tool-name: delete-captions
-      x-wistia-mcp-description: >
-        Delete or remove the captions (subtitles / closed captions / CC / SRT
-
-        subtitle track) from a video for a specified ISO-639-2 language code. Use
-
-        this when someone wants to delete a subtitle or caption track from a media.
-
-        Use create-captions to add a track, update-captions to replace one, or
-
-        get-captions to list existing tracks.
-
+      x-wistia-mcp-description: |
+        Removes the captions file from a media for the specified language.
   /medias/{mediaHashedId}/localizations:
     get:
       summary: List Localizations
@@ -6157,17 +5464,8 @@ paths:
       x-speakeasy-group: localizations
       x-speakeasy-name-override: list
       x-wistia-mcp-tool-name: gets-localizations
-      x-wistia-mcp-description: >
-        List, get, or find all localizations (translated, language-specific / dubbed
-
-        versions) for a media, optionally including each one's transcript. Use this
-
-        when someone wants to see which translated or localized language variants a
-
-        video has. Use show-localization for details on one, create-localization to
-
-        add one, or delete-localization to remove one.
-
+      x-wistia-mcp-description: |
+        Lists all the localizations for a media.
     post:
       summary: Create Localization
       description: |
@@ -6462,19 +5760,7 @@ paths:
       x-speakeasy-name-override: create
       x-wistia-mcp-tool-name: create-localization
       x-wistia-mcp-description: >
-        Create, add, or order a localization: a translated, language-specific
-
-        (dubbed) version of a media in a chosen output language. This incurs a
-
-        charge on the account (it orders a dubbed video from a third-party service)
-
-        and is processed asynchronously. Use this when someone wants to translate or
-
-        produce a different-language variant of a video. Use gets-localizations to
-
-        list a media's localizations, show-localization for one, or delete-localization
-
-        to remove one. For subtitle tracks instead, see create-captions.
+        Creates a new localization. Creating a localization incurs a charge on the account.
 
   /medias/{mediaHashedId}/localizations/{localizationHashedId}:
     get:
@@ -6690,17 +5976,8 @@ paths:
       x-speakeasy-group: localizations
       x-speakeasy-name-override: get
       x-wistia-mcp-tool-name: show-localization
-      x-wistia-mcp-description: >
-        Show, get, or fetch detailed information about a single localization (a
-
-        translated, language-specific / dubbed version of a media) by its hashed ID,
-
-        optionally including its transcript. Use this when someone wants details on
-
-        one localized or translated variant of a video. Use gets-localizations to
-
-        list all of a media's localizations, or create-localization to add one.
-
+      x-wistia-mcp-description: |
+        Obtain detailed information about a localization.
     delete:
       summary: Delete Localization
       description: |
@@ -6919,15 +6196,8 @@ paths:
       x-speakeasy-group: localizations
       x-speakeasy-name-override: delete
       x-wistia-mcp-tool-name: delete-localization
-      x-wistia-mcp-description: >
-        Delete or remove a localization (a translated, language-specific / dubbed
-
-        version of a media) by its hashed ID. Use this when someone wants to remove
-
-        a localized or translated variant of a video. Use create-localization to
-
-        add one, gets-localizations to list them, or show-localization to view one.
-
+      x-wistia-mcp-description: |
+        Deletes a localization.
   /medias/{mediaHashedId}/trims:
     post:
       summary: Create Media from Trims
@@ -6988,9 +6258,6 @@ paths:
                       id:
                         type: integer
                         description: The ID of the background job that's been queued for the request.
-                      hashed_id:
-                        type: string
-                        description: The unguessable hashed ID of the background job. Prefer this over the numeric ID when polling for status.
                       status:
                         type: string
                         enum:
@@ -7001,7 +6268,6 @@ paths:
                         description: The status of the background job that's been queued for the request.
                     required:
                       - id
-                      - hashed_id
                       - status
                     description: |
                       A background job keeps track of the progress of an asynchronous task, e.g
@@ -7084,19 +6350,13 @@ paths:
       x-speakeasy-name-override: create
       x-wistia-mcp-tool-name: create-media-from-trims
       x-wistia-mcp-description: >
-        Create a new media by trimming, cutting, or clipping parts off an existing
+        Creates a new media that trims off parts of an existing media.
 
-        video — produces a separate, shortened copy without modifying the source.
 
-        By default the trims time ranges specify parts to remove; set keep_trims to
+        By default, the `trims` parameter specifies time ranges to **remove** from the media. When `keep_trims` is set to `true`, the `trims` parameter instead specifies time ranges to **keep** in the media.
 
-        true to instead specify the ranges to keep. Processing is asynchronous and
 
-        returns a background_job_status object. Use this when someone wants to cut,
-
-        clip, shorten, or trim a video into a new media. Currently only video files
-
-        are supported.
+        **NOTE:** currently this tool only supports trimming video files.
 
   /media_extended_audio_descriptions:
     get:
@@ -7334,17 +6594,7 @@ paths:
         destructive_hint_justification: This tool is read-only and does not make any changes.
       x-wistia-mcp-tool-name: get-media-extended-audio-descriptions
       x-wistia-mcp-description: >
-        List, get, or find all extended audio descriptions (EADs) in the account —
-
-        the accessibility audio tracks that narrate on-screen visuals for blind and
-
-        low-vision viewers. Supports pagination, filtering by hashed_ids, and
-
-        sorting. Use this when someone wants to see existing audio descriptions. For
-
-        a single one use show-media-extended-audio-description, or
-
-        order-media-extended-audio-description to buy a new one.
+        Lists all extended audio descriptions belonging to the account. Supports pagination and sorting.
 
   /media_extended_audio_descriptions/{id}:
     get:
@@ -7531,17 +6781,7 @@ paths:
         destructive_hint_justification: This tool is read-only and does not make any changes.
       x-wistia-mcp-tool-name: show-media-extended-audio-description
       x-wistia-mcp-description: >
-        Show, get, or retrieve a single extended audio description (EAD) by its
-
-        hashed id, including download links — the accessibility audio track that
-
-        narrates on-screen visuals for blind and low-vision viewers. Use this when
-
-        someone wants details or download URLs for one audio description. To list
-
-        many use get-media-extended-audio-descriptions, or
-
-        delete-media-extended-audio-description to remove one.
+        Retrieves a single extended audio description by its hashed id, including download links.
 
     delete:
       summary: Delete Media Extended Audio Description
@@ -7708,19 +6948,8 @@ paths:
         destructive_hint_justification: >-
           This tool permanently deletes the media extended audio description and cannot be undone.
       x-wistia-mcp-tool-name: delete-media-extended-audio-description
-      x-wistia-mcp-description: >
-        Delete (remove) an extended audio description (EAD) by its hashed id — the
-
-        accessibility audio track that narrates on-screen visuals for blind and
-
-        low-vision viewers. This permanently removes the EAD and cannot be undone.
-
-        Use this when someone wants to delete or remove audio descriptions from a
-
-        media. To look one up first use show-media-extended-audio-description, or
-
-        get-media-extended-audio-descriptions to list them.
-
+      x-wistia-mcp-description: |
+        Deletes an extended audio description by its hashed id.
   /media_extended_audio_descriptions/order:
     post:
       summary: Order Extended Audio Description
@@ -7928,21 +7157,7 @@ paths:
       x-wistia-is-purchase: true
       x-wistia-mcp-tool-name: order-media-extended-audio-description
       x-wistia-mcp-description: >
-        Order, purchase, or buy an extended audio description (EAD) for a media — an
-
-        accessibility audio track that narrates on-screen visuals for blind and
-
-        low-vision viewers. This places a paid order and charges the account's
-
-        credit card when the order is ready; only paid plans with the
-
-        order_audio_descriptions feature can use it. Use this when someone wants to
-
-        add audio descriptions to a video. Poll
-
-        show-media-extended-audio-description-order-status to track the order, or
-
-        use get-media-extended-audio-descriptions to list existing ones.
+        Orders an extended audio description for a media. The request will charge the credit card on the account when the order is ready. Only accounts on paid plans with the order_audio_descriptions feature can use this endpoint.
 
   /media_extended_audio_descriptions/order_status/{id}:
     get:
@@ -8109,17 +7324,7 @@ paths:
         destructive_hint_justification: This tool is read-only and does not make any changes.
       x-wistia-mcp-tool-name: show-media-extended-audio-description-order-status
       x-wistia-mcp-description: >
-        Show, get, or check the current status of an extended audio description
-
-        (EAD) order — the paid accessibility audio track ordered for a media. Pass
-
-        the order id returned by order-media-extended-audio-description and poll this
-
-        to track progress until the order completes. Use this when someone wants to
-
-        know whether their audio description order is ready. List finished ones with
-
-        get-media-extended-audio-descriptions.
+        Returns the current status of an extended audio description order. Use the order id returned from the order endpoint to poll for status updates.
 
   /tags:
     get:
@@ -8315,17 +7520,8 @@ paths:
       x-speakeasy-group: tags
       x-speakeasy-name-override: list
       x-wistia-mcp-tool-name: get-tags
-      x-wistia-mcp-description: >
-        List, get, or find the tags in the account — the labels or keywords used to
-
-        organize and categorize media. Supports pagination and sorting (by name,
-
-        created, updated, or taggings count). Use this when someone wants to see
-
-        which tags exist. To make a new tag use create-tags, delete-tag to remove
-
-        one, or bulk-tag-media to apply tags to media files.
-
+      x-wistia-mcp-description: |
+        Lists tags belonging to the account.
     post:
       summary: Create Tags
       description: |
@@ -8469,15 +7665,8 @@ paths:
       x-speakeasy-group: tags
       x-speakeasy-name-override: create
       x-wistia-mcp-tool-name: create-tags
-      x-wistia-mcp-description: >
-        Create, add, or make a new tag — a label or keyword used to organize and
-
-        categorize media. Use this when someone wants to define a new tag in the
-
-        account. To list existing tags use get-tags, delete-tag to remove one, or
-
-        bulk-tag-media to apply tags to media files.
-
+      x-wistia-mcp-description: |
+        Creates a new tag.
   /tags/{name}:
     delete:
       summary: Delete Tag
@@ -8560,15 +7749,8 @@ paths:
       x-speakeasy-group: tags
       x-speakeasy-name-override: delete
       x-wistia-mcp-tool-name: delete-tag
-      x-wistia-mcp-description: >
-        Delete or remove a tag by name — a label or keyword used to organize and
-
-        categorize media. This permanently removes the tag and cannot be undone. Use
-
-        this when someone wants to get rid of a tag. To list existing tags use
-
-        get-tags, or create-tags to make a new one.
-
+      x-wistia-mcp-description: |
+        Deletes a tag
   /taggings/bulk_create:
     post:
       summary: Bulk Tag Media
@@ -8625,9 +7807,6 @@ paths:
                       id:
                         type: integer
                         description: The ID of the background job that's been queued for the request.
-                      hashed_id:
-                        type: string
-                        description: The unguessable hashed ID of the background job. Prefer this over the numeric ID when polling for status.
                       status:
                         type: string
                         enum:
@@ -8638,7 +7817,6 @@ paths:
                         description: The status of the background job that's been queued for the request.
                     required:
                       - id
-                      - hashed_id
                       - status
                     description: |
                       A background job keeps track of the progress of an asynchronous task, e.g
@@ -8711,17 +7889,10 @@ paths:
       x-cli-action-override: bulk-tag
       x-wistia-mcp-tool-name: bulk-tag-media
       x-wistia-mcp-description: >
-        Bulk tag, label, or categorize many media at once — apply a list of tag
+        This method accepts a list of medias to tag. It processes requests asynchronously and will return a background_job_status object rather than the typical Media response object.
 
-        names to multiple video or audio files in a single batch. Processing is
 
-        asynchronous, so this returns a background_job_status object rather than the
-
-        media themselves. The supplied tags are added to each media's existing tags,
-
-        not replaced. Use this when someone wants to tag several media together. To
-
-        manage the tag definitions use create-tags, get-tags, or delete-tag.
+        The tags will be added to the existing tags on each media file, not replaced.
 
   /folders:
     get:
@@ -9003,9 +8174,8 @@ paths:
       x-speakeasy-group: folders
       x-speakeasy-name-override: list
       x-wistia-mcp-tool-name: get-folders
-      x-wistia-mcp-description: >
-        List, get, show, browse, or find folders (previously called "projects") belonging to the account — containers that organize videos and audio files (media). Use this when someone wants to list, get, show, browse, or find folders or projects, optionally filtering by hashed IDs and sorting/paginating the results. Use create-folder to add a new folder, update-folder to rename one, delete-folder to remove one, copy-folder to duplicate one, or get-subfolders to list folders nested inside a folder.
-
+      x-wistia-mcp-description: |
+        Gets folders (previously called projects) belonging to the account.
     post:
       summary: Create Folder
       description: |
@@ -9213,7 +8383,7 @@ paths:
       x-speakeasy-name-override: create
       x-wistia-mcp-tool-name: create-folder
       x-wistia-mcp-description: >
-        Create, add, or set up a new folder (previously called a "project") — a container that organizes your videos and audio files (media). Use this when someone wants to make, add, or create a new folder or project to group media. On success the Location HTTP header points to the new folder. Use update-folder to rename it, get-folders to list folders, delete-folder to remove one, copy-folder to duplicate one, or create-subfolder to nest a folder inside it.
+        Creates a new folder (previously called project). If the folder is created successfully the Location HTTP header will point to the new folder.
 
   /folders/{id}:
     get:
@@ -9630,15 +8800,11 @@ paths:
         destructive_hint: true
         destructive_hint_justification: >-
           Updating replaces existing values and the previous data cannot be recovered.
-        idempotent_hint: true
-        idempotent_hint_justification: >-
-          Re-sending the same update with identical attributes leaves the resource in the same state, so repeating the request has no additional effect.
       x-speakeasy-group: folders
       x-speakeasy-name-override: update
       x-wistia-mcp-tool-name: update-folder
-      x-wistia-mcp-description: >
-        Update, edit, change, or rename an existing folder (previously called a "project") — a container that organizes videos and audio files (media). Use this when someone wants to update, edit, change, or rename a folder or project. Use create-folder to make a new folder, get-folders to list folders, delete-folder to remove one, copy-folder to duplicate one, or update-subfolder to edit a nested subfolder.
-
+      x-wistia-mcp-description: |
+        Updates a folder (previously called project)
     delete:
       summary: Delete Folder
       description: |
@@ -9843,9 +9009,8 @@ paths:
       x-speakeasy-group: folders
       x-speakeasy-name-override: delete
       x-wistia-mcp-tool-name: delete-folder
-      x-wistia-mcp-description: >
-        Delete or remove a folder (previously called a "project") — a container that organizes videos and audio files (media). Use this when someone wants to delete, remove, or get rid of a folder or project. Use get-folders to list folders first, create-folder to make a new one, update-folder to rename instead, or bulk-delete-subfolders to remove nested subfolders.
-
+      x-wistia-mcp-description: |
+        Deletes a folder (previously called project)
   /folders/{id}/copy:
     post:
       summary: Copy Folder
@@ -9898,9 +9063,6 @@ paths:
                   id:
                     type: integer
                     description: The ID of the background job that's been queued for the request.
-                  hashed_id:
-                    type: string
-                    description: The unguessable hashed ID of the background job. Prefer this over the numeric ID when polling for status.
                   status:
                     type: string
                     enum:
@@ -9911,7 +9073,6 @@ paths:
                     description: The status of the background job that's been queued for the request.
                 required:
                   - id
-                  - hashed_id
                   - status
                 description: |
                   A background job keeps track of the progress of an asynchronous task, e.g
@@ -9972,7 +9133,16 @@ paths:
       x-speakeasy-name-override: copy
       x-wistia-mcp-tool-name: copy-folder
       x-wistia-mcp-description: >
-        Copy, duplicate, or clone a folder (previously called a "project") along with all its media and subfolders. Use this when someone wants to copy, duplicate, or clone an existing folder or project and its contents. The copy runs asynchronously in a background job, so the response contains an object representing the queued background job. Sharing information is NOT copied (users who could see the old folder will not automatically see the new one). You may pass an optional parameter to set the owner of the new folder, but the person specified must be a Manager in the account. Use create-folder to make an empty folder, update-folder to rename, get-folders to list folders, or create-folder-sharing to grant access to the copy.
+        This copies a folder (previously called project) and all its media and subfolders asynchronously in a background job.
+
+
+        This method does not copy the folder’s sharing information (i.e. users that could see the old folder will not automatically be able to see the new one).
+
+
+        For the request you can specify the owner of a new folder by passing an optional parameter. The person you specify must be a Manager in the account.
+
+
+        The body of the response will contain an object representing the background job that was created.
 
   /folders/{folderId}/sharings:
     get:
@@ -10229,9 +9399,8 @@ paths:
       x-speakeasy-group: folderSharings
       x-speakeasy-name-override: list
       x-wistia-mcp-tool-name: get-folder-sharings
-      x-wistia-mcp-description: >
-        List, get, show, or browse the folder sharings — the contacts and contact groups who have been granted access to a folder (previously called a "project"). Use this when someone wants to see who a folder is shared with, list access permissions, or find sharings on a folder, with optional hashed-id filtering, sorting, and pagination. Use create-folder-sharing to grant access, update-folder-sharing to change a sharing, or delete-folder-sharing to revoke access.
-
+      x-wistia-mcp-description: |
+        Gets the sharings of contacts and contact groups on a folder.
     post:
       summary: Create Folder Sharing
       description: |
@@ -10469,7 +9638,7 @@ paths:
       x-speakeasy-name-override: create
       x-wistia-mcp-tool-name: create-folder-sharing
       x-wistia-mcp-description: >
-        Create a folder sharing — grant a contact or contact group access/view permission to a folder (previously called a "project"). Use this when someone wants to share a folder, give access, or add a person or group to a folder by specifying the email of the person to share with plus other optional parameters. Use get-folder-sharings to list who a folder is shared with, update-folder-sharing to change a sharing's permission, or delete-folder-sharing to revoke access.
+        Creates a new sharing object for a folder by specifying the email of the person to share with and other optional parameters.
 
   /folders/{folderId}/sharings/{sharingId}:
     get:
@@ -10819,15 +9988,11 @@ paths:
         destructive_hint: true
         destructive_hint_justification: >-
           Updating replaces existing values and the previous data cannot be recovered.
-        idempotent_hint: true
-        idempotent_hint_justification: >-
-          Re-sending the same update with identical attributes leaves the resource in the same state, so repeating the request has no additional effect.
       x-speakeasy-group: folderSharings
       x-speakeasy-name-override: update
       x-wistia-mcp-tool-name: update-folder-sharing
-      x-wistia-mcp-description: >
-        Update, edit, or change a folder sharing — modify a contact's or contact group's access/permission on a folder (previously called a "project"). Use this when someone wants to change, edit, or update an existing folder sharing or access permission. Use create-folder-sharing to grant new access, get-folder-sharings to list current sharings, or delete-folder-sharing to revoke access.
-
+      x-wistia-mcp-description: |
+        Updates a sharing on a folder.
     delete:
       summary: Delete Folder Sharing
       description: |
@@ -10996,9 +10161,8 @@ paths:
       x-speakeasy-group: folderSharings
       x-speakeasy-name-override: delete
       x-wistia-mcp-tool-name: delete-folder-sharing
-      x-wistia-mcp-description: >
-        Delete a folder sharing — remove or revoke a contact's or contact group's access to a folder (previously called a "project"). Use this when someone wants to unshare a folder, revoke access, or remove a person or group's permission on a folder. Use get-folder-sharings to list current sharings, create-folder-sharing to grant access, or update-folder-sharing to change a sharing instead of removing it.
-
+      x-wistia-mcp-description: |
+        Deletes a sharing on a folder.
   /folders/{folderId}/subfolders:
     get:
       summary: List Subfolders
@@ -11249,9 +10413,9 @@ paths:
       x-speakeasy-group: subfolders
       x-speakeasy-name-override: list
       x-wistia-mcp-tool-name: get-subfolders
-      x-wistia-mcp-description: >
-        List, get, show, browse, or find subfolders within a specific folder (previously called a "project"). A subfolder is a nested folder inside a folder that organizes videos and audio files (media). Use this when someone wants to list, get, show, or browse the subfolders inside a folder. You can use the hashed_ids filter to fetch a specific subfolder, plus sorting and pagination. Use create-subfolder to add a subfolder, update-subfolder to rename one, delete-subfolder to remove one, or get-folders to list the parent folders.
-
+      x-wistia-mcp-description: |
+        Lists subfolders in a specific folder. You can use the hashed_ids
+        filter to fetch a specific subfolder.
     post:
       summary: Create Subfolder
       description: |
@@ -11434,7 +10598,7 @@ paths:
       x-speakeasy-name-override: create
       x-wistia-mcp-tool-name: create-subfolder
       x-wistia-mcp-description: >
-        Create, add, set up, or nest a new subfolder within a folder (previously called a "project"). A subfolder is a nested folder inside a folder, used to further organize videos and audio files (media). Use this when someone wants to make, add, or create a subfolder inside a folder. The subfolder is created at the next available position. Use update-subfolder to rename it, get-subfolders to list subfolders, delete-subfolder to remove one, or get-folders to list the parent folders.
+        Creates a new subfolder within a folder. The subfolder will be created with the next available position.
 
   /folders/{folderId}/subfolders/{subfolderId}:
     get:
@@ -11854,15 +11018,11 @@ paths:
         destructive_hint: true
         destructive_hint_justification: >-
           Updating replaces existing values and the previous data cannot be recovered.
-        idempotent_hint: true
-        idempotent_hint_justification: >-
-          Re-sending the same update with identical attributes leaves the resource in the same state, so repeating the request has no additional effect.
       x-speakeasy-group: subfolders
       x-speakeasy-name-override: update
       x-wistia-mcp-tool-name: update-subfolder
-      x-wistia-mcp-description: >
-        Update, edit, change, or rename a subfolder's name and/or description. A subfolder is a nested folder inside a folder (previously called a "project") that organizes videos and audio files (media). Use this when someone wants to update, edit, change, or rename a subfolder. Use create-subfolder to add a new subfolder, get-subfolders to list subfolders, delete-subfolder to remove one, or update-folder to edit the parent folder.
-
+      x-wistia-mcp-description: |
+        Updates a subfolder's name and/or description.
     delete:
       summary: Delete Subfolder
       description: |
@@ -12022,7 +11182,10 @@ paths:
       x-speakeasy-name-override: delete
       x-wistia-mcp-tool-name: delete-subfolder
       x-wistia-mcp-description: >
-        Delete or remove a single subfolder from a folder (previously called a "project"). A subfolder is a nested folder inside a folder. Use this when someone wants to delete or remove one subfolder. All media files (videos and audio) in the subfolder are moved to the folder's root level. The subfolder is soft-deleted and may be recoverable through other means, but is no longer accessible via the API. Use bulk-delete-subfolders to remove several at once, get-subfolders to list subfolders, create-subfolder to add one, or update-subfolder to rename one.
+        Deletes a subfolder from a folder. All media files in the subfolder will be moved to the folder's root level.
+
+
+        The subfolder is soft-deleted and may be recoverable through other means, but is no longer accessible via the API.
 
   /folders/{folderId}/subfolders/bulk_delete:
     delete:
@@ -12081,9 +11244,6 @@ paths:
                       id:
                         type: integer
                         description: The ID of the background job that's been queued for the request.
-                      hashed_id:
-                        type: string
-                        description: The unguessable hashed ID of the background job. Prefer this over the numeric ID when polling for status.
                       status:
                         type: string
                         enum:
@@ -12094,7 +11254,6 @@ paths:
                         description: The status of the background job that's been queued for the request.
                     required:
                       - id
-                      - hashed_id
                       - status
                     description: |
                       A background job keeps track of the progress of an asynchronous task, e.g
@@ -12165,7 +11324,7 @@ paths:
       x-speakeasy-name-override: bulkDelete
       x-wistia-mcp-tool-name: bulk-delete-subfolders
       x-wistia-mcp-description: >
-        Delete or remove multiple subfolders at once from a folder (previously called a "project") in a single bulk operation. A subfolder is a nested folder inside a folder. Use this when someone wants to bulk delete, remove, or clean up several subfolders together. Accepts a list of subfolder hashed IDs, processes the deletions asynchronously, and returns a background_job_status object for the queued job. All media files (videos and audio) in each deleted subfolder are moved to the folder's root level. Use delete-subfolder to remove a single subfolder, get-subfolders to list subfolders, or create-subfolder to add one.
+        This method accepts a list of subfolders to delete. It processes requests asynchronously and will return a background_job_status object. All media files in each deleted subfolder will be moved to the folder's root level.
 
   /channels:
     get:
@@ -12831,19 +11990,9 @@ paths:
       x-speakeasy-name-override: list
       x-wistia-mcp-tool-name: get-channels
       x-wistia-mcp-description: >
-        List, get, show, browse, or find all Wistia Channels in an account — each an
+        Gets all Channels belonging to an account. This endpoint can also be used to
 
-        embeddable video gallery, content hub, video showcase, or playlist page that
-
-        groups videos into episodes. Supports pagination, sorting, and batch fetch by
-
-        one or more hashed_ids. Use this when someone wants to see what channels or
-
-        video galleries exist or look up a channel's hashed id. Use create-channel to
-
-        make one, update-channel to edit, or get-channel-episodes to list a channel's
-
-        videos.
+        do a batch fetch based off of the hashed id.
 
     post:
       summary: Create Channel
@@ -13870,19 +13019,8 @@ paths:
       x-speakeasy-group: channels
       x-speakeasy-name-override: create
       x-wistia-mcp-tool-name: create-channel
-      x-wistia-mcp-description: >
-        Create a new Wistia Channel — a customizable, embeddable video gallery
-
-        (also called a content hub, video showcase, series, or playlist page) that
-
-        groups videos into episodes for viewers to browse. Use this when someone
-
-        wants to set up, add, start, or build a new channel or video gallery. Use
-
-        update-channel to change an existing one, get-channels to list channels, or
-
-        create-channel-episode to add videos to a channel.
-
+      x-wistia-mcp-description: |
+        Creates a channel.
   /channels/{channelHashedId}:
     get:
       summary: Show Channel
@@ -15482,25 +14620,11 @@ paths:
         destructive_hint: true
         destructive_hint_justification: >-
           Updating replaces existing values and the previous data cannot be recovered.
-        idempotent_hint: true
-        idempotent_hint_justification: >-
-          Re-sending the same update with identical attributes leaves the resource in the same state, so repeating the request has no additional effect.
       x-speakeasy-group: channels
       x-speakeasy-name-override: update
       x-wistia-mcp-tool-name: update-channel
-      x-wistia-mcp-description: >
-        Update, edit, change, rename, or reconfigure an existing Wistia Channel — an
-
-        embeddable video gallery, content hub, or video showcase page that groups
-
-        videos into episodes. Identify it by its channelHashedId; supplied values
-
-        replace the existing ones. Use this when someone wants to modify a channel's
-
-        name, appearance, or settings. Use get-channels to find the hashed id,
-
-        create-channel to make a new one, or delete-channel to remove it.
-
+      x-wistia-mcp-description: |
+        Updates a channel.
     delete:
       summary: Delete Channel
       description: |
@@ -16071,19 +15195,8 @@ paths:
       x-speakeasy-group: channels
       x-speakeasy-name-override: delete
       x-wistia-mcp-tool-name: delete-channel
-      x-wistia-mcp-description: >
-        Permanently delete (remove, destroy, tear down) a Wistia Channel — an
-
-        embeddable video gallery, content hub, or video showcase page that groups
-
-        videos into episodes. Identify it by its channelHashedId. This cannot be
-
-        undone. Use this when someone wants to get rid of a channel or video
-
-        gallery. Use get-channels to find the hashed id, update-channel to edit
-
-        instead, or delete-channel-episode to remove a single video.
-
+      x-wistia-mcp-description: |
+        Deletes a channel.
   /channels/{channelHashedId}/channel_episodes/{channelEpisodeId}:
     get:
       summary: Show Channel Episode
@@ -16349,7 +15462,7 @@ paths:
                   after the cursor up to the `per_page` are returned.
         - name: media_id[]
           in: query
-          description: Filter by media id. Accepts either the numeric id or the hashed id of a media.
+          description: Filter by media id
           required: false
           schema:
             type: array
@@ -16790,19 +15903,8 @@ paths:
       x-speakeasy-group: channelEpisodes
       x-speakeasy-name-override: create
       x-wistia-mcp-tool-name: create-channel-episode
-      x-wistia-mcp-description: >
-        Add a video to a Wistia Channel as a new episode — an individual video entry
-
-        within a channel's embeddable video gallery or content hub. Use this when
-
-        someone wants to add, insert, append, or put a video into a channel or video
-
-        gallery. Requires an api token with "Read, update & delete anything"
-
-        permission. Use create-channel to make the channel first, get-channels to
-
-        find its hashed id, and publish-channel-episode to make the episode visible.
-
+      x-wistia-mcp-description: |
+        Creates a new channel episode in a channel.
   /channel_episodes:
     get:
       summary: List Channel Episodes
@@ -16903,7 +16005,7 @@ paths:
                   after the cursor up to the `per_page` are returned.
         - name: media_id[]
           in: query
-          description: Filter by media id. Accepts either the numeric id or the hashed id of a media.
+          description: Filter by media id
           required: false
           schema:
             type: array
@@ -17094,19 +16196,9 @@ paths:
       x-speakeasy-name-override: list
       x-wistia-mcp-tool-name: get-channel-episodes
       x-wistia-mcp-description: >
-        List, get, show, browse, or find channel episodes — the individual video
+        Lists Channel Episodes belonging to an account. This endpoint can also be used to
 
-        entries within a Wistia Channel's embeddable video gallery or content hub.
-
-        Filter by channel_id, media_id, title, or published state; supports pagination,
-
-        sorting, and batch fetch by hashed_ids. Use this when someone wants to see
-
-        which videos are in a channel or video gallery. Use get-channels to find a
-
-        channel's hashed id, create-channel-episode to add a video, or
-
-        publish-channel-episode / un-publish-channel-episode to control visibility.
+        do a batch fetch based off of the hashed id.
 
   /channel_episodes/{channelEpisodeHashedId}:
     put:
@@ -17349,27 +16441,11 @@ paths:
         destructive_hint: true
         destructive_hint_justification: >-
           Updating replaces existing values and the previous data cannot be recovered.
-        idempotent_hint: true
-        idempotent_hint_justification: >-
-          Re-sending the same update with identical attributes leaves the resource in the same state, so repeating the request has no additional effect.
       x-speakeasy-group: channelEpisodes
       x-speakeasy-name-override: update
       x-wistia-mcp-tool-name: update-channel-episode
-      x-wistia-mcp-description: >
-        Update, edit, change, or reconfigure an existing channel episode — an
-
-        individual video entry within a Wistia Channel's embeddable video gallery or
-
-        content hub. Identify it by its channelEpisodeHashedId; supplied values replace
-
-        the existing ones. Requires an api token with "Read, update & delete anything"
-
-        permission. Use this when someone wants to modify a video's title, ordering, or
-
-        settings within a channel. Use get-channel-episodes to find the hashed id, or
-
-        publish-channel-episode / un-publish-channel-episode to change its visibility.
-
+      x-wistia-mcp-description: |
+        Updates an existing channel episode in a channel.
     delete:
       summary: Delete Channel Episode
       description: |
@@ -17547,21 +16623,8 @@ paths:
       x-speakeasy-group: channelEpisodes
       x-speakeasy-name-override: delete
       x-wistia-mcp-tool-name: delete-channel-episode
-      x-wistia-mcp-description: >
-        Permanently delete (remove, destroy, take out) a channel episode — an
-
-        individual video entry within a Wistia Channel's embeddable video gallery or
-
-        content hub. Identify it by its channelEpisodeHashedId; this cannot be undone.
-
-        Requires an api token with "Read, update & delete anything" permission. Use
-
-        this when someone wants to remove a video from a channel or video gallery. Use
-
-        get-channel-episodes to find the hashed id, or un-publish-channel-episode to
-
-        just hide it instead of deleting.
-
+      x-wistia-mcp-description: |
+        Deletes an existing channel episode in a channel.
   /channel_episodes/{channelEpisodeHashedId}/publish:
     put:
       summary: Publish Channel Episode
@@ -17745,31 +16808,11 @@ paths:
           This tool only operates on records inside the account and does not reach external services.
         destructive_hint: true
         destructive_hint_justification: Publishing changes the episode's visibility state in the channel.
-        idempotent_hint: true
-        idempotent_hint_justification: >-
-          Publishing an already-published episode is a no-op, so repeating the request has no additional effect.
       x-speakeasy-group: channelEpisodes
       x-speakeasy-name-override: publish
       x-wistia-mcp-tool-name: publish-channel-episode
-      x-wistia-mcp-description: >
-        Publish (make visible, show, go live, release) a channel episode — an
-
-        individual video entry within a Wistia Channel's embeddable video gallery or
-
-        content hub — so viewers can see it in the gallery. Identify it by its
-
-        channelEpisodeHashedId; optionally pass publish_at (UTC) to schedule
-
-        publishing for a future date and time. Requires an api token with "Read,
-
-        update & delete anything" permission. Use this when someone wants to make a
-
-        video in a channel visible or schedule it to go live. Use
-
-        un-publish-channel-episode to hide it again, or get-channel-episodes to find
-
-        the hashed id.
-
+      x-wistia-mcp-description: |
+        Publishes an existing channel episode in a channel.
   /channel_episodes/{channelEpisodeHashedId}/unpublish:
     put:
       summary: Un-publish Channel Episode
@@ -17942,29 +16985,11 @@ paths:
           This tool only operates on records inside the account and does not reach external services.
         destructive_hint: true
         destructive_hint_justification: Unpublishing changes the episode's visibility state in the channel.
-        idempotent_hint: true
-        idempotent_hint_justification: >-
-          Unpublishing an already-unpublished episode is a no-op, so repeating the request has no additional effect.
       x-speakeasy-group: channelEpisodes
       x-speakeasy-name-override: unpublish
       x-wistia-mcp-tool-name: un-publish-channel-episode
-      x-wistia-mcp-description: >
-        Unpublish (hide, take down, remove from view, make private) a channel episode
-
-        — an individual video entry within a Wistia Channel's embeddable video gallery
-
-        or content hub — so viewers no longer see it in the gallery, without deleting
-
-        it. Identify it by its channelEpisodeHashedId. Requires an api token with
-
-        "Read, update & delete anything" permission. Use this when someone wants to
-
-        hide or pull a video from a channel while keeping it. Use
-
-        publish-channel-episode to show it again, or delete-channel-episode to remove
-
-        it entirely.
-
+      x-wistia-mcp-description: |
+        Un-publishes an existing channel episode in a channel.
   /webinars:
     get:
       summary: List Webinars
@@ -18277,17 +17302,9 @@ paths:
       x-speakeasy-name-override: list
       x-wistia-mcp-tool-name: get-webinars
       x-wistia-mcp-description: >
-        List, get, show, or find webinars belonging to the account — live or scheduled
+        Gets webinars belonging to the account. This endpoint can also be used to
 
-        online video events / live streams that people register for and attend. Supports
-
-        pagination, sorting, and filtering by hashed IDs or started status, and can batch
-
-        fetch specific webinars by hashed ID. Use this to look up or browse webinars. Use
-
-        create-webinar to make one, update-webinar to edit one, delete-webinar to cancel
-
-        one, or list-webinar-registrations to see who registered.
+        do a batch fetch based off of the hashed id.
 
     post:
       summary: Create Webinar
@@ -18560,17 +17577,8 @@ paths:
       x-speakeasy-group: webinars
       x-speakeasy-name-override: create
       x-wistia-mcp-tool-name: create-webinar
-      x-wistia-mcp-description: >
-        Create a new webinar — a live or scheduled online video event / live stream
-
-        that people register for and attend. Use this when someone wants to create,
-
-        add, set up, or schedule a new webinar or live event. Use update-webinar to
-
-        edit it, get-webinars to list webinars, delete-webinar to cancel one, or
-
-        create-webinar-registration to register an attendee.
-
+      x-wistia-mcp-description: |
+        Creates a new webinar.
   /webinars/{id}:
     get:
       summary: Show Webinar
@@ -19033,23 +18041,11 @@ paths:
         destructive_hint: true
         destructive_hint_justification: >-
           Updating replaces existing values and the previous data cannot be recovered.
-        idempotent_hint: true
-        idempotent_hint_justification: >-
-          Re-sending the same update with identical attributes leaves the resource in the same state, so repeating the request has no additional effect.
       x-speakeasy-group: webinars
       x-speakeasy-name-override: update
       x-wistia-mcp-tool-name: update-webinar
-      x-wistia-mcp-description: >
-        Update an existing webinar — a live or scheduled online video event / live
-
-        stream — by its hashed ID. Use this when someone wants to update, edit, change,
-
-        modify, or reschedule a webinar or live event (for example its title or schedule).
-
-        Use get-webinars to find a webinar, create-webinar to make a new one, or
-
-        delete-webinar to cancel one.
-
+      x-wistia-mcp-description: |
+        Updates an existing webinar.
     delete:
       summary: Delete Webinar
       description: |
@@ -19256,17 +18252,8 @@ paths:
       x-speakeasy-group: webinars
       x-speakeasy-name-override: delete
       x-wistia-mcp-tool-name: delete-webinar
-      x-wistia-mcp-description: >
-        Delete an existing webinar — a live or scheduled online video event / live
-
-        stream — by its hashed ID. Use this when someone wants to delete, remove,
-
-        cancel, or take down a webinar or live event. This permanently removes the
-
-        webinar and cannot be undone. Use get-webinars to find a webinar, create-webinar
-
-        to make one, or update-webinar to edit one instead.
-
+      x-wistia-mcp-description: |
+        Deletes an existing webinar.
   /webinars/{webinarId}/registrations:
     get:
       summary: List Webinar Registrations
@@ -19692,21 +18679,18 @@ paths:
         destructive_hint_justification: This tool is read-only and does not make any changes.
       x-wistia-mcp-tool-name: list-webinar-registrations
       x-wistia-mcp-description: >
-        List, get, show, or find the registrations (registrants/attendees) for a webinar —
+        Retrieve a paginated list of registrations for a webinar. Returns contact
 
-        the people who signed up or enrolled for a live or scheduled online video event.
+        information, attendance status, engagement metrics, and attribution data
 
-        Use this when someone wants to see who registered or attended a webinar. Returns
+        for each registrant.
 
-        contact information, attendance status, engagement metrics, and attribution data
 
-        for each registrant. Uses cursor-based pagination with a `page_info` object; use
+        Pagination uses cursor-based pagination with a `page_info` object in the
 
-        `page_info.end_cursor` as the `cursor` parameter to fetch the next page. Use
+        response rather than per-record cursors. Use `page_info.end_cursor` as
 
-        get-webinars to find the webinar, or create-webinar-registration to enroll a new
-
-        attendee.
+        the `cursor` parameter to fetch the next page.
 
     post:
       summary: Create Webinar Registration
@@ -19869,17 +18853,10 @@ paths:
       x-speakeasy-name-override: create
       x-wistia-mcp-tool-name: create-webinar-registration
       x-wistia-mcp-description: >
-        Register, sign up, or enroll a person (a registrant/attendee) for a webinar — a
+        Register a person for a webinar by providing their email, first name, and last name.
 
-        live or scheduled online video event — by providing their email, first name, and
 
-        last name. Use this when someone wants to add an attendee to or register someone for
-
-        a webinar or live event. Generates a unique visitor key and returns a personalized
-
-        webinar URL for the registrant. Use get-webinars to find the webinar, or
-
-        list-webinar-registrations to see existing registrants.
+        This endpoint generates a unique visitor key and returns a personalized webinar URL for the registrant.
 
   /account:
     get:
@@ -19986,13 +18963,7 @@ paths:
       x-speakeasy-name-override: get
       x-wistia-mcp-tool-name: get-current-account
       x-wistia-mcp-description: >
-        Get, show, or retrieve a profile summary of the current Wistia account: account name,
-
-        description, URL, settings, and counts of records. Use this when someone asks about
-
-        their account details, account info, account name, or who they are. For plan, quota,
-
-        and billing limits use get-account-usage; for the API token/credential use get-current-token.
+        Retrieves a summary of the Wistia account including account name, description, URL and counts of records.
 
   /account_usage:
     get:
@@ -20204,13 +19175,9 @@ paths:
       x-speakeasy-name-override: getUsage
       x-wistia-mcp-tool-name: get-account-usage
       x-wistia-mcp-description: >
-        Get, show, or check the current account's plan, usage, limits, and quota: plan tier,
+        Retrieves plan, usage, and limit information for the current account including
 
-        billing details, upload eligibility, media counts, and storage usage (how much of the
-
-        plan is used). Use this when someone asks about their plan, billing, quota, limits,
-
-        remaining storage, or usage. For general account profile/name use get-current-account.
+        plan tier, upload eligibility, media counts, and storage usage.
 
   /token:
     get:
@@ -20330,13 +19297,9 @@ paths:
       x-cli-action-override: token
       x-wistia-mcp-tool-name: get-current-token
       x-wistia-mcp-description: >
-        Get, show, or look up info about the API token, credential, or API key making the current
+        Retrieves a summary of the token used to make tool calls. This endpoint can primarily be used to
 
-        request, including its scope, permissions, and owner. Use this when someone asks who the
-
-        token belongs to, what scope or permissions the auth has, or to debug permission/authorization
-
-        issues. For account profile use get-current-account; for plan and limits use get-account-usage.
+        debug permission issues with the MCP.
 
   /search:
     get:
@@ -21044,13 +20007,9 @@ paths:
       x-speakeasy-name-override: search
       x-wistia-mcp-tool-name: search
       x-wistia-mcp-description: >
-        Search, find, look up, or query content across the account's folders, medias, channels, and
+        Searches across folders, medias, channels, and channel episodes. Also searches through video transcripts,
 
-        channel episodes by keyword. Also searches video transcripts, so media results may include
-
-        transcript matches with timestamps when the query matches spoken content. Use this when someone
-
-        wants to locate content by name or text across their Wistia library.
+        so media results may include transcript matches with timestamps when the query matches spoken content.
 
   /expiring_token:
     post:
@@ -21197,10 +20156,10 @@ paths:
       parameters:
         - name: backgroundJobStatusId
           in: path
-          description: The hashed ID or numeric ID of the background job
+          description: The numeric ID of the background job
           required: true
           schema:
-            type: string
+            type: integer
       responses:
         "200":
           description: OK
@@ -21217,9 +20176,6 @@ paths:
                       id:
                         type: integer
                         description: The ID of the background job that's been queued for the request.
-                      hashed_id:
-                        type: string
-                        description: The unguessable hashed ID of the background job. Prefer this over the numeric ID when polling for status.
                       status:
                         type: string
                         enum:
@@ -21230,7 +20186,6 @@ paths:
                         description: The status of the background job that's been queued for the request.
                     required:
                       - id
-                      - hashed_id
                       - status
                     description: |
                       A background job keeps track of the progress of an asynchronous task, e.g
@@ -21285,13 +20240,9 @@ paths:
       x-cli-topic-override: jobs
       x-wistia-mcp-tool-name: show-background-job-status
       x-wistia-mcp-description: >
-        Poll, check, or get the status and progress of an asynchronous background job by its
+        Retrieves the status of a background job. This can be used to see when a background
 
-        job id, to see whether it is still running, succeeded, or failed. Use this when someone
-
-        wants to track an async operation: poll a job started by tools like import-media-from-url,
-
-        bulk-copy-media, archive-media, or remix operations until it completes.
+        job succeeds or fails.
 
   /allowed_domains:
     get:
@@ -21809,689 +20760,6 @@ paths:
       x-wistia-mcp-ignore: true
       x-speakeasy-group: allowedDomains
       x-speakeasy-name-override: delete
-  /remixes:
-    post:
-      summary: Create Remix
-      description: |
-        Start a new video remix job. The remix is processed asynchronously — poll
-        the show endpoint to check status and get preview URLs when ready.
-
-        Remix uses AI to analyze video transcripts and create edited versions
-        (highlight reels, trailers, cut-downs, etc.) based on your instructions.
-
-        The remix is automatically exported (rendered) upon completion. When the
-        status reaches "completed", the output media is available in the
-        destination folder. If no `folder_id` is provided, the remix is exported
-        to the source media's folder.
-
-        <!--- HIDE-MCP -->
-        ## Requires api token with one of the following permissions
-        ```
-        Read, update & delete anything
-        ```
-        <!--- /HIDE-MCP -->
-      tags:
-        - Remix
-      security:
-        - BearerAuth: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              unevaluatedProperties: false
-              properties:
-                media_hashed_ids:
-                  type: array
-                  examples:
-                    - - abc123
-                      - def456
-                  items:
-                    type: string
-                  description: Array of source media hashed IDs to remix from.
-                instructions:
-                  type: string
-                  examples:
-                    - >-
-                      Create a 60-second highlight reel focusing on the product demo section
-                  description: Natural language instructions describing the desired remix (e.g., "create a 60-second highlight reel").
-                folder_id:
-                  type: string
-                  description: Hashed ID of the destination folder for the exported media. Defaults to the source media's folder if not specified.
-              required:
-                - media_hashed_ids
-                - instructions
-      responses:
-        "201":
-          description: Remix job successfully created.
-          content:
-            application/json:
-              schema:
-                type: object
-                unevaluatedProperties: false
-                properties:
-                  remix_id:
-                    type: string
-                    description: Hashed ID of the created remix. Use this to poll for status.
-                  conversation_id:
-                    type: string
-                    description: Hashed ID of the remix conversation (groups multiple remix iterations).
-                  status:
-                    type: string
-                    enum:
-                      - pending
-                      - deferred
-                    description: Current status of the remix job.
-                  source_medias:
-                    type: array
-                    items:
-                      type: object
-                      unevaluatedProperties: false
-                      properties:
-                        hashed_id:
-                          type: string
-                        name:
-                          type: string
-                    description: The source media used for this remix.
-        "401":
-          description: Unauthorized, invalid or missing token
-          content:
-            application/json:
-              schema:
-                type: object
-                unevaluatedProperties: false
-                properties:
-                  code:
-                    type: string
-                    enum:
-                      - unauthorized_credentials
-                      - account_inactive
-                      - unauthorized_scope
-                      - unauthorized_params
-                    description: A machine-readable identifier for the specific authorization failure.
-                  error:
-                    type: string
-                    examples:
-                      - Invalid credentials.
-        "422":
-          description: Unprocessable entity (e.g., credit limit reached, media not found).
-          content:
-            application/json:
-              schema:
-                type: object
-                unevaluatedProperties: false
-                properties:
-                  error:
-                    type: string
-                  credits_renew_at:
-                    type: string
-                    format: date-time
-                    description: When remix credits renew (ISO 8601), if the error is a credit limit.
-        "500":
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                type: object
-                unevaluatedProperties: false
-                properties:
-                  error:
-                    type: string
-                    examples:
-                      - Internal server error
-      x-readme-hidden: true
-      x-wistia-mcp-annotations:
-        read_only_hint: false
-        read_only_hint_justification: >-
-          This tool starts an AI-driven remix job, which creates new edit data on the account.
-        open_world_hint: false
-        open_world_hint_justification: >-
-          This tool calls an external AI service to generate the remix edit tree.
-        destructive_hint: false
-        destructive_hint_justification: Only a new remix is created; existing media are not modified.
-      x-wistia-mcp-tool-name: create-remix
-      x-wistia-mcp-description: >
-        Start, create, or generate a new AI video remix — an automated edit that
-
-        transforms source videos using natural-language instructions (e.g. "create a
-
-        60-second highlight reel", "cut the intro", "add captions"). Provide source
-
-        media hashed IDs and a prompt. Use this when someone wants to auto-edit, make,
-
-        or produce an edited video with AI. Runs asynchronously and auto-exports on
-
-        completion; poll get-remix for status, continue-remix to refine it. Each job
-
-        consumes a remix credit — check get-remix-account-status for remaining quota.
-
-  /remixes/{remixHashedId}:
-    get:
-      summary: Get Remix
-      description: |
-        Get the current status of a remix job. When the status reaches
-        "edit_tree_generated", preview URLs are included in the response.
-
-        <!--- HIDE-MCP -->
-        ## Requires api token with one of the following permissions
-        ```
-        Read all folder and media data
-        ```
-        <!--- /HIDE-MCP -->
-      tags:
-        - Remix
-      security:
-        - BearerAuth: []
-      parameters:
-        - name: remixHashedId
-          in: path
-          description: The hashed ID of the remix.
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: Remix status and details.
-          content:
-            application/json:
-              schema:
-                type: object
-                unevaluatedProperties: false
-                properties:
-                  remix_id:
-                    type: string
-                    description: Hashed ID of the remix.
-                  conversation_id:
-                    type: string
-                    description: Hashed ID of the parent conversation.
-                  created_at:
-                    type: string
-                    format: date-time
-                    description: The ISO 8601 timestamp when the remix was created.
-                  status:
-                    type: string
-                    enum:
-                      - pending
-                      - generating
-                      - generating_scenes
-                      - editable_scenes_generated
-                      - edit_tree_generated
-                      - exporting
-                      - completed
-                      - error
-                    description: Current processing status.
-                  error_message:
-                    type: string
-                    description: Error details if status is "error".
-                  preview:
-                    type: object
-                    unevaluatedProperties: false
-                    properties:
-                      embed_url:
-                        type: string
-                        format: uri
-                        description: Iframe embed URL for video playback.
-                      thumbnail_url:
-                        type:
-                          - string
-                          - "null"
-                        format: uri
-                        description: Thumbnail image URL.
-                      instant_hls_ready:
-                        type: boolean
-                        description: Whether the instant HLS preview is ready.
-                    description: Preview URLs, available when status is "edit_tree_generated" or later.
-        "401":
-          description: Unauthorized, invalid or missing token
-          content:
-            application/json:
-              schema:
-                type: object
-                unevaluatedProperties: false
-                properties:
-                  code:
-                    type: string
-                    enum:
-                      - unauthorized_credentials
-                      - account_inactive
-                      - unauthorized_scope
-                      - unauthorized_params
-                    description: A machine-readable identifier for the specific authorization failure.
-                  error:
-                    type: string
-                    examples:
-                      - Invalid credentials.
-        "404":
-          description: Resource not found
-          content:
-            application/json:
-              schema:
-                type: object
-                unevaluatedProperties: false
-                properties:
-                  error:
-                    type: string
-                    examples:
-                      - Folder with ID 'fakeid' not found.
-        "500":
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                type: object
-                unevaluatedProperties: false
-                properties:
-                  error:
-                    type: string
-                    examples:
-                      - Internal server error
-      x-readme-hidden: true
-      x-wistia-mcp-annotations:
-        read_only_hint: true
-        read_only_hint_justification: This tool only reads remix state and does not modify any data.
-        open_world_hint: false
-        open_world_hint_justification: >-
-          This tool only queries records inside the account and does not reach external services.
-        destructive_hint: false
-        destructive_hint_justification: This tool is read-only and does not make any changes.
-      x-wistia-mcp-tool-name: get-remix
-      x-wistia-mcp-description: >
-        Get, show, check, or poll the status of an AI video remix job. Poll this after
-
-        create-remix or continue-remix to track progress of the asynchronous edit. When
-
-        status reaches "edit_tree_generated", the remix is ready and preview URLs (video
-
-        embed, thumbnail) are included. Use this when someone wants to know if a remix is
-
-        done, see its preview, or check progress. Then use export-remix to save the
-
-        result.
-
-  /remixes/{remixHashedId}/continue:
-    post:
-      summary: Continue Remix
-      description: |
-        Submit a follow-up edit to an existing remix. Creates a new remix version
-        in the same conversation. The previous remix is preserved and can be
-        referenced later.
-
-        The new remix version is automatically exported (rendered) upon completion.
-        If `folder_id` is provided, the output is exported to that folder. Otherwise,
-        it defaults to the same folder as the previous remix version's output.
-
-        <!--- HIDE-MCP -->
-        ## Requires api token with one of the following permissions
-        ```
-        Read, update & delete anything
-        ```
-        <!--- /HIDE-MCP -->
-      tags:
-        - Remix
-      security:
-        - BearerAuth: []
-      parameters:
-        - name: remixHashedId
-          in: path
-          description: The hashed ID of the current remix version to edit from.
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              unevaluatedProperties: false
-              properties:
-                instructions:
-                  type: string
-                  examples:
-                    - Cut the intro and add background music
-                  description: Natural language instructions for the edit (e.g., "cut the first 10 seconds").
-                folder_id:
-                  type: string
-                  description: Hashed ID of the destination folder for the exported media. Defaults to the same folder as the previous remix version's output.
-              required:
-                - instructions
-      responses:
-        "201":
-          description: New remix version created.
-          content:
-            application/json:
-              schema:
-                type: object
-                unevaluatedProperties: false
-                properties:
-                  remix_id:
-                    type: string
-                    description: Hashed ID of the new remix version.
-                  conversation_id:
-                    type: string
-                    description: Hashed ID of the conversation.
-                  status:
-                    type: string
-                    enum:
-                      - pending
-                    description: Status of the new remix version.
-                  previous_remix_id:
-                    type: string
-                    description: Hashed ID of the remix version this edit is based on.
-        "401":
-          description: Unauthorized, invalid or missing token
-          content:
-            application/json:
-              schema:
-                type: object
-                unevaluatedProperties: false
-                properties:
-                  code:
-                    type: string
-                    enum:
-                      - unauthorized_credentials
-                      - account_inactive
-                      - unauthorized_scope
-                      - unauthorized_params
-                    description: A machine-readable identifier for the specific authorization failure.
-                  error:
-                    type: string
-                    examples:
-                      - Invalid credentials.
-        "404":
-          description: Resource not found
-          content:
-            application/json:
-              schema:
-                type: object
-                unevaluatedProperties: false
-                properties:
-                  error:
-                    type: string
-                    examples:
-                      - Folder with ID 'fakeid' not found.
-        "422":
-          description: Unprocessable entity (e.g., conversation not found).
-          content:
-            application/json:
-              schema:
-                type: object
-                unevaluatedProperties: false
-                properties:
-                  error:
-                    type: string
-        "500":
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                type: object
-                unevaluatedProperties: false
-                properties:
-                  error:
-                    type: string
-                    examples:
-                      - Internal server error
-      x-readme-hidden: true
-      x-wistia-mcp-annotations:
-        read_only_hint: false
-        read_only_hint_justification: >-
-          This tool refines an existing remix, which updates remix data on the account.
-        open_world_hint: false
-        open_world_hint_justification: This tool calls an external AI service to refine the remix edit tree.
-        destructive_hint: false
-        destructive_hint_justification: >-
-          Continuing only appends new instructions to the remix; the prior edit tree is preserved as a revision.
-      x-wistia-mcp-tool-name: continue-remix
-      x-wistia-mcp-description: >
-        Continue, refine, or revise an existing AI video remix with new natural-language
-
-        instructions (e.g. "cut the intro", "add background music", "make it shorter").
-
-        Creates a new edited version in the same remix conversation; the prior version is
-
-        preserved as a revision. Use this when someone wants to further edit, adjust, or
-
-        iterate on a remix. Runs asynchronously and auto-exports on completion; poll
-
-        get-remix for status. See create-remix to start a new remix and
-
-        get-remix-account-status for remaining credits.
-
-  /remixes/{remixHashedId}/export:
-    post:
-      summary: Export Remix
-      description: |
-        Export a completed remix to a folder in your account. Triggers the full
-        render pipeline. The remix must have reached "edit_tree_generated" status.
-
-        If no folder_id is provided, the remix is exported to the source media's folder.
-
-        <!--- HIDE-MCP -->
-        ## Requires api token with one of the following permissions
-        ```
-        Read, update & delete anything
-        ```
-        <!--- /HIDE-MCP -->
-      tags:
-        - Remix
-      security:
-        - BearerAuth: []
-      parameters:
-        - name: remixHashedId
-          in: path
-          description: The hashed ID of the remix to export.
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              unevaluatedProperties: false
-              properties:
-                folder_id:
-                  type: string
-                  description: Hashed ID of the destination folder. Defaults to the source media's folder.
-                name:
-                  type: string
-                  description: Custom name for the exported media.
-      responses:
-        "202":
-          description: Export successfully queued.
-          content:
-            application/json:
-              schema:
-                type: object
-                unevaluatedProperties: false
-                properties:
-                  remix_id:
-                    type: string
-                    description: Hashed ID of the exported remix.
-                  media_hashed_id:
-                    type: string
-                    description: Hashed ID of the output media being rendered.
-                  media_name:
-                    type: string
-                    description: Name of the output media.
-                  folder_hashed_id:
-                    type: string
-                    description: Hashed ID of the destination folder.
-                  status:
-                    type: string
-                    enum:
-                      - exporting
-                    description: Export status.
-        "401":
-          description: Unauthorized, invalid or missing token
-          content:
-            application/json:
-              schema:
-                type: object
-                unevaluatedProperties: false
-                properties:
-                  code:
-                    type: string
-                    enum:
-                      - unauthorized_credentials
-                      - account_inactive
-                      - unauthorized_scope
-                      - unauthorized_params
-                    description: A machine-readable identifier for the specific authorization failure.
-                  error:
-                    type: string
-                    examples:
-                      - Invalid credentials.
-        "404":
-          description: Resource not found
-          content:
-            application/json:
-              schema:
-                type: object
-                unevaluatedProperties: false
-                properties:
-                  error:
-                    type: string
-                    examples:
-                      - Folder with ID 'fakeid' not found.
-        "422":
-          description: Unprocessable entity (e.g., remix not ready for export).
-          content:
-            application/json:
-              schema:
-                type: object
-                unevaluatedProperties: false
-                properties:
-                  error:
-                    type: string
-        "500":
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                type: object
-                unevaluatedProperties: false
-                properties:
-                  error:
-                    type: string
-                    examples:
-                      - Internal server error
-      x-readme-hidden: true
-      x-wistia-mcp-annotations:
-        read_only_hint: false
-        read_only_hint_justification: >-
-          This tool exports a remix to a new media, which adds data to the account.
-        open_world_hint: false
-        open_world_hint_justification: >-
-          This tool only operates on records inside the account and does not reach external services.
-        destructive_hint: false
-        destructive_hint_justification: >-
-          Exporting creates a new media; the source remix and source media are not modified.
-      x-wistia-mcp-tool-name: export-remix
-      x-wistia-mcp-description: >
-        Export, save, or render a finished AI video remix as a new media file in a
-
-        folder in your Wistia account, triggering the full render pipeline. Optionally
-
-        specify a destination folder and custom name. Use this when someone wants to
-
-        save, render, or publish the result of a remix. The remix must have reached
-
-        "edit_tree_generated" status (poll get-remix) before it can be exported. See
-
-        create-remix to start a remix and continue-remix to refine one.
-
-  /remix_account_status:
-    get:
-      summary: Get Remix Account Status
-      description: |
-        Check the current account's remix credit usage and limits.
-
-        <!--- HIDE-MCP -->
-        ## Requires api token with one of the following permissions
-        ```
-        Read all folder and media data
-        ```
-        <!--- /HIDE-MCP -->
-      tags:
-        - Remix
-      security:
-        - BearerAuth: []
-      responses:
-        "200":
-          description: Remix account status.
-          content:
-            application/json:
-              schema:
-                type: object
-                unevaluatedProperties: false
-                properties:
-                  monthly_limit:
-                    type: integer
-                    description: Maximum number of remix credits per month.
-                  monthly_usage:
-                    type: integer
-                    description: Number of remix credits used this month.
-                  remaining:
-                    type: integer
-                    description: Number of remix credits remaining this month.
-                  can_create_remix:
-                    type: boolean
-                    description: Whether the account can create a new remix.
-        "401":
-          description: Unauthorized, invalid or missing token
-          content:
-            application/json:
-              schema:
-                type: object
-                unevaluatedProperties: false
-                properties:
-                  code:
-                    type: string
-                    enum:
-                      - unauthorized_credentials
-                      - account_inactive
-                      - unauthorized_scope
-                      - unauthorized_params
-                    description: A machine-readable identifier for the specific authorization failure.
-                  error:
-                    type: string
-                    examples:
-                      - Invalid credentials.
-        "500":
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                type: object
-                unevaluatedProperties: false
-                properties:
-                  error:
-                    type: string
-                    examples:
-                      - Internal server error
-      x-readme-hidden: true
-      x-wistia-mcp-annotations:
-        read_only_hint: true
-        read_only_hint_justification: >-
-          This tool only reads remix credit balance and does not modify any data.
-        open_world_hint: false
-        open_world_hint_justification: >-
-          This tool only queries records inside the account and does not reach external services.
-        destructive_hint: false
-        destructive_hint_justification: This tool is read-only and does not make any changes.
-      x-wistia-mcp-tool-name: get-remix-account-status
-      x-wistia-mcp-description: >
-        Check remaining AI video remix credits, quota, and balance for the account
-
-        this month. Returns the monthly limit, current usage, remaining credits, and
-
-        whether the account can start a new remix. Use this when someone asks how many
-
-        remixes are left, their remix quota/allowance, or before calling create-remix
-
-        or continue-remix to confirm credits are available.
-
   /stats/account:
     get:
       summary: Show Current Account Stats
@@ -27749,9 +26017,6 @@ components:
         id:
           type: integer
           description: The ID of the background job that's been queued for the request.
-        hashed_id:
-          type: string
-          description: The unguessable hashed ID of the background job. Prefer this over the numeric ID when polling for status.
         status:
           type: string
           enum:
@@ -27762,7 +26027,6 @@ components:
           description: The status of the background job that's been queued for the request.
       required:
         - id
-        - hashed_id
         - status
       description: |
         A background job keeps track of the progress of an asynchronous task, e.g
@@ -28226,97 +26490,6 @@ components:
       description: |
         A collection of settings you can apply to a video to change its appearance and
         behavior.
-    Visibility:
-      type: string
-      enum:
-        - unlocked
-        - account
-        - locked
-        - domain_verified
-      description: |
-        Controls who can view the media via this share link.
-
-        - `unlocked`: anyone with the link can view the media.
-        - `account`: only signed-in members of the media's account can view.
-        - `locked`: only contacts with access to the media's folder can view.
-        - `domain_verified`: only viewers signed in with an email address at a
-          domain verified on the media's account can view. Requires the account
-          to be enrolled in the domain validation gate; otherwise setting this
-          value returns 400.
-    ShareLink:
-      type: object
-      unevaluatedProperties: false
-      properties:
-        id:
-          type: string
-          description: The hashed ID of the share link. This appears in the link's URL.
-        media_id:
-          type: string
-          description: The hashed ID of the media this share link points to.
-        url:
-          type: string
-          format: uri
-          description: The full URL viewers can use to view the media via this share link.
-        visibility:
-          type: string
-          enum:
-            - unlocked
-            - account
-            - locked
-            - domain_verified
-          description: |
-            Controls who can view the media via this share link.
-
-            - `unlocked`: anyone with the link can view the media.
-            - `account`: only signed-in members of the media's account can view.
-            - `locked`: only contacts with access to the media's folder can view.
-            - `domain_verified`: only viewers signed in with an email address at a
-              domain verified on the media's account can view. Requires the account
-              to be enrolled in the domain validation gate; otherwise setting this
-              value returns 400.
-        created_at:
-          type: string
-          format: date-time
-          description: When the share link was created.
-        updated_at:
-          type: string
-          format: date-time
-          description: When the share link was last updated.
-      required:
-        - id
-        - media_id
-        - url
-        - visibility
-        - created_at
-        - updated_at
-      description: |
-        A shareable link for a single media. Each media can have at most one
-        share link, and the link's `visibility` controls who can view the
-        media when visiting the link.
-    ShareLinkUpdate:
-      type: object
-      unevaluatedProperties: false
-      properties:
-        visibility:
-          type: string
-          enum:
-            - unlocked
-            - account
-            - locked
-            - domain_verified
-          description: |
-            Controls who can view the media via this share link.
-
-            - `unlocked`: anyone with the link can view the media.
-            - `account`: only signed-in members of the media's account can view.
-            - `locked`: only contacts with access to the media's folder can view.
-            - `domain_verified`: only viewers signed in with an email address at a
-              domain verified on the media's account can view. Requires the account
-              to be enrolled in the domain validation gate; otherwise setting this
-              value returns 400.
-      required:
-        - visibility
-      description: Fields that can be set when updating a share link.
     Caption:
       type: object
       unevaluatedProperties: false
@@ -33888,7 +32061,7 @@ components:
     media_id:
       name: media_id[]
       in: query
-      description: Filter by media id. Accepts either the numeric id or the hashed id of a media.
+      description: Filter by media id
       required: false
       schema:
         type: array
@@ -33958,10 +32131,6 @@ tags:
     x-displayName: Background Job Status
   - name: Allowed Domains
     x-displayName: Allowed Domains
-  - name: Remix
-    x-displayName: Remix
-  - name: Share Links
-    x-displayName: Share Links
   - name: Stats:Account
     x-displayName: Stats:Account
   - name: Stats:Projects
@@ -34001,8 +32170,6 @@ x-tagGroups:
       - Expiring Access Tokens
       - Background Job Status
       - Allowed Domains
-      - Remix
-      - Share Links
   - name: Stats API
     tags:
       - Stats:Account

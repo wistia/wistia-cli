@@ -24,8 +24,8 @@ wistia background-job-status get [flags]
 ### Options
 
 ```
-  -b, --background-job-status-id string   The hashed ID or numeric ID of the background job [required]
-  -h, --help                              help for get
+  -b, --background-job-status-id int   The numeric ID of the background job [required]
+  -h, --help                           help for get
 ```
 
 ### Options inherited from parent commands

@@ -115,8 +115,6 @@ func (e *PostMediasMediaHashedIDTrimsStatus) IsExact() bool {
 type PostMediasMediaHashedIDTrimsBackgroundJobStatus struct {
 	// The ID of the background job that's been queued for the request.
 	ID int64 `json:"id"`
-	// The unguessable hashed ID of the background job. Prefer this over the numeric ID when polling for status.
-	HashedID string `json:"hashed_id"`
 	// The status of the background job that's been queued for the request.
 	Status PostMediasMediaHashedIDTrimsStatus `json:"status"`
 }
@@ -126,13 +124,6 @@ func (p *PostMediasMediaHashedIDTrimsBackgroundJobStatus) GetID() int64 {
 		return 0
 	}
 	return p.ID
-}
-
-func (p *PostMediasMediaHashedIDTrimsBackgroundJobStatus) GetHashedID() string {
-	if p == nil {
-		return ""
-	}
-	return p.HashedID
 }
 
 func (p *PostMediasMediaHashedIDTrimsBackgroundJobStatus) GetStatus() PostMediasMediaHashedIDTrimsStatus {

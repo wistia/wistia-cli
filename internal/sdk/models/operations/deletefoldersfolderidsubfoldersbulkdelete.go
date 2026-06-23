@@ -95,8 +95,6 @@ func (e *DeleteFoldersFolderIDSubfoldersBulkDeleteStatus) IsExact() bool {
 type DeleteFoldersFolderIDSubfoldersBulkDeleteBackgroundJobStatus struct {
 	// The ID of the background job that's been queued for the request.
 	ID int64 `json:"id"`
-	// The unguessable hashed ID of the background job. Prefer this over the numeric ID when polling for status.
-	HashedID string `json:"hashed_id"`
 	// The status of the background job that's been queued for the request.
 	Status DeleteFoldersFolderIDSubfoldersBulkDeleteStatus `json:"status"`
 }
@@ -106,13 +104,6 @@ func (d *DeleteFoldersFolderIDSubfoldersBulkDeleteBackgroundJobStatus) GetID() i
 		return 0
 	}
 	return d.ID
-}
-
-func (d *DeleteFoldersFolderIDSubfoldersBulkDeleteBackgroundJobStatus) GetHashedID() string {
-	if d == nil {
-		return ""
-	}
-	return d.HashedID
 }
 
 func (d *DeleteFoldersFolderIDSubfoldersBulkDeleteBackgroundJobStatus) GetStatus() DeleteFoldersFolderIDSubfoldersBulkDeleteStatus {

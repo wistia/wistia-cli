@@ -181,7 +181,7 @@ type GetChannelEpisodesRequest struct {
 	// cursor value to a `sort_by` name.
 	//
 	Cursor *GetChannelEpisodesCursor `queryParam:"style=deepObject,explode=true,name=cursor"`
-	// Filter by media id. Accepts either the numeric id or the hashed id of a media.
+	// Filter by media id
 	MediaID []string `queryParam:"style=form,explode=true,name=media_id[]"`
 	// Filter by hashed id
 	HashedIds []string `queryParam:"style=form,explode=true,name=hashed_ids[]"`
