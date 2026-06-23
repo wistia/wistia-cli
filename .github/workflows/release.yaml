@@ -1,15 +1,31 @@
 name: Release
 
+# Releases originate ONLY from version branches (v20NN-NN), never from main or an
+# ad-hoc tag (F7: "main never releases"). A release is triggered when a regen lands
+# on a version branch (gen.lock changes), or manually via workflow_dispatch.
+#
+# The dated version is computed here from the branch name + existing tags and applied
+# to the git tag + GoReleaser ldflags — NOT to the Go module (F10). The module path
+# stays unsuffixed; the binary reports the dated version via -X main.version.
+#
+# DRY MODE: this builds the release (version-compute, tag, archives) but does NOT
+# publish — no tag push, no GitHub release, no Homebrew formula. Real publishing is
+# enabled at the public-launch cutover (push the tag, drop --skip=publish, point the
+# formula at wistia/homebrew-tap). A test gate (integration tests) is added later.
+
 on:
   push:
-    tags:
-      - "v*"
+    branches:
+      - 'v20[0-9][0-9]-[0-9][0-9]'
+    paths:
+      - .speakeasy/gen.lock
+  workflow_dispatch: {}
 
 permissions:
   contents: write
 
 jobs:
-  goreleaser:
+  release:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -17,50 +33,45 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Fetch tags
+        run: git fetch --tags --force
+
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
           go-version-file: "go.mod"
           cache: true
-      - name: Patch goreleaser for public release
-        # Speakeasy regenerates .goreleaser.yaml targeting the private source repo.
-        # Redirect the release to the public homebrew tap repo so assets are
-        # downloadable without auth, and strip the private-repo download strategy.
-        run: |
-          # Speakeasy sets release.github.name to wistia-cli (the source repo).
-          # Redirect it to homebrew-wistia-cli so release assets are downloadable
-          # without auth (needed for Homebrew formula download URLs).
-          sed -i 's/^    name: wistia-cli$/    name: homebrew-wistia-cli/' .goreleaser.yaml
-          sed -i '/download_strategy:/d' .goreleaser.yaml
-          sed -i '/custom_require:/d' .goreleaser.yaml
 
-      - name: Run GoReleaser
+      - name: Compute dated release version
+        id: version
+        run: |
+          version="$(scripts/compute-version.sh)"
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+          echo "Release version: ${version} (branch ${GITHUB_REF_NAME})"
+
+      - name: Create tag (local only — dry)
+        run: |
+          # GoReleaser derives the version from the tag at HEAD. We create it locally
+          # so ldflags stamp the dated version, but do NOT push it (dry). Real mode
+          # pushes the tag.
+          git tag -a "v${{ steps.version.outputs.version }}" \
+            -m "Release v${{ steps.version.outputs.version }}"
+
+      - name: Run GoReleaser (dry — build, no publish)
         uses: goreleaser/goreleaser-action@v6
         with:
           distribution: goreleaser
           version: "~> v2"
-          args: release --clean --skip=validate
-        env:
-          # HOMEBREW_TAP_GITHUB_TOKEN needs Contents: Read and write on
-          # wistia/homebrew-wistia-cli (for both the release assets and the formula).
-          GITHUB_TOKEN: ${{ secrets.HOMEBREW_TAP_GITHUB_TOKEN }}
-          HOMEBREW_TAP_GITHUB_TOKEN: ${{ secrets.HOMEBREW_TAP_GITHUB_TOKEN }}
-
-      - name: Create release on source repo
-        # GoReleaser publishes to homebrew-wistia-cli for Homebrew downloads.
-        # Mirror a release here so it shows up on wistia/wistia-cli's Releases page.
-        run: |
-          gh release create "${{ github.ref_name }}" --title "${{ github.ref_name }}" --generate-notes
-          gh release upload "${{ github.ref_name }}" dist/*.tar.gz dist/*.zip dist/checksums.txt
+          args: release --clean --skip=publish,homebrew,announce
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload artifacts
+      - name: Upload built artifacts
         uses: actions/upload-artifact@v4
-        if: always()
         with:
-          name: release-artifacts
+          name: release-dry-${{ steps.version.outputs.version }}
           path: |
-            dist/
-            !dist/*.txt
-          retention-days: 30
+            dist/*.tar.gz
+            dist/*.zip
+            dist/checksums.txt
+          retention-days: 14

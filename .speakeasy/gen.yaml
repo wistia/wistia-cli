@@ -53,7 +53,7 @@ cli:
       repositoryOwner: ""
   enableCustomCodeRegions: false
   envVarPrefix: WISTIA_CLI
-  generateRelease: true
+  generateRelease: false
   imports:
     option: openapi
     paths:
