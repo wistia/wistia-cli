@@ -197,12 +197,6 @@ Configuration is stored in `~/.config/wistia/config.yaml`.
 * [`update`](docs/wistia_customizations_update.md) - Update Customizations
 * [`delete`](docs/wistia_customizations_delete.md) - Delete Customizations
 
-### [share-links](docs/wistia_share-links.md)
-
-* [`get`](docs/wistia_share-links_get.md) - Show share link
-* [`update`](docs/wistia_share-links_update.md) - Update share link
-* [`delete`](docs/wistia_share-links_delete.md) - Delete share link
-
 ### [captions](docs/wistia_captions.md)
 
 * [`list`](docs/wistia_captions_list.md) - List Captions by Media
@@ -329,14 +323,6 @@ Configuration is stored in `~/.config/wistia/config.yaml`.
 * [`create`](docs/wistia_allowed-domains_create.md) - Create Allowed Domain
 * [`get`](docs/wistia_allowed-domains_get.md) - Show Allowed Domain
 * [`delete`](docs/wistia_allowed-domains_delete.md) - Delete Allowed Domain
-
-### [remix](docs/wistia_remix.md)
-
-* [`post-remixes`](docs/wistia_remix_post-remixes.md) - Create Remix
-* [`get-remixes-remix-hashed-id`](docs/wistia_remix_get-remixes-remix-hashed-id.md) - Get Remix
-* [`post-remixes-remix-hashed-id-continue`](docs/wistia_remix_post-remixes-remix-hashed-id-continue.md) - Continue Remix
-* [`post-remixes-remix-hashed-id-export`](docs/wistia_remix_post-remixes-remix-hashed-id-export.md) - Export Remix
-* [`get-remix-account-status`](docs/wistia_remix_get-remix-account-status.md) - Get Remix Account Status
 
 ### [stats-account](docs/wistia_stats-account.md)
 

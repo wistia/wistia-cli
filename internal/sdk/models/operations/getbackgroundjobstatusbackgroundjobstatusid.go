@@ -9,13 +9,13 @@ import (
 )
 
 type GetBackgroundJobStatusBackgroundJobStatusIDRequest struct {
-	// The hashed ID or numeric ID of the background job
-	BackgroundJobStatusID string `pathParam:"style=simple,explode=false,name=backgroundJobStatusId"`
+	// The numeric ID of the background job
+	BackgroundJobStatusID int64 `pathParam:"style=simple,explode=false,name=backgroundJobStatusId"`
 }
 
-func (g *GetBackgroundJobStatusBackgroundJobStatusIDRequest) GetBackgroundJobStatusID() string {
+func (g *GetBackgroundJobStatusBackgroundJobStatusIDRequest) GetBackgroundJobStatusID() int64 {
 	if g == nil {
-		return ""
+		return 0
 	}
 	return g.BackgroundJobStatusID
 }
@@ -75,8 +75,6 @@ func (e *GetBackgroundJobStatusBackgroundJobStatusIDStatus) IsExact() bool {
 type GetBackgroundJobStatusBackgroundJobStatusIDBackgroundJobStatus struct {
 	// The ID of the background job that's been queued for the request.
 	ID int64 `json:"id"`
-	// The unguessable hashed ID of the background job. Prefer this over the numeric ID when polling for status.
-	HashedID string `json:"hashed_id"`
 	// The status of the background job that's been queued for the request.
 	Status GetBackgroundJobStatusBackgroundJobStatusIDStatus `json:"status"`
 }
@@ -86,13 +84,6 @@ func (g *GetBackgroundJobStatusBackgroundJobStatusIDBackgroundJobStatus) GetID()
 		return 0
 	}
 	return g.ID
-}
-
-func (g *GetBackgroundJobStatusBackgroundJobStatusIDBackgroundJobStatus) GetHashedID() string {
-	if g == nil {
-		return ""
-	}
-	return g.HashedID
 }
 
 func (g *GetBackgroundJobStatusBackgroundJobStatusIDBackgroundJobStatus) GetStatus() GetBackgroundJobStatusBackgroundJobStatusIDStatus {

@@ -3,7 +3,7 @@
 
 package sdk
 
-// Generated from OpenAPI doc version edge-version and generator version 2.911.0
+// Generated from OpenAPI doc version 2026.05.0 and generator version 2.911.3
 
 import (
 	"context"
@@ -54,7 +54,6 @@ type Wistia struct {
 	UploadOrImportMedia            *UploadOrImportMedia
 	Media                          *Media
 	Customizations                 *Customizations
-	ShareLinks                     *ShareLinks
 	Captions                       *Captions
 	Localizations                  *Localizations
 	Trims                          *Trims
@@ -69,18 +68,27 @@ type Wistia struct {
 	Webinars                       *Webinars
 	WebinarRegistrations           *WebinarRegistrations
 	Account                        *Account
-	Search                         *Search
-	ExpiringAccessTokens           *ExpiringAccessTokens
-	BackgroundJobStatus            *BackgroundJobStatus
-	AllowedDomains                 *AllowedDomains
-	Remix                          *Remix
-	StatsAccount                   *StatsAccount
-	StatsProjects                  *StatsProjects
-	StatsMedia                     *StatsMedia
-	StatsVisitors                  *StatsVisitors
-	StatsEvents                    *StatsEvents
-	AnalyticsMedia                 *AnalyticsMedia
-	AnalyticsWebinar               *AnalyticsWebinar
+	// Search
+	// Searches across folders, subfolders, medias, channels, channel episodes, and webinars.
+	// Also searches through video transcripts, so media results may include transcript matches with
+	// timestamps when the query matches spoken content.
+	//
+	// ## Requires api token with one of the following permissions
+	// ```
+	// Read all data
+	// ```
+	//
+	Search               *Search
+	ExpiringAccessTokens *ExpiringAccessTokens
+	BackgroundJobStatus  *BackgroundJobStatus
+	AllowedDomains       *AllowedDomains
+	StatsAccount         *StatsAccount
+	StatsProjects        *StatsProjects
+	StatsMedia           *StatsMedia
+	StatsVisitors        *StatsVisitors
+	StatsEvents          *StatsEvents
+	AnalyticsMedia       *AnalyticsMedia
+	AnalyticsWebinar     *AnalyticsWebinar
 
 	sdkConfiguration config.SDKConfiguration
 	hooks            *hooks.Hooks
@@ -158,7 +166,7 @@ func New(opts ...SDKOption) *Wistia {
 	sdk := &Wistia{
 		SDKVersion: "0.0.1",
 		sdkConfiguration: config.SDKConfiguration{
-			UserAgent:  "speakeasy-sdk/go 0.0.1 2.911.0 edge-version github.com/wistia/wistia-cli/internal/sdk",
+			UserAgent:  "speakeasy-sdk/go 0.0.1 2.911.3 2026.05.0 github.com/wistia/wistia-cli/internal/sdk",
 			ServerList: ServerList,
 		},
 		hooks: hooks.New(),
@@ -177,7 +185,6 @@ func New(opts ...SDKOption) *Wistia {
 	sdk.UploadOrImportMedia = newUploadOrImportMedia(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Media = newMedia(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Customizations = newCustomizations(sdk, sdk.sdkConfiguration, sdk.hooks)
-	sdk.ShareLinks = newShareLinks(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Captions = newCaptions(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Localizations = newLocalizations(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Trims = newTrims(sdk, sdk.sdkConfiguration, sdk.hooks)
@@ -196,7 +203,6 @@ func New(opts ...SDKOption) *Wistia {
 	sdk.ExpiringAccessTokens = newExpiringAccessTokens(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.BackgroundJobStatus = newBackgroundJobStatus(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.AllowedDomains = newAllowedDomains(sdk, sdk.sdkConfiguration, sdk.hooks)
-	sdk.Remix = newRemix(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.StatsAccount = newStatsAccount(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.StatsProjects = newStatsProjects(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.StatsMedia = newStatsMedia(sdk, sdk.sdkConfiguration, sdk.hooks)

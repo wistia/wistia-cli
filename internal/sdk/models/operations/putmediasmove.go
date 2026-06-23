@@ -93,8 +93,6 @@ func (e *PutMediasMoveStatus2) IsExact() bool {
 type PutMediasMoveBackgroundJobStatus2 struct {
 	// The ID of the background job that's been queued for the request.
 	ID int64 `json:"id"`
-	// The unguessable hashed ID of the background job. Prefer this over the numeric ID when polling for status.
-	HashedID string `json:"hashed_id"`
 	// The status of the background job that's been queued for the request.
 	Status PutMediasMoveStatus2 `json:"status"`
 }
@@ -104,13 +102,6 @@ func (p *PutMediasMoveBackgroundJobStatus2) GetID() int64 {
 		return 0
 	}
 	return p.ID
-}
-
-func (p *PutMediasMoveBackgroundJobStatus2) GetHashedID() string {
-	if p == nil {
-		return ""
-	}
-	return p.HashedID
 }
 
 func (p *PutMediasMoveBackgroundJobStatus2) GetStatus() PutMediasMoveStatus2 {
@@ -217,8 +208,6 @@ func (e *PutMediasMoveStatus1) IsExact() bool {
 type PutMediasMoveBackgroundJobStatus1 struct {
 	// The ID of the background job that's been queued for the request.
 	ID int64 `json:"id"`
-	// The unguessable hashed ID of the background job. Prefer this over the numeric ID when polling for status.
-	HashedID string `json:"hashed_id"`
 	// The status of the background job that's been queued for the request.
 	Status PutMediasMoveStatus1 `json:"status"`
 }
@@ -228,13 +217,6 @@ func (p *PutMediasMoveBackgroundJobStatus1) GetID() int64 {
 		return 0
 	}
 	return p.ID
-}
-
-func (p *PutMediasMoveBackgroundJobStatus1) GetHashedID() string {
-	if p == nil {
-		return ""
-	}
-	return p.HashedID
 }
 
 func (p *PutMediasMoveBackgroundJobStatus1) GetStatus() PutMediasMoveStatus1 {

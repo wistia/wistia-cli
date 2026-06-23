@@ -39,7 +39,7 @@ wistia channel-episodes list [flags]
                                  
       --hashed-ids stringArray   Filter by hashed id
   -h, --help                     help for list
-  -m, --media-id stringArray     Filter by media id. Accepts either the numeric id or the hashed id of a media.
+  -m, --media-id stringArray     Filter by media id
       --page cursor              The page number to retrieve. This cannot be combined with cursor,
                                  pagination.
                                  

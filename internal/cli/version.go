@@ -14,7 +14,7 @@ import (
 // which propagates the value here (see cmd/wistia/main.go):
 //
 //	go build -ldflags "-X main.version=x.y.z" ./cmd/wistia
-var Version = "0.1.2"
+var Version = "0.1.3"
 
 // BuildTime is optionally set at build time via ldflags targeting the main package.
 var BuildTime string
