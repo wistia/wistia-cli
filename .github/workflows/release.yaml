@@ -40,7 +40,10 @@ jobs:
         run: |
           # GoReleaser derives the version from the tag at HEAD. We create it locally
           # so ldflags stamp the dated version, but do NOT push it (dry). Real mode
-          # pushes the tag.
+          # pushes the tag. Annotated tags need a committer identity, which the CI
+          # runner lacks by default.
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git tag -a "v${{ steps.version.outputs.version }}" \
             -m "Release v${{ steps.version.outputs.version }}"
 
