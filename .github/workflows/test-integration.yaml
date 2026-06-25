@@ -55,6 +55,8 @@ jobs:
           cache: true
 
       - name: Test
-        run: go test -tags integration -run TestLive ./test/...
+        run: go test -tags integration -run TestLive -v ./test/...
         env:
           WISTIA_API_KEY: ${{ secrets.WISTIA_API_KEY }}
+          # Fail (don't skip) if the secret didn't reach this job.
+          WISTIA_REQUIRE_LIVE: "1"

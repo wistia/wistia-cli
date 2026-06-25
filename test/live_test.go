@@ -17,11 +17,16 @@ import (
 //
 // Run: WISTIA_API_KEY=... go test -tags integration -run TestLive ./test/...
 
-// liveKey returns the API key, or skips the test when it is unset.
+// liveKey returns the API key, or skips the test when it is unset. In CI the
+// live job sets WISTIA_REQUIRE_LIVE so a missing/misrouted secret fails loudly
+// instead of silently skipping and reporting a false green.
 func liveKey(t *testing.T) string {
 	t.Helper()
 	key := os.Getenv("WISTIA_API_KEY")
 	if key == "" {
+		if os.Getenv("WISTIA_REQUIRE_LIVE") != "" {
+			t.Fatal("WISTIA_API_KEY is empty but WISTIA_REQUIRE_LIVE is set — live tests must run here")
+		}
 		t.Skip("WISTIA_API_KEY not set; skipping live tests")
 	}
 	return key
