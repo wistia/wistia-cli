@@ -36,3 +36,25 @@ jobs:
       # No account, network, or secret required.
       - name: Test
         run: go test ./test/...
+
+  # Live tests hit the real Wistia API (a dedicated test account) and need the
+  # secret, so they run on push/dispatch/release — not on PRs (which keeps the
+  # PR gate fast and deterministic, and skips on forks where the secret is
+  # unavailable). The release workflow calls this, so releases gate on it too.
+  live:
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: "go.mod"
+          cache: true
+
+      - name: Test
+        run: go test -tags integration -run TestLive ./test/...
+        env:
+          WISTIA_API_KEY: ${{ secrets.WISTIA_API_KEY }}
