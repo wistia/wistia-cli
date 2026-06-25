@@ -1,0 +1,38 @@
+name: Tests
+
+# Reusable test workflow. Runs on PRs/pushes for fast feedback, and is called by
+# the Release workflow (via workflow_call) so a release is gated on tests passing.
+on:
+  workflow_call:
+    secrets:
+      WISTIA_API_KEY:
+        description: Wistia API key for live integration tests (Tier B).
+        required: false
+  pull_request: {}
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  mock:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: "go.mod"
+          cache: true
+
+      - name: Vet
+        run: go vet ./test/...
+
+      # Builds the CLI and runs it against an in-process httptest server.
+      # No account, network, or secret required.
+      - name: Test
+        run: go test ./test/...
