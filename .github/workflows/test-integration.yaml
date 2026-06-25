@@ -1,4 +1,4 @@
-name: Test
+name: Tests
 
 # Reusable test workflow. Runs on PRs/pushes for fast feedback, and is called by
 # the Release workflow (via workflow_call) so a release is gated on tests passing.
