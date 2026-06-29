@@ -31,7 +31,6 @@ Data API: Wistia Data API
 
 <!-- End Table of Contents [toc] -->
 
-<!-- Start CLI Installation [installation] -->
 ## CLI Installation
 
 ### Quick Install (Linux/macOS)
@@ -48,21 +47,13 @@ iwr -useb https://raw.githubusercontent.com/wistia/wistia-cli/main/scripts/insta
 ### Homebrew (macOS/Linux)
 
 ```bash
-brew install wistia/wistia-cli/wistia
-```
-
-### Go Install
-
-Alternatively, install directly via Go:
-
-```bash
-go install github.com/wistia/wistia-cli/cmd/wistia@latest
+brew install wistia/tap/wistia-cli
 ```
 
 ### Manual Download
 
 Download pre-built binaries for your platform from the [releases page](https://github.com/wistia/wistia-cli/releases).
-<!-- End CLI Installation [installation] -->
+<!-- No CLI Installation [installation] -->
 
 <!-- Start Shell Completion [completion] -->
 ## Shell Completion
