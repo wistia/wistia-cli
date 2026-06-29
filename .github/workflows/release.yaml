@@ -22,6 +22,9 @@ jobs:
   release:
     needs: tests
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -55,6 +58,21 @@ jobs:
           git tag -a "v${{ steps.version.outputs.version }}" \
             -m "Release v${{ steps.version.outputs.version }}"
 
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@d979d5b3a71173a29b74b5b88418bfda9437d885 # v6.1.1
+        with:
+          role-to-assume: arn:aws:iam::001688053317:role/github-cicd-wistia-cli
+          aws-region: us-east-1
+
+      - name: Fetch Homebrew tap token
+        id: secrets
+        run: |
+          TOKEN=$(aws secretsmanager get-secret-value \
+            --secret-id glass/homebrew-tap-token \
+            --query SecretString --output text | jq -r '.token')
+          echo "::add-mask::$TOKEN"
+          echo "token=$TOKEN" >> "$GITHUB_OUTPUT"
+
       - name: Run GoReleaser (dry — build, no publish)
         uses: goreleaser/goreleaser-action@v6
         with:
@@ -63,6 +81,7 @@ jobs:
           args: release --clean --skip=publish,homebrew,announce
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HOMEBREW_TAP_GITHUB_TOKEN: ${{ steps.secrets.outputs.token }}
 
       - name: Upload built artifacts
         uses: actions/upload-artifact@v4
