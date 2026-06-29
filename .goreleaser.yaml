@@ -44,11 +44,10 @@ brews:
   - name: wistia-cli
     repository:
       owner: wistia
-      name: homebrew-wistia-cli
+      name: homebrew-tap
       branch: main
       token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
-    download_strategy: GitHubPrivateRepositoryReleaseDownloadStrategy
-    custom_require: lib/custom_download_strategy
+    directory: Formula
     homepage: "https://github.com/wistia/wistia-cli"
     description: "Data API: Wistia Data API"
     install: |
