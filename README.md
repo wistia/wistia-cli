@@ -589,12 +589,6 @@ Diagnostic output should still be treated as potentially sensitive operational d
 
 # Development
 
-## Maturity
-
-This CLI is in beta, and there may be breaking changes between versions without a major version update. Therefore, we recommend pinning usage
-to a specific package version. This way, you can install the same version each time without breaking changes unless you are intentionally
-looking for the latest version.
-
 ## Contributions
 
 While we value open-source contributions to this CLI, this library is generated programmatically. Any manual changes added to internal files will be overwritten on the next generation. 
