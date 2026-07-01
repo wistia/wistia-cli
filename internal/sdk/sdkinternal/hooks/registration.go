@@ -9,20 +9,12 @@ package hooks
  */
 
 func initHooks(h *Hooks) {
-	// Hooks are registered per SDK instance, and are valid for the lifetime of the SDK instance.
-	// Add any hooks you wish to add here. Feel free to define your hooks in this file or in
-	// separate files in the hooks package.
-	//
-	// The following methods are available for registering hooks:
+	// Brand the User-Agent (and embed the real CLI version) on every request so
+	// CLI traffic is attributable and version-trackable server-side.
+	h.registerBeforeRequestHook(userAgentHook{})
+
+	// Remaining hook points, available for future use.
 	_ = h.registerSDKInitHook
-	_ = h.registerBeforeRequestHook
 	_ = h.registerAfterSuccessHook
 	_ = h.registerAfterErrorHook
-
-	// Example:
-	// exampleHook := &ExampleHook{}
-	// h.registerSDKInitHook(exampleHook)
-	// h.registerBeforeRequestHook(exampleHook)
-	// h.registerAfterErrorHook(exampleHook)
-	// h.registerAfterSuccessHook(exampleHook)
 }

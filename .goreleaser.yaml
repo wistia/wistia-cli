@@ -22,6 +22,7 @@ builds:
       - -s -w
       - -X main.version={{.Version}}
       - -X main.buildTime={{.Date}}
+      - -X github.com/wistia/wistia-cli/internal/useragent.Version={{.Version}}
 
 archives:
   - id: wistia

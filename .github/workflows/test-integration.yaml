@@ -60,3 +60,5 @@ jobs:
           WISTIA_API_KEY: ${{ secrets.WISTIA_API_KEY }}
           # Fail (don't skip) if the secret didn't reach this job.
           WISTIA_REQUIRE_LIVE: "1"
+          # Tag our own live-test traffic so it's excludable from CLI adoption metrics.
+          WISTIA_CLI_USER_AGENT_SUFFIX: ci
