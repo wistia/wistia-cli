@@ -8,3 +8,5 @@
 dist/
 .tool-versions
 wistia
+# The npm launcher shim is a checked-in script, not a build artifact.
+!npm/wistia-cli/bin/wistia

@@ -1,0 +1,90 @@
+#!/usr/bin/env node
+"use strict";
+
+// Launcher for the platform-specific wistia binary. npm installs exactly one
+// of the optionalDependencies below (matched via each package's os/cpu
+// fields); this shim resolves it and executes it with the caller's stdio.
+const { spawn } = require("node:child_process");
+const os = require("node:os");
+
+const PLATFORMS = {
+  "darwin-arm64": "@wistia/wistia-cli-darwin-arm64",
+  "darwin-x64": "@wistia/wistia-cli-darwin-x64",
+  "linux-arm64": "@wistia/wistia-cli-linux-arm64",
+  "linux-x64": "@wistia/wistia-cli-linux-x64",
+  "win32-arm64": "@wistia/wistia-cli-win32-arm64",
+  "win32-x64": "@wistia/wistia-cli-win32-x64",
+};
+
+const INSTALL_DOCS = "https://github.com/wistia/wistia-cli#cli-installation";
+
+function unsupportedMessage(platform, arch) {
+  return (
+    `wistia: unsupported platform ${platform}-${arch}. ` +
+    `Supported: ${Object.keys(PLATFORMS).join(", ")}. ` +
+    `Other install options: ${INSTALL_DOCS}`
+  );
+}
+
+function missingMessage(pkg) {
+  return (
+    `wistia: ${pkg} is not installed. Optional dependencies may have been ` +
+    `skipped (--no-optional / --omit=optional). Reinstall @wistia/wistia-cli ` +
+    `without those flags, or use another install method: ${INSTALL_DOCS}`
+  );
+}
+
+// WISTIA_CLI_BINARY overrides resolution entirely (debugging escape hatch).
+function binaryPath({ platform, arch, env, resolve }) {
+  if (env.WISTIA_CLI_BINARY) return env.WISTIA_CLI_BINARY;
+  const pkg = PLATFORMS[`${platform}-${arch}`];
+  if (!pkg) throw new Error(unsupportedMessage(platform, arch));
+  const exe = platform === "win32" ? "wistia.exe" : "wistia";
+  try {
+    return resolve(`${pkg}/bin/${exe}`);
+  } catch {
+    throw new Error(missingMessage(pkg));
+  }
+}
+
+function main() {
+  let bin;
+  try {
+    bin = binaryPath({
+      platform: process.platform,
+      arch: process.arch,
+      env: process.env,
+      resolve: require.resolve,
+    });
+  } catch (err) {
+    process.stderr.write(`${err.message}\n`);
+    process.exit(1);
+  }
+
+  const child = spawn(bin, process.argv.slice(2), { stdio: "inherit" });
+
+  // Ctrl+C: the TTY delivers SIGINT to the whole foreground process group, so
+  // the binary already receives it; forwarding would double-signal it.
+  process.on("SIGINT", () => {});
+  if (process.platform !== "win32") {
+    for (const sig of ["SIGTERM", "SIGHUP"]) {
+      process.on(sig, () => child.kill(sig));
+    }
+  }
+
+  child.on("error", (err) => {
+    process.stderr.write(`wistia: failed to start ${bin}: ${err.message}\n`);
+    process.exit(1);
+  });
+  child.on("exit", (code, signal) => {
+    // 128+n, not a self re-raise: our handlers would swallow the re-raise and
+    // their listeners keep the event loop alive.
+    process.exit(signal ? 128 + (os.constants.signals[signal] ?? 0) : (code ?? 1));
+  });
+}
+
+if (require.main === module) {
+  main();
+} else {
+  module.exports = { PLATFORMS, binaryPath, unsupportedMessage, missingMessage };
+}

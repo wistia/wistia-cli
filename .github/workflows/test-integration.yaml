@@ -37,6 +37,16 @@ jobs:
       - name: Test
         run: go test ./test/...
 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      # The npm launcher shim (npm/wistia-cli/bin/wistia) — platform mapping,
+      # error messages, and spawn passthrough.
+      - name: Shim tests
+        run: node --test npm/wistia-cli/test/shim.test.js
+
   # Live tests hit the real Wistia API (a dedicated test account) and need the
   # secret, so they run on push/dispatch/release — not on PRs (which keeps the
   # PR gate fast and deterministic, and skips on forks where the secret is

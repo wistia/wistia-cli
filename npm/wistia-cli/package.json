@@ -1,0 +1,39 @@
+{
+  "name": "@wistia/wistia-cli",
+  "version": "0.0.0",
+  "description": "Command-line interface for the Wistia Data API",
+  "bin": {
+    "wistia": "bin/wistia"
+  },
+  "optionalDependencies": {
+    "@wistia/wistia-cli-darwin-arm64": "0.0.0",
+    "@wistia/wistia-cli-darwin-x64": "0.0.0",
+    "@wistia/wistia-cli-linux-arm64": "0.0.0",
+    "@wistia/wistia-cli-linux-x64": "0.0.0",
+    "@wistia/wistia-cli-win32-arm64": "0.0.0",
+    "@wistia/wistia-cli-win32-x64": "0.0.0"
+  },
+  "files": [
+    "bin"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "MIT",
+  "author": "Wistia Engineering",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wistia/wistia-cli.git"
+  },
+  "homepage": "https://github.com/wistia/wistia-cli#readme",
+  "keywords": [
+    "wistia",
+    "video",
+    "cli",
+    "api",
+    "agents"
+  ]
+}
