@@ -1,0 +1,20 @@
+{
+  "name": "",
+  "version": "0.0.0",
+  "description": "",
+  "os": [],
+  "cpu": [],
+  "files": [
+    "bin"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "MIT",
+  "author": "Wistia Engineering",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wistia/wistia-cli.git"
+  },
+  "homepage": "https://github.com/wistia/wistia-cli#readme"
+}
