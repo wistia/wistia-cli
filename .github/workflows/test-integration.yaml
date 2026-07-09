@@ -47,6 +47,15 @@ jobs:
       - name: Shim tests
         run: node --test npm/wistia-cli/test/shim.test.js
 
+      # Repeat on the oldest Node the meta package declares (engines >=18).
+      - name: Setup Node 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+
+      - name: Shim tests (Node 18)
+        run: node --test npm/wistia-cli/test/shim.test.js
+
   # Live tests hit the real Wistia API (a dedicated test account) and need the
   # secret, so they run on push/dispatch/release — not on PRs (which keeps the
   # PR gate fast and deterministic, and skips on forks where the secret is

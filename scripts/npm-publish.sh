@@ -25,6 +25,12 @@ if [[ ! "$VERSION" =~ ^[0-9]{4}\.[0-9]{1,2}\.[0-9]+$ ]]; then
   exit 1
 fi
 
+# Fail closed: only the exact string "false" publishes for real.
+if [[ "$DRY_RUN" != "true" && "$DRY_RUN" != "false" ]]; then
+  echo "error: DRY_RUN must be 'true' or 'false', got '${DRY_RUN}'" >&2
+  exit 1
+fi
+
 if [[ -z "${CHANNEL:-}" ]]; then
   year="${VERSION%%.*}"
   rest="${VERSION#*.}"
@@ -82,10 +88,45 @@ if [[ "$DRY_RUN" == "true" ]]; then
   exit 0
 fi
 
+# JSON array of the meta package's published versions; [] on E404 (first
+# publish). Aborts on persistent registry errors rather than guessing — a
+# transient failure read as "no versions" would move `latest` onto a
+# backpatch. Re-running repairs an aborted guard.
+published_versions() {
+  local out attempt
+  for attempt in 1 2 3; do
+    if out=$(npm view "$META_PKG" versions --json 2>&1); then
+      printf '%s' "$out"
+      return 0
+    fi
+    if grep -qE "E404|404 Not Found" <<<"$out"; then
+      printf '[]'
+      return 0
+    fi
+    echo "npm view ${META_PKG} versions failed (attempt ${attempt}), retrying" >&2
+    sleep $((attempt * 5))
+  done
+  echo "error: cannot list ${META_PKG} versions; latest tag left untouched (re-run to repair): ${out}" >&2
+  exit 1
+}
+
+dist_tag_latest() {
+  local name="$1" attempt
+  for attempt in 1 2 3; do
+    if npm dist-tag add "${name}@${VERSION}" latest; then
+      return 0
+    fi
+    echo "npm dist-tag add ${name} failed (attempt ${attempt}), retrying" >&2
+    sleep $((attempt * 5))
+  done
+  echo "error: failed to set latest on ${name}@${VERSION} (re-run to repair)" >&2
+  exit 1
+}
+
 # Move `latest` only when this version is the highest stable published —
 # a backpatch to an older API version must not steal `latest` from a newer
 # one. An empty result means first publish: this version is the max.
-highest=$(npm view "$META_PKG" versions --json 2>/dev/null | node -p '
+highest=$(published_versions | node -p '
   const input = require("fs").readFileSync(0, "utf8").trim();
   const parsed = input ? JSON.parse(input) : [];
   const versions = Array.isArray(parsed) ? parsed : [parsed];
@@ -100,7 +141,7 @@ highest=$(npm view "$META_PKG" versions --json 2>/dev/null | node -p '
 if [[ -z "$highest" || "$highest" == "$VERSION" ]]; then
   for ((i = 0; i < count; i++)); do
     name=$(mf "[$i].name")
-    npm dist-tag add "${name}@${VERSION}" latest
+    dist_tag_latest "$name"
   done
   echo "latest -> ${VERSION} (all packages)"
 else
