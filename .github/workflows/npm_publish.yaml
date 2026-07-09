@@ -1,0 +1,111 @@
+name: NPM Publish
+
+# Publishes the release binaries to npm as @wistia/wistia-cli plus six
+# platform packages (see scripts/npm-stage.mjs). Sources binaries from the
+# GitHub Release assets — the same contract the install scripts and the
+# Homebrew formula consume.
+#
+# Called from the Release workflow after GoReleaser publishes the release.
+# An `on: release` trigger would never fire: the release is created with the
+# workflow's GITHUB_TOKEN, whose events are suppressed. workflow_dispatch
+# covers retries and backfills against any existing release; publishes are
+# idempotent (already-published versions are skipped).
+on:
+  workflow_call:
+    inputs:
+      version:
+        required: true
+        type: string
+      dry_run:
+        required: false
+        type: boolean
+        default: true
+    secrets:
+      NPM_TOKEN:
+        required: false
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Release version, no v prefix (e.g. 2026.5.1)"
+        required: true
+        type: string
+      dry_run:
+        description: "Plan only; publish nothing"
+        required: false
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    # Serialize across all release branches: the latest dist-tag guard in
+    # npm-publish.sh is check-then-act and must not race a concurrent publish.
+    concurrency:
+      group: npm-publish
+      cancel-in-progress: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Download release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p assets
+          for i in 1 2 3; do
+            gh release download "v${{ inputs.version }}" \
+              --repo "$GITHUB_REPOSITORY" --dir assets --clobber && break
+            sleep $((i * 10))
+          done
+          test -f assets/checksums.txt
+
+      - name: Stage npm packages
+        run: |
+          node scripts/npm-stage.mjs --version "${{ inputs.version }}" \
+            --assets assets --out dist/npm
+
+      - name: Smoke test
+        run: |
+          scripts/npm-smoke.sh --version "${{ inputs.version }}" \
+            --tarballs dist/npm/tarballs
+
+      - name: Publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          VERSION: ${{ inputs.version }}
+          DRY_RUN: ${{ inputs.dry_run }}
+          PKG_DIR: dist/npm
+        run: scripts/npm-publish.sh
+
+  # End-user install check on all three OSes. Registry propagation can lag a
+  # publish by a minute or two, hence the retries.
+  verify:
+    needs: publish
+    if: ${{ !inputs.dry_run }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: npx install check
+        shell: bash
+        run: |
+          for i in 1 2 3 4 5; do
+            out="$(npx -y @wistia/wistia-cli@${{ inputs.version }} version)" && break
+            sleep $((i * 15))
+          done
+          echo "$out" | grep -F "${{ inputs.version }}"
