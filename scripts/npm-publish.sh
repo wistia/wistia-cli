@@ -69,7 +69,7 @@ already_published() {
 count=$(mf .length)
 for ((i = 0; i < count; i++)); do
   name=$(mf "[$i].name")
-  dir=$(mf "[$i].dir")
+  dir="${PKG_DIR}/$(mf "[$i].dir")"
   staged=$(mf "[$i].version")
   if [[ "$staged" != "$VERSION" ]]; then
     echo "error: manifest entry ${name} is staged at ${staged}, expected ${VERSION}" >&2
