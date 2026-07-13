@@ -8,21 +8,15 @@ const path = require("node:path");
 const SHIM = path.join(__dirname, "..", "bin", "wistia");
 const shim = require(SHIM);
 
-const KNOWN = [
-  ["darwin", "arm64"],
-  ["darwin", "x64"],
-  ["linux", "arm64"],
-  ["linux", "x64"],
-  ["win32", "arm64"],
-  ["win32", "x64"],
-];
-
-test("platform map covers all six targets", () => {
-  for (const [platform, arch] of KNOWN) {
-    const pkg = shim.PLATFORMS[`${platform}-${arch}`];
-    assert.equal(pkg, `@wistia/wistia-cli-${platform}-${arch}`);
+// The map must resolve to the packages the meta package actually declares —
+// a drifted entry only surfaces as a broken install on that platform, and
+// four of the six platforms are never executed by any test environment.
+test("platform map matches the meta package optionalDependencies", () => {
+  const deps = Object.keys(require("../package.json").optionalDependencies);
+  assert.deepEqual(Object.values(shim.PLATFORMS).sort(), deps.sort());
+  for (const [key, pkg] of Object.entries(shim.PLATFORMS)) {
+    assert.equal(pkg, `@wistia/wistia-cli-${key}`);
   }
-  assert.equal(Object.keys(shim.PLATFORMS).length, KNOWN.length);
 });
 
 test("WISTIA_CLI_BINARY overrides resolution", () => {
@@ -87,24 +81,17 @@ test("missing platform package fails with reinstall guidance", () => {
   );
 });
 
-test("spawn path forwards argv and exit code", () => {
-  const result = spawnSync(process.execPath, [SHIM, "-e", "process.exit(7)"], {
-    env: { ...process.env, WISTIA_CLI_BINARY: process.execPath },
-    encoding: "utf8",
-  });
-  assert.equal(result.status, 7);
-});
-
-test("spawn path passes stdout through", () => {
+test("spawn path forwards argv, stdout, and exit code", () => {
+  // exit inside the write callback: piped stdout may not flush past exit()
   const result = spawnSync(
     process.execPath,
-    [SHIM, "-e", "console.log('passthrough-ok')"],
+    [SHIM, "-e", "process.stdout.write('passthrough-ok\\n', () => process.exit(7))"],
     {
       env: { ...process.env, WISTIA_CLI_BINARY: process.execPath },
       encoding: "utf8",
     },
   );
-  assert.equal(result.status, 0);
+  assert.equal(result.status, 7);
   assert.match(result.stdout, /passthrough-ok/);
 });
 
