@@ -52,7 +52,9 @@ already_published() {
   local name="$1" out attempt
   for attempt in 1 2 3; do
     if out=$(npm view "${name}@${VERSION}" version 2>&1); then
-      return 0
+      # npm < 8.13 exits 0 with empty output when the version doesn't exist.
+      [[ -n "$out" ]] && return 0
+      return 1
     fi
     if grep -qE "E404|404 Not Found" <<<"$out"; then
       return 1
@@ -125,20 +127,22 @@ dist_tag_latest() {
 
 # Move `latest` only when this version is the highest stable published —
 # a backpatch to an older API version must not steal `latest` from a newer
-# one. An empty result means first publish: this version is the max.
-highest=$(published_versions | node -p '
+# one. VERSION is added to the set explicitly: the registry read can lag the
+# publish that just happened, and a stale list would silently skip the move.
+highest=$(published_versions | VERSION="$VERSION" node -p '
   const input = require("fs").readFileSync(0, "utf8").trim();
   const parsed = input ? JSON.parse(input) : [];
   const versions = Array.isArray(parsed) ? parsed : [parsed];
   versions
+    .concat(process.env.VERSION)
     .filter((v) => !v.includes("-"))
     .sort((a, b) => {
       const [x, y] = [a, b].map((v) => v.split(".").map(Number));
       return x[0] - y[0] || x[1] - y[1] || x[2] - y[2];
     })
-    .pop() ?? ""')
+    .pop()')
 
-if [[ -z "$highest" || "$highest" == "$VERSION" ]]; then
+if [[ "$highest" == "$VERSION" ]]; then
   for ((i = 0; i < count; i++)); do
     name=$(mf "[$i].name")
     dist_tag_latest "$name"
