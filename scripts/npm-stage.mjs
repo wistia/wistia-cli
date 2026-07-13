@@ -156,5 +156,12 @@ for (const entry of manifest) {
   entry.tarball = path.join(tarballsDir, stdout.trim().split("\n").pop());
 }
 
-writeJson(path.join(outDir, "manifest.json"), manifest);
-console.log(JSON.stringify(manifest, null, 2));
+// Manifest paths are relative to the manifest itself, so the staging dir
+// survives a move (artifact round-trips between jobs, other machines).
+const portable = manifest.map((entry) => ({
+  ...entry,
+  dir: path.relative(outDir, entry.dir),
+  tarball: path.relative(outDir, entry.tarball),
+}));
+writeJson(path.join(outDir, "manifest.json"), portable);
+console.log(JSON.stringify(portable, null, 2));
