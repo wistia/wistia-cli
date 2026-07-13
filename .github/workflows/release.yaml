@@ -22,6 +22,8 @@ jobs:
   release:
     needs: tests
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
     permissions:
       contents: write
       id-token: write
@@ -93,3 +95,18 @@ jobs:
             dist/*.zip
             dist/checksums.txt
           retention-days: 14
+
+  # npm leg — consumes the GitHub Release assets GoReleaser just published.
+  # dry_run stays true until the npm packages and the NPM_TOKEN secret exist.
+  # Failures here don't roll back the release; re-run via npm_publish.yaml's
+  # workflow_dispatch (idempotent).
+  npm:
+    needs: release
+    permissions:
+      contents: read
+    uses: ./.github/workflows/npm_publish.yaml
+    with:
+      version: ${{ needs.release.outputs.version }}
+      dry_run: true
+    secrets:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
