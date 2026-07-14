@@ -1,3 +1,5 @@
 # Files Speakeasy generation must not manage or overwrite.
 # Hand-written black-box CLI tests (gitignore-style patterns).
 /test/
+# Hand-written npm distribution packaging.
+/npm/
