@@ -52,9 +52,7 @@ func TestClientVersion(t *testing.T) {
 	}
 }
 
-// The server-side resolver validates the metadata segment against
-// `\+[0-9A-Za-z.-]+` — note: no underscore. Whatever the environment supplies,
-// what we emit has to satisfy that, or version attribution is dropped.
+// Invalid metadata makes the server drop version attribution while keeping the client name.
 func TestClientVersionEmitsValidBuildMetadata(t *testing.T) {
 	valid := regexp.MustCompile(`^\+[0-9A-Za-z.-]+$`)
 	suffixes := []string{
@@ -69,7 +67,7 @@ func TestClientVersionEmitsValidBuildMetadata(t *testing.T) {
 			continue
 		}
 		if metadata == "" {
-			continue // sanitized away entirely, so no "+" segment at all
+			continue
 		}
 		if !valid.MatchString(metadata) {
 			t.Errorf("clientVersion(_, %q) = %q: %q is not valid SemVer build metadata",

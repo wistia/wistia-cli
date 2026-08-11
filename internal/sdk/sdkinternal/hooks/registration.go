@@ -13,8 +13,6 @@ func initHooks(h *Hooks) {
 	// CLI traffic is attributable and version-trackable server-side.
 	h.registerBeforeRequestHook(userAgentHook{})
 
-	// Declare the same identity in dedicated headers, so server-side attribution
-	// doesn't depend on parsing the User-Agent.
 	h.registerBeforeRequestHook(clientIdentityHook{})
 
 	// Remaining hook points, available for future use.

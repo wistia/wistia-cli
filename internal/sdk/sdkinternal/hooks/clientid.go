@@ -5,13 +5,7 @@ import (
 	"net/http"
 )
 
-// clientIdentityHook declares who the caller is, in headers the server can read
-// directly instead of pattern-matching the User-Agent. Registered in
-// registration.go alongside userAgentHook.
-//
-// These are declared attribution — any authenticated caller could send them —
-// so the server normalizes and bounds the values. The CLI's job is only to send
-// them consistently.
+// These headers are declared attribution, so the server validates and bounds them.
 type clientIdentityHook struct{}
 
 var _ beforeRequestHook = (*clientIdentityHook)(nil)

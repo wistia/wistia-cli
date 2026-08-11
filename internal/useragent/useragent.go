@@ -1,8 +1,4 @@
-// Package useragent builds the headers that identify the CLI on every Wistia
-// API request: a branded, versioned User-Agent (rather than the generic
-// Speakeasy default), and the X-Wistia-Client-Name / X-Wistia-Client-Version
-// pair. Together they let CLI traffic be identified and version-tracked
-// server-side without parsing a vendor-generated string.
+// Package useragent builds the CLI identity sent with Wistia API requests.
 package useragent
 
 import (
@@ -34,15 +30,10 @@ func format(version, goos, goarch, suffix string) string {
 	return ua
 }
 
-// ClientName is the X-Wistia-Client-Name value. It is deliberately invariant:
-// the server allowlists client names, so this must not vary by platform, build
-// or environment.
+// ClientName remains stable because the server allowlists client names.
 const ClientName = "wistia-cli"
 
-// ClientVersion returns the X-Wistia-Client-Version value: the same version the
-// User-Agent carries, with the suffix attached as SemVer build metadata
-// (e.g. "2026.5.1+ci") so internal traffic stays distinguishable while the
-// client name stays stable. Source builds report "dev".
+// ClientVersion adds the optional traffic suffix as SemVer build metadata.
 func ClientVersion() string {
 	return clientVersion(Version, strings.TrimSpace(os.Getenv(suffixEnvVar)))
 }
@@ -55,18 +46,8 @@ func clientVersion(version, suffix string) string {
 	return version + "+" + metadata
 }
 
-// buildMetadata reduces a free-form suffix to valid SemVer build metadata:
-// dot-separated identifiers drawn from [0-9A-Za-z-]. Any run of characters
-// outside that set collapses to a single "-", so a suffix like "nightly build"
-// becomes "nightly-build" rather than producing "2026.5.1+nightly build",
-// which the server rejects — dropping version attribution silently while the
-// client name still resolves.
-//
-// The rule is deliberately general, not an allowlist: "staging", "nightly" and
-// anything else legitimate work without a code change here.
-//
-// Only the header needs this. The User-Agent carries the suffix verbatim,
-// which is fine — that string is presentation, not a parsed identifier.
+// Keep this generic so new traffic suffixes remain valid without a CLI release.
+// The User-Agent retains the original suffix for existing log filters.
 func buildMetadata(suffix string) string {
 	var b strings.Builder
 	skipped := false
@@ -75,8 +56,7 @@ func buildMetadata(suffix string) string {
 			skipped = true
 			continue
 		}
-		// Only separate what was actually joined; a leading invalid run must not
-		// produce a leading "-".
+		// Avoid a leading separator when the suffix starts with invalid characters.
 		if skipped && b.Len() > 0 {
 			b.WriteByte('-')
 		}
@@ -84,7 +64,7 @@ func buildMetadata(suffix string) string {
 		b.WriteRune(r)
 	}
 
-	// Empty identifiers ("a..b", ".a", "a.") are not valid build metadata.
+	// SemVer forbids empty build identifiers.
 	identifiers := strings.Split(b.String(), ".")
 	kept := identifiers[:0]
 	for _, id := range identifiers {
