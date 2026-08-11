@@ -73,10 +73,35 @@ func TestReleaseIdentity(t *testing.T) {
 			t.Fatalf("exit = %d, want 0; stderr:\n%s", res.exitCode, res.stderr)
 		}
 		ua := got.headers.Get("User-Agent")
-		if want := "wistia-cli/" + version; !strings.Contains(ua, want) {
-			t.Errorf("outbound User-Agent = %q, want it to contain %q\n"+
+		if reported := versionFromUserAgent(ua); reported != version {
+			t.Errorf("outbound User-Agent reports version %q, want %q (User-Agent = %q)\n"+
 				"An unregistered User-Agent hook regresses this to the Speakeasy default; "+
-				"a missing -X useragent.Version regresses it to wistia-cli/dev.", ua, want)
+				"a missing -X useragent.Version regresses it to wistia-cli/dev.", reported, version, ua)
 		}
 	})
+}
+
+// versionFromUserAgent returns the version token from a branded User-Agent —
+// "wistia-cli/<version> (<os>/<arch>)[ suffix]" — or "" if the value isn't
+// branded at all.
+//
+// The token is read out and compared whole rather than searched for as a
+// substring: `strings.Contains(ua, "wistia-cli/"+version)` accepts any version
+// that merely starts with the expected one, so a binary reporting 2026.5.10
+// would satisfy an expected 2026.5.1. Dated versions reach two-digit patches
+// routinely, so that collision is a question of when, not whether.
+//
+// Matching the brand as a prefix rather than anywhere in the string matters
+// too: the Speakeasy default User-Agent ends in the module path
+// ".../wistia-cli/internal/sdk", which contains the brand but no version.
+func versionFromUserAgent(ua string) string {
+	rest, ok := strings.CutPrefix(ua, "wistia-cli/")
+	if !ok {
+		return ""
+	}
+	// The version is always followed by " (<os>/<arch>)"; taking everything when
+	// that separator is missing keeps a malformed value visible in the failure
+	// message instead of silently passing.
+	version, _, _ := strings.Cut(rest, " ")
+	return version
 }
