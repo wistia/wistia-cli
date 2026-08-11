@@ -5,10 +5,6 @@ import (
 	"testing"
 )
 
-// versionFromUserAgent is what makes the release gate exact, so it is tested
-// against fabricated User-Agent values here — the gate itself needs a real
-// release binary and can't fabricate one.
-
 func TestVersionFromUserAgent(t *testing.T) {
 	tests := []struct {
 		name, ua, want string
@@ -17,8 +13,6 @@ func TestVersionFromUserAgent(t *testing.T) {
 		{"with CI suffix", "wistia-cli/2026.5.1 (linux/amd64) ci", "2026.5.1"},
 		{"dev build", "wistia-cli/dev (linux/amd64)", "dev"},
 		{"two-digit patch", "wistia-cli/2026.5.10 (darwin/arm64)", "2026.5.10"},
-		// The module path in the Speakeasy default contains the brand, so this
-		// only comes out empty because the match is anchored at the start.
 		{"speakeasy default", "speakeasy-sdk/go 0.0.1 2.911.0 edge-version github.com/wistia/wistia-cli/internal/sdk", ""},
 		{"empty", "", ""},
 	}
@@ -31,8 +25,6 @@ func TestVersionFromUserAgent(t *testing.T) {
 	}
 }
 
-// The gate must reject a version that only shares a prefix with the expected
-// one. The substring form this replaced accepted exactly that.
 func TestVersionFromUserAgentRejectsPrefixMatch(t *testing.T) {
 	const ua = "wistia-cli/2026.5.10 (darwin/arm64)"
 	const expected = "2026.5.1"

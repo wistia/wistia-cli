@@ -6,31 +6,12 @@ import (
 	"testing"
 )
 
-// Release gate for how the CLI identifies itself.
-//
-// Server-side CLI usage tracking keys on the version the binary reports, so a
-// release that ships a "dev" or Speakeasy-default identity is invisible in those
-// metrics. That has nearly happened: the User-Agent branding was absent from a
-// release line because the commit carrying it was not on the release branch, and
-// nothing in the release path noticed.
-//
-// This asserts against the actual release artifact that `wistia version` and the
-// outbound User-Agent both report the tag's version. Run from
-// .github/workflows/release.yaml after GoReleaser builds and before the tag is
-// pushed, so a mismatch stops the release. Reproduce locally:
-//
-//	goreleaser build --single-target --clean --skip=validate -o /tmp/wistia
-//	WISTIA_RELEASE_VERSION=2026.5.1 WISTIA_RELEASE_BINARY=/tmp/wistia \
-//	  go test ./test/... -run TestReleaseIdentity -v
-//
-// The binary is supplied rather than built here on purpose: .goreleaser.yaml
-// stays the single source of truth for the release ldflags, and the check then
-// covers the ldflags themselves, not a restatement of them.
+// TestReleaseIdentity checks the GoReleaser-built artifact so the test covers
+// the release ldflags from .goreleaser.yaml rather than a restatement of them.
 const (
 	releaseVersionEnv = "WISTIA_RELEASE_VERSION"
 	releaseBinaryEnv  = "WISTIA_RELEASE_BINARY"
-	// Set in the release workflow so a misconfigured gate fails loudly instead of
-	// skipping (mirrors WISTIA_REQUIRE_LIVE for the live tests).
+	// Prevent a misconfigured release workflow from silently skipping this gate.
 	requireReleaseEnv = "WISTIA_REQUIRE_RELEASE_CHECK"
 )
 
@@ -81,27 +62,13 @@ func TestReleaseIdentity(t *testing.T) {
 	})
 }
 
-// versionFromUserAgent returns the version token from a branded User-Agent —
-// "wistia-cli/<version> (<os>/<arch>)[ suffix]" — or "" if the value isn't
-// branded at all.
-//
-// The token is read out and compared whole rather than searched for as a
-// substring: `strings.Contains(ua, "wistia-cli/"+version)` accepts any version
-// that merely starts with the expected one, so a binary reporting 2026.5.10
-// would satisfy an expected 2026.5.1. Dated versions reach two-digit patches
-// routinely, so that collision is a question of when, not whether.
-//
-// Matching the brand as a prefix rather than anywhere in the string matters
-// too: the Speakeasy default User-Agent ends in the module path
-// ".../wistia-cli/internal/sdk", which contains the brand but no version.
+// Prefix matching rejects Speakeasy's User-Agent, whose module path also
+// contains "wistia-cli"; returning the whole token avoids version collisions.
 func versionFromUserAgent(ua string) string {
 	rest, ok := strings.CutPrefix(ua, "wistia-cli/")
 	if !ok {
 		return ""
 	}
-	// The version is always followed by " (<os>/<arch>)"; taking everything when
-	// that separator is missing keeps a malformed value visible in the failure
-	// message instead of silently passing.
 	version, _, _ := strings.Cut(rest, " ")
 	return version
 }

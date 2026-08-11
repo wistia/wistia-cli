@@ -103,9 +103,6 @@ func runWistiaEnv(t *testing.T, extraEnv []string, args ...string) result {
 	return runBinEnv(t, wistiaBin, extraEnv, args...)
 }
 
-// runBinEnv is runWistiaEnv against an explicit binary, so a test can exercise a
-// build other than the suite's own (release_identity_test.go checks the binary
-// GoReleaser produced).
 func runBinEnv(t *testing.T, bin string, extraEnv []string, args ...string) result {
 	t.Helper()
 
