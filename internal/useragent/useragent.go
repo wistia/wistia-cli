@@ -1,7 +1,8 @@
-// Package useragent builds the User-Agent header the CLI sends on every Wistia
-// API request. A branded, versioned value (rather than the generic Speakeasy
-// default) is what lets CLI traffic be identified and version-tracked
-// server-side.
+// Package useragent builds the headers that identify the CLI on every Wistia
+// API request: a branded, versioned User-Agent (rather than the generic
+// Speakeasy default), and the X-Wistia-Client-Name / X-Wistia-Client-Version
+// pair. Together they let CLI traffic be identified and version-tracked
+// server-side without parsing a vendor-generated string.
 package useragent
 
 import (
@@ -31,4 +32,24 @@ func format(version, goos, goarch, suffix string) string {
 		ua += " " + suffix
 	}
 	return ua
+}
+
+// ClientName is the X-Wistia-Client-Name value. It is deliberately invariant:
+// the server allowlists client names, so this must not vary by platform, build
+// or environment.
+const ClientName = "wistia-cli"
+
+// ClientVersion returns the X-Wistia-Client-Version value: the same version the
+// User-Agent carries, with the CI suffix attached as SemVer build metadata
+// (e.g. "2026.5.1+ci") so internal traffic stays distinguishable while the
+// client name stays stable. Source builds report "dev".
+func ClientVersion() string {
+	return clientVersion(Version, strings.TrimSpace(os.Getenv(suffixEnvVar)))
+}
+
+func clientVersion(version, suffix string) string {
+	if suffix == "" {
+		return version
+	}
+	return version + "+" + suffix
 }

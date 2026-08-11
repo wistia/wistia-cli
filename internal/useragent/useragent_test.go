@@ -24,6 +24,32 @@ func TestFormat(t *testing.T) {
 	}
 }
 
+func TestClientVersion(t *testing.T) {
+	tests := []struct {
+		name            string
+		version, suffix string
+		want            string
+	}{
+		{"release", "2026.5.0", "", "2026.5.0"},
+		{"dev default", "dev", "", "dev"},
+		{"suffix as build metadata", "2026.5.0", "ci", "2026.5.0+ci"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := clientVersion(tt.version, tt.suffix); got != tt.want {
+				t.Errorf("clientVersion() = %q, want %q", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestClientVersionReadsAndTrimsEnvSuffix(t *testing.T) {
+	t.Setenv(suffixEnvVar, "  ci  ")
+	if got, want := ClientVersion(), Version+"+ci"; got != want {
+		t.Errorf("ClientVersion() = %q, want %q", got, want)
+	}
+}
+
 func TestStringReadsAndTrimsEnvSuffix(t *testing.T) {
 	t.Setenv(suffixEnvVar, "  ci  ")
 	got := String()
