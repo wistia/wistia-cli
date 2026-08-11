@@ -100,10 +100,18 @@ func runWistiaEnv(t *testing.T, extraEnv []string, args ...string) result {
 	if wistiaBin == "" {
 		t.Fatal("wistiaBin not built (did TestMain run?)")
 	}
+	return runBinEnv(t, wistiaBin, extraEnv, args...)
+}
+
+// runBinEnv is runWistiaEnv against an explicit binary, so a test can exercise a
+// build other than the suite's own (release_identity_test.go checks the binary
+// GoReleaser produced).
+func runBinEnv(t *testing.T, bin string, extraEnv []string, args ...string) result {
+	t.Helper()
 
 	// --no-interactive guards against any prompt; the tests never feed stdin.
 	full := append([]string{"--no-interactive"}, args...)
-	cmd := exec.Command(wistiaBin, full...)
+	cmd := exec.Command(bin, full...)
 	cmd.Env = append(isolatedEnv(t), extraEnv...)
 
 	var stdout, stderr bytes.Buffer

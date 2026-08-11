@@ -49,15 +49,39 @@ jobs:
           echo "version=${version}" >> "$GITHUB_OUTPUT"
           echo "Release version: ${version} (branch ${GITHUB_REF_NAME})"
 
-      - name: Create and push tag
+      - name: Create tag
         run: |
-          # Push the tag so GoReleaser's GitHub release references this commit.
-          # (A GITHUB_TOKEN-pushed tag won't re-trigger this workflow — F1.)
           # Annotated tags need a committer identity the runner lacks by default.
+          # GoReleaser reads the version from this tag, so it must exist locally
+          # before the identity check builds anything.
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git tag -a "v${{ steps.version.outputs.version }}" \
             -m "Release v${{ steps.version.outputs.version }}"
+
+      # Build one host-platform binary through GoReleaser — the same ldflags the
+      # published artifacts get — so the next step can check the real thing.
+      - name: Build release binary for identity check
+        uses: goreleaser/goreleaser-action@v6
+        with:
+          distribution: goreleaser
+          version: "v2.16.0"
+          args: build --single-target --clean --skip=validate --output ${{ runner.temp }}/wistia
+
+      # Fails the release if the built binary reports a "dev" or Speakeasy-default
+      # version from `wistia version` or the outbound User-Agent. Runs before the
+      # tag is pushed, so a failure leaves nothing published.
+      - name: Verify release identity
+        run: go test ./test/... -run TestReleaseIdentity -v
+        env:
+          WISTIA_RELEASE_VERSION: ${{ steps.version.outputs.version }}
+          WISTIA_RELEASE_BINARY: ${{ runner.temp }}/wistia
+          WISTIA_REQUIRE_RELEASE_CHECK: "1"
+
+      - name: Push tag
+        run: |
+          # Push the tag so GoReleaser's GitHub release references this commit.
+          # (A GITHUB_TOKEN-pushed tag won't re-trigger this workflow — F1.)
           git push origin "v${{ steps.version.outputs.version }}"
 
       - name: Configure AWS credentials (OIDC)
