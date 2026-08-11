@@ -40,7 +40,7 @@ func format(version, goos, goarch, suffix string) string {
 const ClientName = "wistia-cli"
 
 // ClientVersion returns the X-Wistia-Client-Version value: the same version the
-// User-Agent carries, with the CI suffix attached as SemVer build metadata
+// User-Agent carries, with the suffix attached as SemVer build metadata
 // (e.g. "2026.5.1+ci") so internal traffic stays distinguishable while the
 // client name stays stable. Source builds report "dev".
 func ClientVersion() string {
@@ -48,8 +48,56 @@ func ClientVersion() string {
 }
 
 func clientVersion(version, suffix string) string {
-	if suffix == "" {
+	metadata := buildMetadata(suffix)
+	if metadata == "" {
 		return version
 	}
-	return version + "+" + suffix
+	return version + "+" + metadata
+}
+
+// buildMetadata reduces a free-form suffix to valid SemVer build metadata:
+// dot-separated identifiers drawn from [0-9A-Za-z-]. Any run of characters
+// outside that set collapses to a single "-", so a suffix like "nightly build"
+// becomes "nightly-build" rather than producing "2026.5.1+nightly build",
+// which the server rejects — dropping version attribution silently while the
+// client name still resolves.
+//
+// The rule is deliberately general, not an allowlist: "staging", "nightly" and
+// anything else legitimate work without a code change here.
+//
+// Only the header needs this. The User-Agent carries the suffix verbatim,
+// which is fine — that string is presentation, not a parsed identifier.
+func buildMetadata(suffix string) string {
+	var b strings.Builder
+	skipped := false
+	for _, r := range suffix {
+		if !isBuildMetadataRune(r) {
+			skipped = true
+			continue
+		}
+		// Only separate what was actually joined; a leading invalid run must not
+		// produce a leading "-".
+		if skipped && b.Len() > 0 {
+			b.WriteByte('-')
+		}
+		skipped = false
+		b.WriteRune(r)
+	}
+
+	// Empty identifiers ("a..b", ".a", "a.") are not valid build metadata.
+	identifiers := strings.Split(b.String(), ".")
+	kept := identifiers[:0]
+	for _, id := range identifiers {
+		if id != "" {
+			kept = append(kept, id)
+		}
+	}
+	return strings.Join(kept, ".")
+}
+
+func isBuildMetadataRune(r rune) bool {
+	return r == '.' || r == '-' ||
+		(r >= '0' && r <= '9') ||
+		(r >= 'a' && r <= 'z') ||
+		(r >= 'A' && r <= 'Z')
 }

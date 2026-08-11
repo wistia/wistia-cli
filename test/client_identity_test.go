@@ -43,6 +43,25 @@ func TestClientIdentity_CISuffixRidesOnVersion(t *testing.T) {
 	}
 }
 
+// A suffix that isn't already valid SemVer build metadata is sanitized for the
+// header only — the User-Agent keeps it verbatim, since that string is read by
+// people and log filters rather than parsed as a version.
+func TestClientIdentity_SuffixSanitizedForHeaderOnly(t *testing.T) {
+	srv, got := newMockAPI(t, 200, `{}`)
+	runWistiaEnv(t, []string{"WISTIA_CLI_USER_AGENT_SUFFIX=nightly build"},
+		"media", "get", "--media-hashed-id", "abc123",
+		"--server-url", srv.URL, "--bearer-auth", "test-token")
+
+	ua := got.headers.Get("User-Agent")
+	if !strings.HasSuffix(ua, " nightly build") {
+		t.Errorf("User-Agent = %q, want it to end with %q verbatim", ua, " nightly build")
+	}
+	want := userAgentVersion(t, ua) + "+nightly-build"
+	if version := got.headers.Get("X-Wistia-Client-Version"); version != want {
+		t.Errorf("X-Wistia-Client-Version = %q, want %q", version, want)
+	}
+}
+
 // userAgentVersion pulls the version token out of "wistia-cli/<version> (os/arch)".
 func userAgentVersion(t *testing.T, ua string) string {
 	t.Helper()

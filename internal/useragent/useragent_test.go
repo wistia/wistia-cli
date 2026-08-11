@@ -1,6 +1,7 @@
 package useragent
 
 import (
+	"regexp"
 	"strings"
 	"testing"
 )
@@ -33,6 +34,14 @@ func TestClientVersion(t *testing.T) {
 		{"release", "2026.5.0", "", "2026.5.0"},
 		{"dev default", "dev", "", "dev"},
 		{"suffix as build metadata", "2026.5.0", "ci", "2026.5.0+ci"},
+		{"future suffix needs no code change", "2026.5.0", "staging", "2026.5.0+staging"},
+		{"space becomes a separator", "2026.5.0", "nightly build", "2026.5.0+nightly-build"},
+		{"invalid characters collapse", "2026.5.0", "ci_run/7", "2026.5.0+ci-run-7"},
+		{"dotted identifiers survive", "2026.5.0", "staging.2", "2026.5.0+staging.2"},
+		{"empty identifiers dropped", "2026.5.0", ".staging..2.", "2026.5.0+staging.2"},
+		{"leading and trailing junk trimmed", "2026.5.0", " %ci% ", "2026.5.0+ci"},
+		{"nothing usable omits the plus", "2026.5.0", "!!!", "2026.5.0"},
+		{"dev build with suffix", "dev", "ci", "dev+ci"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -40,6 +49,32 @@ func TestClientVersion(t *testing.T) {
 				t.Errorf("clientVersion() = %q, want %q", got, tt.want)
 			}
 		})
+	}
+}
+
+// The server-side resolver validates the metadata segment against
+// `\+[0-9A-Za-z.-]+` — note: no underscore. Whatever the environment supplies,
+// what we emit has to satisfy that, or version attribution is dropped.
+func TestClientVersionEmitsValidBuildMetadata(t *testing.T) {
+	valid := regexp.MustCompile(`^\+[0-9A-Za-z.-]+$`)
+	suffixes := []string{
+		"ci", "staging", "nightly build", "ci_run/7", "  ci  ", "a.b.c",
+		"CI-2026", "héllo", "ci\nrun", "!!!", "..", "-", "",
+	}
+	for _, suffix := range suffixes {
+		got := clientVersion("2026.5.0", suffix)
+		metadata, ok := strings.CutPrefix(got, "2026.5.0")
+		if !ok {
+			t.Errorf("clientVersion(_, %q) = %q, want it to start with the version", suffix, got)
+			continue
+		}
+		if metadata == "" {
+			continue // sanitized away entirely, so no "+" segment at all
+		}
+		if !valid.MatchString(metadata) {
+			t.Errorf("clientVersion(_, %q) = %q: %q is not valid SemVer build metadata",
+				suffix, got, metadata)
+		}
 	}
 }
 
