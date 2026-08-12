@@ -6,10 +6,62 @@ import (
 	"testing"
 )
 
-// Shared with the wistia/wistia resolver that validates X-Wistia-Client-Version,
-// and with #37's Dependency section. Widening it on one side without the other
-// silently drops version attribution, so both sides pin the same grammar.
-var resolverContract = regexp.MustCompile(`^(?:\d+\.\d+\.\d+|dev)(\+[0-9A-Za-z.-]{1,16})?$`)
+// validClientVersion mirrors the wistia/wistia resolver's validation of
+// X-Wistia-Client-Version. Canonical grammar: "The client-version contract
+// (normative — Aug 12)" in wistia/work-notes,
+// wistia-for-agents/wistia-cli/cli-usage-tracking-implementation-plan.md,
+// quoted here because that repo is not reachable from CI:
+//
+//	version  ::= (\d+\.\d+\.\d+ | "dev") ["+" metadata]
+//	metadata ::= identifier ("." identifier)*   ; 1..16 characters total
+//	identifier ::= [0-9A-Za-z-]+
+//
+// Structure and total length are separate checks because "structure AND length"
+// needs a lookahead RE2 lacks. The Rails side mirrors the same two-part shape.
+func validClientVersion(v string) bool {
+	core, metadata, hasMetadata := strings.Cut(v, "+")
+	if !contractCore.MatchString(core) {
+		return false
+	}
+	if !hasMetadata {
+		return true
+	}
+	if len(metadata) == 0 || len(metadata) > maxBuildMetadata {
+		return false
+	}
+	return contractMetadata.MatchString(metadata)
+}
+
+var (
+	contractCore     = regexp.MustCompile(`^(?:\d+\.\d+\.\d+|dev)$`)
+	contractMetadata = regexp.MustCompile(`^[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*$`)
+)
+
+// Mirrored verbatim from the contract section's accept/reject lists, which the
+// wistia/wistia resolver suite also carries. There is no automatic cross-repo
+// enforcement — keeping these two lists identical is what catches Rails-side
+// drift, so add cases to both or neither.
+var (
+	contractAcceptCases = []string{
+		"2026.5.1",
+		"2026.5.1+ci",
+		"dev",
+		"dev+ci",
+		"2026.5.1+nightly-analytic",
+	}
+
+	contractRejectCases = []string{
+		"dev+.",
+		"1.2.3+.a",
+		"1.2.3+a.",
+		"1.2.3+a..b",
+		"1.2.3+" + strings.Repeat("a", maxBuildMetadata+1),
+		"0.1.2-beta",
+		"dev-anything",
+		"",
+		"wistia-cli/2026.5.1 (darwin/arm64)",
+	}
+)
 
 func TestFormat(t *testing.T) {
 	tests := []struct {
@@ -62,25 +114,35 @@ func TestClientVersion(t *testing.T) {
 	}
 }
 
-func TestClientVersionMatchesResolverContract(t *testing.T) {
-	tests := []struct {
-		name string
-		got  string
-		want bool
-	}{
-		{"source build", clientVersion("dev", ""), true},
-		{"source build in CI", clientVersion("dev", "ci"), true},
-		{"release in CI", clientVersion("2026.5.1", "ci"), true},
-		{"release with truncated metadata", clientVersion("2026.5.1", "nightly analytics pipeline"), true},
-		{"metadata one over the bound", "2026.5.1+" + strings.Repeat("a", maxBuildMetadata+1), false},
-		{"prerelease version", "0.1.2-beta", false},
+// Executable documentation of the contract: it pins the CLI's understanding of
+// the grammar, and pairs with the identical fixture lists in the Rails suite.
+func TestClientVersionContractFixtures(t *testing.T) {
+	for _, v := range contractAcceptCases {
+		if !validClientVersion(v) {
+			t.Errorf("validClientVersion(%q) = false, want true", v)
+		}
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := resolverContract.MatchString(tt.got); got != tt.want {
-				t.Errorf("resolverContract.MatchString(%q) = %v, want %v", tt.got, got, tt.want)
-			}
-		})
+	for _, v := range contractRejectCases {
+		if validClientVersion(v) {
+			t.Errorf("validClientVersion(%q) = true, want false", v)
+		}
+	}
+}
+
+// The half that is enforced automatically: whatever the CLI emits must satisfy
+// the contract.
+func TestClientVersionSatisfiesContract(t *testing.T) {
+	emitted := []struct{ version, suffix string }{
+		{"dev", ""},
+		{"dev", "ci"},
+		{"2026.5.1", "ci"},
+		{"2026.5.1", "nightly analytics pipeline"},
+	}
+	for _, e := range emitted {
+		if got := clientVersion(e.version, e.suffix); !validClientVersion(got) {
+			t.Errorf("clientVersion(%q, %q) = %q, which the resolver would reject",
+				e.version, e.suffix, got)
+		}
 	}
 }
 
@@ -94,7 +156,7 @@ func TestClientVersionEmitsValidBuildMetadata(t *testing.T) {
 	}
 	for _, suffix := range suffixes {
 		got := clientVersion("2026.5.0", suffix)
-		if !resolverContract.MatchString(got) {
+		if !validClientVersion(got) {
 			t.Errorf("clientVersion(_, %q) = %q, which the resolver would reject", suffix, got)
 		}
 		// Anchored to the Go constant rather than the pattern, so raising one
