@@ -14,7 +14,11 @@ func TestClientIdentity_Headers(t *testing.T) {
 		t.Errorf("X-Wistia-Client-Name = %q, want %q", name, "wistia-cli")
 	}
 	// Compare against the User-Agent so this assertion works in dev and release builds.
-	want := userAgentVersion(t, got.headers.Get("User-Agent"))
+	ua := got.headers.Get("User-Agent")
+	want := versionFromUserAgent(ua)
+	if want == "" {
+		t.Fatalf("User-Agent = %q, want a branded wistia-cli/<version> value", ua)
+	}
 	if version := got.headers.Get("X-Wistia-Client-Version"); version != want {
 		t.Errorf("X-Wistia-Client-Version = %q, want %q", version, want)
 	}
@@ -30,8 +34,12 @@ func TestClientIdentity_CISuffixRidesOnVersion(t *testing.T) {
 		t.Errorf("X-Wistia-Client-Name = %q, want %q — the name must not vary with the suffix",
 			name, "wistia-cli")
 	}
-	want := userAgentVersion(t, got.headers.Get("User-Agent")) + "+ci"
-	if version := got.headers.Get("X-Wistia-Client-Version"); version != want {
+	ua := got.headers.Get("User-Agent")
+	base := versionFromUserAgent(ua)
+	if base == "" {
+		t.Fatalf("User-Agent = %q, want a branded wistia-cli/<version> value", ua)
+	}
+	if version, want := got.headers.Get("X-Wistia-Client-Version"), base+"+ci"; version != want {
 		t.Errorf("X-Wistia-Client-Version = %q, want %q", version, want)
 	}
 }
@@ -46,18 +54,11 @@ func TestClientIdentity_SuffixSanitizedForHeaderOnly(t *testing.T) {
 	if !strings.HasSuffix(ua, " nightly build") {
 		t.Errorf("User-Agent = %q, want it to end with %q verbatim", ua, " nightly build")
 	}
-	want := userAgentVersion(t, ua) + "+nightly-build"
-	if version := got.headers.Get("X-Wistia-Client-Version"); version != want {
+	base := versionFromUserAgent(ua)
+	if base == "" {
+		t.Fatalf("User-Agent = %q, want a branded wistia-cli/<version> value", ua)
+	}
+	if version, want := got.headers.Get("X-Wistia-Client-Version"), base+"+nightly-build"; version != want {
 		t.Errorf("X-Wistia-Client-Version = %q, want %q", version, want)
 	}
-}
-
-func userAgentVersion(t *testing.T, ua string) string {
-	t.Helper()
-	_, rest, ok := strings.Cut(ua, "wistia-cli/")
-	if !ok {
-		t.Fatalf("User-Agent = %q, want it to contain %q", ua, "wistia-cli/")
-	}
-	version, _, _ := strings.Cut(rest, " ")
-	return version
 }

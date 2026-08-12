@@ -42,6 +42,11 @@ func TestClientVersion(t *testing.T) {
 		{"leading and trailing junk trimmed", "2026.5.0", " %ci% ", "2026.5.0+ci"},
 		{"nothing usable omits the plus", "2026.5.0", "!!!", "2026.5.0"},
 		{"dev build with suffix", "dev", "ci", "dev+ci"},
+		{"long suffix truncates", "2026.5.0", "nightly analytics pipeline", "2026.5.0+nightly-analytic"},
+		{"exactly at the bound is kept", "2026.5.0", "abcdefghijklmnop", "2026.5.0+abcdefghijklmnop"},
+		{"one over the bound truncates", "2026.5.0", "abcdefghijklmnopq", "2026.5.0+abcdefghijklmnop"},
+		{"trailing dot from truncation dropped", "2026.5.0", "abcdefghijklmno.pqrs", "2026.5.0+abcdefghijklmno"},
+		{"trailing hyphen from truncation kept", "2026.5.0", "abcdefghijklmno-pqrs", "2026.5.0+abcdefghijklmno-"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -58,6 +63,8 @@ func TestClientVersionEmitsValidBuildMetadata(t *testing.T) {
 	suffixes := []string{
 		"ci", "staging", "nightly build", "ci_run/7", "  ci  ", "a.b.c",
 		"CI-2026", "héllo", "ci\nrun", "!!!", "..", "-", "",
+		"nightly analytics pipeline", strings.Repeat("a.", 40), strings.Repeat("-", 40),
+		"aaaaaaaaaaaaaaa.bbbbb", strings.Repeat("é", 40) + " tail",
 	}
 	for _, suffix := range suffixes {
 		got := clientVersion("2026.5.0", suffix)
@@ -72,6 +79,10 @@ func TestClientVersionEmitsValidBuildMetadata(t *testing.T) {
 		if !valid.MatchString(metadata) {
 			t.Errorf("clientVersion(_, %q) = %q: %q is not valid SemVer build metadata",
 				suffix, got, metadata)
+		}
+		if n := len(metadata) - len("+"); n > maxBuildMetadata {
+			t.Errorf("clientVersion(_, %q) = %q: metadata is %d chars, want at most %d",
+				suffix, got, n, maxBuildMetadata)
 		}
 	}
 }

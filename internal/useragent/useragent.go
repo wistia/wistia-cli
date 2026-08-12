@@ -46,6 +46,9 @@ func clientVersion(version, suffix string) string {
 	return version + "+" + metadata
 }
 
+// Matches the bound the server validates against.
+const maxBuildMetadata = 16
+
 // Keep this generic so new traffic suffixes remain valid without a CLI release.
 // The User-Agent retains the original suffix for existing log filters.
 func buildMetadata(suffix string) string {
@@ -72,7 +75,15 @@ func buildMetadata(suffix string) string {
 			kept = append(kept, id)
 		}
 	}
-	return strings.Join(kept, ".")
+	metadata := strings.Join(kept, ".")
+
+	// Truncate rather than drop: an over-long suffix still marks the traffic as
+	// internal, where a bare version would pass for a release build.
+	if len(metadata) > maxBuildMetadata {
+		// A trailing "-" is a legal identifier character; a trailing "." is not.
+		metadata = strings.TrimRight(metadata[:maxBuildMetadata], ".")
+	}
+	return metadata
 }
 
 func isBuildMetadataRune(r rune) bool {
