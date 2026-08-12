@@ -6,6 +6,11 @@ import (
 	"testing"
 )
 
+// Shared with the wistia/wistia resolver that validates X-Wistia-Client-Version,
+// and with #37's Dependency section. Widening it on one side without the other
+// silently drops version attribution, so both sides pin the same grammar.
+var resolverContract = regexp.MustCompile(`^(?:\d+\.\d+\.\d+|dev)(\+[0-9A-Za-z.-]{1,16})?$`)
+
 func TestFormat(t *testing.T) {
 	tests := []struct {
 		name                          string
@@ -57,9 +62,30 @@ func TestClientVersion(t *testing.T) {
 	}
 }
 
+func TestClientVersionMatchesResolverContract(t *testing.T) {
+	tests := []struct {
+		name string
+		got  string
+		want bool
+	}{
+		{"source build", clientVersion("dev", ""), true},
+		{"source build in CI", clientVersion("dev", "ci"), true},
+		{"release in CI", clientVersion("2026.5.1", "ci"), true},
+		{"release with truncated metadata", clientVersion("2026.5.1", "nightly analytics pipeline"), true},
+		{"metadata one over the bound", "2026.5.1+" + strings.Repeat("a", maxBuildMetadata+1), false},
+		{"prerelease version", "0.1.2-beta", false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := resolverContract.MatchString(tt.got); got != tt.want {
+				t.Errorf("resolverContract.MatchString(%q) = %v, want %v", tt.got, got, tt.want)
+			}
+		})
+	}
+}
+
 // Invalid metadata makes the server drop version attribution while keeping the client name.
 func TestClientVersionEmitsValidBuildMetadata(t *testing.T) {
-	valid := regexp.MustCompile(`^\+[0-9A-Za-z.-]+$`)
 	suffixes := []string{
 		"ci", "staging", "nightly build", "ci_run/7", "  ci  ", "a.b.c",
 		"CI-2026", "héllo", "ci\nrun", "!!!", "..", "-", "",
@@ -68,19 +94,13 @@ func TestClientVersionEmitsValidBuildMetadata(t *testing.T) {
 	}
 	for _, suffix := range suffixes {
 		got := clientVersion("2026.5.0", suffix)
-		metadata, ok := strings.CutPrefix(got, "2026.5.0")
-		if !ok {
-			t.Errorf("clientVersion(_, %q) = %q, want it to start with the version", suffix, got)
-			continue
+		if !resolverContract.MatchString(got) {
+			t.Errorf("clientVersion(_, %q) = %q, which the resolver would reject", suffix, got)
 		}
-		if metadata == "" {
-			continue
-		}
-		if !valid.MatchString(metadata) {
-			t.Errorf("clientVersion(_, %q) = %q: %q is not valid SemVer build metadata",
-				suffix, got, metadata)
-		}
-		if n := len(metadata) - len("+"); n > maxBuildMetadata {
+		// Anchored to the Go constant rather than the pattern, so raising one
+		// without the other fails here instead of drifting silently.
+		metadata, _ := strings.CutPrefix(got, "2026.5.0")
+		if n := len(strings.TrimPrefix(metadata, "+")); n > maxBuildMetadata {
 			t.Errorf("clientVersion(_, %q) = %q: metadata is %d chars, want at most %d",
 				suffix, got, n, maxBuildMetadata)
 		}
