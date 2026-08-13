@@ -24,7 +24,7 @@ func TestFormat(t *testing.T) {
 	}
 }
 
-// The four values the header can ever carry.
+// The four forms the header can carry.
 func TestClientVersion(t *testing.T) {
 	tests := []struct {
 		name            string
