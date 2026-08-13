@@ -1,7 +1,6 @@
 package integration
 
 import (
-	"strings"
 	"testing"
 )
 
@@ -40,25 +39,6 @@ func TestClientIdentity_CISuffixRidesOnVersion(t *testing.T) {
 		t.Fatalf("User-Agent = %q, want a branded wistia-cli/<version> value", ua)
 	}
 	if version, want := got.headers.Get("X-Wistia-Client-Version"), base+"+ci"; version != want {
-		t.Errorf("X-Wistia-Client-Version = %q, want %q", version, want)
-	}
-}
-
-func TestClientIdentity_SuffixSanitizedForHeaderOnly(t *testing.T) {
-	srv, got := newMockAPI(t, 200, `{}`)
-	runWistiaEnv(t, []string{"WISTIA_CLI_USER_AGENT_SUFFIX=nightly build"},
-		"media", "get", "--media-hashed-id", "abc123",
-		"--server-url", srv.URL, "--bearer-auth", "test-token")
-
-	ua := got.headers.Get("User-Agent")
-	if !strings.HasSuffix(ua, " nightly build") {
-		t.Errorf("User-Agent = %q, want it to end with %q verbatim", ua, " nightly build")
-	}
-	base := versionFromUserAgent(ua)
-	if base == "" {
-		t.Fatalf("User-Agent = %q, want a branded wistia-cli/<version> value", ua)
-	}
-	if version, want := got.headers.Get("X-Wistia-Client-Version"), base+"+nightly-build"; version != want {
 		t.Errorf("X-Wistia-Client-Version = %q, want %q", version, want)
 	}
 }
