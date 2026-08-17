@@ -63,7 +63,7 @@ jobs:
         with:
           distribution: goreleaser
           version: "v2.16.0"
-          args: build --single-target --clean --skip=validate --output ${{ runner.temp }}/wistia
+          args: build --single-target --clean --output ${{ runner.temp }}/wistia
 
       - name: Verify release identity
         run: go test ./test/... -run TestReleaseIdentity -v
