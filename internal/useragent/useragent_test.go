@@ -24,6 +24,34 @@ func TestFormat(t *testing.T) {
 	}
 }
 
+// The four forms the header can carry.
+func TestClientVersion(t *testing.T) {
+	tests := []struct {
+		name            string
+		version, suffix string
+		want            string
+	}{
+		{"release", "2026.5.0", "", "2026.5.0"},
+		{"source build", "dev", "", "dev"},
+		{"release, any non-empty suffix marks ci", "2026.5.0", "staging", "2026.5.0+ci"},
+		{"source build in CI", "dev", "ci", "dev+ci"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := clientVersion(tt.version, tt.suffix); got != tt.want {
+				t.Errorf("clientVersion() = %q, want %q", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestClientVersionReadsAndTrimsEnvSuffix(t *testing.T) {
+	t.Setenv(suffixEnvVar, "  ci  ")
+	if got, want := ClientVersion(), Version+"+ci"; got != want {
+		t.Errorf("ClientVersion() = %q, want %q", got, want)
+	}
+}
+
 func TestStringReadsAndTrimsEnvSuffix(t *testing.T) {
 	t.Setenv(suffixEnvVar, "  ci  ")
 	got := String()

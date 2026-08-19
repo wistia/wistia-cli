@@ -44,20 +44,29 @@ func TestReleaseIdentity(t *testing.T) {
 		}
 	})
 
-	// A unit test on useragent.Version would not prove the hook that sets the
-	// header is registered, so capture the header off a real request.
-	t.Run("outbound user agent", func(t *testing.T) {
+	// A unit test on useragent.Version would not prove the hooks that set these
+	// headers are registered, so capture them off a real request.
+	t.Run("outbound identity", func(t *testing.T) {
 		srv, got := newMockAPI(t, 200, `{"hashed_id":"abc123"}`)
 		res := runBinEnv(t, bin, nil, "media", "get", "--media-hashed-id", "abc123",
 			"--server-url", srv.URL, "--bearer-auth", "test-token")
 		if res.exitCode != 0 {
 			t.Fatalf("exit = %d, want 0; stderr:\n%s", res.exitCode, res.stderr)
 		}
+
 		ua := got.headers.Get("User-Agent")
 		if reported := versionFromUserAgent(ua); reported != version {
 			t.Errorf("outbound User-Agent reports version %q, want %q (User-Agent = %q)\n"+
 				"An unregistered User-Agent hook regresses this to the Speakeasy default; "+
 				"a missing -X useragent.Version regresses it to wistia-cli/dev.", reported, version, ua)
+		}
+
+		// runBinEnv sets no suffix, so no build metadata is expected here.
+		if name := got.headers.Get("X-Wistia-Client-Name"); name != "wistia-cli" {
+			t.Errorf("X-Wistia-Client-Name = %q, want %q", name, "wistia-cli")
+		}
+		if reported := got.headers.Get("X-Wistia-Client-Version"); reported != version {
+			t.Errorf("X-Wistia-Client-Version = %q, want %q", reported, version)
 		}
 	})
 }
