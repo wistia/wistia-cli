@@ -13,6 +13,8 @@ func initHooks(h *Hooks) {
 	// CLI traffic is attributable and version-trackable server-side.
 	h.registerBeforeRequestHook(userAgentHook{})
 
+	h.registerBeforeRequestHook(clientIdentityHook{})
+
 	// Remaining hook points, available for future use.
 	_ = h.registerSDKInitHook
 	_ = h.registerAfterSuccessHook
