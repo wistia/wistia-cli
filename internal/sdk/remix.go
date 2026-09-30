@@ -43,12 +43,15 @@ func newRemix(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks *hooks.H
 // destination folder. If no `folder_id` is provided, the remix is exported
 // to the source media's folder.
 //
-// <!--- HIDE-MCP -->
 // ## Requires api token with one of the following permissions
 // ```
 // Read, update & delete anything
 // ```
-// <!--- /HIDE-MCP -->
+//
+// Tokens with the "Act with a team member's permissions" permission
+// (`all:delegate_to_contact_permissions` scope) can also be used. Requests
+// made with such a token are authorized using the permissions of the
+// contact assigned to the token.
 func (s *Remix) PostRemixes(ctx context.Context, request *operations.PostRemixesRequest, opts ...operations.Option) (*operations.PostRemixesResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -92,10 +95,17 @@ func (s *Remix) PostRemixes(ctx context.Context, request *operations.PostRemixes
 		timeout = s.sdkConfiguration.Timeout
 	}
 
+	var streamCancel context.CancelFunc
+
 	if timeout != nil {
 		var cancel context.CancelFunc
 		ctx, cancel = context.WithTimeout(ctx, *timeout)
-		defer cancel()
+		streamCancel = cancel
+		defer func() {
+			if streamCancel != nil {
+				streamCancel()
+			}
+		}()
 	}
 
 	req, err := http.NewRequestWithContext(ctx, "POST", opURL, bodyReader)
@@ -156,7 +166,10 @@ func (s *Remix) PostRemixes(ctx context.Context, request *operations.PostRemixes
 	case httpRes.StatusCode == 201:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			if o.SkipDeserialization == nil || !*o.SkipDeserialization {
+			if o.SkipDeserialization != nil && *o.SkipDeserialization {
+				httpRes.Body = utils.BodyWithCancel(httpRes.Body, streamCancel)
+				streamCancel = nil
+			} else {
 				rawBody, err := utils.ConsumeRawBody(httpRes)
 				if err != nil {
 					return nil, err
@@ -186,7 +199,32 @@ func (s *Remix) PostRemixes(ctx context.Context, request *operations.PostRemixes
 
 			var out sdkerrors.PostRemixesUnauthorizedError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
+			}
+
+			out.HTTPMeta = components.HTTPMetadata{
+				Request:  req,
+				Response: httpRes,
+			}
+			return nil, &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
 				return nil, err
+			}
+			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
+	case httpRes.StatusCode == 403:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out sdkerrors.PostRemixesForbiddenError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -209,9 +247,9 @@ func (s *Remix) PostRemixes(ctx context.Context, request *operations.PostRemixes
 				return nil, err
 			}
 
-			var out sdkerrors.PostRemixesUnprocessableEntityError
+			var out sdkerrors.PostRemixesCreditsError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -236,7 +274,7 @@ func (s *Remix) PostRemixes(ctx context.Context, request *operations.PostRemixes
 
 			var out sdkerrors.PostRemixesInternalServerError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -279,12 +317,15 @@ func (s *Remix) PostRemixes(ctx context.Context, request *operations.PostRemixes
 // Get the current status of a remix job. When the status reaches
 // "edit_tree_generated", preview URLs are included in the response.
 //
-// <!--- HIDE-MCP -->
 // ## Requires api token with one of the following permissions
 // ```
 // Read all folder and media data
 // ```
-// <!--- /HIDE-MCP -->
+//
+// Tokens with the "Act with a team member's permissions" permission
+// (`all:delegate_to_contact_permissions` scope) can also be used. Requests
+// made with such a token are authorized using the permissions of the
+// contact assigned to the token.
 func (s *Remix) GetRemixesRemixHashedID(ctx context.Context, request operations.GetRemixesRemixHashedIDRequest, opts ...operations.Option) (*operations.GetRemixesRemixHashedIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -324,10 +365,17 @@ func (s *Remix) GetRemixesRemixHashedID(ctx context.Context, request operations.
 		timeout = s.sdkConfiguration.Timeout
 	}
 
+	var streamCancel context.CancelFunc
+
 	if timeout != nil {
 		var cancel context.CancelFunc
 		ctx, cancel = context.WithTimeout(ctx, *timeout)
-		defer cancel()
+		streamCancel = cancel
+		defer func() {
+			if streamCancel != nil {
+				streamCancel()
+			}
+		}()
 	}
 
 	req, err := http.NewRequestWithContext(ctx, "GET", opURL, nil)
@@ -385,7 +433,10 @@ func (s *Remix) GetRemixesRemixHashedID(ctx context.Context, request operations.
 	case httpRes.StatusCode == 200:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			if o.SkipDeserialization == nil || !*o.SkipDeserialization {
+			if o.SkipDeserialization != nil && *o.SkipDeserialization {
+				httpRes.Body = utils.BodyWithCancel(httpRes.Body, streamCancel)
+				streamCancel = nil
+			} else {
 				rawBody, err := utils.ConsumeRawBody(httpRes)
 				if err != nil {
 					return nil, err
@@ -415,7 +466,7 @@ func (s *Remix) GetRemixesRemixHashedID(ctx context.Context, request operations.
 
 			var out sdkerrors.GetRemixesRemixHashedIDUnauthorizedError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -440,7 +491,7 @@ func (s *Remix) GetRemixesRemixHashedID(ctx context.Context, request operations.
 
 			var out sdkerrors.GetRemixesRemixHashedIDNotFoundError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -465,7 +516,7 @@ func (s *Remix) GetRemixesRemixHashedID(ctx context.Context, request operations.
 
 			var out sdkerrors.GetRemixesRemixHashedIDInternalServerError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -513,12 +564,15 @@ func (s *Remix) GetRemixesRemixHashedID(ctx context.Context, request operations.
 // If `folder_id` is provided, the output is exported to that folder. Otherwise,
 // it defaults to the same folder as the previous remix version's output.
 //
-// <!--- HIDE-MCP -->
 // ## Requires api token with one of the following permissions
 // ```
 // Read, update & delete anything
 // ```
-// <!--- /HIDE-MCP -->
+//
+// Tokens with the "Act with a team member's permissions" permission
+// (`all:delegate_to_contact_permissions` scope) can also be used. Requests
+// made with such a token are authorized using the permissions of the
+// contact assigned to the token.
 func (s *Remix) PostRemixesRemixHashedIDContinue(ctx context.Context, request operations.PostRemixesRemixHashedIDContinueRequest, opts ...operations.Option) (*operations.PostRemixesRemixHashedIDContinueResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -562,10 +616,17 @@ func (s *Remix) PostRemixesRemixHashedIDContinue(ctx context.Context, request op
 		timeout = s.sdkConfiguration.Timeout
 	}
 
+	var streamCancel context.CancelFunc
+
 	if timeout != nil {
 		var cancel context.CancelFunc
 		ctx, cancel = context.WithTimeout(ctx, *timeout)
-		defer cancel()
+		streamCancel = cancel
+		defer func() {
+			if streamCancel != nil {
+				streamCancel()
+			}
+		}()
 	}
 
 	req, err := http.NewRequestWithContext(ctx, "POST", opURL, bodyReader)
@@ -626,7 +687,10 @@ func (s *Remix) PostRemixesRemixHashedIDContinue(ctx context.Context, request op
 	case httpRes.StatusCode == 201:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			if o.SkipDeserialization == nil || !*o.SkipDeserialization {
+			if o.SkipDeserialization != nil && *o.SkipDeserialization {
+				httpRes.Body = utils.BodyWithCancel(httpRes.Body, streamCancel)
+				streamCancel = nil
+			} else {
 				rawBody, err := utils.ConsumeRawBody(httpRes)
 				if err != nil {
 					return nil, err
@@ -656,7 +720,32 @@ func (s *Remix) PostRemixesRemixHashedIDContinue(ctx context.Context, request op
 
 			var out sdkerrors.PostRemixesRemixHashedIDContinueUnauthorizedError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
+			}
+
+			out.HTTPMeta = components.HTTPMetadata{
+				Request:  req,
+				Response: httpRes,
+			}
+			return nil, &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
 				return nil, err
+			}
+			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
+	case httpRes.StatusCode == 403:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out sdkerrors.PostRemixesRemixHashedIDContinueForbiddenError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -681,7 +770,7 @@ func (s *Remix) PostRemixesRemixHashedIDContinue(ctx context.Context, request op
 
 			var out sdkerrors.PostRemixesRemixHashedIDContinueNotFoundError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -704,9 +793,9 @@ func (s *Remix) PostRemixesRemixHashedIDContinue(ctx context.Context, request op
 				return nil, err
 			}
 
-			var out sdkerrors.PostRemixesRemixHashedIDContinueUnprocessableEntityError
+			var out sdkerrors.PostRemixesRemixHashedIDContinueCreditsError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -731,7 +820,7 @@ func (s *Remix) PostRemixesRemixHashedIDContinue(ctx context.Context, request op
 
 			var out sdkerrors.PostRemixesRemixHashedIDContinueInternalServerError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -771,17 +860,25 @@ func (s *Remix) PostRemixesRemixHashedIDContinue(ctx context.Context, request op
 }
 
 // PostRemixesRemixHashedIDExport - Export Remix
-// Export a completed remix to a folder in your account. Triggers the full
-// render pipeline. The remix must have reached "edit_tree_generated" status.
+// Export a remix to a folder in your account, triggering the full render pipeline.
+//
+// Remixes created through this API export automatically, so a remix is usually
+// already exported by the time you can call this. Exporting one again does not
+// re-render it — it moves and renames the media the first export produced, so you
+// can use this to place a finished remix in a different folder or under a
+// different name.
 //
 // If no folder_id is provided, the remix is exported to the source media's folder.
 //
-// <!--- HIDE-MCP -->
 // ## Requires api token with one of the following permissions
 // ```
 // Read, update & delete anything
 // ```
-// <!--- /HIDE-MCP -->
+//
+// Tokens with the "Act with a team member's permissions" permission
+// (`all:delegate_to_contact_permissions` scope) can also be used. Requests
+// made with such a token are authorized using the permissions of the
+// contact assigned to the token.
 func (s *Remix) PostRemixesRemixHashedIDExport(ctx context.Context, request operations.PostRemixesRemixHashedIDExportRequest, opts ...operations.Option) (*operations.PostRemixesRemixHashedIDExportResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -825,10 +922,17 @@ func (s *Remix) PostRemixesRemixHashedIDExport(ctx context.Context, request oper
 		timeout = s.sdkConfiguration.Timeout
 	}
 
+	var streamCancel context.CancelFunc
+
 	if timeout != nil {
 		var cancel context.CancelFunc
 		ctx, cancel = context.WithTimeout(ctx, *timeout)
-		defer cancel()
+		streamCancel = cancel
+		defer func() {
+			if streamCancel != nil {
+				streamCancel()
+			}
+		}()
 	}
 
 	req, err := http.NewRequestWithContext(ctx, "POST", opURL, bodyReader)
@@ -889,7 +993,10 @@ func (s *Remix) PostRemixesRemixHashedIDExport(ctx context.Context, request oper
 	case httpRes.StatusCode == 202:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			if o.SkipDeserialization == nil || !*o.SkipDeserialization {
+			if o.SkipDeserialization != nil && *o.SkipDeserialization {
+				httpRes.Body = utils.BodyWithCancel(httpRes.Body, streamCancel)
+				streamCancel = nil
+			} else {
 				rawBody, err := utils.ConsumeRawBody(httpRes)
 				if err != nil {
 					return nil, err
@@ -919,7 +1026,32 @@ func (s *Remix) PostRemixesRemixHashedIDExport(ctx context.Context, request oper
 
 			var out sdkerrors.PostRemixesRemixHashedIDExportUnauthorizedError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
+			}
+
+			out.HTTPMeta = components.HTTPMetadata{
+				Request:  req,
+				Response: httpRes,
+			}
+			return nil, &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
 				return nil, err
+			}
+			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
+	case httpRes.StatusCode == 403:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out sdkerrors.PostRemixesRemixHashedIDExportForbiddenError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -944,7 +1076,7 @@ func (s *Remix) PostRemixesRemixHashedIDExport(ctx context.Context, request oper
 
 			var out sdkerrors.PostRemixesRemixHashedIDExportNotFoundError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -969,7 +1101,7 @@ func (s *Remix) PostRemixesRemixHashedIDExport(ctx context.Context, request oper
 
 			var out sdkerrors.PostRemixesRemixHashedIDExportUnprocessableEntityError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -994,7 +1126,7 @@ func (s *Remix) PostRemixesRemixHashedIDExport(ctx context.Context, request oper
 
 			var out sdkerrors.PostRemixesRemixHashedIDExportInternalServerError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -1034,14 +1166,17 @@ func (s *Remix) PostRemixesRemixHashedIDExport(ctx context.Context, request oper
 }
 
 // GetRemixAccountStatus - Get Remix Account Status
-// Check the current account's remix credit usage and limits.
+// Check the current account's Remix billing mode and ability to create a Remix.
 //
-// <!--- HIDE-MCP -->
 // ## Requires api token with one of the following permissions
 // ```
 // Read all folder and media data
 // ```
-// <!--- /HIDE-MCP -->
+//
+// Tokens with the "Act with a team member's permissions" permission
+// (`all:delegate_to_contact_permissions` scope) can also be used. Requests
+// made with such a token are authorized using the permissions of the
+// contact assigned to the token.
 func (s *Remix) GetRemixAccountStatus(ctx context.Context, opts ...operations.Option) (*operations.GetRemixAccountStatusResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1081,10 +1216,17 @@ func (s *Remix) GetRemixAccountStatus(ctx context.Context, opts ...operations.Op
 		timeout = s.sdkConfiguration.Timeout
 	}
 
+	var streamCancel context.CancelFunc
+
 	if timeout != nil {
 		var cancel context.CancelFunc
 		ctx, cancel = context.WithTimeout(ctx, *timeout)
-		defer cancel()
+		streamCancel = cancel
+		defer func() {
+			if streamCancel != nil {
+				streamCancel()
+			}
+		}()
 	}
 
 	req, err := http.NewRequestWithContext(ctx, "GET", opURL, nil)
@@ -1142,7 +1284,10 @@ func (s *Remix) GetRemixAccountStatus(ctx context.Context, opts ...operations.Op
 	case httpRes.StatusCode == 200:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			if o.SkipDeserialization == nil || !*o.SkipDeserialization {
+			if o.SkipDeserialization != nil && *o.SkipDeserialization {
+				httpRes.Body = utils.BodyWithCancel(httpRes.Body, streamCancel)
+				streamCancel = nil
+			} else {
 				rawBody, err := utils.ConsumeRawBody(httpRes)
 				if err != nil {
 					return nil, err
@@ -1172,7 +1317,7 @@ func (s *Remix) GetRemixAccountStatus(ctx context.Context, opts ...operations.Op
 
 			var out sdkerrors.GetRemixAccountStatusUnauthorizedError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -1197,7 +1342,7 @@ func (s *Remix) GetRemixAccountStatus(ctx context.Context, opts ...operations.Op
 
 			var out sdkerrors.GetRemixAccountStatusInternalServerError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{

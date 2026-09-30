@@ -144,12 +144,10 @@ func (p *PartialError) GetError() *string {
 
 // PutMediasMoveResponseBody2 - Successfully queued move of at least one media. Other provided hashed_ids failed.
 type PutMediasMoveResponseBody2 struct {
-	Message *string `json:"message,omitzero"`
-	// A background job keeps track of the progress of an asynchronous task, e.g
-	// bulk archiving media, translating media, etc.
-	//
-	BackgroundJobStatus *PutMediasMoveBackgroundJobStatus2 `json:"background_job_status,omitzero"`
-	PartialErrors       []PartialError                     `json:"partial_errors,omitzero"`
+	// A confirmation message that the background job has been queued.
+	Message             string                            `json:"message"`
+	BackgroundJobStatus PutMediasMoveBackgroundJobStatus2 `json:"background_job_status"`
+	PartialErrors       []PartialError                    `json:"partial_errors,omitzero"`
 }
 
 func (p PutMediasMoveResponseBody2) MarshalJSON() ([]byte, error) {
@@ -163,16 +161,16 @@ func (p *PutMediasMoveResponseBody2) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (p *PutMediasMoveResponseBody2) GetMessage() *string {
+func (p *PutMediasMoveResponseBody2) GetMessage() string {
 	if p == nil {
-		return nil
+		return ""
 	}
 	return p.Message
 }
 
-func (p *PutMediasMoveResponseBody2) GetBackgroundJobStatus() *PutMediasMoveBackgroundJobStatus2 {
+func (p *PutMediasMoveResponseBody2) GetBackgroundJobStatus() PutMediasMoveBackgroundJobStatus2 {
 	if p == nil {
-		return nil
+		return PutMediasMoveBackgroundJobStatus2{}
 	}
 	return p.BackgroundJobStatus
 }
@@ -249,34 +247,21 @@ func (p *PutMediasMoveBackgroundJobStatus1) GetStatus() PutMediasMoveStatus1 {
 
 // PutMediasMoveResponseBody1 - Successfully queued move of all the media.
 type PutMediasMoveResponseBody1 struct {
-	Message *string `json:"message,omitzero"`
-	// A background job keeps track of the progress of an asynchronous task, e.g
-	// bulk archiving media, translating media, etc.
-	//
-	BackgroundJobStatus *PutMediasMoveBackgroundJobStatus1 `json:"background_job_status,omitzero"`
+	// A confirmation message that the background job has been queued.
+	Message             string                            `json:"message"`
+	BackgroundJobStatus PutMediasMoveBackgroundJobStatus1 `json:"background_job_status"`
 }
 
-func (p PutMediasMoveResponseBody1) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(p, "", false)
-}
-
-func (p *PutMediasMoveResponseBody1) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &p, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (p *PutMediasMoveResponseBody1) GetMessage() *string {
+func (p *PutMediasMoveResponseBody1) GetMessage() string {
 	if p == nil {
-		return nil
+		return ""
 	}
 	return p.Message
 }
 
-func (p *PutMediasMoveResponseBody1) GetBackgroundJobStatus() *PutMediasMoveBackgroundJobStatus1 {
+func (p *PutMediasMoveResponseBody1) GetBackgroundJobStatus() PutMediasMoveBackgroundJobStatus1 {
 	if p == nil {
-		return nil
+		return PutMediasMoveBackgroundJobStatus1{}
 	}
 	return p.BackgroundJobStatus
 }

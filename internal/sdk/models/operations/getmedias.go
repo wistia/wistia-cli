@@ -151,23 +151,47 @@ func (e *GetMediasSortDirection) UnmarshalJSON(data []byte) error {
 	}
 }
 
-// QueryParamType - A string specifying which type of media you would like to get.
-type QueryParamType string
+// GetMediasInclude - Set to `speakers` to include active transcript speaker assignments used for diarization. Webinar hosts and panelists are not included.
+type GetMediasInclude string
 
 const (
-	QueryParamTypeVideo                   QueryParamType = "Video"
-	QueryParamTypeAudio                   QueryParamType = "Audio"
-	QueryParamTypeImage                   QueryParamType = "Image"
-	QueryParamTypePdfDocument             QueryParamType = "PdfDocument"
-	QueryParamTypeMicrosoftOfficeDocument QueryParamType = "MicrosoftOfficeDocument"
-	QueryParamTypeSwf                     QueryParamType = "Swf"
-	QueryParamTypeUnknownType             QueryParamType = "UnknownType"
+	GetMediasIncludeSpeakers GetMediasInclude = "speakers"
 )
 
-func (e QueryParamType) ToPointer() *QueryParamType {
+func (e GetMediasInclude) ToPointer() *GetMediasInclude {
 	return &e
 }
-func (e *QueryParamType) UnmarshalJSON(data []byte) error {
+func (e *GetMediasInclude) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "speakers":
+		*e = GetMediasInclude(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for GetMediasInclude: %v", v)
+	}
+}
+
+// GetMediasQueryParamType - A string specifying which type of media you would like to get.
+type GetMediasQueryParamType string
+
+const (
+	GetMediasQueryParamTypeVideo                   GetMediasQueryParamType = "Video"
+	GetMediasQueryParamTypeAudio                   GetMediasQueryParamType = "Audio"
+	GetMediasQueryParamTypeImage                   GetMediasQueryParamType = "Image"
+	GetMediasQueryParamTypePdfDocument             GetMediasQueryParamType = "PdfDocument"
+	GetMediasQueryParamTypeMicrosoftOfficeDocument GetMediasQueryParamType = "MicrosoftOfficeDocument"
+	GetMediasQueryParamTypeSwf                     GetMediasQueryParamType = "Swf"
+	GetMediasQueryParamTypeUnknownType             GetMediasQueryParamType = "UnknownType"
+)
+
+func (e GetMediasQueryParamType) ToPointer() *GetMediasQueryParamType {
+	return &e
+}
+func (e *GetMediasQueryParamType) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
 		return err
@@ -186,10 +210,10 @@ func (e *QueryParamType) UnmarshalJSON(data []byte) error {
 	case "Swf":
 		fallthrough
 	case "UnknownType":
-		*e = QueryParamType(v)
+		*e = GetMediasQueryParamType(v)
 		return nil
 	default:
-		return fmt.Errorf("invalid value for QueryParamType: %v", v)
+		return fmt.Errorf("invalid value for GetMediasQueryParamType: %v", v)
 	}
 }
 
@@ -226,8 +250,10 @@ type GetMediasRequest struct {
 	// Format for media descriptions
 	//lint:ignore U1000 accessed via reflection for JSON marshaling
 	descriptionFormat *string `const:"markdown" queryParam:"style=form,explode=true,name=description_format"`
+	// Set to `speakers` to include active transcript speaker assignments used for diarization. Webinar hosts and panelists are not included.
+	Include *GetMediasInclude `queryParam:"style=form,explode=true,name=include"`
 	// A string specifying which type of media you would like to get.
-	Type *QueryParamType `queryParam:"style=form,explode=true,name=type"`
+	Type *GetMediasQueryParamType `queryParam:"style=form,explode=true,name=type"`
 	// Find all of the medias by these hashed_ids.
 	HashedIds []string `queryParam:"style=form,explode=true,name=hashed_ids[]"`
 	// Find all of the medias that match all of these tag names.
@@ -300,7 +326,14 @@ func (g *GetMediasRequest) GetDescriptionFormat() *string {
 	return types.Pointer("markdown")
 }
 
-func (g *GetMediasRequest) GetType() *QueryParamType {
+func (g *GetMediasRequest) GetInclude() *GetMediasInclude {
+	if g == nil {
+		return nil
+	}
+	return g.Include
+}
+
+func (g *GetMediasRequest) GetType() *GetMediasQueryParamType {
 	if g == nil {
 		return nil
 	}
@@ -524,7 +557,7 @@ func (g *GetMediasAsset) GetType() *string {
 // GetMediasSubfolder - The subfolder (media group) in which the media appears. Null if the media is not in a subfolder.
 type GetMediasSubfolder struct {
 	// A unique alphanumeric identifier for this subfolder.
-	HashedID string `json:"hashed_id"`
+	HashedID *string `json:"hashed_id"`
 	// The display name of the subfolder.
 	Name optionalnullable.OptionalNullable[string] `json:"name,omitzero"`
 	// A description for the subfolder.
@@ -550,9 +583,9 @@ func (g *GetMediasSubfolder) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (g *GetMediasSubfolder) GetHashedID() string {
+func (g *GetMediasSubfolder) GetHashedID() *string {
 	if g == nil {
-		return ""
+		return nil
 	}
 	return g.HashedID
 }
@@ -611,6 +644,36 @@ func (g *GetMediasTag) GetName() *string {
 	return g.Name
 }
 
+type GetMediasSpeaker struct {
+	// The unique identifier for this transcript speaker assignment on the media.
+	MediaSpeakerID string `json:"media_speaker_id"`
+	// The reusable account speaker profile assigned to the transcript speaker.
+	SpeakerProfileID string `json:"speaker_profile_id"`
+	// The assigned speaker profile's display name.
+	Name string `json:"name"`
+}
+
+func (g *GetMediasSpeaker) GetMediaSpeakerID() string {
+	if g == nil {
+		return ""
+	}
+	return g.MediaSpeakerID
+}
+
+func (g *GetMediasSpeaker) GetSpeakerProfileID() string {
+	if g == nil {
+		return ""
+	}
+	return g.SpeakerProfileID
+}
+
+func (g *GetMediasSpeaker) GetName() string {
+	if g == nil {
+		return ""
+	}
+	return g.Name
+}
+
 // GetMediasResponseBody - A media generally represents a video or an audio which can be embedded into your website.
 //
 // CDN-backed medias are accessible using this url structure: https://fast.wistia.com/embed/medias/{hashed_id}.m3u8.
@@ -656,6 +719,8 @@ type GetMediasResponseBody struct {
 	Subfolder *GetMediasSubfolder `json:"subfolder,omitzero"`
 	// Tags associated with this media.
 	Tags []GetMediasTag `json:"tags,omitzero"`
+	// Active transcript speaker assignments used for diarization. Webinar hosts and panelists are not included. Present when `include=speakers` is requested.
+	Speakers []GetMediasSpeaker `json:"speakers,omitzero"`
 	// A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
 	Cursor optionalnullable.OptionalNullable[string] `json:"cursor,omitzero"`
 }
@@ -802,6 +867,13 @@ func (g *GetMediasResponseBody) GetTags() []GetMediasTag {
 		return nil
 	}
 	return g.Tags
+}
+
+func (g *GetMediasResponseBody) GetSpeakers() []GetMediasSpeaker {
+	if g == nil {
+		return nil
+	}
+	return g.Speakers
 }
 
 func (g *GetMediasResponseBody) GetCursor() optionalnullable.OptionalNullable[string] {

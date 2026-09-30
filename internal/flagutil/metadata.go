@@ -7,8 +7,9 @@ import (
 	"bytes"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
-	"io"
+	"math"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -16,6 +17,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"unicode/utf8"
 
 	"github.com/spf13/cobra"
 
@@ -50,6 +52,114 @@ type UnionMeta struct {
 	Optional         bool               // true if the union field itself is *T (pointer)
 	TypeDescription  string             // help text for top-level JSON flag
 	Variants         []UnionVariantMeta // variant definitions (empty for non-discriminated)
+
+	VariantKeys []string // distinguishing selector keys across variants (e.g. ["card","bank_transfer"])
+	DefaultJSON string   // JSON object merged when no VariantKeys key is present
+}
+
+func applyUnionDefaults(body []byte, u *UnionMeta) []byte {
+	if u == nil || u.DefaultJSON == "" || len(u.VariantKeys) == 0 {
+		return body
+	}
+	// json.RawMessage round-trips large integers and precise decimals byte-for-byte
+	var obj map[string]json.RawMessage
+	if err := json.Unmarshal(body, &obj); err != nil || obj == nil {
+		return body
+	}
+	for _, k := range u.VariantKeys {
+		if _, ok := obj[k]; ok {
+			return body
+		}
+	}
+	var defs map[string]json.RawMessage
+	if err := json.Unmarshal([]byte(u.DefaultJSON), &defs); err != nil {
+		return body
+	}
+	for k, v := range defs {
+		if _, ok := obj[k]; !ok {
+			obj[k] = v
+		}
+	}
+	out, err := json.Marshal(obj)
+	if err != nil {
+		return body
+	}
+	return out
+}
+
+func applyNestedUnionDefaults(body []byte, meta []FlagMeta, bodyFieldPath string, bodyType reflect.Type) []byte {
+	for _, m := range meta {
+		if m.Kind != FlagKindUnion || m.Union == nil || m.Union.DefaultJSON == "" || len(m.Union.VariantKeys) == 0 ||
+			!isBodyFieldPath(m.FieldPath, bodyFieldPath) || m.FieldPath == bodyFieldPath {
+			continue
+		}
+		rel := m.FieldPath
+		if bodyFieldPath != "" {
+			rel = strings.TrimPrefix(rel, bodyFieldPath+".")
+		}
+		keys, ok := jsonKeyPathForFields(bodyType, strings.Split(rel, "."))
+		if !ok {
+			continue
+		}
+		body = mergeUnionDefaultAtPath(body, keys, m.Union)
+	}
+	return body
+}
+
+func jsonKeyPathForFields(t reflect.Type, fields []string) ([]string, bool) {
+	keys := make([]string, 0, len(fields))
+	for _, name := range fields {
+		for t.Kind() == reflect.Ptr {
+			t = t.Elem()
+		}
+		if t.Kind() != reflect.Struct {
+			return nil, false
+		}
+		field, ok := t.FieldByName(name)
+		if !ok {
+			return nil, false
+		}
+		key := strings.Split(field.Tag.Get("json"), ",")[0]
+		if key == "" || key == "-" {
+			return nil, false
+		}
+		keys = append(keys, key)
+		t = field.Type
+	}
+	return keys, true
+}
+
+func mergeUnionDefaultAtPath(body []byte, keys []string, u *UnionMeta) []byte {
+	if len(keys) == 0 {
+		return applyUnionDefaults(body, u)
+	}
+	var obj map[string]json.RawMessage
+	if err := json.Unmarshal(body, &obj); err != nil || obj == nil {
+		return body
+	}
+	child, ok := obj[keys[0]]
+	if !ok {
+		return body
+	}
+	merged := mergeUnionDefaultAtPath(child, keys[1:], u)
+	if bytes.Equal(merged, child) {
+		return body
+	}
+	obj[keys[0]] = merged
+	out, err := json.Marshal(obj)
+	if err != nil {
+		return body
+	}
+	return out
+}
+
+func bodyUnionMeta(meta []FlagMeta, bodyFieldPath string) *UnionMeta {
+	for _, m := range meta {
+		if m.Kind == FlagKindUnion && m.Union != nil && m.FieldPath == bodyFieldPath {
+			return m.Union
+		}
+	}
+	return nil
 }
 
 // UnionVariantMeta describes a single variant within a discriminated union.
@@ -75,10 +185,15 @@ type FlagMeta struct {
 	// Flag behavior
 	Optional   bool // true if Go field is a pointer type
 	Required   bool // true if user must provide this flag
-	HasDefault bool // true if optional+has-default (always wrap in pointer, even when unchanged)
+	HasDefault bool // true if optional+has-default (apply cobra default when flag unchanged and no body/stdin)
 
 	// Validation
 	EnumValues []string // valid values for enum validation; nil if not enum
+	MinLength  int64    // schema minLength for string flags (0 = unconstrained)
+	HasMinimum bool     // schema minimum declared for numeric flags
+	Minimum    float64  // schema minimum (valid when HasMinimum)
+	HasMaximum bool     // schema maximum declared for numeric flags
+	Maximum    float64  // schema maximum (valid when HasMaximum)
 
 	// JSON unmarshal
 	Annotations string // struct tag for JSON unmarshal, e.g. `request:"mediaType=application/json"`
@@ -101,11 +216,324 @@ type FlagMeta struct {
 	ConfigKey string // config file key, e.g. "api_key"; empty if none
 }
 
+const (
+	AnnotationRequired        = "speakeasy:required"
+	AnnotationEnv             = "speakeasy:env"
+	AnnotationConfig          = "speakeasy:config"
+	AnnotationDefaultResolves = "speakeasy:default-resolves"
+	AnnotationBodyField       = "speakeasy:body-field"
+	AnnotationBodyFlag        = "speakeasy:body-flag"
+	AnnotationDocSurface      = "speakeasy:doc-surface"
+	AnnotationPrompt          = "speakeasy:prompt"
+	AnnotationPromptDirect    = "speakeasy:prompt-direct"
+	AnnotationPromptLabel     = "speakeasy:prompt-label"
+	AnnotationPromptKind      = "speakeasy:prompt-kind"
+	AnnotationPromptValues    = "speakeasy:prompt-values"
+	AnnotationPromptOrder     = "speakeasy:prompt-order"
+	AnnotationUnionMember     = "speakeasy:union-member"
+	AnnotationOpDeclaredInput = "speakeasy:op-declared-input"
+)
+
+type PromptFlagSpec struct {
+	Required        bool
+	PromptOptional  bool
+	PromptDirect    bool
+	Label           string
+	Kind            string
+	Values          []string
+	Order           int
+	EnvVar          string
+	ConfigKey       string
+	DefaultResolves bool
+	BodySources     []string
+	BodyFlag        bool
+	DocSurface      bool
+}
+
+func AnnotatePromptFlag(cmd *cobra.Command, name string, spec PromptFlagSpec) error {
+	f := cmd.Flags().Lookup(name)
+	if f == nil {
+		f = cmd.InheritedFlags().Lookup(name)
+	}
+	if f == nil {
+		return fmt.Errorf("cannot annotate unknown flag --%s", name)
+	}
+	set := func(key string, values []string) {
+		if len(values) == 0 {
+			delete(f.Annotations, key)
+			return
+		}
+		if f.Annotations == nil {
+			f.Annotations = map[string][]string{}
+		}
+		f.Annotations[key] = values
+	}
+	truth := func(v bool) []string {
+		if v {
+			return []string{"true"}
+		}
+		return nil
+	}
+
+	set(AnnotationRequired, truth(spec.Required))
+	set(AnnotationPrompt, truth(spec.PromptOptional))
+	set(AnnotationPromptDirect, truth(spec.PromptDirect))
+	if spec.Label != "" {
+		set(AnnotationPromptLabel, []string{spec.Label})
+	}
+	if spec.Kind != "" {
+		set(AnnotationPromptKind, []string{spec.Kind})
+	}
+	set(AnnotationPromptValues, spec.Values)
+	set(AnnotationPromptOrder, []string{strconv.Itoa(spec.Order)})
+	if spec.EnvVar != "" {
+		set(AnnotationEnv, []string{spec.EnvVar})
+	}
+	if spec.ConfigKey != "" {
+		set(AnnotationConfig, []string{spec.ConfigKey})
+	}
+	set(AnnotationDefaultResolves, truth(spec.DefaultResolves))
+	set(AnnotationBodyField, spec.BodySources)
+	set(AnnotationBodyFlag, truth(spec.BodyFlag))
+	set(AnnotationDocSurface, truth(spec.DocSurface))
+	return nil
+}
+
+func OverridePromptRequirement(cmd *cobra.Command, name string, required, promptOptional bool) error {
+	f := cmd.Flags().Lookup(name)
+	if f == nil {
+		return fmt.Errorf("cannot override unknown flag --%s", name)
+	}
+	if f.Annotations == nil {
+		f.Annotations = map[string][]string{}
+	}
+	if required {
+		f.Annotations[AnnotationRequired] = []string{"true"}
+	} else {
+		delete(f.Annotations, AnnotationRequired)
+	}
+	if promptOptional {
+		f.Annotations[AnnotationPrompt] = []string{"true"}
+	} else {
+		delete(f.Annotations, AnnotationPrompt)
+	}
+	return nil
+}
+
+const (
+	AnnotationPositionalFlag     = "speakeasy_positional_flag"
+	annotationPositionalRequired = "speakeasy_positional_required"
+)
+
+func DeclarePositionalFlag(cmd *cobra.Command, name, usage string, required bool) error {
+	f := cmd.Flags().Lookup(name)
+	if f == nil {
+		return fmt.Errorf("cannot declare positional for unknown flag --%s", name)
+	}
+	if err := OverridePromptRequirement(cmd, name, false, false); err != nil {
+		return err
+	}
+	f.Usage = usage
+	if cmd.Annotations == nil {
+		cmd.Annotations = map[string]string{}
+	}
+	cmd.Annotations[AnnotationPositionalFlag] = name
+	if required {
+		cmd.Annotations[annotationPositionalRequired] = "true"
+	}
+	return nil
+}
+
+func PositionalFlagArgs(cmd *cobra.Command, args []string) error {
+	name := cmd.Annotations[AnnotationPositionalFlag]
+	if name == "" {
+		return cobra.NoArgs(cmd, args)
+	}
+	if err := cobra.MaximumNArgs(1)(cmd, args); err != nil {
+		return err
+	}
+	if len(args) == 0 {
+		return nil
+	}
+	value := args[0]
+	if FlagChanged(cmd, name) {
+		return fmt.Errorf("pass %s once: as the [%s] argument or via --%s, not both", name, name, name)
+	}
+	// Only reachable after "--": "op -- --dry-run" must not send a live request.
+	if strings.HasPrefix(value, "-") {
+		f := cmd.Flags().Lookup(name)
+		if f.Value.Type() != "int64" && f.Value.Type() != "float64" {
+			return fmt.Errorf("argument %q looks like a flag; pass a value starting with \"-\" as --%s=%s", value, name, value)
+		}
+		if _, err := strconv.ParseFloat(value, 64); err != nil {
+			return fmt.Errorf("argument %q looks like a flag; pass a value starting with \"-\" as --%s=%s", value, name, value)
+		}
+	}
+	return cmd.Flags().Set(name, value)
+}
+
+func ResolvePositionalFlag(cmd *cobra.Command, args []string) error {
+	name := cmd.Annotations[AnnotationPositionalFlag]
+	if name == "" {
+		return nil
+	}
+	// An interactive answer arrives as an argument: Args validation ran before the prompt.
+	if len(args) == 1 && !FlagChanged(cmd, name) {
+		if err := cmd.Flags().Set(name, args[0]); err != nil {
+			return WithCLIValidation(err)
+		}
+	}
+	if !FlagChanged(cmd, name) && cmd.Annotations[annotationPositionalRequired] == "true" {
+		return &MissingRequiredFlagError{FlagName: name, Detail: fmt.Sprintf("(or pass it as the [%s] argument)", name)}
+	}
+	return nil
+}
+
+func SetPromptOptional(cmd *cobra.Command, name string, promptOptional bool) error {
+	f := cmd.Flags().Lookup(name)
+	if f == nil {
+		return fmt.Errorf("cannot update unknown flag --%s", name)
+	}
+	if f.Annotations == nil {
+		f.Annotations = map[string][]string{}
+	}
+	if promptOptional {
+		f.Annotations[AnnotationPrompt] = []string{"true"}
+	} else {
+		delete(f.Annotations, AnnotationPrompt)
+	}
+	return nil
+}
+
+func SetMetaPromptOptional(cmd *cobra.Command, meta []FlagMeta, promptOptional bool) {
+	for _, m := range meta {
+		if cmd.Flags().Lookup(m.FlagName) != nil {
+			_ = SetPromptOptional(cmd, m.FlagName, promptOptional)
+		}
+		if m.Union == nil {
+			continue
+		}
+		for _, variant := range m.Union.Variants {
+			if cmd.Flags().Lookup(variant.FlagName) != nil {
+				_ = SetPromptOptional(cmd, variant.FlagName, promptOptional)
+			}
+			SetMetaPromptOptional(cmd, variant.Fields, promptOptional)
+		}
+	}
+}
+
+func ClearBodyRequirements(cmd *cobra.Command, meta []FlagMeta, bodyFieldPath string) {
+	for _, m := range meta {
+		if !isBodyFieldPath(m.FieldPath, bodyFieldPath) {
+			continue
+		}
+		clearMetaRequirements(cmd, m)
+	}
+}
+
+func clearMetaRequirements(cmd *cobra.Command, m FlagMeta) {
+	if cmd.Flags().Lookup(m.FlagName) != nil {
+		_ = OverridePromptRequirement(cmd, m.FlagName, false, false)
+	}
+	if m.Union == nil {
+		return
+	}
+	for _, variant := range m.Union.Variants {
+		if cmd.Flags().Lookup(variant.FlagName) != nil {
+			_ = OverridePromptRequirement(cmd, variant.FlagName, false, false)
+		}
+		for _, field := range variant.Fields {
+			clearMetaRequirements(cmd, field)
+		}
+	}
+}
+
+func MarkBodyFlag(cmd *cobra.Command, name string) error {
+	f := cmd.Flags().Lookup(name)
+	if f == nil {
+		return fmt.Errorf("cannot mark unknown body flag --%s", name)
+	}
+	if f.Annotations == nil {
+		f.Annotations = map[string][]string{}
+	}
+	f.Annotations[AnnotationBodyFlag] = []string{"true"}
+	if len(f.Annotations[AnnotationPromptKind]) == 0 {
+		f.Annotations[AnnotationPromptKind] = []string{"json"}
+	}
+	return nil
+}
+
+func AnnotateBodyFields(cmd *cobra.Command, meta []FlagMeta, bodyFieldPath string, bodyFlags ...string) error {
+	for _, m := range meta {
+		if !isBodyFieldPath(m.FieldPath, bodyFieldPath) {
+			continue
+		}
+		annotateBodySource(cmd, m.FlagName, bodyFlags)
+		if m.Union == nil {
+			continue
+		}
+		for _, variant := range m.Union.Variants {
+			annotateBodySource(cmd, variant.FlagName, bodyFlags)
+			annotateAllBodySources(cmd, variant.Fields, bodyFlags)
+		}
+	}
+	return nil
+}
+
+func annotateAllBodySources(cmd *cobra.Command, meta []FlagMeta, bodyFlags []string) {
+	for _, m := range meta {
+		annotateBodySource(cmd, m.FlagName, bodyFlags)
+		if m.Union == nil {
+			continue
+		}
+		for _, variant := range m.Union.Variants {
+			annotateBodySource(cmd, variant.FlagName, bodyFlags)
+			annotateAllBodySources(cmd, variant.Fields, bodyFlags)
+		}
+	}
+}
+
+func annotateBodySource(cmd *cobra.Command, name string, bodyFlags []string) {
+	f := cmd.Flags().Lookup(name)
+	if f == nil {
+		return
+	}
+	if f.Annotations == nil {
+		f.Annotations = map[string][]string{}
+	}
+	f.Annotations[AnnotationBodyField] = append([]string(nil), bodyFlags...)
+}
+
+func promptKindName(kind FlagKind) string {
+	switch kind {
+	case FlagKindBool:
+		return "bool"
+	case FlagKindInt64:
+		return "int64"
+	case FlagKindFloat64:
+		return "float64"
+	case FlagKindStringArray, FlagKindFileArray:
+		return "string-array"
+	case FlagKindEnum, FlagKindIntEnum:
+		return "enum"
+	case FlagKindJSON, FlagKindUnion:
+		return "json"
+	case FlagKindFile:
+		return "file"
+	default:
+		return "string"
+	}
+}
+
+func promptMetaRequired(m FlagMeta) bool {
+	return m.Required
+}
+
 // RegisterFlags registers Cobra flags from metadata, including union flags.
 // Flags that already exist as inherited persistent flags (e.g., global security
 // credentials) are skipped to prevent local flags from shadowing them.
 func RegisterFlags(cmd *cobra.Command, meta []FlagMeta) {
-	for _, m := range meta {
+	for order, m := range meta {
 		// Skip if a flag with this name already exists — either inherited from
 		// a parent command (persistent globals/security) or already registered
 		// locally (e.g., operation security flags like username/password).
@@ -148,10 +576,17 @@ func RegisterFlags(cmd *cobra.Command, meta []FlagMeta) {
 			}
 		}
 
-		if m.Required {
-			if f := cmd.Flags().Lookup(m.FlagName); f != nil {
-				_ = cmd.Flags().SetAnnotation(m.FlagName, "speakeasy:required", []string{"true"})
-			}
+		if cmd.Flags().Lookup(m.FlagName) != nil {
+			_ = AnnotatePromptFlag(cmd, m.FlagName, PromptFlagSpec{
+				Required:        promptMetaRequired(m),
+				PromptOptional:  true,
+				Kind:            promptKindName(m.Kind),
+				Values:          m.EnumValues,
+				Order:           order,
+				EnvVar:          m.EnvVar,
+				ConfigKey:       m.ConfigKey,
+				DefaultResolves: m.HasDefault,
+			})
 		}
 		if m.Group != "" {
 			_ = cmd.Flags().SetAnnotation(m.FlagName, "speakeasy:group", []string{m.Group})
@@ -224,49 +659,63 @@ func BuildRequest[T any](cmd *cobra.Command, meta []FlagMeta, bodyFieldPath stri
 	var req T
 	v := reflect.ValueOf(&req).Elem()
 	bodyPrePopulated := false
+	hasRequestBody := bodyFieldPath != "" || bodyFlagName != "" || !isJSONSerialized(v.Type())
 
-	// Priority 1: --body flag (explicit whole-body JSON)
+	decodeBody := func(data []byte, source string) error {
+		u := bodyUnionMeta(meta, bodyFieldPath)
+		if bodyFieldPath != "" {
+			bodyField, err := navigateToField(v, bodyFieldPath)
+			if err != nil {
+				return fmt.Errorf("failed to resolve body field %q: %w", bodyFieldPath, err)
+			}
+			withDefaults := applyNestedUnionDefaults(applyUnionDefaults(data, u), meta, bodyFieldPath, bodyField.Type())
+			if err := unmarshalIntoField(bodyField, withDefaults); err != nil {
+				return fmt.Errorf("failed to parse %s as JSON: %w", source, err)
+			}
+			return enforceStrictOrWarn(cmd, verifyBodyKeys(source, data, bodyField, u))
+		}
+		withDefaults := applyNestedUnionDefaults(data, meta, "", reflect.TypeOf(req))
+		if err := json.Unmarshal(withDefaults, &req); err != nil {
+			return fmt.Errorf("failed to parse %s as JSON: %w", source, err)
+		}
+		v = reflect.ValueOf(&req).Elem() // refresh after unmarshal
+		return enforceStrictOrWarn(cmd, verifyBodyKeys(source, data, v, nil))
+	}
+
+	wholeBodyFlag := ""
+	for _, m := range meta {
+		if bodyFieldPath != "" && m.FieldPath == bodyFieldPath && FlagChanged(cmd, m.FlagName) {
+			wholeBodyFlag = m.FlagName
+		}
+	}
+
+	// Priority 1: --body flag
 	if bodyFlagName != "" && FlagChanged(cmd, bodyFlagName) {
+		if wholeBodyFlag != "" {
+			return nil, fmt.Errorf("--%s and --%s both supply the whole request body; pass exactly one", bodyFlagName, wholeBodyFlag)
+		}
 		bodyJSON, _ := GetStringFlag(cmd, bodyFlagName)
+		bodyJSON, err := ResolveBodyFlagValue(cmd, bodyFlagName, bodyJSON)
+		if err != nil {
+			return nil, err
+		}
 		if bodyJSON != "" {
-			if bodyFieldPath != "" {
-				bodyField, err := navigateToField(v, bodyFieldPath)
-				if err != nil {
-					return nil, fmt.Errorf("failed to resolve body field %q: %w", bodyFieldPath, err)
-				}
-				if err := unmarshalIntoField(bodyField, []byte(bodyJSON)); err != nil {
-					return nil, fmt.Errorf("failed to parse --%s as JSON: %w", bodyFlagName, err)
-				}
-			} else {
-				if err := json.Unmarshal([]byte(bodyJSON), &req); err != nil {
-					return nil, fmt.Errorf("failed to parse --%s as JSON: %w", bodyFlagName, err)
-				}
-				v = reflect.ValueOf(&req).Elem() // refresh after unmarshal
+			if err := decodeBody([]byte(bodyJSON), "--"+bodyFlagName); err != nil {
+				return nil, err
 			}
 			bodyPrePopulated = true
 		}
 	}
 
 	// Priority 2: stdin
-	if !bodyPrePopulated && HasStdinInput(cmd) {
-		stdinData, err := io.ReadAll(cmd.InOrStdin())
+	if !bodyPrePopulated && bodyFlagName != "" && wholeBodyFlag == "" {
+		stdinData, err := ReadStdinBody(cmd, bodyFlagName)
 		if err != nil {
-			return nil, fmt.Errorf("failed to read stdin: %w", err)
+			return nil, err
 		}
 		if len(bytes.TrimSpace(stdinData)) > 0 {
-			if bodyFieldPath != "" {
-				bodyField, err := navigateToField(v, bodyFieldPath)
-				if err != nil {
-					return nil, fmt.Errorf("failed to resolve body field %q: %w", bodyFieldPath, err)
-				}
-				if err := unmarshalIntoField(bodyField, stdinData); err != nil {
-					return nil, fmt.Errorf("failed to parse stdin as JSON: %w", err)
-				}
-			} else {
-				if err := json.Unmarshal(stdinData, &req); err != nil {
-					return nil, fmt.Errorf("failed to parse stdin as JSON: %w", err)
-				}
-				v = reflect.ValueOf(&req).Elem() // refresh after unmarshal
+			if err := decodeBody(stdinData, "stdin"); err != nil {
+				return nil, err
 			}
 			bodyPrePopulated = true
 		}
@@ -275,7 +724,7 @@ func BuildRequest[T any](cmd *cobra.Command, meta []FlagMeta, bodyFieldPath stri
 	// When body provided via --body flag or stdin, relax Required checks for body fields
 	// so builders don't error for fields already populated
 	if bodyPrePopulated {
-		meta = relaxRequiredForBodyFields(meta, bodyFieldPath)
+		meta = relaxRequiredForBodyFields(meta, v.Type(), bodyFieldPath, true)
 	}
 
 	// When the entire struct IS the body (bodyFieldPath == "") and no body was
@@ -291,7 +740,7 @@ func BuildRequest[T any](cmd *cobra.Command, meta []FlagMeta, bodyFieldPath stri
 			}
 		}
 		if !anyChanged {
-			meta = relaxRequiredForBodyFields(meta, "")
+			meta = relaxRequiredForBodyFields(meta, v.Type(), "", false)
 		}
 	}
 
@@ -310,6 +759,20 @@ func BuildRequest[T any](cmd *cobra.Command, meta []FlagMeta, bodyFieldPath stri
 		}
 	}
 
+	if hasRequestBody {
+		body := v
+		if bodyFieldPath != "" {
+			var err error
+			body, err = navigateToField(v, bodyFieldPath)
+			if err != nil {
+				return nil, fmt.Errorf("failed to resolve body field %q: %w", bodyFieldPath, err)
+			}
+		}
+		if err := validateRequiredUnionFields(body, meta, bodyFieldPath, bodyFlagName); err != nil {
+			return nil, err
+		}
+	}
+
 	return &req, nil
 }
 
@@ -321,17 +784,22 @@ func BuildRequestBody[T any](cmd *cobra.Command, flagName string, annotations st
 
 	if FlagChanged(cmd, flagName) {
 		requestData, _ = GetStringFlag(cmd, flagName)
-	} else if HasStdinInput(cmd) {
-		stdin, err := io.ReadAll(cmd.InOrStdin())
+		resolved, err := ResolveBodyFlagValue(cmd, flagName, requestData)
 		if err != nil {
-			return nil, fmt.Errorf("failed to read stdin: %w", err)
+			return nil, err
+		}
+		requestData = resolved
+	} else {
+		stdin, err := ReadStdinBody(cmd, flagName)
+		if err != nil {
+			return nil, err
 		}
 		requestData = strings.TrimSpace(string(stdin))
 	}
 
 	if requestData == "" {
 		if isRequired {
-			return nil, fmt.Errorf("missing required flag: --%s (or provide via stdin)", flagName)
+			return nil, &MissingRequiredFlagError{FlagName: flagName, Detail: "(or provide via stdin)"}
 		}
 		return nil, nil
 	}
@@ -347,7 +815,466 @@ func BuildRequestBody[T any](cmd *cobra.Command, flagName string, annotations st
 	if err := utils.UnmarshalJsonFromString(requestData, &req, annotations); err != nil {
 		return nil, fmt.Errorf("invalid %s: %w", flagName, err)
 	}
+	source := "stdin"
+	if FlagChanged(cmd, flagName) {
+		source = "--" + flagName
+	}
+	if err := enforceStrictOrWarn(cmd, verifyBodyKeys(source, []byte(requestData), reflect.ValueOf(&req).Elem(), nil)); err != nil {
+		return nil, err
+	}
+	if err := validateRequiredUnionFields(reflect.ValueOf(&req).Elem(), nil, "", flagName); err != nil {
+		return nil, err
+	}
 	return &req, nil
+}
+
+type MissingRequiredFieldError struct {
+	Path         string
+	FlagHint     string
+	BodyFlagName string
+}
+
+func (e *MissingRequiredFieldError) Error() string {
+	if e.Path == "" {
+		unionOptions := strings.Replace(e.FlagHint, ", or ", " / ", 1)
+		switch {
+		case e.BodyFlagName != "" && unionOptions != "":
+			return fmt.Sprintf("the request body is missing or selects no variant; pass --%s (or %s)", e.BodyFlagName, unionOptions)
+		case e.BodyFlagName != "":
+			return fmt.Sprintf("the request body is missing or selects no variant; pass --%s", e.BodyFlagName)
+		case unionOptions != "":
+			return fmt.Sprintf("the request body is missing or selects no variant; pass %s", unionOptions)
+		default:
+			return "the request body is missing or selects no variant; provide a body that selects one variant"
+		}
+	}
+	if e.FlagHint != "" {
+		return fmt.Sprintf("missing required field %q (%s)", e.Path, e.FlagHint)
+	}
+	return fmt.Sprintf("missing required field %q", e.Path)
+}
+
+func (*MissingRequiredFieldError) CLIReason() string { return "CLI_VALIDATION" }
+
+// A union serializes as its selected member's wire shape, so members share the parent JSON path.
+func validateRequiredUnionFields(body reflect.Value, meta []FlagMeta, bodyFieldPath, bodyFlagName string) error {
+	err := walkRequiredUnionFields(body, meta, bodyFieldPath, "")
+	var missing *MissingRequiredFieldError
+	if errors.As(err, &missing) && missing.Path == "" {
+		missing.BodyFlagName = bodyFlagName
+	}
+	return err
+}
+
+func walkRequiredUnionFields(v reflect.Value, meta []FlagMeta, goPath, jsonPath string) error {
+	for v.IsValid() && (v.Kind() == reflect.Ptr || v.Kind() == reflect.Interface) {
+		if v.IsNil() {
+			return nil
+		}
+		v = v.Elem()
+	}
+	if !v.IsValid() {
+		return nil
+	}
+
+	switch v.Kind() {
+	case reflect.Struct:
+		if union, selected := selectedUnionMembers(v); union {
+			if len(selected) == 0 && !hasUnknownUnionValue(v) {
+				return &MissingRequiredFieldError{Path: jsonPath, FlagHint: unionFlagHint(meta, goPath)}
+			}
+			for _, member := range selected {
+				if err := walkRequiredUnionFields(member, meta, goPath, jsonPath); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+		for i := 0; i < v.NumField(); i++ {
+			fieldType := v.Type().Field(i)
+			if fieldType.PkgPath != "" || jsonFieldOmitted(fieldType, v.Field(i)) {
+				continue
+			}
+			jsonName := serializedBodyFieldName(fieldType)
+			if jsonName == "" {
+				continue
+			}
+			if err := walkRequiredUnionFields(
+				v.Field(i),
+				meta,
+				joinFieldPath(goPath, fieldType.Name),
+				joinJSONPath(jsonPath, jsonName),
+			); err != nil {
+				return err
+			}
+		}
+	case reflect.Slice, reflect.Array:
+		for i := 0; i < v.Len(); i++ {
+			if err := walkRequiredUnionFields(v.Index(i), meta, goPath, fmt.Sprintf("%s[%d]", jsonPath, i)); err != nil {
+				return err
+			}
+		}
+	case reflect.Map:
+		if v.IsNil() {
+			return nil
+		}
+		iter := v.MapRange()
+		for iter.Next() {
+			path := fmt.Sprintf("%s[%v]", jsonPath, iter.Key().Interface())
+			if err := walkRequiredUnionFields(iter.Value(), meta, goPath, path); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+// jsonFieldOmitted mirrors the generated SDK's utils.MarshalJSON omission rules.
+func jsonFieldOmitted(field reflect.StructField, value reflect.Value) bool {
+	if field.Tag.Get("const") != "" {
+		return false
+	}
+	var omitEmpty, omitZero bool
+	for _, option := range strings.Split(field.Tag.Get("json"), ",")[1:] {
+		switch option {
+		case "omitempty":
+			omitEmpty = true
+		case "omitzero":
+			omitZero = true
+		}
+	}
+	if omitZero && value.IsZero() {
+		return true
+	}
+	if !omitEmpty {
+		return false
+	}
+	switch value.Kind() {
+	case reflect.Chan, reflect.Func, reflect.Interface, reflect.Map, reflect.Ptr, reflect.Slice:
+		if value.IsNil() {
+			return true
+		}
+	}
+	if value.Kind() != reflect.Struct && value.IsZero() {
+		return true
+	}
+	switch value.Kind() {
+	case reflect.Array, reflect.Map, reflect.Slice:
+		return value.Len() == 0
+	}
+	return false
+}
+
+func serializedBodyFieldName(field reflect.StructField) string {
+	if tag := field.Tag.Get("json"); tag != "" {
+		name := strings.Split(tag, ",")[0]
+		if name == "-" {
+			return ""
+		}
+		return name
+	}
+	for _, key := range []string{"form", "multipartForm"} {
+		tag := field.Tag.Get(key)
+		if tag == "" {
+			continue
+		}
+		var name string
+		jsonEncoded := false
+		for _, part := range strings.Split(tag, ",") {
+			if part == "json" {
+				jsonEncoded = true
+			} else if strings.HasPrefix(part, "name=") {
+				name = strings.TrimPrefix(part, "name=")
+			}
+		}
+		if jsonEncoded {
+			return name
+		}
+	}
+	return ""
+}
+
+func selectedUnionMembers(v reflect.Value) (bool, []reflect.Value) {
+	isUnion := false
+	var selected []reflect.Value
+	for i := 0; i < v.NumField(); i++ {
+		if v.Type().Field(i).Tag.Get("union") != "member" {
+			continue
+		}
+		isUnion = true
+		member := v.Field(i)
+		if unionMemberIsSet(member) {
+			selected = append(selected, member)
+		}
+	}
+	return isUnion, selected
+}
+
+func unionMemberIsSet(v reflect.Value) bool {
+	switch v.Kind() {
+	case reflect.Chan, reflect.Func, reflect.Interface, reflect.Map, reflect.Ptr, reflect.Slice:
+		return !v.IsNil()
+	default:
+		return !v.IsZero()
+	}
+}
+
+func hasUnknownUnionValue(v reflect.Value) bool {
+	for i := 0; i < v.NumField(); i++ {
+		if v.Type().Field(i).Tag.Get("union") != "unknown" {
+			continue
+		}
+		raw := v.Field(i)
+		return (raw.Kind() == reflect.Slice || raw.Kind() == reflect.Array || raw.Kind() == reflect.String) && raw.Len() > 0
+	}
+	return false
+}
+
+func unionFlagHint(meta []FlagMeta, goPath string) string {
+	for _, m := range meta {
+		if m.Kind != FlagKindUnion || m.FieldPath != goPath {
+			continue
+		}
+		parts := []string{"--" + m.FlagName}
+		if m.Union != nil {
+			var variants []string
+			for _, variant := range m.Union.Variants {
+				name := "--" + variant.FlagName
+				if variant.CanExpand && len(variant.Fields) > 0 {
+					name += ".*"
+				}
+				variants = append(variants, name)
+			}
+			if len(variants) > 0 {
+				parts = append(parts, "or "+strings.Join(variants, " / "))
+			}
+		}
+		return strings.Join(parts, ", ")
+	}
+	return ""
+}
+
+func joinFieldPath(base, field string) string {
+	if base == "" {
+		return field
+	}
+	return base + "." + field
+}
+
+func joinJSONPath(base, field string) string {
+	if base == "" {
+		return field
+	}
+	return base + "." + field
+}
+
+func strictBodyKeys(cmd *cobra.Command) bool {
+	if cmd == nil {
+		return false
+	}
+	if cmd.Annotations["speakeasy_strict_body_keys"] == "true" {
+		return true
+	}
+	val, changed := GetBoolFlag(cmd, "agent-mode")
+	return changed && val
+}
+
+type unionBodyKeyError struct{ err error }
+
+func (e *unionBodyKeyError) Error() string { return e.err.Error() }
+func (e *unionBodyKeyError) Unwrap() error { return e.err }
+
+func enforceStrictOrWarn(cmd *cobra.Command, err error) error {
+	if err == nil || strictBodyKeys(cmd) {
+		return err
+	}
+	var unionErr *unionBodyKeyError
+	if errors.As(err, &unionErr) {
+		return err
+	}
+	fmt.Fprintf(cmd.ErrOrStderr(), "Warning: %v\n", err)
+	return nil
+}
+
+func bodyTypeIsUnion(t reflect.Type) bool {
+	for t.Kind() == reflect.Pointer {
+		t = t.Elem()
+	}
+	if t.Kind() != reflect.Struct {
+		return false
+	}
+	for i := 0; i < t.NumField(); i++ {
+		if _, ok := t.Field(i).Tag.Lookup("union"); ok {
+			return true
+		}
+	}
+	return false
+}
+
+func verifyBodyKeys(source string, input []byte, target reflect.Value, u *UnionMeta) error {
+	var in map[string]json.RawMessage
+	if err := json.Unmarshal(input, &in); err != nil || len(in) == 0 {
+		return nil // not an object (or empty): nothing to lose
+	}
+	if !isJSONSerialized(target.Type()) {
+		return nil // form-only body types have no JSON wire shape
+	}
+	if target.CanAddr() {
+		target = target.Addr()
+	}
+	encoded, err := utils.MarshalJSON(target.Interface(), "", true)
+	if err != nil {
+		return nil
+	}
+	var out map[string]json.RawMessage
+	if err := json.Unmarshal(encoded, &out); err != nil {
+		return nil
+	}
+	// The serializer omits null optionals, so a known key set to null never survives into out.
+	knownForNull := knownJSONKeys(target.Type())
+	var lost []string
+	for k, v := range in {
+		if _, kept := out[k]; kept {
+			continue
+		}
+		if string(bytes.TrimSpace(v)) == "null" && slices.Contains(knownForNull, k) {
+			continue
+		}
+		lost = append(lost, k)
+	}
+	if len(lost) == 0 {
+		return nil
+	}
+	slices.Sort(lost)
+
+	if u != nil {
+		for _, k := range lost {
+			if !slices.Contains(u.VariantKeys, k) {
+				continue
+			}
+			for _, other := range u.VariantKeys {
+				if _, present := in[other]; present && other != k {
+					return &unionBodyKeyError{err: fmt.Errorf("%s names both %q and %q, but the request variant it selects carries only one of them; keep exactly one", source, other, k)}
+				}
+			}
+		}
+	}
+
+	known := knownForNull
+	quoted := make([]string, 0, len(lost))
+	var hints []string
+	for _, k := range lost {
+		quoted = append(quoted, strconv.Quote(k))
+		if slices.Contains(known, k) {
+			hints = append(hints, fmt.Sprintf("%q belongs to a different request variant than the rest of the body", k))
+		} else if s := closestKey(k, known); s != "" {
+			hints = append(hints, fmt.Sprintf("did you mean %q instead of %q?", s, k))
+		}
+	}
+	noun := "key %s is"
+	if len(lost) > 1 {
+		noun = "keys %s are"
+	}
+	msg := fmt.Sprintf("%s: "+noun+" not part of the request body and would be dropped", source, strings.Join(quoted, ", "))
+	if len(hints) > 0 {
+		msg += " (" + strings.Join(hints, "; ") + ")"
+	}
+	if u != nil || bodyTypeIsUnion(target.Type()) {
+		return &unionBodyKeyError{err: fmt.Errorf("%s", msg)}
+	}
+	return fmt.Errorf("%s", msg)
+}
+
+func isJSONSerialized(t reflect.Type) bool {
+	for t.Kind() == reflect.Ptr {
+		t = t.Elem()
+	}
+	if t.Kind() != reflect.Struct {
+		return true
+	}
+	formTagged := false
+	for i := 0; i < t.NumField(); i++ {
+		f := t.Field(i)
+		if f.Tag.Get("union") == "member" && isJSONSerialized(f.Type) {
+			return true
+		}
+		if name := strings.Split(f.Tag.Get("json"), ",")[0]; name != "" && name != "-" {
+			return true
+		}
+		if f.Tag.Get("form") != "" || f.Tag.Get("multipartForm") != "" {
+			formTagged = true
+		}
+	}
+	return !formTagged
+}
+
+func knownJSONKeys(t reflect.Type) []string {
+	seen := map[string]bool{}
+	var keys []string
+	var walk func(t reflect.Type, depth int)
+	walk = func(t reflect.Type, depth int) {
+		for t.Kind() == reflect.Ptr {
+			t = t.Elem()
+		}
+		if t.Kind() != reflect.Struct || depth > 4 {
+			return
+		}
+		for i := 0; i < t.NumField(); i++ {
+			f := t.Field(i)
+			if f.Tag.Get("union") == "member" {
+				walk(f.Type, depth+1)
+				continue
+			}
+			name := strings.Split(f.Tag.Get("json"), ",")[0]
+			if name == "" || name == "-" || seen[name] {
+				continue
+			}
+			seen[name] = true
+			keys = append(keys, name)
+		}
+	}
+	walk(t, 0)
+	slices.Sort(keys)
+	return keys
+}
+
+func closestKey(lost string, known []string) string {
+	fold := func(s string) string {
+		return strings.NewReplacer("_", "", "-", "").Replace(strings.ToLower(s))
+	}
+	target := fold(lost)
+	limit := 1
+	if len([]rune(target)) >= 4 {
+		limit = 2
+	}
+	best, bestDist := "", limit+1
+	for _, k := range known {
+		if d := editDistance(target, fold(k)); d < bestDist {
+			best, bestDist = k, d
+		}
+	}
+	return best
+}
+
+func editDistance(a, b string) int {
+	ra, rb := []rune(a), []rune(b)
+	prev := make([]int, len(rb)+1)
+	cur := make([]int, len(rb)+1)
+	for j := range prev {
+		prev[j] = j
+	}
+	for i := 1; i <= len(ra); i++ {
+		cur[0] = i
+		for j := 1; j <= len(rb); j++ {
+			cost := 1
+			if ra[i-1] == rb[j-1] {
+				cost = 0
+			}
+			cur[j] = min(prev[j]+1, cur[j-1]+1, prev[j-1]+cost)
+		}
+		prev, cur = cur, prev
+	}
+	return prev[len(rb)]
 }
 
 // unmarshalIntoField unmarshals JSON data into a reflect.Value field,
@@ -370,15 +1297,15 @@ func unmarshalIntoField(field reflect.Value, data []byte) error {
 	return nil
 }
 
-// relaxRequiredForBodyFields returns a copy of meta with Required=false
-// for fields that belong to the body. This prevents required-field errors
-// when stdin already populated those fields.
-func relaxRequiredForBodyFields(meta []FlagMeta, bodyFieldPath string) []FlagMeta {
+func relaxRequiredForBodyFields(meta []FlagMeta, reqType reflect.Type, bodyFieldPath string, clearDefaults bool) []FlagMeta {
 	result := make([]FlagMeta, len(meta))
 	copy(result, meta)
 	for i := range result {
-		if isBodyFieldPath(result[i].FieldPath, bodyFieldPath) {
+		if isBodyFieldPath(result[i].FieldPath, bodyFieldPath) && requestParamTag(reqType, result[i].FieldPath) == "" {
 			result[i].Required = false
+			if clearDefaults {
+				result[i].HasDefault = false
+			}
 			// Also relax union fields so buildUnionField doesn't error
 			if result[i].Union != nil {
 				unionCopy := *result[i].Union
@@ -390,12 +1317,47 @@ func relaxRequiredForBodyFields(meta []FlagMeta, bodyFieldPath string) []FlagMet
 	return result
 }
 
+func NonBodyMeta(meta []FlagMeta, bodyFieldPath string) []FlagMeta {
+	var result []FlagMeta
+	for _, m := range meta {
+		if !isBodyFieldPath(m.FieldPath, bodyFieldPath) {
+			result = append(result, m)
+		}
+	}
+	return result
+}
+
 // isBodyFieldPath returns true if the given field path belongs to the body sub-struct.
 func isBodyFieldPath(fieldPath, bodyFieldPath string) bool {
 	if bodyFieldPath == "" {
 		return true // entire struct is body
 	}
 	return fieldPath == bodyFieldPath || strings.HasPrefix(fieldPath, bodyFieldPath+".")
+}
+
+// Body models tag every location alongside their json/form tags, so those never count as params.
+func requestParamTag(reqType reflect.Type, fieldPath string) string {
+	for reqType.Kind() == reflect.Ptr {
+		reqType = reqType.Elem()
+	}
+	if reqType.Kind() != reflect.Struct {
+		return ""
+	}
+	field, ok := reqType.FieldByName(strings.Split(fieldPath, ".")[0])
+	if !ok {
+		return ""
+	}
+	for _, tag := range []string{"json", "form", "multipartForm"} {
+		if _, ok := field.Tag.Lookup(tag); ok {
+			return ""
+		}
+	}
+	for _, tag := range []string{"pathParam", "queryParam", "header"} {
+		if _, ok := field.Tag.Lookup(tag); ok {
+			return tag
+		}
+	}
+	return ""
 }
 
 // setFieldByPath navigates nested struct fields via a dot-delimited path and sets the leaf value.
@@ -445,11 +1407,12 @@ func setFieldByPath(v reflect.Value, path string, val reflect.Value) error {
 					elemType := field.Type().Elem()
 					newSlice := reflect.MakeSlice(field.Type(), val.Len(), val.Len())
 					for j := 0; j < val.Len(); j++ {
-						if !val.Index(j).Type().ConvertibleTo(elemType) {
-							return fmt.Errorf("cannot convert slice element %s to %s for field %q at path %q",
-								val.Index(j).Type(), elemType, part, path)
+						elem, err := convertSliceElem(val.Index(j), elemType)
+						if err != nil {
+							return fmt.Errorf("cannot convert slice element %s to %s for field %q at path %q: %w",
+								val.Index(j).Type(), elemType, part, path, err)
 						}
-						newSlice.Index(j).Set(val.Index(j).Convert(elemType))
+						newSlice.Index(j).Set(elem)
 					}
 					field.Set(newSlice)
 				}
@@ -465,6 +1428,33 @@ func setFieldByPath(v reflect.Value, path string, val reflect.Value) error {
 		}
 	}
 	return nil
+}
+
+// convertSliceElem converts a repeatable flag's string element to the slice
+// element type; reflect cannot convert a string to an integer kind.
+func convertSliceElem(elem reflect.Value, elemType reflect.Type) (reflect.Value, error) {
+	if elemType.Kind() == reflect.Ptr {
+		inner, err := convertSliceElem(elem, elemType.Elem())
+		if err != nil {
+			return reflect.Value{}, err
+		}
+		ptr := reflect.New(elemType.Elem())
+		ptr.Elem().Set(inner)
+		return ptr, nil
+	}
+	if elem.Kind() == reflect.String && elemType.Kind() >= reflect.Int && elemType.Kind() <= reflect.Int64 {
+		n, err := strconv.ParseInt(elem.String(), 10, elemType.Bits())
+		if err != nil {
+			return reflect.Value{}, err
+		}
+		out := reflect.New(elemType).Elem()
+		out.SetInt(n)
+		return out, nil
+	}
+	if !elem.Type().ConvertibleTo(elemType) {
+		return reflect.Value{}, fmt.Errorf("incompatible types")
+	}
+	return elem.Convert(elemType), nil
 }
 
 // navigateToField resolves a dot-delimited field path and returns the leaf field.
@@ -511,16 +1501,187 @@ func shouldSkipDefault(m FlagMeta, changed bool) bool {
 // validateRequiredString returns an error if a required string flag is empty.
 func validateRequiredString(m FlagMeta, val string) error {
 	if m.Required && val == "" {
-		return fmt.Errorf("missing required flag: --%s", m.FlagName)
+		return &MissingRequiredFlagError{FlagName: m.FlagName}
 	}
 	return nil
+}
+
+func validateStringLength(m FlagMeta, val string, changed bool) error {
+	if !changed || m.MinLength <= 0 {
+		return nil
+	}
+	if val == "" {
+		return fmt.Errorf("invalid value for --%s: empty (the schema requires at least %d character(s)); omit the flag to leave the field unset", m.FlagName, m.MinLength)
+	}
+	if int64(utf8.RuneCountInString(val)) < m.MinLength {
+		return fmt.Errorf("invalid value for --%s: %q is shorter than the minimum length %d", m.FlagName, val, m.MinLength)
+	}
+	return nil
+}
+
+// pflag's float64 parser accepts NaN and Inf, which are not valid JSON numbers.
+func validateFiniteNumber(m FlagMeta, val float64, changed bool) error {
+	if changed && (math.IsNaN(val) || math.IsInf(val, 0)) {
+		return fmt.Errorf("invalid value for --%s: %s is not a finite number", m.FlagName, formatNumber(val))
+	}
+	return nil
+}
+
+func validateNumericBounds(m FlagMeta, val float64, changed bool) error {
+	if !changed {
+		return nil
+	}
+	if m.HasMinimum && val < m.Minimum {
+		return fmt.Errorf("invalid value for --%s: %s is below the minimum %s", m.FlagName, formatNumber(val), formatNumber(m.Minimum))
+	}
+	if m.HasMaximum && val > m.Maximum {
+		return fmt.Errorf("invalid value for --%s: %s is above the maximum %s", m.FlagName, formatNumber(val), formatNumber(m.Maximum))
+	}
+	return nil
+}
+
+func formatNumber(f float64) string {
+	return strconv.FormatFloat(f, 'f', -1, 64)
+}
+
+func validateRequiredPresence(m FlagMeta, changed bool) error {
+	if m.Required && !changed {
+		return &MissingRequiredFlagError{FlagName: m.FlagName}
+	}
+	return nil
+}
+
+func isChangedRequiredPathParam(v reflect.Value, m FlagMeta, changed bool) bool {
+	return m.Required && changed && requestParamTag(v.Type(), m.FieldPath) == "pathParam"
+}
+
+// A blank path segment would address the parent collection instead of the item.
+func validateRequiredPathParam(v reflect.Value, m FlagMeta, changed bool, values ...string) error {
+	if !isChangedRequiredPathParam(v, m, changed) {
+		return nil
+	}
+	for _, value := range values {
+		if strings.TrimSpace(value) == "" {
+			return WithCLIValidation(fmt.Errorf("invalid value for --%s: blank; path parameters require a non-empty value", m.FlagName))
+		}
+	}
+	return nil
+}
+
+func validateRequiredJSONPathParam(v reflect.Value, m FlagMeta, changed bool, val string) error {
+	if !isChangedRequiredPathParam(v, m, changed) {
+		return nil
+	}
+	if strings.TrimSpace(val) == "null" {
+		return WithCLIValidation(fmt.Errorf("invalid value for --%s: null; path parameters require a non-empty value", m.FlagName))
+	}
+	var elems []string
+	if json.Unmarshal([]byte(val), &elems) != nil {
+		return nil
+	}
+	if len(elems) == 0 {
+		elems = []string{""}
+	}
+	return validateRequiredPathParam(v, m, changed, elems...)
+}
+
+func validateJSONArrayInput(m FlagMeta, fieldType reflect.Type, paramTag, val string) error {
+	// OptionalNullable[T] is a map[bool]*T
+	if fieldType.Kind() == reflect.Map && fieldType.Key().Kind() == reflect.Bool && fieldType.Elem().Kind() == reflect.Ptr {
+		fieldType = fieldType.Elem().Elem()
+	}
+	if fieldType.Kind() != reflect.Slice || fieldType.Elem().Kind() == reflect.Uint8 {
+		return nil
+	}
+	trimmed := strings.TrimSpace(val)
+	if trimmed == "null" {
+		if m.Required {
+			return WithCLIValidation(fmt.Errorf("invalid value for --%s: null; the field is required", m.FlagName))
+		}
+		return nil
+	}
+	if !strings.HasPrefix(trimmed, "[") {
+		return WithCLIValidation(fmt.Errorf(`invalid value for --%s: expected a JSON array, e.g. --%s '["value"]'`, m.FlagName, m.FlagName))
+	}
+	var raw []json.RawMessage
+	rawErr := json.Unmarshal([]byte(trimmed), &raw)
+	if rawErr == nil {
+		if m.Required && len(raw) == 0 && (paramTag == "queryParam" || paramTag == "header") {
+			return WithCLIValidation(fmt.Errorf(`invalid value for --%s: empty array; a required parameter cannot be sent empty, e.g. --%s '["value"]'`, m.FlagName, m.FlagName))
+		}
+		if !keepsJSONNull(fieldType.Elem().Kind()) && slices.ContainsFunc(raw, isJSONNull) {
+			return WithCLIValidation(fmt.Errorf("invalid value for --%s: null element; array elements cannot be null", m.FlagName))
+		}
+	}
+	elemType := fieldType.Elem()
+	if elemType.Kind() == reflect.Ptr {
+		elemType = elemType.Elem()
+	}
+	if kind := elemType.Kind(); kind >= reflect.Int && kind <= reflect.Int64 && rawErr == nil {
+		for _, elem := range raw {
+			if isJSONNull(elem) {
+				continue
+			}
+			if err := validateEnumValue(m, string(elem), true); err != nil {
+				return err
+			}
+		}
+	}
+	if elemType.Kind() != reflect.String {
+		return nil
+	}
+	var elems []*string
+	if err := json.Unmarshal([]byte(trimmed), &elems); err != nil {
+		return WithCLIValidation(fmt.Errorf(`invalid value for --%s: expected a JSON array of strings, e.g. --%s '["value"]': %v`, m.FlagName, m.FlagName, err))
+	}
+	for _, elem := range elems {
+		if elem == nil {
+			continue
+		}
+		if err := validateEnumValue(m, *elem, true); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func keepsJSONNull(k reflect.Kind) bool {
+	return k == reflect.Ptr || k == reflect.Interface || k == reflect.Map || k == reflect.Slice
+}
+
+func isJSONNull(raw json.RawMessage) bool {
+	return bytes.Equal(bytes.TrimSpace(raw), []byte("null"))
+}
+
+func validateEnumValue(m FlagMeta, val string, changed bool) error {
+	if m.EnumValues == nil {
+		return nil
+	}
+	if val == "" && !changed {
+		return nil
+	}
+	if slices.Contains(m.EnumValues, val) {
+		return nil
+	}
+	if val == "" {
+		return fmt.Errorf("invalid value for --%s: empty; valid options: %s (omit the flag to leave the field unset)",
+			m.FlagName, strings.Join(m.EnumValues, ", "))
+	}
+	return fmt.Errorf("invalid value for --%s: %q; valid options: %s",
+		m.FlagName, val, strings.Join(m.EnumValues, ", "))
 }
 
 // Per-kind builder functions. Each reads the flag value, validates, and sets via reflection.
 
 func buildStringField(cmd *cobra.Command, v reflect.Value, m FlagMeta) error {
 	val, changed := GetStringFlag(cmd, m.FlagName)
-	if err := validateRequiredString(m, val); err != nil {
+	if err := enforceStrictOrWarn(cmd, validateStringLength(m, val, changed)); err != nil {
+		return err
+	}
+	if err := validateRequiredPresence(m, changed); err != nil {
+		return err
+	}
+	if err := validateRequiredPathParam(v, m, changed, val); err != nil {
 		return err
 	}
 	if shouldSkipUnchanged(m, changed) {
@@ -535,7 +1696,7 @@ func buildStringField(cmd *cobra.Command, v reflect.Value, m FlagMeta) error {
 func buildBoolField(cmd *cobra.Command, v reflect.Value, m FlagMeta) error {
 	val, changed := GetBoolFlag(cmd, m.FlagName)
 	if m.Required && !changed {
-		return fmt.Errorf("missing required flag: --%s", m.FlagName)
+		return &MissingRequiredFlagError{FlagName: m.FlagName}
 	}
 	if shouldSkipUnchanged(m, changed) {
 		return nil
@@ -549,7 +1710,13 @@ func buildBoolField(cmd *cobra.Command, v reflect.Value, m FlagMeta) error {
 func buildInt64Field(cmd *cobra.Command, v reflect.Value, m FlagMeta) error {
 	val, changed := GetInt64Flag(cmd, m.FlagName)
 	if m.Required && !changed {
-		return fmt.Errorf("missing required flag: --%s", m.FlagName)
+		return &MissingRequiredFlagError{FlagName: m.FlagName}
+	}
+	if err := validateFiniteNumber(m, float64(val), changed); err != nil {
+		return err
+	}
+	if err := enforceStrictOrWarn(cmd, validateNumericBounds(m, float64(val), changed)); err != nil {
+		return err
 	}
 	if shouldSkipUnchanged(m, changed) {
 		return nil
@@ -563,7 +1730,13 @@ func buildInt64Field(cmd *cobra.Command, v reflect.Value, m FlagMeta) error {
 func buildFloat64Field(cmd *cobra.Command, v reflect.Value, m FlagMeta) error {
 	val, changed := GetFloat64Flag(cmd, m.FlagName)
 	if m.Required && !changed {
-		return fmt.Errorf("missing required flag: --%s", m.FlagName)
+		return &MissingRequiredFlagError{FlagName: m.FlagName}
+	}
+	if err := validateFiniteNumber(m, val, changed); err != nil {
+		return err
+	}
+	if err := enforceStrictOrWarn(cmd, validateNumericBounds(m, val, changed)); err != nil {
+		return err
 	}
 	if shouldSkipUnchanged(m, changed) {
 		return nil
@@ -578,7 +1751,15 @@ func buildStringArrayField(cmd *cobra.Command, v reflect.Value, m FlagMeta) erro
 	val, changed := GetStringArrayFlag(cmd, m.FlagName)
 
 	if m.Required && len(val) == 0 {
-		return fmt.Errorf("missing required flag: --%s", m.FlagName)
+		return &MissingRequiredFlagError{FlagName: m.FlagName}
+	}
+	if err := validateRequiredPathParam(v, m, changed, val...); err != nil {
+		return err
+	}
+	for _, elem := range val {
+		if err := validateEnumValue(m, elem, true); err != nil {
+			return err
+		}
 	}
 
 	if !changed {
@@ -590,6 +1771,9 @@ func buildStringArrayField(cmd *cobra.Command, v reflect.Value, m FlagMeta) erro
 
 func buildDateTimeField(cmd *cobra.Command, v reflect.Value, m FlagMeta) error {
 	val, changed := GetStringFlag(cmd, m.FlagName)
+	if err := validateRequiredPathParam(v, m, changed, val); err != nil {
+		return err
+	}
 	if err := validateRequiredString(m, val); err != nil {
 		return err
 	}
@@ -632,6 +1816,9 @@ func buildDateTimeField(cmd *cobra.Command, v reflect.Value, m FlagMeta) error {
 
 func buildDateField(cmd *cobra.Command, v reflect.Value, m FlagMeta) error {
 	val, changed := GetStringFlag(cmd, m.FlagName)
+	if err := validateRequiredPathParam(v, m, changed, val); err != nil {
+		return err
+	}
 	if err := validateRequiredString(m, val); err != nil {
 		return err
 	}
@@ -678,13 +1865,14 @@ func buildDateField(cmd *cobra.Command, v reflect.Value, m FlagMeta) error {
 
 func buildEnumField(cmd *cobra.Command, v reflect.Value, m FlagMeta) error {
 	val, changed := GetStringFlag(cmd, m.FlagName)
-	if err := validateRequiredString(m, val); err != nil {
+	if err := validateRequiredPathParam(v, m, changed, val); err != nil {
 		return err
 	}
-	// Validate enum values (validate before convert)
-	if val != "" && m.EnumValues != nil && !slices.Contains(m.EnumValues, val) {
-		return fmt.Errorf("invalid value for --%s: %q; valid options: %s",
-			m.FlagName, val, strings.Join(m.EnumValues, ", "))
+	if err := validateEnumValue(m, val, changed); err != nil {
+		return err
+	}
+	if err := validateRequiredPresence(m, changed); err != nil {
+		return err
 	}
 	if shouldSkipUnchanged(m, changed) {
 		return nil
@@ -699,14 +1887,14 @@ func buildEnumField(cmd *cobra.Command, v reflect.Value, m FlagMeta) error {
 
 func buildIntEnumField(cmd *cobra.Command, v reflect.Value, m FlagMeta) error {
 	val, changed := GetStringFlag(cmd, m.FlagName)
-	if err := validateRequiredString(m, val); err != nil {
+	if err := validateRequiredPathParam(v, m, changed, val); err != nil {
 		return err
 	}
-	// Validate enum values
-	if val != "" && m.EnumValues != nil && !slices.Contains(m.EnumValues, val) {
-		validStr := strings.Join(m.EnumValues, ", ")
-		return fmt.Errorf("invalid value for --%s: %q; valid options: %s",
-			m.FlagName, val, validStr)
+	if err := validateEnumValue(m, val, changed); err != nil {
+		return err
+	}
+	if err := validateRequiredString(m, val); err != nil {
+		return err
 	}
 	if shouldSkipUnchanged(m, changed) {
 		return nil
@@ -732,7 +1920,7 @@ func buildJSONField(cmd *cobra.Command, v reflect.Value, m FlagMeta) error {
 	val, changed := GetStringFlag(cmd, m.FlagName)
 
 	if m.Required && val == "" {
-		return fmt.Errorf("missing required flag: --%s", m.FlagName)
+		return &MissingRequiredFlagError{FlagName: m.FlagName}
 	}
 
 	if m.Optional && !changed {
@@ -741,6 +1929,10 @@ func buildJSONField(cmd *cobra.Command, v reflect.Value, m FlagMeta) error {
 
 	if val == "" {
 		return nil
+	}
+
+	if err := validateRequiredJSONPathParam(v, m, changed, val); err != nil {
+		return err
 	}
 
 	// Navigate to the target field to get its type
@@ -789,6 +1981,10 @@ func buildJSONField(cmd *cobra.Command, v reflect.Value, m FlagMeta) error {
 		return nil
 	}
 
+	if err := validateJSONArrayInput(m, fieldType, requestParamTag(v.Type(), m.FieldPath), val); err != nil {
+		return err
+	}
+
 	// If the annotation specifies bigint:"string" or decimal:"string", the SDK's
 	// unmarshalValue expects the value as a JSON string (e.g., "123"), not a bare
 	// number. Wrap bare numbers in JSON quotes for user convenience.
@@ -825,7 +2021,7 @@ func buildFileField(cmd *cobra.Command, v reflect.Value, m FlagMeta) error {
 	path, changed := GetStringFlag(cmd, m.FlagName)
 
 	if m.Required && (!changed || path == "") {
-		return fmt.Errorf("missing required flag: --%s", m.FlagName)
+		return &MissingRequiredFlagError{FlagName: m.FlagName}
 	}
 
 	if !changed || path == "" {
@@ -835,7 +2031,7 @@ func buildFileField(cmd *cobra.Command, v reflect.Value, m FlagMeta) error {
 	// Read file from disk
 	content, err := os.ReadFile(path)
 	if err != nil {
-		return fmt.Errorf("failed to read file for --%s: %w", m.FlagName, err)
+		return WithCLIValidation(fmt.Errorf("failed to read file for --%s: %w", m.FlagName, err))
 	}
 	fileName := filepath.Base(path)
 
@@ -876,7 +2072,7 @@ func buildFileArrayField(cmd *cobra.Command, v reflect.Value, m FlagMeta) error 
 	val, changed := GetStringFlag(cmd, m.FlagName)
 
 	if m.Required && (!changed || val == "") {
-		return fmt.Errorf("missing required flag: --%s", m.FlagName)
+		return &MissingRequiredFlagError{FlagName: m.FlagName}
 	}
 
 	if !changed || val == "" {
@@ -917,7 +2113,7 @@ func buildFileArrayField(cmd *cobra.Command, v reflect.Value, m FlagMeta) error 
 
 		content, err := os.ReadFile(filePath)
 		if err != nil {
-			return fmt.Errorf("failed to read file %q for --%s: %w", filePath, m.FlagName, err)
+			return WithCLIValidation(fmt.Errorf("failed to read file %q for --%s: %w", filePath, m.FlagName, err))
 		}
 
 		fileName := filepath.Base(filePath)
@@ -962,7 +2158,7 @@ func buildBytesField(cmd *cobra.Command, v reflect.Value, m FlagMeta) error {
 		var err error
 		data, err = os.ReadFile(path)
 		if err != nil {
-			return fmt.Errorf("failed to read file for --%s: %w", m.FlagName, err)
+			return WithCLIValidation(fmt.Errorf("failed to read file for --%s: %w", m.FlagName, err))
 		}
 	case strings.HasPrefix(val, "b64:"):
 		raw := strings.TrimPrefix(val, "b64:")
@@ -1040,12 +2236,38 @@ func registerUnionFlags(cmd *cobra.Command, m FlagMeta) {
 		if cmd.InheritedFlags().Lookup(v.FlagName) == nil {
 			cmd.Flags().String(v.FlagName, "", v.Description)
 		}
+		annotateUnionMember(cmd, v.FlagName, m.FlagName)
 
 		// Expanded variant fields reuse RegisterFlags
 		if v.CanExpand && len(v.Fields) > 0 {
 			RegisterFlags(cmd, v.Fields)
+			annotateUnionMembers(cmd, v.Fields, m.FlagName)
 		}
 	}
+}
+
+func annotateUnionMembers(cmd *cobra.Command, meta []FlagMeta, unionFlag string) {
+	for _, m := range meta {
+		annotateUnionMember(cmd, m.FlagName, unionFlag)
+		if m.Union == nil {
+			continue
+		}
+		for _, variant := range m.Union.Variants {
+			annotateUnionMember(cmd, variant.FlagName, unionFlag)
+			annotateUnionMembers(cmd, variant.Fields, unionFlag)
+		}
+	}
+}
+
+func annotateUnionMember(cmd *cobra.Command, name, unionFlag string) {
+	f := cmd.Flags().Lookup(name)
+	if f == nil {
+		return
+	}
+	if f.Annotations == nil {
+		f.Annotations = map[string][]string{}
+	}
+	f.Annotations[AnnotationUnionMember] = []string{unionFlag}
 }
 
 // buildUnionField handles the complete union parsing flow:
@@ -1082,7 +2304,7 @@ func buildUnionField(cmd *cobra.Command, root reflect.Value, m FlagMeta) error {
 			return nil // Leave field as nil
 		}
 		if !u.Discriminated {
-			return fmt.Errorf("missing required flag: --%s", m.FlagName)
+			return &MissingRequiredFlagError{FlagName: m.FlagName}
 		}
 		// Discriminated required with nothing set: leave as zero (matches current behavior)
 		return nil
@@ -1110,8 +2332,11 @@ func buildUnionField(cmd *cobra.Command, root reflect.Value, m FlagMeta) error {
 	if FlagChanged(cmd, m.FlagName) {
 		jsonStr, _ := GetStringFlag(cmd, m.FlagName)
 		target := reflect.New(unionType)
-		if err := utils.UnmarshalJsonFromString(jsonStr, target.Interface(), ""); err != nil {
+		if err := utils.UnmarshalJsonFromString(string(applyUnionDefaults([]byte(jsonStr), u)), target.Interface(), ""); err != nil {
 			return fmt.Errorf("invalid value for --%s: %w", m.FlagName, err)
+		}
+		if err := enforceStrictOrWarn(cmd, verifyBodyKeys("--"+m.FlagName, []byte(jsonStr), target, u)); err != nil {
+			return err
 		}
 		setUnionFieldValue(unionField, target, isPtr)
 		return nil

@@ -24,18 +24,35 @@ var postRemixesRemixHashedIDContinueCmdMeta = []flagutil.FlagMeta{
 // initPostRemixesRemixHashedIdContinueCmd initializes the post-remixes-remix-hashed-id-continue command.
 func initPostRemixesRemixHashedIdContinueCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
-		Use:     "post-remixes-remix-hashed-id-continue",
+		Use:     "post-remixes-remix-hashed-id-continue [remix-hashed-id]",
 		Short:   "Continue Remix",
-		Long:    "Submit a follow-up edit to an existing remix. Creates a new remix version\nin the same conversation. The previous remix is preserved and can be\nreferenced later.\n\nThe new remix version is automatically exported (rendered) upon completion.\nIf `folder_id` is provided, the output is exported to that folder. Otherwise,\nit defaults to the same folder as the previous remix version's output.\n\n<!--- HIDE-MCP -->\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n<!--- /HIDE-MCP -->",
-		Example: "  wistia remix post-remixes-remix-hashed-id-continue --remix-hashed-id <id> --instructions Cut the intro and add background music",
+		Long:    "Submit a follow-up edit to an existing remix. Creates a new remix version\nin the same conversation. The previous remix is preserved and can be\nreferenced later.\n\nThe new remix version is automatically exported (rendered) upon completion.\nIf `folder_id` is provided, the output is exported to that folder. Otherwise,\nit defaults to the same folder as the previous remix version's output.\n\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
+		Example: "  wistia remix post-remixes-remix-hashed-id-continue --remix-hashed-id <id> --instructions 'Cut the intro and add background music'",
+		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runPostRemixesRemixHashedIdContinueCmd,
 		Aliases: []string{"prrhic"},
+		Annotations: map[string]string{
+			"speakeasy_operation": "post_/remixes/{remixHashedId}/continue",
+		},
 	}
 	flagutil.RegisterFlags(cmd, postRemixesRemixHashedIDContinueCmdMeta)
 	if err := flagutil.ValidateMeta[operations.PostRemixesRemixHashedIDContinueRequest](postRemixesRemixHashedIDContinueCmdMeta); err != nil {
 		return fmt.Errorf("invalid metadata for post-remixes-remix-hashed-id-continue: %w", err)
 	}
-	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin.")
+	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
+	if err := flagutil.AnnotateBodyFields(cmd, postRemixesRemixHashedIDContinueCmdMeta, "Body", "body"); err != nil {
+		return fmt.Errorf("annotate body fields for post-remixes-remix-hashed-id-continue: %w", err)
+	}
+	if err := flagutil.DeclarePositionalFlag(cmd, "remix-hashed-id", "The hashed ID of the current remix version to edit from. (or pass it as the [remix-hashed-id] argument)", true); err != nil {
+		return err
+	}
+	if err := interactive.Declare(cmd, interactive.CommandSpec{Args: []interactive.ArgSpec{
+		{Name: "remix-hashed-id", Summary: "The hashed ID of the current remix version to edit from.", Required: true, SatisfiedBy: []string{"remix-hashed-id"}},
+	}}); err != nil {
+		return fmt.Errorf("declare interactive arguments for post-remixes-remix-hashed-id-continue: %w", err)
+	}
 	parent.AddCommand(cmd)
 	return nil
 }
@@ -45,14 +62,12 @@ func runPostRemixesRemixHashedIdContinueCmd(cmd *cobra.Command, args []string) e
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, postRemixesRemixHashedIDContinueCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, postRemixesRemixHashedIDContinueCmdMeta); err != nil {
-			return err
-		}
+	if err := flagutil.ResolvePositionalFlag(cmd, args); err != nil {
+		return err
 	}
 	req, err := flagutil.BuildRequest[operations.PostRemixesRemixHashedIDContinueRequest](cmd, postRemixesRemixHashedIDContinueCmdMeta, "Body", "body")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

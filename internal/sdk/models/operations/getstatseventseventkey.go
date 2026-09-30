@@ -151,6 +151,7 @@ func (u GetStatsEventsEventKeyConversionType) IsUnknown() bool {
 }
 
 func (u *GetStatsEventsEventKeyConversionType) UnmarshalJSON(data []byte) error {
+	*u = GetStatsEventsEventKeyConversionType{}
 
 	var candidates []utils.UnionCandidate
 

@@ -37,6 +37,11 @@ func newLocalizations(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks 
 // ```
 // Read all data
 // ```
+//
+// Tokens with the "Act with a team member's permissions" permission
+// (`all:delegate_to_contact_permissions` scope) can also be used. Requests
+// made with such a token are authorized using the permissions of the
+// contact assigned to the token.
 func (s *Localizations) List(ctx context.Context, request operations.GetMediasMediaHashedIDLocalizationsRequest, opts ...operations.Option) (*operations.GetMediasMediaHashedIDLocalizationsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -76,10 +81,17 @@ func (s *Localizations) List(ctx context.Context, request operations.GetMediasMe
 		timeout = s.sdkConfiguration.Timeout
 	}
 
+	var streamCancel context.CancelFunc
+
 	if timeout != nil {
 		var cancel context.CancelFunc
 		ctx, cancel = context.WithTimeout(ctx, *timeout)
-		defer cancel()
+		streamCancel = cancel
+		defer func() {
+			if streamCancel != nil {
+				streamCancel()
+			}
+		}()
 	}
 
 	req, err := http.NewRequestWithContext(ctx, "GET", opURL, nil)
@@ -141,7 +153,10 @@ func (s *Localizations) List(ctx context.Context, request operations.GetMediasMe
 	case httpRes.StatusCode == 200:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			if o.SkipDeserialization == nil || !*o.SkipDeserialization {
+			if o.SkipDeserialization != nil && *o.SkipDeserialization {
+				httpRes.Body = utils.BodyWithCancel(httpRes.Body, streamCancel)
+				streamCancel = nil
+			} else {
 				rawBody, err := utils.ConsumeRawBody(httpRes)
 				if err != nil {
 					return nil, err
@@ -171,7 +186,7 @@ func (s *Localizations) List(ctx context.Context, request operations.GetMediasMe
 
 			var out sdkerrors.GetMediasMediaHashedIDLocalizationsUnauthorizedError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -196,7 +211,7 @@ func (s *Localizations) List(ctx context.Context, request operations.GetMediasMe
 
 			var out sdkerrors.GetMediasMediaHashedIDLocalizationsNotFoundError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -221,7 +236,7 @@ func (s *Localizations) List(ctx context.Context, request operations.GetMediasMe
 
 			var out sdkerrors.GetMediasMediaHashedIDLocalizationsInternalServerError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -263,12 +278,19 @@ func (s *Localizations) List(ctx context.Context, request operations.GetMediasMe
 // Create Localization
 // Creates a new localization.
 //
-// Creating a localization incurs a charge on your account.
+// Creating a localization can incur a charge on your account. Accounts get a
+// free-dub allowance; once it is used up, dubs bill per minute at the
+// account's configured rate.
 //
 // ## Requires api token with one of the following permissions
 // ```
 // Read, update & delete anything
 // ```
+//
+// Tokens with the "Act with a team member's permissions" permission
+// (`all:delegate_to_contact_permissions` scope) can also be used. Requests
+// made with such a token are authorized using the permissions of the
+// contact assigned to the token.
 func (s *Localizations) Create(ctx context.Context, request operations.PostMediasMediaHashedIDLocalizationsRequest, opts ...operations.Option) (*operations.PostMediasMediaHashedIDLocalizationsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -312,10 +334,17 @@ func (s *Localizations) Create(ctx context.Context, request operations.PostMedia
 		timeout = s.sdkConfiguration.Timeout
 	}
 
+	var streamCancel context.CancelFunc
+
 	if timeout != nil {
 		var cancel context.CancelFunc
 		ctx, cancel = context.WithTimeout(ctx, *timeout)
-		defer cancel()
+		streamCancel = cancel
+		defer func() {
+			if streamCancel != nil {
+				streamCancel()
+			}
+		}()
 	}
 
 	req, err := http.NewRequestWithContext(ctx, "POST", opURL, bodyReader)
@@ -376,7 +405,10 @@ func (s *Localizations) Create(ctx context.Context, request operations.PostMedia
 	case httpRes.StatusCode == 201:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			if o.SkipDeserialization == nil || !*o.SkipDeserialization {
+			if o.SkipDeserialization != nil && *o.SkipDeserialization {
+				httpRes.Body = utils.BodyWithCancel(httpRes.Body, streamCancel)
+				streamCancel = nil
+			} else {
 				rawBody, err := utils.ConsumeRawBody(httpRes)
 				if err != nil {
 					return nil, err
@@ -406,7 +438,7 @@ func (s *Localizations) Create(ctx context.Context, request operations.PostMedia
 
 			var out sdkerrors.PostMediasMediaHashedIDLocalizationsBadRequestError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -431,7 +463,7 @@ func (s *Localizations) Create(ctx context.Context, request operations.PostMedia
 
 			var out sdkerrors.PostMediasMediaHashedIDLocalizationsUnauthorizedError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -456,7 +488,7 @@ func (s *Localizations) Create(ctx context.Context, request operations.PostMedia
 
 			var out sdkerrors.PostMediasMediaHashedIDLocalizationsForbiddenError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -481,7 +513,7 @@ func (s *Localizations) Create(ctx context.Context, request operations.PostMedia
 
 			var out sdkerrors.PostMediasMediaHashedIDLocalizationsNotFoundError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -506,7 +538,7 @@ func (s *Localizations) Create(ctx context.Context, request operations.PostMedia
 
 			var out sdkerrors.PostMediasMediaHashedIDLocalizationsUnprocessableEntityError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -531,7 +563,7 @@ func (s *Localizations) Create(ctx context.Context, request operations.PostMedia
 
 			var out sdkerrors.PostMediasMediaHashedIDLocalizationsInternalServerError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -577,6 +609,11 @@ func (s *Localizations) Create(ctx context.Context, request operations.PostMedia
 // ```
 // Read all data
 // ```
+//
+// Tokens with the "Act with a team member's permissions" permission
+// (`all:delegate_to_contact_permissions` scope) can also be used. Requests
+// made with such a token are authorized using the permissions of the
+// contact assigned to the token.
 func (s *Localizations) Get(ctx context.Context, request operations.GetMediasMediaHashedIDLocalizationsLocalizationHashedIDRequest, opts ...operations.Option) (*operations.GetMediasMediaHashedIDLocalizationsLocalizationHashedIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -616,10 +653,17 @@ func (s *Localizations) Get(ctx context.Context, request operations.GetMediasMed
 		timeout = s.sdkConfiguration.Timeout
 	}
 
+	var streamCancel context.CancelFunc
+
 	if timeout != nil {
 		var cancel context.CancelFunc
 		ctx, cancel = context.WithTimeout(ctx, *timeout)
-		defer cancel()
+		streamCancel = cancel
+		defer func() {
+			if streamCancel != nil {
+				streamCancel()
+			}
+		}()
 	}
 
 	req, err := http.NewRequestWithContext(ctx, "GET", opURL, nil)
@@ -681,7 +725,10 @@ func (s *Localizations) Get(ctx context.Context, request operations.GetMediasMed
 	case httpRes.StatusCode == 200:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			if o.SkipDeserialization == nil || !*o.SkipDeserialization {
+			if o.SkipDeserialization != nil && *o.SkipDeserialization {
+				httpRes.Body = utils.BodyWithCancel(httpRes.Body, streamCancel)
+				streamCancel = nil
+			} else {
 				rawBody, err := utils.ConsumeRawBody(httpRes)
 				if err != nil {
 					return nil, err
@@ -711,7 +758,7 @@ func (s *Localizations) Get(ctx context.Context, request operations.GetMediasMed
 
 			var out sdkerrors.GetMediasMediaHashedIDLocalizationsLocalizationHashedIDUnauthorizedError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -736,7 +783,7 @@ func (s *Localizations) Get(ctx context.Context, request operations.GetMediasMed
 
 			var out sdkerrors.GetMediasMediaHashedIDLocalizationsLocalizationHashedIDNotFoundError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -761,7 +808,7 @@ func (s *Localizations) Get(ctx context.Context, request operations.GetMediasMed
 
 			var out sdkerrors.GetMediasMediaHashedIDLocalizationsLocalizationHashedIDInternalServerError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -807,6 +854,11 @@ func (s *Localizations) Get(ctx context.Context, request operations.GetMediasMed
 // ```
 // Read, update & delete anything
 // ```
+//
+// Tokens with the "Act with a team member's permissions" permission
+// (`all:delegate_to_contact_permissions` scope) can also be used. Requests
+// made with such a token are authorized using the permissions of the
+// contact assigned to the token.
 func (s *Localizations) Delete(ctx context.Context, request operations.DeleteMediasMediaHashedIDLocalizationsLocalizationHashedIDRequest, opts ...operations.Option) (*operations.DeleteMediasMediaHashedIDLocalizationsLocalizationHashedIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -846,10 +898,17 @@ func (s *Localizations) Delete(ctx context.Context, request operations.DeleteMed
 		timeout = s.sdkConfiguration.Timeout
 	}
 
+	var streamCancel context.CancelFunc
+
 	if timeout != nil {
 		var cancel context.CancelFunc
 		ctx, cancel = context.WithTimeout(ctx, *timeout)
-		defer cancel()
+		streamCancel = cancel
+		defer func() {
+			if streamCancel != nil {
+				streamCancel()
+			}
+		}()
 	}
 
 	req, err := http.NewRequestWithContext(ctx, "DELETE", opURL, nil)
@@ -907,7 +966,10 @@ func (s *Localizations) Delete(ctx context.Context, request operations.DeleteMed
 	case httpRes.StatusCode == 200:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			if o.SkipDeserialization == nil || !*o.SkipDeserialization {
+			if o.SkipDeserialization != nil && *o.SkipDeserialization {
+				httpRes.Body = utils.BodyWithCancel(httpRes.Body, streamCancel)
+				streamCancel = nil
+			} else {
 				rawBody, err := utils.ConsumeRawBody(httpRes)
 				if err != nil {
 					return nil, err
@@ -937,7 +999,7 @@ func (s *Localizations) Delete(ctx context.Context, request operations.DeleteMed
 
 			var out sdkerrors.DeleteMediasMediaHashedIDLocalizationsLocalizationHashedIDUnauthorizedError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -962,7 +1024,7 @@ func (s *Localizations) Delete(ctx context.Context, request operations.DeleteMed
 
 			var out sdkerrors.DeleteMediasMediaHashedIDLocalizationsLocalizationHashedIDForbiddenError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -987,7 +1049,7 @@ func (s *Localizations) Delete(ctx context.Context, request operations.DeleteMed
 
 			var out sdkerrors.DeleteMediasMediaHashedIDLocalizationsLocalizationHashedIDNotFoundError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -1012,7 +1074,7 @@ func (s *Localizations) Delete(ctx context.Context, request operations.DeleteMed
 
 			var out sdkerrors.DeleteMediasMediaHashedIDLocalizationsLocalizationHashedIDInternalServerError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{

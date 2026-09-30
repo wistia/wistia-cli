@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/wistia/wistia-cli/internal/client"
 	"github.com/wistia/wistia-cli/internal/flagutil"
-	"github.com/wistia/wistia-cli/internal/interactive"
 	"github.com/wistia/wistia-cli/internal/output"
 	"github.com/wistia/wistia-cli/internal/sdk"
 	"github.com/wistia/wistia-cli/internal/sdk/models/operations"
@@ -25,16 +24,25 @@ func initBulkCopyCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "bulk-copy",
 		Short:   "Bulk Copy Media",
-		Long:    "This method accepts a list of medias to copy to a destination folder. It processes requests asynchronously and will return a background_job_status object rather than the typical Media response object.\n\nEach media will be duplicated and the copy will be placed in the specified destination folder. The original media files will not be affected.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
-		Example: "  wistia media bulk-copy --hashed-ids '[\"<value 1>\"]' --folder-id <id>",
+		Long:    "This method accepts a list of medias to copy to a destination folder. It processes requests asynchronously and will return a background_job_status object rather than the typical Media response object.\n\nEach media will be duplicated and the copy will be placed in the specified destination folder. The original media files will not be affected.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\nauthorization granting the `update` permission on the destination folder\ncan also be used; only the media the token's authorizations name are\ncopied.",
+		Example: "  wistia media bulk-copy --hashed-ids <value 1> --folder-id <id>",
+		Args:    cobra.NoArgs,
 		RunE:    runBulkCopyCmd,
 		Aliases: []string{"bc"},
+		Annotations: map[string]string{
+			"speakeasy_operation": "put_/medias/copy",
+		},
 	}
 	flagutil.RegisterFlags(cmd, bulkCopyCmdMeta)
 	if err := flagutil.ValidateMeta[operations.PutMediasCopyRequest](bulkCopyCmdMeta); err != nil {
 		return fmt.Errorf("invalid metadata for bulk-copy: %w", err)
 	}
-	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin.")
+	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
+	if err := flagutil.AnnotateBodyFields(cmd, bulkCopyCmdMeta, "", "body"); err != nil {
+		return fmt.Errorf("annotate body fields for bulk-copy: %w", err)
+	}
 	parent.AddCommand(cmd)
 	return nil
 }
@@ -44,14 +52,9 @@ func runBulkCopyCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, bulkCopyCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, bulkCopyCmdMeta); err != nil {
-			return err
-		}
-	}
 	request, err := flagutil.BuildRequest[operations.PutMediasCopyRequest](cmd, bulkCopyCmdMeta, "", "body")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

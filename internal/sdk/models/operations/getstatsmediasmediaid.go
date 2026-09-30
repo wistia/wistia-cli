@@ -46,7 +46,7 @@ func (e *GetStatsMediasMediaIDCode) IsExact() bool {
 	return false
 }
 
-type Action struct {
+type GetStatsMediasMediaIDAction struct {
 	// Type of action (e.g., "Call to Action").
 	Type *string `json:"type,omitzero"`
 	// Number of actions performed.
@@ -61,46 +61,46 @@ type Action struct {
 	Text optionalnullable.OptionalNullable[string] `json:"text,omitzero"`
 }
 
-func (a *Action) GetType() *string {
-	if a == nil {
+func (g *GetStatsMediasMediaIDAction) GetType() *string {
+	if g == nil {
 		return nil
 	}
-	return a.Type
+	return g.Type
 }
 
-func (a *Action) GetActionCount() *int64 {
-	if a == nil {
+func (g *GetStatsMediasMediaIDAction) GetActionCount() *int64 {
+	if g == nil {
 		return nil
 	}
-	return a.ActionCount
+	return g.ActionCount
 }
 
-func (a *Action) GetImpressionCount() *int64 {
-	if a == nil {
+func (g *GetStatsMediasMediaIDAction) GetImpressionCount() *int64 {
+	if g == nil {
 		return nil
 	}
-	return a.ImpressionCount
+	return g.ImpressionCount
 }
 
-func (a *Action) GetRate() *float32 {
-	if a == nil {
+func (g *GetStatsMediasMediaIDAction) GetRate() *float32 {
+	if g == nil {
 		return nil
 	}
-	return a.Rate
+	return g.Rate
 }
 
-func (a *Action) GetURL() optionalnullable.OptionalNullable[string] {
-	if a == nil {
+func (g *GetStatsMediasMediaIDAction) GetURL() optionalnullable.OptionalNullable[string] {
+	if g == nil {
 		return nil
 	}
-	return a.URL
+	return g.URL
 }
 
-func (a *Action) GetText() optionalnullable.OptionalNullable[string] {
-	if a == nil {
+func (g *GetStatsMediasMediaIDAction) GetText() optionalnullable.OptionalNullable[string] {
+	if g == nil {
 		return nil
 	}
-	return a.Text
+	return g.Text
 }
 
 // GetStatsMediasMediaIDResponseBody - Success response with the stats of the video.
@@ -116,8 +116,8 @@ type GetStatsMediasMediaIDResponseBody struct {
 	// The average percentage of the video that gets viewed (between 0 and 1).
 	Engagement *float32 `json:"engagement,omitzero"`
 	// The total number of unique people that have loaded this video.
-	Visitors *int64   `json:"visitors,omitzero"`
-	Actions  []Action `json:"actions,omitzero"`
+	Visitors *int64                        `json:"visitors,omitzero"`
+	Actions  []GetStatsMediasMediaIDAction `json:"actions,omitzero"`
 }
 
 func (g GetStatsMediasMediaIDResponseBody) MarshalJSON() ([]byte, error) {
@@ -173,7 +173,7 @@ func (g *GetStatsMediasMediaIDResponseBody) GetVisitors() *int64 {
 	return g.Visitors
 }
 
-func (g *GetStatsMediasMediaIDResponseBody) GetActions() []Action {
+func (g *GetStatsMediasMediaIDResponseBody) GetActions() []GetStatsMediasMediaIDAction {
 	if g == nil {
 		return nil
 	}

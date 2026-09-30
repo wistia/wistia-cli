@@ -187,11 +187,11 @@ type GetAnalyticsWebinarsWebinarIDTrafficResponseBody struct {
 	// The referrer domain (present when group_by is referrer_domain).
 	ReferrerDomain optionalnullable.OptionalNullable[string] `json:"referrer_domain,omitzero"`
 	// The number of registrations from this traffic source.
-	Registrations *int64 `json:"registrations,omitzero"`
+	Registrations optionalnullable.OptionalNullable[int64] `json:"registrations,omitzero"`
 	// The number of attendees from this traffic source.
-	Attendees *int64 `json:"attendees,omitzero"`
+	Attendees optionalnullable.OptionalNullable[int64] `json:"attendees,omitzero"`
 	// The number of registration page impressions from this traffic source.
-	Impressions *int64 `json:"impressions,omitzero"`
+	Impressions optionalnullable.OptionalNullable[int64] `json:"impressions,omitzero"`
 }
 
 func (g *GetAnalyticsWebinarsWebinarIDTrafficResponseBody) GetUtmCampaign() optionalnullable.OptionalNullable[string] {
@@ -222,21 +222,21 @@ func (g *GetAnalyticsWebinarsWebinarIDTrafficResponseBody) GetReferrerDomain() o
 	return g.ReferrerDomain
 }
 
-func (g *GetAnalyticsWebinarsWebinarIDTrafficResponseBody) GetRegistrations() *int64 {
+func (g *GetAnalyticsWebinarsWebinarIDTrafficResponseBody) GetRegistrations() optionalnullable.OptionalNullable[int64] {
 	if g == nil {
 		return nil
 	}
 	return g.Registrations
 }
 
-func (g *GetAnalyticsWebinarsWebinarIDTrafficResponseBody) GetAttendees() *int64 {
+func (g *GetAnalyticsWebinarsWebinarIDTrafficResponseBody) GetAttendees() optionalnullable.OptionalNullable[int64] {
 	if g == nil {
 		return nil
 	}
 	return g.Attendees
 }
 
-func (g *GetAnalyticsWebinarsWebinarIDTrafficResponseBody) GetImpressions() *int64 {
+func (g *GetAnalyticsWebinarsWebinarIDTrafficResponseBody) GetImpressions() optionalnullable.OptionalNullable[int64] {
 	if g == nil {
 		return nil
 	}

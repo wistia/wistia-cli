@@ -11,6 +11,21 @@ Creates a new folder (previously called project). If the folder is created succe
 Read, update & delete anything
 ```
 
+Tokens with the "Act with a team member's permissions" permission
+(`all:delegate_to_contact_permissions` scope) can also be used. Requests
+made with such a token are authorized using the permissions of the
+contact assigned to the token.
+
+An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+created with the `all:delegate_to_contact_permissions` scope and an
+`account` authorization granting the `create-folders` permission can also
+be used. The folder's creator is the contact behind the token (the account
+owner for a token minted from an account-level token); `adminEmail` selects
+the folder's administrator (defaults to the account owner). `personalLibrary`
+creates the folder inside the My Library of the contact behind the token.
+The new folder is not covered by the token that created it, so follow-up
+requests need a token whose authorizations name the returned hashed id.
+
 ```
 wistia folders create [flags]
 ```
@@ -24,26 +39,32 @@ wistia folders create [flags]
 ### Options
 
 ```
-  -a, --admin-email string   The email address of the person you want to set as the owner of this folder. Defaults to the Wistia Account Owner.
-      --body string          Request body as JSON (alternative to individual flags). Can also be provided via stdin.
-  -h, --help                 help for create
-  -n, --name string          The name of the folder you want to create.
-  -p, --public               A flag indicating whether or not the folder is enabled for public access.
+      --admin-email string       The email address of the person you want to set as the owner of this folder. Defaults to the Wistia Account Owner.
+      --anonymous-can-download   Whether anonymous users can download media from the folder.
+      --anonymous-can-upload     Whether anonymous users can upload media to the folder.
+      --body string              Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.
+      --description string       The folder’s description.
+  -h, --help                     help for create
+  -n, --name string              The name of the folder you want to create.
+      --personal-library         When true, creates the folder inside the requesting user's personal "My Library" (owned by them) instead of a shared account folder.
+      --public                   A flag indicating whether or not the folder is enabled for public access.
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --agent-mode             Enable structured errors and default TOON output for AI coding agents. Automatically enabled when a known agent environment is detected (CLAUDE_CODE, CURSOR_AGENT, etc.). Use --agent-mode=false to disable.
+      --agent-mode             Enable structured errors and default TOON output for AI coding agents. Automatically enabled when a known agent environment is detected (CLAUDECODE, CURSOR_AGENT, etc.). Use --agent-mode=false to disable.
       --bearer-auth string     HTTP Bearer
       --color string           Control colored output: auto (color when output is a TTY), always, or never. Respects NO_COLOR and FORCE_COLOR env vars. (default "auto")
   -d, --debug                  Log request and response diagnostics to stderr
-      --dry-run                Preview the request that would be sent without executing it (output to stderr)
+      --dry-run                Preview API requests without sending them (no network, no OS keychain). Human preview on stderr; with -o json or --jq, one JSON object per request on stdout. Local mutation commands (auth login, auth logout and configure) make no request: they skip prompts and writes and report a no-op (stderr, or one JSON object on stdout in the machine form)
   -H, --header stringArray     Set a custom HTTP request header (format: "Key: Value"). Can be specified multiple times.
       --include-headers        Include HTTP response headers in the output
+      --interactive            Prompt for missing inputs and open guided configure/auth forms (forms fall back to line prompts on stdin off-TTY) (default true)
   -q, --jq string              Filter and transform output using a jq expression (e.g., '.name', '.items[] | .id')
       --no-interactive         Disable all interactive features (auto-prompting, explorer auto-launch, TUI forms)
   -o, --output-format string   Specify the output format. Options: pretty, json, yaml, table, toon. (default "pretty")
+      --raw-output             Write --jq string results as raw text instead of JSON strings (like jq -r); non-string results stay JSON
       --server string          Select a server by index (for indexed servers) or name (for named servers)
       --server-url string      Override the default server URL
       --timeout string         HTTP request timeout (e.g., 30s, 5m, 100ms)
@@ -53,3 +74,12 @@ wistia folders create [flags]
 ### SEE ALSO
 
 * [wistia folders](wistia_folders.md)	 - Operations for folders
+
+### Machine interface
+
+* `wistia folders create --usage` — this command's flags, defaults and env vars as machine-readable KDL
+* `wistia folders create --dry-run` — preview the request without OS-keychain access or a network call (human preview on stderr)
+* `--dry-run --output-format json` (or a caller-explicit `--jq`) writes one preview object per request as NDJSON on stdout; jq is not applied to previews
+* `--output-format json` or `--jq <expr>` for machine-readable live output; in agent mode errors are a JSON envelope on stderr
+
+Exit codes: 0 ok · 1 runtime · 2 usage · 3 authentication/authorization

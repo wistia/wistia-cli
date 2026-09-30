@@ -15,8 +15,16 @@ type PostFoldersRequest struct {
 	Name *string `json:"name,omitzero"`
 	// The email address of the person you want to set as the owner of this folder. Defaults to the Wistia Account Owner.
 	AdminEmail *string `json:"adminEmail,omitzero"`
+	// The folder’s description.
+	Description *string `json:"description,omitzero"`
+	// Whether anonymous users can upload media to the folder.
+	AnonymousCanUpload *bool `json:"anonymousCanUpload,omitzero"`
+	// Whether anonymous users can download media from the folder.
+	AnonymousCanDownload *bool `json:"anonymousCanDownload,omitzero"`
 	// A flag indicating whether or not the folder is enabled for public access.
 	Public *bool `json:"public,omitzero"`
+	// When true, creates the folder inside the requesting user's personal "My Library" (owned by them) instead of a shared account folder.
+	PersonalLibrary *bool `json:"personalLibrary,omitzero"`
 }
 
 func (p *PostFoldersRequest) GetName() *string {
@@ -33,11 +41,39 @@ func (p *PostFoldersRequest) GetAdminEmail() *string {
 	return p.AdminEmail
 }
 
+func (p *PostFoldersRequest) GetDescription() *string {
+	if p == nil {
+		return nil
+	}
+	return p.Description
+}
+
+func (p *PostFoldersRequest) GetAnonymousCanUpload() *bool {
+	if p == nil {
+		return nil
+	}
+	return p.AnonymousCanUpload
+}
+
+func (p *PostFoldersRequest) GetAnonymousCanDownload() *bool {
+	if p == nil {
+		return nil
+	}
+	return p.AnonymousCanDownload
+}
+
 func (p *PostFoldersRequest) GetPublic() *bool {
 	if p == nil {
 		return nil
 	}
 	return p.Public
+}
+
+func (p *PostFoldersRequest) GetPersonalLibrary() *bool {
+	if p == nil {
+		return nil
+	}
+	return p.PersonalLibrary
 }
 
 // PostFoldersCode - A machine-readable identifier for the specific authorization failure.

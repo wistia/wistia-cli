@@ -92,7 +92,10 @@ func (g *GetMediaExtendedAudioDescriptionsCursor) GetAfter() *string {
 type GetMediaExtendedAudioDescriptionsSortBy string
 
 const (
-	GetMediaExtendedAudioDescriptionsSortByID GetMediaExtendedAudioDescriptionsSortBy = "id"
+	GetMediaExtendedAudioDescriptionsSortByLanguage GetMediaExtendedAudioDescriptionsSortBy = "language"
+	GetMediaExtendedAudioDescriptionsSortByCreated  GetMediaExtendedAudioDescriptionsSortBy = "created"
+	GetMediaExtendedAudioDescriptionsSortByUpdated  GetMediaExtendedAudioDescriptionsSortBy = "updated"
+	GetMediaExtendedAudioDescriptionsSortByID       GetMediaExtendedAudioDescriptionsSortBy = "id"
 )
 
 func (e GetMediaExtendedAudioDescriptionsSortBy) ToPointer() *GetMediaExtendedAudioDescriptionsSortBy {
@@ -104,6 +107,12 @@ func (e *GetMediaExtendedAudioDescriptionsSortBy) UnmarshalJSON(data []byte) err
 		return err
 	}
 	switch v {
+	case "language":
+		fallthrough
+	case "created":
+		fallthrough
+	case "updated":
+		fallthrough
 	case "id":
 		*e = GetMediaExtendedAudioDescriptionsSortBy(v)
 		return nil

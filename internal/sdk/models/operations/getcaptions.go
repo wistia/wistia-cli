@@ -11,6 +11,31 @@ import (
 	"github.com/wistia/wistia-cli/internal/sdk/sdkinternal/utils"
 )
 
+// GetCaptionsInclude - Set to `metadata` to omit caption text and return only track metadata.
+// Omitting this parameter preserves the existing response, including SRT text.
+type GetCaptionsInclude string
+
+const (
+	GetCaptionsIncludeMetadata GetCaptionsInclude = "metadata"
+)
+
+func (e GetCaptionsInclude) ToPointer() *GetCaptionsInclude {
+	return &e
+}
+func (e *GetCaptionsInclude) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "metadata":
+		*e = GetCaptionsInclude(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for GetCaptionsInclude: %v", v)
+	}
+}
+
 // GetCaptionsEnabled - If `cursor[enabled]` is set to 1, the first result set will be fetched with cursor pagination enabled. This
 // values is ignored if `cursor[before]` or `cursor[after]` are set.
 type GetCaptionsEnabled int64
@@ -92,8 +117,10 @@ func (g *GetCaptionsCursor) GetAfter() *string {
 type GetCaptionsSortBy string
 
 const (
-	GetCaptionsSortByID      GetCaptionsSortBy = "id"
-	GetCaptionsSortByCreated GetCaptionsSortBy = "created"
+	GetCaptionsSortByID       GetCaptionsSortBy = "id"
+	GetCaptionsSortByCreated  GetCaptionsSortBy = "created"
+	GetCaptionsSortByUpdated  GetCaptionsSortBy = "updated"
+	GetCaptionsSortByLanguage GetCaptionsSortBy = "language"
 )
 
 func (e GetCaptionsSortBy) ToPointer() *GetCaptionsSortBy {
@@ -108,6 +135,10 @@ func (e *GetCaptionsSortBy) UnmarshalJSON(data []byte) error {
 	case "id":
 		fallthrough
 	case "created":
+		fallthrough
+	case "updated":
+		fallthrough
+	case "language":
 		*e = GetCaptionsSortBy(v)
 		return nil
 	default:
@@ -145,6 +176,19 @@ func (e *GetCaptionsSortDirection) UnmarshalJSON(data []byte) error {
 type GetCaptionsRequest struct {
 	// Find captions for a particular media by providing the media hashed ID
 	MediaID *string `queryParam:"style=form,explode=true,name=media_id"`
+	// Find captions belonging to any of these media hashed IDs. IDs that don't match
+	// a media the token can access are ignored rather than returning an error.
+	//
+	MediaIds []string `queryParam:"style=form,explode=true,name=media_ids[]"`
+	// Find captions in any of these languages, using the codes returned in each
+	// caption's `language` field (for example `eng` or `spa`). When combined with
+	// `media_ids[]`, captions must match both.
+	//
+	Languages []string `queryParam:"style=form,explode=true,name=languages[]"`
+	// Set to `metadata` to omit caption text and return only track metadata.
+	// Omitting this parameter preserves the existing response, including SRT text.
+	//
+	Include *GetCaptionsInclude `queryParam:"style=form,explode=true,name=include"`
 	// The page number to retrieve. This cannot be combined with `cursor`,
 	// pagination.
 	//
@@ -187,6 +231,27 @@ func (g *GetCaptionsRequest) GetMediaID() *string {
 		return nil
 	}
 	return g.MediaID
+}
+
+func (g *GetCaptionsRequest) GetMediaIds() []string {
+	if g == nil {
+		return nil
+	}
+	return g.MediaIds
+}
+
+func (g *GetCaptionsRequest) GetLanguages() []string {
+	if g == nil {
+		return nil
+	}
+	return g.Languages
+}
+
+func (g *GetCaptionsRequest) GetInclude() *GetCaptionsInclude {
+	if g == nil {
+		return nil
+	}
+	return g.Include
 }
 
 func (g *GetCaptionsRequest) GetPage() *int64 {
@@ -249,6 +314,147 @@ func (e *GetCaptionsCode) IsExact() bool {
 	return false
 }
 
+type GetCaptionsSegment struct {
+	// The segment's start offset from the beginning of the media, in milliseconds.
+	StartMs int64 `json:"start_ms"`
+	// The segment's end offset from the beginning of the media, in milliseconds.
+	EndMs int64 `json:"end_ms"`
+	// The segment's transcript text.
+	Text string `json:"text"`
+}
+
+func (g *GetCaptionsSegment) GetStartMs() int64 {
+	if g == nil {
+		return 0
+	}
+	return g.StartMs
+}
+
+func (g *GetCaptionsSegment) GetEndMs() int64 {
+	if g == nil {
+		return 0
+	}
+	return g.EndMs
+}
+
+func (g *GetCaptionsSegment) GetText() string {
+	if g == nil {
+		return ""
+	}
+	return g.Text
+}
+
+type GetCaptionsSpeaker struct {
+	// The media-specific speaker assignment identifier, or null for an unidentified turn.
+	MediaSpeakerID *string `json:"media_speaker_id"`
+	// The reusable account speaker-profile identifier, or null for an unidentified turn.
+	SpeakerProfileID *string `json:"speaker_profile_id"`
+	// The anonymous detected-speaker identifier that can be assigned, or null once resolved or when unknown.
+	DetectedSpeakerID *string `json:"detected_speaker_id"`
+	// The resolved name, a display-only generic label, or `Unknown speaker`. Speakers are numbered by when they first appear in the transcript. Assigning a name does not renumber the other speakers, so generic labels may start at `Speaker 2` or skip numbers. Use `detected_speaker_id` as the identifier.
+	DisplayLabel string `json:"display_label"`
+	// The assigned speaker profile's name, or null for an unidentified turn.
+	Name *string `json:"name"`
+}
+
+func (g *GetCaptionsSpeaker) GetMediaSpeakerID() *string {
+	if g == nil {
+		return nil
+	}
+	return g.MediaSpeakerID
+}
+
+func (g *GetCaptionsSpeaker) GetSpeakerProfileID() *string {
+	if g == nil {
+		return nil
+	}
+	return g.SpeakerProfileID
+}
+
+func (g *GetCaptionsSpeaker) GetDetectedSpeakerID() *string {
+	if g == nil {
+		return nil
+	}
+	return g.DetectedSpeakerID
+}
+
+func (g *GetCaptionsSpeaker) GetDisplayLabel() string {
+	if g == nil {
+		return ""
+	}
+	return g.DisplayLabel
+}
+
+func (g *GetCaptionsSpeaker) GetName() *string {
+	if g == nil {
+		return nil
+	}
+	return g.Name
+}
+
+type GetCaptionsDiarizedSegment struct {
+	// The speaker-turn segment's start offset from the beginning of the media, in milliseconds.
+	StartMs int64 `json:"start_ms"`
+	// The speaker-turn segment's end offset from the beginning of the media, in milliseconds.
+	EndMs int64 `json:"end_ms"`
+	// Transcript text attributed to this speaker turn.
+	Text    string             `json:"text"`
+	Speaker GetCaptionsSpeaker `json:"speaker"`
+}
+
+func (g *GetCaptionsDiarizedSegment) GetStartMs() int64 {
+	if g == nil {
+		return 0
+	}
+	return g.StartMs
+}
+
+func (g *GetCaptionsDiarizedSegment) GetEndMs() int64 {
+	if g == nil {
+		return 0
+	}
+	return g.EndMs
+}
+
+func (g *GetCaptionsDiarizedSegment) GetText() string {
+	if g == nil {
+		return ""
+	}
+	return g.Text
+}
+
+func (g *GetCaptionsDiarizedSegment) GetSpeaker() GetCaptionsSpeaker {
+	if g == nil {
+		return GetCaptionsSpeaker{}
+	}
+	return g.Speaker
+}
+
+// GetCaptionsDiarizationStatus - Speaker-data availability when `include=diarized_segments`.
+type GetCaptionsDiarizationStatus string
+
+const (
+	GetCaptionsDiarizationStatusReady       GetCaptionsDiarizationStatus = "ready"
+	GetCaptionsDiarizationStatusProcessing  GetCaptionsDiarizationStatus = "processing"
+	GetCaptionsDiarizationStatusUnavailable GetCaptionsDiarizationStatus = "unavailable"
+	GetCaptionsDiarizationStatusDisabled    GetCaptionsDiarizationStatus = "disabled"
+)
+
+func (e GetCaptionsDiarizationStatus) ToPointer() *GetCaptionsDiarizationStatus {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetCaptionsDiarizationStatus) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "ready", "processing", "unavailable", "disabled":
+			return true
+		}
+	}
+	return false
+}
+
 type GetCaptionsResponseBody struct {
 	// English name of the language.
 	EnglishName *string `json:"english_name,omitzero"`
@@ -261,8 +467,33 @@ type GetCaptionsResponseBody struct {
 	IsDraft bool                                      `json:"is_draft"`
 	// The unique hashed identifier of the time-coded transcript.
 	ID string `json:"id"`
+	// The hashed ID of the media the captions belong to.
+	MediaID string `json:"media_id"`
+	// The active caption payload version, or null when no payload is active.
+	Version *int64 `json:"version"`
+	// Time-coded caption cues when `include=segments`; null otherwise.
+	Segments []GetCaptionsSegment `json:"segments"`
+	// Transcript text split at speaker-turn boundaries when `include=diarized_segments`. The media-level speaker timeline is shared across language tracks.
+	DiarizedSegments []GetCaptionsDiarizedSegment `json:"diarized_segments,omitzero"`
+	// Speaker-data availability when `include=diarized_segments`.
+	DiarizationStatus *GetCaptionsDiarizationStatus `json:"diarization_status,omitzero"`
+	// Whether speaker data can be derived from the active default transcript when `include=diarized_segments`.
+	DiarizationDerivable *bool `json:"diarization_derivable,omitzero"`
+	// The concurrency version for speaker assignments when `include=diarized_segments`, or null when speaker data is unavailable.
+	SpeakerDataVersion optionalnullable.OptionalNullable[int64] `json:"speaker_data_version,omitzero"`
 	// A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
 	Cursor optionalnullable.OptionalNullable[string] `json:"cursor,omitzero"`
+}
+
+func (g GetCaptionsResponseBody) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(g, "", false)
+}
+
+func (g *GetCaptionsResponseBody) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &g, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (g *GetCaptionsResponseBody) GetEnglishName() *string {
@@ -305,6 +536,55 @@ func (g *GetCaptionsResponseBody) GetID() string {
 		return ""
 	}
 	return g.ID
+}
+
+func (g *GetCaptionsResponseBody) GetMediaID() string {
+	if g == nil {
+		return ""
+	}
+	return g.MediaID
+}
+
+func (g *GetCaptionsResponseBody) GetVersion() *int64 {
+	if g == nil {
+		return nil
+	}
+	return g.Version
+}
+
+func (g *GetCaptionsResponseBody) GetSegments() []GetCaptionsSegment {
+	if g == nil {
+		return nil
+	}
+	return g.Segments
+}
+
+func (g *GetCaptionsResponseBody) GetDiarizedSegments() []GetCaptionsDiarizedSegment {
+	if g == nil {
+		return nil
+	}
+	return g.DiarizedSegments
+}
+
+func (g *GetCaptionsResponseBody) GetDiarizationStatus() *GetCaptionsDiarizationStatus {
+	if g == nil {
+		return nil
+	}
+	return g.DiarizationStatus
+}
+
+func (g *GetCaptionsResponseBody) GetDiarizationDerivable() *bool {
+	if g == nil {
+		return nil
+	}
+	return g.DiarizationDerivable
+}
+
+func (g *GetCaptionsResponseBody) GetSpeakerDataVersion() optionalnullable.OptionalNullable[int64] {
+	if g == nil {
+		return nil
+	}
+	return g.SpeakerDataVersion
 }
 
 func (g *GetCaptionsResponseBody) GetCursor() optionalnullable.OptionalNullable[string] {

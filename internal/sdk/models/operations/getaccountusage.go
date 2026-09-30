@@ -170,6 +170,124 @@ func (s *Storage) GetInflexibleLimitBytes() *int64 {
 	return s.InflexibleLimitBytes
 }
 
+// Users - Seat (user) usage and limits. Viewers are non-billable and excluded from the billable counts.
+type Users struct {
+	// Current number of billable users (seats). For agency accounts this aggregates
+	// distinct users across the parent and team accounts — the count billing compares
+	// against `flexible_limit`. Excludes viewers.
+	//
+	BillableCount int64 `json:"billable_count"`
+	// Billable users in this account only, the count compared against `inflexible_limit`
+	// when enforcing the hard seat limit. Matches `billable_count` for non-agency accounts.
+	// Excludes viewers.
+	//
+	AccountBillableCount int64 `json:"account_billable_count"`
+	// Current number of viewer contacts, which are non-billable and don't count toward seat limits.
+	ViewersCount int64 `json:"viewers_count"`
+	// Included seats on flexible plans (additional seats billed as overage). Null if no soft limit.
+	FlexibleLimit *int64 `json:"flexible_limit"`
+	// Hard seat limit (adding users blocked at the limit). Null if no hard limit.
+	InflexibleLimit *int64 `json:"inflexible_limit"`
+}
+
+func (u *Users) GetBillableCount() int64 {
+	if u == nil {
+		return 0
+	}
+	return u.BillableCount
+}
+
+func (u *Users) GetAccountBillableCount() int64 {
+	if u == nil {
+		return 0
+	}
+	return u.AccountBillableCount
+}
+
+func (u *Users) GetViewersCount() int64 {
+	if u == nil {
+		return 0
+	}
+	return u.ViewersCount
+}
+
+func (u *Users) GetFlexibleLimit() *int64 {
+	if u == nil {
+		return nil
+	}
+	return u.FlexibleLimit
+}
+
+func (u *Users) GetInflexibleLimit() *int64 {
+	if u == nil {
+		return nil
+	}
+	return u.InflexibleLimit
+}
+
+// Period - Whether the bandwidth allowance is tracked monthly or annually
+type Period string
+
+const (
+	PeriodMonthly Period = "monthly"
+	PeriodAnnual  Period = "annual"
+)
+
+func (e Period) ToPointer() *Period {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *Period) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "monthly", "annual":
+			return true
+		}
+	}
+	return false
+}
+
+// Bandwidth usage and limits for the current billing period, in bytes (1 GB = 1,000,000,000 bytes)
+type Bandwidth struct {
+	// Bandwidth used in the current billing period, in bytes
+	UsedBytes int64 `json:"used_bytes"`
+	// Bandwidth limit for the billing period in bytes. Null if unlimited.
+	LimitBytes *int64 `json:"limit_bytes"`
+	// Whether the bandwidth allowance is tracked monthly or annually
+	Period Period `json:"period"`
+	// ISO 8601 timestamp when the bandwidth period resets, or null if unknown
+	ResetsAt *string `json:"resets_at"`
+}
+
+func (b *Bandwidth) GetUsedBytes() int64 {
+	if b == nil {
+		return 0
+	}
+	return b.UsedBytes
+}
+
+func (b *Bandwidth) GetLimitBytes() *int64 {
+	if b == nil {
+		return nil
+	}
+	return b.LimitBytes
+}
+
+func (b *Bandwidth) GetPeriod() Period {
+	if b == nil {
+		return Period("")
+	}
+	return b.Period
+}
+
+func (b *Bandwidth) GetResetsAt() *string {
+	if b == nil {
+		return nil
+	}
+	return b.ResetsAt
+}
+
 // Limits - Usage and limit data. Null when the authenticated contact does not have
 // billing visibility (i.e. is not an account owner or manager).
 type Limits struct {
@@ -179,6 +297,10 @@ type Limits struct {
 	Media GetAccountUsageMedia `json:"media"`
 	// Storage usage and limits in bytes (1 GB = 1,000,000,000 bytes)
 	Storage Storage `json:"storage"`
+	// Seat (user) usage and limits. Viewers are non-billable and excluded from the billable counts.
+	Users Users `json:"users"`
+	// Bandwidth usage and limits for the current billing period, in bytes (1 GB = 1,000,000,000 bytes)
+	Bandwidth Bandwidth `json:"bandwidth"`
 }
 
 func (l *Limits) GetPrimaryResource() PrimaryResource {
@@ -200,6 +322,20 @@ func (l *Limits) GetStorage() Storage {
 		return Storage{}
 	}
 	return l.Storage
+}
+
+func (l *Limits) GetUsers() Users {
+	if l == nil {
+		return Users{}
+	}
+	return l.Users
+}
+
+func (l *Limits) GetBandwidth() Bandwidth {
+	if l == nil {
+		return Bandwidth{}
+	}
+	return l.Bandwidth
 }
 
 // Links - URLs for plan, usage, and billing pages
@@ -233,7 +369,7 @@ func (l *Links) GetBillingURL() *string {
 	return l.BillingURL
 }
 
-// GetAccountUsageResponseBody - Account usage and plan information, including storage and media limits.
+// GetAccountUsageResponseBody - Account usage and plan information, including storage, media, seat, and bandwidth limits.
 // Fields under `limits` are only visible to account owners and managers.
 type GetAccountUsageResponseBody struct {
 	// The account's current plan information
@@ -250,6 +386,21 @@ type GetAccountUsageResponseBody struct {
 	Limits *Limits `json:"limits"`
 	// URLs for plan, usage, and billing pages
 	Links Links `json:"links"`
+	// The authenticated contact's role on the account. One of `owner`, `manager`,
+	// `standard_user`, `limited_user`, `viewer`. Null when the token isn't
+	// associated with a specific contact.
+	//
+	Role *string `json:"role"`
+	// Whether the account has at least one verified business domain (i.e. an
+	// owner whose email domain is verified and business-classified). Independent
+	// of plan tier.
+	//
+	VerifiedDomain bool `json:"verified_domain"`
+	// Whether the authenticated contact can invite additional teammates via the
+	// modern contacts endpoint. True when the contact is an owner or manager and
+	// the account has a verified business domain.
+	//
+	CanInviteTeammates bool `json:"can_invite_teammates"`
 }
 
 func (g *GetAccountUsageResponseBody) GetPlan() Plan {
@@ -285,6 +436,27 @@ func (g *GetAccountUsageResponseBody) GetLinks() Links {
 		return Links{}
 	}
 	return g.Links
+}
+
+func (g *GetAccountUsageResponseBody) GetRole() *string {
+	if g == nil {
+		return nil
+	}
+	return g.Role
+}
+
+func (g *GetAccountUsageResponseBody) GetVerifiedDomain() bool {
+	if g == nil {
+		return false
+	}
+	return g.VerifiedDomain
+}
+
+func (g *GetAccountUsageResponseBody) GetCanInviteTeammates() bool {
+	if g == nil {
+		return false
+	}
+	return g.CanInviteTeammates
 }
 
 type GetAccountUsageResponse struct {

@@ -48,6 +48,19 @@ func (e *DeleteFoldersFolderIDSubfoldersBulkDeleteNotFoundError) Error() string 
 	return string(data)
 }
 
+// DeleteFoldersFolderIDSubfoldersBulkDeleteForbiddenError - Forbidden, token is valid but account does not have access to feature
+type DeleteFoldersFolderIDSubfoldersBulkDeleteForbiddenError struct {
+	Error_   *string                 `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata `json:"-"`
+}
+
+var _ error = &DeleteFoldersFolderIDSubfoldersBulkDeleteForbiddenError{}
+
+func (e *DeleteFoldersFolderIDSubfoldersBulkDeleteForbiddenError) Error() string {
+	data, _ := json.Marshal(e)
+	return string(data)
+}
+
 // DeleteFoldersFolderIDSubfoldersBulkDeleteUnauthorizedError - Unauthorized, invalid or missing token
 type DeleteFoldersFolderIDSubfoldersBulkDeleteUnauthorizedError struct {
 	// A machine-readable identifier for the specific authorization failure.

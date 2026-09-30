@@ -95,6 +95,27 @@ func (e *GetAnalyticsMediasMediaIDConversionsCode) IsExact() bool {
 	return false
 }
 
+type CustomField struct {
+	// The label of the custom form field.
+	Label *string `json:"label,omitzero"`
+	// The value the visitor submitted for this custom form field.
+	Value *string `json:"value,omitzero"`
+}
+
+func (c *CustomField) GetLabel() *string {
+	if c == nil {
+		return nil
+	}
+	return c.Label
+}
+
+func (c *CustomField) GetValue() *string {
+	if c == nil {
+		return nil
+	}
+	return c.Value
+}
+
 type GetAnalyticsMediasMediaIDConversionsData struct {
 	// The first name of the form submitter.
 	FirstName optionalnullable.OptionalNullable[string] `json:"first_name,omitzero"`
@@ -104,6 +125,8 @@ type GetAnalyticsMediasMediaIDConversionsData struct {
 	Email optionalnullable.OptionalNullable[string] `json:"email,omitzero"`
 	// The timestamp when the form was submitted in ISO 8601 format.
 	ConvertedAt *time.Time `json:"converted_at,omitzero"`
+	// The custom form field responses submitted with this conversion (text, dropdown, and single-checkbox fields).
+	CustomFields []CustomField `json:"custom_fields,omitzero"`
 }
 
 func (g GetAnalyticsMediasMediaIDConversionsData) MarshalJSON() ([]byte, error) {
@@ -143,6 +166,13 @@ func (g *GetAnalyticsMediasMediaIDConversionsData) GetConvertedAt() *time.Time {
 		return nil
 	}
 	return g.ConvertedAt
+}
+
+func (g *GetAnalyticsMediasMediaIDConversionsData) GetCustomFields() []CustomField {
+	if g == nil {
+		return nil
+	}
+	return g.CustomFields
 }
 
 type GetAnalyticsMediasMediaIDConversionsPageInfo struct {

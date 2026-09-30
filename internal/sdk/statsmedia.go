@@ -33,12 +33,15 @@ func newStatsMedia(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks *ho
 // Get - Show Media Stats
 // Retrieve stats for a video. This endpoint provides statistics for a specific video identified by its media-id.
 //
-// <!--- HIDE-MCP -->
 // ## Requires api token with one of the following permissions
 // ```
 // Read detailed stats
 // ```
-// <!--- /HIDE-MCP -->
+//
+// Tokens with the "Act with a team member's permissions" permission
+// (`all:delegate_to_contact_permissions` scope) can also be used. Requests
+// made with such a token are authorized using the permissions of the
+// contact assigned to the token.
 func (s *StatsMedia) Get(ctx context.Context, request operations.GetStatsMediasMediaIDRequest, opts ...operations.Option) (*operations.GetStatsMediasMediaIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -78,10 +81,17 @@ func (s *StatsMedia) Get(ctx context.Context, request operations.GetStatsMediasM
 		timeout = s.sdkConfiguration.Timeout
 	}
 
+	var streamCancel context.CancelFunc
+
 	if timeout != nil {
 		var cancel context.CancelFunc
 		ctx, cancel = context.WithTimeout(ctx, *timeout)
-		defer cancel()
+		streamCancel = cancel
+		defer func() {
+			if streamCancel != nil {
+				streamCancel()
+			}
+		}()
 	}
 
 	req, err := http.NewRequestWithContext(ctx, "GET", opURL, nil)
@@ -139,7 +149,10 @@ func (s *StatsMedia) Get(ctx context.Context, request operations.GetStatsMediasM
 	case httpRes.StatusCode == 200:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			if o.SkipDeserialization == nil || !*o.SkipDeserialization {
+			if o.SkipDeserialization != nil && *o.SkipDeserialization {
+				httpRes.Body = utils.BodyWithCancel(httpRes.Body, streamCancel)
+				streamCancel = nil
+			} else {
 				rawBody, err := utils.ConsumeRawBody(httpRes)
 				if err != nil {
 					return nil, err
@@ -169,7 +182,7 @@ func (s *StatsMedia) Get(ctx context.Context, request operations.GetStatsMediasM
 
 			var out sdkerrors.GetStatsMediasMediaIDUnauthorizedError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -194,7 +207,7 @@ func (s *StatsMedia) Get(ctx context.Context, request operations.GetStatsMediasM
 
 			var out sdkerrors.GetStatsMediasMediaIDForbiddenError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -219,7 +232,7 @@ func (s *StatsMedia) Get(ctx context.Context, request operations.GetStatsMediasM
 
 			var out sdkerrors.GetStatsMediasMediaIDInternalServerError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -263,12 +276,15 @@ func (s *StatsMedia) Get(ctx context.Context, request operations.GetStatsMediasM
 // GetByDate - Show Media Stats by Date
 // Retrieve stats for a media organized by day, between a start and end date paramater (inclusive). If start and end date are not provided, defaults to yesterday and today.
 //
-// <!--- HIDE-MCP -->
 // ## Requires api token with one of the following permissions
 // ```
 // Read detailed stats
 // ```
-// <!--- /HIDE-MCP -->
+//
+// Tokens with the "Act with a team member's permissions" permission
+// (`all:delegate_to_contact_permissions` scope) can also be used. Requests
+// made with such a token are authorized using the permissions of the
+// contact assigned to the token.
 func (s *StatsMedia) GetByDate(ctx context.Context, request operations.GetStatsMediasMediaIDByDateRequest, opts ...operations.Option) (*operations.GetStatsMediasMediaIDByDateResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -308,10 +324,17 @@ func (s *StatsMedia) GetByDate(ctx context.Context, request operations.GetStatsM
 		timeout = s.sdkConfiguration.Timeout
 	}
 
+	var streamCancel context.CancelFunc
+
 	if timeout != nil {
 		var cancel context.CancelFunc
 		ctx, cancel = context.WithTimeout(ctx, *timeout)
-		defer cancel()
+		streamCancel = cancel
+		defer func() {
+			if streamCancel != nil {
+				streamCancel()
+			}
+		}()
 	}
 
 	req, err := http.NewRequestWithContext(ctx, "GET", opURL, nil)
@@ -373,7 +396,10 @@ func (s *StatsMedia) GetByDate(ctx context.Context, request operations.GetStatsM
 	case httpRes.StatusCode == 200:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			if o.SkipDeserialization == nil || !*o.SkipDeserialization {
+			if o.SkipDeserialization != nil && *o.SkipDeserialization {
+				httpRes.Body = utils.BodyWithCancel(httpRes.Body, streamCancel)
+				streamCancel = nil
+			} else {
 				rawBody, err := utils.ConsumeRawBody(httpRes)
 				if err != nil {
 					return nil, err
@@ -403,7 +429,7 @@ func (s *StatsMedia) GetByDate(ctx context.Context, request operations.GetStatsM
 
 			var out sdkerrors.GetStatsMediasMediaIDByDateUnauthorizedError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -428,7 +454,7 @@ func (s *StatsMedia) GetByDate(ctx context.Context, request operations.GetStatsM
 
 			var out sdkerrors.GetStatsMediasMediaIDByDateForbiddenError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -453,7 +479,7 @@ func (s *StatsMedia) GetByDate(ctx context.Context, request operations.GetStatsM
 
 			var out sdkerrors.GetStatsMediasMediaIDByDateInternalServerError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -497,12 +523,15 @@ func (s *StatsMedia) GetByDate(ctx context.Context, request operations.GetStatsM
 // GetEngagement - Show Media Engagement
 // Retrieve engagement data for a video. This endpoint provides engagement data for a specific video identified by its media-id.
 //
-// <!--- HIDE-MCP -->
 // ## Requires api token with one of the following permissions
 // ```
 // Read detailed stats
 // ```
-// <!--- /HIDE-MCP -->
+//
+// Tokens with the "Act with a team member's permissions" permission
+// (`all:delegate_to_contact_permissions` scope) can also be used. Requests
+// made with such a token are authorized using the permissions of the
+// contact assigned to the token.
 func (s *StatsMedia) GetEngagement(ctx context.Context, request operations.GetStatsMediasMediaIDEngagementRequest, opts ...operations.Option) (*operations.GetStatsMediasMediaIDEngagementResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -542,10 +571,17 @@ func (s *StatsMedia) GetEngagement(ctx context.Context, request operations.GetSt
 		timeout = s.sdkConfiguration.Timeout
 	}
 
+	var streamCancel context.CancelFunc
+
 	if timeout != nil {
 		var cancel context.CancelFunc
 		ctx, cancel = context.WithTimeout(ctx, *timeout)
-		defer cancel()
+		streamCancel = cancel
+		defer func() {
+			if streamCancel != nil {
+				streamCancel()
+			}
+		}()
 	}
 
 	req, err := http.NewRequestWithContext(ctx, "GET", opURL, nil)
@@ -603,7 +639,10 @@ func (s *StatsMedia) GetEngagement(ctx context.Context, request operations.GetSt
 	case httpRes.StatusCode == 200:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			if o.SkipDeserialization == nil || !*o.SkipDeserialization {
+			if o.SkipDeserialization != nil && *o.SkipDeserialization {
+				httpRes.Body = utils.BodyWithCancel(httpRes.Body, streamCancel)
+				streamCancel = nil
+			} else {
 				rawBody, err := utils.ConsumeRawBody(httpRes)
 				if err != nil {
 					return nil, err
@@ -633,7 +672,7 @@ func (s *StatsMedia) GetEngagement(ctx context.Context, request operations.GetSt
 
 			var out sdkerrors.GetStatsMediasMediaIDEngagementUnauthorizedError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -658,7 +697,7 @@ func (s *StatsMedia) GetEngagement(ctx context.Context, request operations.GetSt
 
 			var out sdkerrors.GetStatsMediasMediaIDEngagementForbiddenError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -683,7 +722,7 @@ func (s *StatsMedia) GetEngagement(ctx context.Context, request operations.GetSt
 
 			var out sdkerrors.GetStatsMediasMediaIDEngagementInternalServerError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{

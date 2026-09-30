@@ -37,12 +37,19 @@ func newExpiringAccessTokens(rootSDK *Wistia, sdkConfig config.SDKConfiguration,
 // This API is still under development and can change at any time.
 // ```
 //
-// This endpoint is for creating expiring access tokens which can be used for some iframe embeds.
+// This endpoint is for creating expiring access tokens which can be used for some iframe embeds
+// and, when granted the `all:delegate_to_contact_permissions` scope, for REST API requests
+// authorized by the token's authorizations.
 //
 // ## Requires api token with one of the following permissions
 // ```
 // Read, update & delete anything
 // ```
+//
+// Tokens with the "Act with a team member's permissions" permission
+// (`all:delegate_to_contact_permissions` scope) can also be used. Requests
+// made with such a token are authorized using the permissions of the
+// contact assigned to the token.
 func (s *ExpiringAccessTokens) Create(ctx context.Context, request *operations.PostExpiringTokenRequest, opts ...operations.Option) (*operations.PostExpiringTokenResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -86,10 +93,17 @@ func (s *ExpiringAccessTokens) Create(ctx context.Context, request *operations.P
 		timeout = s.sdkConfiguration.Timeout
 	}
 
+	var streamCancel context.CancelFunc
+
 	if timeout != nil {
 		var cancel context.CancelFunc
 		ctx, cancel = context.WithTimeout(ctx, *timeout)
-		defer cancel()
+		streamCancel = cancel
+		defer func() {
+			if streamCancel != nil {
+				streamCancel()
+			}
+		}()
 	}
 
 	req, err := http.NewRequestWithContext(ctx, "POST", opURL, bodyReader)
@@ -150,7 +164,10 @@ func (s *ExpiringAccessTokens) Create(ctx context.Context, request *operations.P
 	case httpRes.StatusCode == 200:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			if o.SkipDeserialization == nil || !*o.SkipDeserialization {
+			if o.SkipDeserialization != nil && *o.SkipDeserialization {
+				httpRes.Body = utils.BodyWithCancel(httpRes.Body, streamCancel)
+				streamCancel = nil
+			} else {
 				rawBody, err := utils.ConsumeRawBody(httpRes)
 				if err != nil {
 					return nil, err
@@ -180,7 +197,7 @@ func (s *ExpiringAccessTokens) Create(ctx context.Context, request *operations.P
 
 			var out sdkerrors.PostExpiringTokenUnauthorizedError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -205,7 +222,7 @@ func (s *ExpiringAccessTokens) Create(ctx context.Context, request *operations.P
 
 			var out sdkerrors.PostExpiringTokenUnprocessableEntityError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -230,7 +247,7 @@ func (s *ExpiringAccessTokens) Create(ctx context.Context, request *operations.P
 
 			var out sdkerrors.PostExpiringTokenInternalServerError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -255,7 +272,7 @@ func (s *ExpiringAccessTokens) Create(ctx context.Context, request *operations.P
 
 			var out sdkerrors.NotImplementedError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{

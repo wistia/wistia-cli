@@ -25,23 +25,40 @@ var updateCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "publish-status", FieldPath: "Body.PublishStatus", Kind: flagutil.FlagKindEnum, Optional: true, EnumValues: []string{"draft", "published", "scheduled"}, Description: "The status of whether or not the episode has been published to your channel. (options: draft, published, scheduled)"},
 	{FlagName: "publish-at", FieldPath: "Body.PublishAt", Kind: flagutil.FlagKindDateTime, Optional: true, Description: "The date and time when the episode is scheduled to be published in UTC timezone."},
 	{FlagName: "episode-notes", Shorthand: "e", FieldPath: "Body.EpisodeNotes", Kind: flagutil.FlagKindString, Optional: true, Description: "Additional notes for the episode."},
-	{FlagName: "podcast-settings", FieldPath: "Body.PodcastSettings", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"podcast_settings,omitempty"`, Description: "Podcast specific settings for a channel episode. These settings only take effect\nif podcasting is enabled for the channel.\n"},
+	{FlagName: "podcast-settings", FieldPath: "Body.PodcastSettings", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"podcast_settings,omitempty"`, Description: "Podcast specific settings for a channel episode. These settings only take effect\nif podcasting is enabled for the channel."},
 }
 
 // initUpdateCmd initializes the update command.
 func initUpdateCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
-		Use:     "update",
+		Use:     "update [channel-episode-hashed-id]",
 		Short:   "Update Channel Episode",
-		Long:    "Updates an existing channel episode in a channel.\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
+		Long:    "Updates an existing channel episode in a channel.\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
 		Example: "  wistia channel-episodes update --channel-episode-hashed-id <id>",
+		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runUpdateCmd,
+		Annotations: map[string]string{
+			"speakeasy_operation": "put_/channel_episodes/{channelEpisodeHashedId}",
+		},
 	}
 	flagutil.RegisterFlags(cmd, updateCmdMeta)
 	if err := flagutil.ValidateMeta[operations.PutChannelEpisodesChannelEpisodeHashedIDRequest](updateCmdMeta); err != nil {
 		return fmt.Errorf("invalid metadata for update: %w", err)
 	}
-	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin.")
+	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
+	if err := flagutil.AnnotateBodyFields(cmd, updateCmdMeta, "Body", "body"); err != nil {
+		return fmt.Errorf("annotate body fields for update: %w", err)
+	}
+	if err := flagutil.DeclarePositionalFlag(cmd, "channel-episode-hashed-id", "The hashed id of the Channel Episode (or pass it as the [channel-episode-hashed-id] argument)", true); err != nil {
+		return err
+	}
+	if err := interactive.Declare(cmd, interactive.CommandSpec{Args: []interactive.ArgSpec{
+		{Name: "channel-episode-hashed-id", Summary: "The hashed id of the Channel Episode", Required: true, SatisfiedBy: []string{"channel-episode-hashed-id"}},
+	}}); err != nil {
+		return fmt.Errorf("declare interactive arguments for update: %w", err)
+	}
 	parent.AddCommand(cmd)
 	return nil
 }
@@ -51,14 +68,12 @@ func runUpdateCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, updateCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, updateCmdMeta); err != nil {
-			return err
-		}
+	if err := flagutil.ResolvePositionalFlag(cmd, args); err != nil {
+		return err
 	}
 	req, err := flagutil.BuildRequest[operations.PutChannelEpisodesChannelEpisodeHashedIDRequest](cmd, updateCmdMeta, "Body", "body")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

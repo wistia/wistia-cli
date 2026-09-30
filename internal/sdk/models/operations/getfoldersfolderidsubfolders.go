@@ -271,7 +271,7 @@ func (e *GetFoldersFolderIDSubfoldersCode) IsExact() bool {
 // GetFoldersFolderIDSubfoldersResponseBody - A subfolder within a folder that contains media.
 type GetFoldersFolderIDSubfoldersResponseBody struct {
 	// A unique alphanumeric identifier for this subfolder.
-	HashedID string `json:"hashed_id"`
+	HashedID *string `json:"hashed_id"`
 	// The display name of the subfolder.
 	Name optionalnullable.OptionalNullable[string] `json:"name,omitzero"`
 	// A description for the subfolder.
@@ -297,9 +297,9 @@ func (g *GetFoldersFolderIDSubfoldersResponseBody) UnmarshalJSON(data []byte) er
 	return nil
 }
 
-func (g *GetFoldersFolderIDSubfoldersResponseBody) GetHashedID() string {
+func (g *GetFoldersFolderIDSubfoldersResponseBody) GetHashedID() *string {
 	if g == nil {
-		return ""
+		return nil
 	}
 	return g.HashedID
 }

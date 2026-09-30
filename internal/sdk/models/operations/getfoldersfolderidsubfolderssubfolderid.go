@@ -314,7 +314,7 @@ func (g *GetFoldersFolderIDSubfoldersSubfolderIDMedia) GetProtected() optionalnu
 // GetFoldersFolderIDSubfoldersSubfolderIDResponseBody - A subfolder with its contained media files.
 type GetFoldersFolderIDSubfoldersSubfolderIDResponseBody struct {
 	// A unique alphanumeric identifier for this subfolder.
-	HashedID string `json:"hashed_id"`
+	HashedID *string `json:"hashed_id"`
 	// The display name of the subfolder.
 	Name optionalnullable.OptionalNullable[string] `json:"name,omitzero"`
 	// A description for the subfolder.
@@ -342,9 +342,9 @@ func (g *GetFoldersFolderIDSubfoldersSubfolderIDResponseBody) UnmarshalJSON(data
 	return nil
 }
 
-func (g *GetFoldersFolderIDSubfoldersSubfolderIDResponseBody) GetHashedID() string {
+func (g *GetFoldersFolderIDSubfoldersSubfolderIDResponseBody) GetHashedID() *string {
 	if g == nil {
-		return ""
+		return nil
 	}
 	return g.HashedID
 }

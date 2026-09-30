@@ -34,12 +34,15 @@ func newStatsAccount(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks *
 // Get - Show Current Account Stats
 // Retrieve account-wide video stats. Get statistics like the number of video loads, plays, and hours watched for the entire account.
 //
-// <!--- HIDE-MCP -->
 // ## Requires api token with one of the following permissions
 // ```
 // Read detailed stats
 // ```
-// <!--- /HIDE-MCP -->
+//
+// Tokens with the "Act with a team member's permissions" permission
+// (`all:delegate_to_contact_permissions` scope) can also be used. Requests
+// made with such a token are authorized using the permissions of the
+// contact assigned to the token.
 func (s *StatsAccount) Get(ctx context.Context, opts ...operations.Option) (*operations.GetStatsAccountResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -79,10 +82,17 @@ func (s *StatsAccount) Get(ctx context.Context, opts ...operations.Option) (*ope
 		timeout = s.sdkConfiguration.Timeout
 	}
 
+	var streamCancel context.CancelFunc
+
 	if timeout != nil {
 		var cancel context.CancelFunc
 		ctx, cancel = context.WithTimeout(ctx, *timeout)
-		defer cancel()
+		streamCancel = cancel
+		defer func() {
+			if streamCancel != nil {
+				streamCancel()
+			}
+		}()
 	}
 
 	req, err := http.NewRequestWithContext(ctx, "GET", opURL, nil)
@@ -140,7 +150,10 @@ func (s *StatsAccount) Get(ctx context.Context, opts ...operations.Option) (*ope
 	case httpRes.StatusCode == 200:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			if o.SkipDeserialization == nil || !*o.SkipDeserialization {
+			if o.SkipDeserialization != nil && *o.SkipDeserialization {
+				httpRes.Body = utils.BodyWithCancel(httpRes.Body, streamCancel)
+				streamCancel = nil
+			} else {
 				rawBody, err := utils.ConsumeRawBody(httpRes)
 				if err != nil {
 					return nil, err
@@ -170,7 +183,7 @@ func (s *StatsAccount) Get(ctx context.Context, opts ...operations.Option) (*ope
 
 			var out sdkerrors.GetStatsAccountUnauthorizedError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -195,7 +208,7 @@ func (s *StatsAccount) Get(ctx context.Context, opts ...operations.Option) (*ope
 
 			var out sdkerrors.GetStatsAccountForbiddenError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -220,7 +233,7 @@ func (s *StatsAccount) Get(ctx context.Context, opts ...operations.Option) (*ope
 
 			var out sdkerrors.GetStatsAccountInternalServerError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -262,12 +275,15 @@ func (s *StatsAccount) Get(ctx context.Context, opts ...operations.Option) (*ope
 // GetStatsAccountByDate - Show Account Stats by Date
 // Retrieve account-wide stats organized by day, between a start and end date parameter (inclusive). If start and end date are not provided, defaults to yesterday and today.
 //
-// <!--- HIDE-MCP -->
 // ## Requires api token with one of the following permissions
 // ```
 // Read detailed stats
 // ```
-// <!--- /HIDE-MCP -->
+//
+// Tokens with the "Act with a team member's permissions" permission
+// (`all:delegate_to_contact_permissions` scope) can also be used. Requests
+// made with such a token are authorized using the permissions of the
+// contact assigned to the token.
 func (s *StatsAccount) GetStatsAccountByDate(ctx context.Context, request *operations.GetStatsAccountByDateRequest, opts ...operations.Option) (*operations.GetStatsAccountByDateResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -307,10 +323,17 @@ func (s *StatsAccount) GetStatsAccountByDate(ctx context.Context, request *opera
 		timeout = s.sdkConfiguration.Timeout
 	}
 
+	var streamCancel context.CancelFunc
+
 	if timeout != nil {
 		var cancel context.CancelFunc
 		ctx, cancel = context.WithTimeout(ctx, *timeout)
-		defer cancel()
+		streamCancel = cancel
+		defer func() {
+			if streamCancel != nil {
+				streamCancel()
+			}
+		}()
 	}
 
 	req, err := http.NewRequestWithContext(ctx, "GET", opURL, nil)
@@ -372,7 +395,10 @@ func (s *StatsAccount) GetStatsAccountByDate(ctx context.Context, request *opera
 	case httpRes.StatusCode == 200:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			if o.SkipDeserialization == nil || !*o.SkipDeserialization {
+			if o.SkipDeserialization != nil && *o.SkipDeserialization {
+				httpRes.Body = utils.BodyWithCancel(httpRes.Body, streamCancel)
+				streamCancel = nil
+			} else {
 				rawBody, err := utils.ConsumeRawBody(httpRes)
 				if err != nil {
 					return nil, err
@@ -402,7 +428,7 @@ func (s *StatsAccount) GetStatsAccountByDate(ctx context.Context, request *opera
 
 			var out sdkerrors.GetStatsAccountByDateUnauthorizedError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -427,7 +453,7 @@ func (s *StatsAccount) GetStatsAccountByDate(ctx context.Context, request *opera
 
 			var out sdkerrors.GetStatsAccountByDateForbiddenError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -452,7 +478,7 @@ func (s *StatsAccount) GetStatsAccountByDate(ctx context.Context, request *opera
 
 			var out sdkerrors.GetStatsAccountByDateInternalServerError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{

@@ -4,6 +4,8 @@
 package operations
 
 import (
+	"encoding/json"
+	"fmt"
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
 	"github.com/wistia/wistia-cli/internal/sdk/optionalnullable"
 	"github.com/wistia/wistia-cli/internal/sdk/sdkinternal/utils"
@@ -11,12 +13,38 @@ import (
 	"time"
 )
 
+// GetMediasMediaHashedIDInclude - Set to `speakers` to include active transcript speaker assignments used for diarization. Webinar hosts and panelists are not included.
+type GetMediasMediaHashedIDInclude string
+
+const (
+	GetMediasMediaHashedIDIncludeSpeakers GetMediasMediaHashedIDInclude = "speakers"
+)
+
+func (e GetMediasMediaHashedIDInclude) ToPointer() *GetMediasMediaHashedIDInclude {
+	return &e
+}
+func (e *GetMediasMediaHashedIDInclude) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "speakers":
+		*e = GetMediasMediaHashedIDInclude(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for GetMediasMediaHashedIDInclude: %v", v)
+	}
+}
+
 type GetMediasMediaHashedIDRequest struct {
 	// The hashed ID of the media.
 	MediaHashedID string `pathParam:"style=simple,explode=false,name=mediaHashedId"`
 	// Format for media descriptions
 	//lint:ignore U1000 accessed via reflection for JSON marshaling
 	descriptionFormat *string `const:"markdown" queryParam:"style=form,explode=true,name=description_format"`
+	// Set to `speakers` to include active transcript speaker assignments used for diarization. Webinar hosts and panelists are not included.
+	Include *GetMediasMediaHashedIDInclude `queryParam:"style=form,explode=true,name=include"`
 }
 
 func (g GetMediasMediaHashedIDRequest) MarshalJSON() ([]byte, error) {
@@ -39,6 +67,13 @@ func (g *GetMediasMediaHashedIDRequest) GetMediaHashedID() string {
 
 func (g *GetMediasMediaHashedIDRequest) GetDescriptionFormat() *string {
 	return types.Pointer("markdown")
+}
+
+func (g *GetMediasMediaHashedIDRequest) GetInclude() *GetMediasMediaHashedIDInclude {
+	if g == nil {
+		return nil
+	}
+	return g.Include
 }
 
 // GetMediasMediaHashedIDCode - A machine-readable identifier for the specific authorization failure.
@@ -237,7 +272,7 @@ func (g *GetMediasMediaHashedIDAsset) GetType() *string {
 // GetMediasMediaHashedIDSubfolder - The subfolder (media group) in which the media appears. Null if the media is not in a subfolder.
 type GetMediasMediaHashedIDSubfolder struct {
 	// A unique alphanumeric identifier for this subfolder.
-	HashedID string `json:"hashed_id"`
+	HashedID *string `json:"hashed_id"`
 	// The display name of the subfolder.
 	Name optionalnullable.OptionalNullable[string] `json:"name,omitzero"`
 	// A description for the subfolder.
@@ -263,9 +298,9 @@ func (g *GetMediasMediaHashedIDSubfolder) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (g *GetMediasMediaHashedIDSubfolder) GetHashedID() string {
+func (g *GetMediasMediaHashedIDSubfolder) GetHashedID() *string {
 	if g == nil {
-		return ""
+		return nil
 	}
 	return g.HashedID
 }
@@ -324,6 +359,36 @@ func (g *GetMediasMediaHashedIDTag) GetName() *string {
 	return g.Name
 }
 
+type GetMediasMediaHashedIDSpeaker struct {
+	// The unique identifier for this transcript speaker assignment on the media.
+	MediaSpeakerID string `json:"media_speaker_id"`
+	// The reusable account speaker profile assigned to the transcript speaker.
+	SpeakerProfileID string `json:"speaker_profile_id"`
+	// The assigned speaker profile's display name.
+	Name string `json:"name"`
+}
+
+func (g *GetMediasMediaHashedIDSpeaker) GetMediaSpeakerID() string {
+	if g == nil {
+		return ""
+	}
+	return g.MediaSpeakerID
+}
+
+func (g *GetMediasMediaHashedIDSpeaker) GetSpeakerProfileID() string {
+	if g == nil {
+		return ""
+	}
+	return g.SpeakerProfileID
+}
+
+func (g *GetMediasMediaHashedIDSpeaker) GetName() string {
+	if g == nil {
+		return ""
+	}
+	return g.Name
+}
+
 // GetMediasMediaHashedIDResponseBody - A media generally represents a video or an audio which can be embedded into your website.
 //
 // CDN-backed medias are accessible using this url structure: https://fast.wistia.com/embed/medias/{hashed_id}.m3u8.
@@ -369,6 +434,8 @@ type GetMediasMediaHashedIDResponseBody struct {
 	Subfolder *GetMediasMediaHashedIDSubfolder `json:"subfolder,omitzero"`
 	// Tags associated with this media.
 	Tags []GetMediasMediaHashedIDTag `json:"tags,omitzero"`
+	// Active transcript speaker assignments used for diarization. Webinar hosts and panelists are not included. Present when `include=speakers` is requested.
+	Speakers []GetMediasMediaHashedIDSpeaker `json:"speakers,omitzero"`
 }
 
 func (g GetMediasMediaHashedIDResponseBody) MarshalJSON() ([]byte, error) {
@@ -513,6 +580,13 @@ func (g *GetMediasMediaHashedIDResponseBody) GetTags() []GetMediasMediaHashedIDT
 		return nil
 	}
 	return g.Tags
+}
+
+func (g *GetMediasMediaHashedIDResponseBody) GetSpeakers() []GetMediasMediaHashedIDSpeaker {
+	if g == nil {
+		return nil
+	}
+	return g.Speakers
 }
 
 type GetMediasMediaHashedIDResponse struct {

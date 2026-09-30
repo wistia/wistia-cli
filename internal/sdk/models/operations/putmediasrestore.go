@@ -54,36 +54,6 @@ func (e *PutMediasRestoreCode) IsExact() bool {
 	return false
 }
 
-type Container struct {
-	// The type of container the medias will be restored to.
-	Type *string `json:"type,omitzero"`
-	// The display name of the container the medias will be restored to.
-	Name *string `json:"name,omitzero"`
-	// The hashed ID of the container the medias will be restored to.
-	HashedID *string `json:"hashedId,omitzero"`
-}
-
-func (c *Container) GetType() *string {
-	if c == nil {
-		return nil
-	}
-	return c.Type
-}
-
-func (c *Container) GetName() *string {
-	if c == nil {
-		return nil
-	}
-	return c.Name
-}
-
-func (c *Container) GetHashedID() *string {
-	if c == nil {
-		return nil
-	}
-	return c.HashedID
-}
-
 // PutMediasRestoreStatus - The status of the background job that's been queued for the request.
 type PutMediasRestoreStatus string
 
@@ -141,15 +111,42 @@ func (p *PutMediasRestoreBackgroundJobStatus) GetStatus() PutMediasRestoreStatus
 	return p.Status
 }
 
+type Container struct {
+	// The type of container the medias will be restored to.
+	Type *string `json:"type,omitzero"`
+	// The display name of the container the medias will be restored to.
+	Name *string `json:"name,omitzero"`
+	// The hashed ID of the container the medias will be restored to.
+	HashedID *string `json:"hashedId,omitzero"`
+}
+
+func (c *Container) GetType() *string {
+	if c == nil {
+		return nil
+	}
+	return c.Type
+}
+
+func (c *Container) GetName() *string {
+	if c == nil {
+		return nil
+	}
+	return c.Name
+}
+
+func (c *Container) GetHashedID() *string {
+	if c == nil {
+		return nil
+	}
+	return c.HashedID
+}
+
 // PutMediasRestoreResponseBody - Successful restoration of media.
 type PutMediasRestoreResponseBody struct {
 	// A confirmation message that the background job has been queued.
-	Message   *string    `json:"message,omitzero"`
-	Container *Container `json:"container,omitzero"`
-	// A background job keeps track of the progress of an asynchronous task, e.g
-	// bulk archiving media, translating media, etc.
-	//
-	BackgroundJobStatus *PutMediasRestoreBackgroundJobStatus `json:"background_job_status,omitzero"`
+	Message             string                              `json:"message"`
+	BackgroundJobStatus PutMediasRestoreBackgroundJobStatus `json:"background_job_status"`
+	Container           *Container                          `json:"container,omitzero"`
 }
 
 func (p PutMediasRestoreResponseBody) MarshalJSON() ([]byte, error) {
@@ -163,11 +160,18 @@ func (p *PutMediasRestoreResponseBody) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (p *PutMediasRestoreResponseBody) GetMessage() *string {
+func (p *PutMediasRestoreResponseBody) GetMessage() string {
 	if p == nil {
-		return nil
+		return ""
 	}
 	return p.Message
+}
+
+func (p *PutMediasRestoreResponseBody) GetBackgroundJobStatus() PutMediasRestoreBackgroundJobStatus {
+	if p == nil {
+		return PutMediasRestoreBackgroundJobStatus{}
+	}
+	return p.BackgroundJobStatus
 }
 
 func (p *PutMediasRestoreResponseBody) GetContainer() *Container {
@@ -175,13 +179,6 @@ func (p *PutMediasRestoreResponseBody) GetContainer() *Container {
 		return nil
 	}
 	return p.Container
-}
-
-func (p *PutMediasRestoreResponseBody) GetBackgroundJobStatus() *PutMediasRestoreBackgroundJobStatus {
-	if p == nil {
-		return nil
-	}
-	return p.BackgroundJobStatus
 }
 
 type PutMediasRestoreResponse struct {

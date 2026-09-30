@@ -67,7 +67,7 @@ func (g *GetStatsVisitorsVisitorKeyOrg) GetTitle() optionalnullable.OptionalNull
 }
 
 type GetStatsVisitorsVisitorKeyVisitorIdentity struct {
-	Name  *string                                   `json:"name,omitzero"`
+	Name  optionalnullable.OptionalNullable[string] `json:"name,omitzero"`
 	Email optionalnullable.OptionalNullable[string] `json:"email,omitzero"`
 	Org   *GetStatsVisitorsVisitorKeyOrg            `json:"org,omitzero"`
 }
@@ -83,7 +83,7 @@ func (g *GetStatsVisitorsVisitorKeyVisitorIdentity) UnmarshalJSON(data []byte) e
 	return nil
 }
 
-func (g *GetStatsVisitorsVisitorKeyVisitorIdentity) GetName() *string {
+func (g *GetStatsVisitorsVisitorKeyVisitorIdentity) GetName() optionalnullable.OptionalNullable[string] {
 	if g == nil {
 		return nil
 	}
@@ -148,7 +148,9 @@ type GetStatsVisitorsVisitorKeyResponseBody struct {
 	// The last time the visitor played a video.
 	LastActiveAt *time.Time `json:"last_active_at,omitzero"`
 	// The event key for the last video play action.
-	LastEventKey *string `json:"last_event_key,omitzero"`
+	LastEventKey optionalnullable.OptionalNullable[string] `json:"last_event_key,omitzero"`
+	// The event key for the conversion event that identified the visitor. Null when the visitor has not been identified.
+	IdentifyingEventKey optionalnullable.OptionalNullable[string] `json:"identifying_event_key,omitzero"`
 	// The total number of videos loaded by the visitor.
 	LoadCount *int64 `json:"load_count,omitzero"`
 	// The total number of videos played by the visitor.
@@ -189,11 +191,18 @@ func (g *GetStatsVisitorsVisitorKeyResponseBody) GetLastActiveAt() *time.Time {
 	return g.LastActiveAt
 }
 
-func (g *GetStatsVisitorsVisitorKeyResponseBody) GetLastEventKey() *string {
+func (g *GetStatsVisitorsVisitorKeyResponseBody) GetLastEventKey() optionalnullable.OptionalNullable[string] {
 	if g == nil {
 		return nil
 	}
 	return g.LastEventKey
+}
+
+func (g *GetStatsVisitorsVisitorKeyResponseBody) GetIdentifyingEventKey() optionalnullable.OptionalNullable[string] {
+	if g == nil {
+		return nil
+	}
+	return g.IdentifyingEventKey
 }
 
 func (g *GetStatsVisitorsVisitorKeyResponseBody) GetLoadCount() *int64 {

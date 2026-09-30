@@ -78,6 +78,63 @@ func (e *PutMediasMediaHashedIDSwapCode) IsExact() bool {
 	return false
 }
 
+// PutMediasMediaHashedIDSwapBackgroundJobStatusStatus - The status of the background job that's been queued for the request.
+type PutMediasMediaHashedIDSwapBackgroundJobStatusStatus string
+
+const (
+	PutMediasMediaHashedIDSwapBackgroundJobStatusStatusQueued   PutMediasMediaHashedIDSwapBackgroundJobStatusStatus = "queued"
+	PutMediasMediaHashedIDSwapBackgroundJobStatusStatusStarted  PutMediasMediaHashedIDSwapBackgroundJobStatusStatus = "started"
+	PutMediasMediaHashedIDSwapBackgroundJobStatusStatusFinished PutMediasMediaHashedIDSwapBackgroundJobStatusStatus = "finished"
+	PutMediasMediaHashedIDSwapBackgroundJobStatusStatusFailed   PutMediasMediaHashedIDSwapBackgroundJobStatusStatus = "failed"
+)
+
+func (e PutMediasMediaHashedIDSwapBackgroundJobStatusStatus) ToPointer() *PutMediasMediaHashedIDSwapBackgroundJobStatusStatus {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *PutMediasMediaHashedIDSwapBackgroundJobStatusStatus) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "queued", "started", "finished", "failed":
+			return true
+		}
+	}
+	return false
+}
+
+// PutMediasMediaHashedIDSwapBackgroundJobStatus - A background job keeps track of the progress of an asynchronous task, e.g
+// bulk archiving media, translating media, etc.
+type PutMediasMediaHashedIDSwapBackgroundJobStatus struct {
+	// The ID of the background job that's been queued for the request.
+	ID int64 `json:"id"`
+	// The unguessable hashed ID of the background job. Prefer this over the numeric ID when polling for status.
+	HashedID string `json:"hashed_id"`
+	// The status of the background job that's been queued for the request.
+	Status PutMediasMediaHashedIDSwapBackgroundJobStatusStatus `json:"status"`
+}
+
+func (p *PutMediasMediaHashedIDSwapBackgroundJobStatus) GetID() int64 {
+	if p == nil {
+		return 0
+	}
+	return p.ID
+}
+
+func (p *PutMediasMediaHashedIDSwapBackgroundJobStatus) GetHashedID() string {
+	if p == nil {
+		return ""
+	}
+	return p.HashedID
+}
+
+func (p *PutMediasMediaHashedIDSwapBackgroundJobStatus) GetStatus() PutMediasMediaHashedIDSwapBackgroundJobStatusStatus {
+	if p == nil {
+		return PutMediasMediaHashedIDSwapBackgroundJobStatusStatus("")
+	}
+	return p.Status
+}
+
 // PutMediasMediaHashedIDSwapType - A string representing what type of media this is.
 type PutMediasMediaHashedIDSwapType string
 
@@ -314,71 +371,12 @@ func (p *PutMediasMediaHashedIDSwapMedia) GetProtected() optionalnullable.Option
 	return p.Protected
 }
 
-// PutMediasMediaHashedIDSwapBackgroundJobStatusStatus - The status of the background job that's been queued for the request.
-type PutMediasMediaHashedIDSwapBackgroundJobStatusStatus string
-
-const (
-	PutMediasMediaHashedIDSwapBackgroundJobStatusStatusQueued   PutMediasMediaHashedIDSwapBackgroundJobStatusStatus = "queued"
-	PutMediasMediaHashedIDSwapBackgroundJobStatusStatusStarted  PutMediasMediaHashedIDSwapBackgroundJobStatusStatus = "started"
-	PutMediasMediaHashedIDSwapBackgroundJobStatusStatusFinished PutMediasMediaHashedIDSwapBackgroundJobStatusStatus = "finished"
-	PutMediasMediaHashedIDSwapBackgroundJobStatusStatusFailed   PutMediasMediaHashedIDSwapBackgroundJobStatusStatus = "failed"
-)
-
-func (e PutMediasMediaHashedIDSwapBackgroundJobStatusStatus) ToPointer() *PutMediasMediaHashedIDSwapBackgroundJobStatusStatus {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *PutMediasMediaHashedIDSwapBackgroundJobStatusStatus) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "queued", "started", "finished", "failed":
-			return true
-		}
-	}
-	return false
-}
-
-// PutMediasMediaHashedIDSwapBackgroundJobStatus - A background job keeps track of the progress of an asynchronous task, e.g
-// bulk archiving media, translating media, etc.
-type PutMediasMediaHashedIDSwapBackgroundJobStatus struct {
-	// The ID of the background job that's been queued for the request.
-	ID int64 `json:"id"`
-	// The unguessable hashed ID of the background job. Prefer this over the numeric ID when polling for status.
-	HashedID string `json:"hashed_id"`
-	// The status of the background job that's been queued for the request.
-	Status PutMediasMediaHashedIDSwapBackgroundJobStatusStatus `json:"status"`
-}
-
-func (p *PutMediasMediaHashedIDSwapBackgroundJobStatus) GetID() int64 {
-	if p == nil {
-		return 0
-	}
-	return p.ID
-}
-
-func (p *PutMediasMediaHashedIDSwapBackgroundJobStatus) GetHashedID() string {
-	if p == nil {
-		return ""
-	}
-	return p.HashedID
-}
-
-func (p *PutMediasMediaHashedIDSwapBackgroundJobStatus) GetStatus() PutMediasMediaHashedIDSwapBackgroundJobStatusStatus {
-	if p == nil {
-		return PutMediasMediaHashedIDSwapBackgroundJobStatusStatus("")
-	}
-	return p.Status
-}
-
 // PutMediasMediaHashedIDSwapResponseBody - Successfully queued background job for media swap.
 type PutMediasMediaHashedIDSwapResponseBody struct {
-	Message *string                          `json:"message,omitzero"`
-	Media   *PutMediasMediaHashedIDSwapMedia `json:"media,omitzero"`
-	// A background job keeps track of the progress of an asynchronous task, e.g
-	// bulk archiving media, translating media, etc.
-	//
-	BackgroundJobStatus *PutMediasMediaHashedIDSwapBackgroundJobStatus `json:"background_job_status,omitzero"`
+	// A confirmation message that the background job has been queued.
+	Message             string                                        `json:"message"`
+	BackgroundJobStatus PutMediasMediaHashedIDSwapBackgroundJobStatus `json:"background_job_status"`
+	Media               *PutMediasMediaHashedIDSwapMedia              `json:"media,omitzero"`
 }
 
 func (p PutMediasMediaHashedIDSwapResponseBody) MarshalJSON() ([]byte, error) {
@@ -392,11 +390,18 @@ func (p *PutMediasMediaHashedIDSwapResponseBody) UnmarshalJSON(data []byte) erro
 	return nil
 }
 
-func (p *PutMediasMediaHashedIDSwapResponseBody) GetMessage() *string {
+func (p *PutMediasMediaHashedIDSwapResponseBody) GetMessage() string {
 	if p == nil {
-		return nil
+		return ""
 	}
 	return p.Message
+}
+
+func (p *PutMediasMediaHashedIDSwapResponseBody) GetBackgroundJobStatus() PutMediasMediaHashedIDSwapBackgroundJobStatus {
+	if p == nil {
+		return PutMediasMediaHashedIDSwapBackgroundJobStatus{}
+	}
+	return p.BackgroundJobStatus
 }
 
 func (p *PutMediasMediaHashedIDSwapResponseBody) GetMedia() *PutMediasMediaHashedIDSwapMedia {
@@ -404,13 +409,6 @@ func (p *PutMediasMediaHashedIDSwapResponseBody) GetMedia() *PutMediasMediaHashe
 		return nil
 	}
 	return p.Media
-}
-
-func (p *PutMediasMediaHashedIDSwapResponseBody) GetBackgroundJobStatus() *PutMediasMediaHashedIDSwapBackgroundJobStatus {
-	if p == nil {
-		return nil
-	}
-	return p.BackgroundJobStatus
 }
 
 type PutMediasMediaHashedIDSwapResponse struct {

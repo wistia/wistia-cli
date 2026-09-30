@@ -10,9 +10,11 @@ import (
 
 func InitBackgroundJobStatusRoot(parent *cobra.Command) error {
 	var BackgroundJobStatusCmd = &cobra.Command{
-		Use:   "background-job-status",
-		Short: "Operations for background-job-status",
-		Long:  "Operations for background-job-status",
+		Use:         "background-job-status",
+		Short:       "Operations for background-job-status",
+		Long:        "Operations for background-job-status",
+		Args:        cobra.NoArgs,
+		Annotations: map[string]string{"speakeasy_cli_group": "true"},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if usage.UsageRequested(cmd) {
 				return usage.EmitSchema(cmd, cmd.OutOrStdout())

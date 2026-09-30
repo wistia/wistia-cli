@@ -8,7 +8,7 @@ import (
 )
 
 type DeleteTagsNameRequest struct {
-	// Tag ID
+	// Name of the tag to delete
 	Name string `pathParam:"style=simple,explode=false,name=name"`
 }
 

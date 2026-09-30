@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/wistia/wistia-cli/internal/client"
 	"github.com/wistia/wistia-cli/internal/flagutil"
-	"github.com/wistia/wistia-cli/internal/interactive"
 	"github.com/wistia/wistia-cli/internal/output"
 	"github.com/wistia/wistia-cli/internal/sdk"
 	"github.com/wistia/wistia-cli/internal/sdk/models/operations"
@@ -25,16 +24,25 @@ func initImportUrlCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "import-url",
 		Short:   "Import Media from URL",
-		Long:    "This endpoint imports a media file from a given URL. The import is processed\nasynchronously and will return a background_job_status object rather than the\ntypical Media response object. You can poll the background job status endpoint\nto check on the progress of the import.\n\nIf no folder_id is provided, a new folder called \"Untitled Folder\" will be\ncreated and the imported media will be placed there.\n\nThe URL must be publicly accessible — Wistia's servers need to be able to fetch the file directly.\n\nNote: imports from certain domains (e.g. vimeo.com, wistia.com) are not permitted.\n\n<!--- HIDE-MCP -->\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n<!--- /HIDE-MCP -->",
+		Long:    "This endpoint imports a media file from a given URL. The import is processed\nasynchronously and will return a background_job_status object rather than the\ntypical Media response object. You can poll the background job status endpoint\nto check on the progress of the import.\n\nIf no folder_id is provided, a new folder called \"Untitled Folder\" will be\ncreated and the imported media will be placed there.\n\nThe URL must be publicly accessible — Wistia's servers need to be able to fetch the file directly.\n\nNote: imports from certain domains (e.g. vimeo.com, wistia.com) are not permitted.\n\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
 		Example: "  wistia media import-url --url https://example.com/video.mp4",
+		Args:    cobra.NoArgs,
 		RunE:    runImportUrlCmd,
 		Aliases: []string{"iu"},
+		Annotations: map[string]string{
+			"speakeasy_operation": "post_/medias/import_url",
+		},
 	}
 	flagutil.RegisterFlags(cmd, importURLCmdMeta)
 	if err := flagutil.ValidateMeta[operations.PostMediasImportURLRequest](importURLCmdMeta); err != nil {
 		return fmt.Errorf("invalid metadata for import-url: %w", err)
 	}
-	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin.")
+	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
+	if err := flagutil.AnnotateBodyFields(cmd, importURLCmdMeta, "", "body"); err != nil {
+		return fmt.Errorf("annotate body fields for import-url: %w", err)
+	}
 	parent.AddCommand(cmd)
 	return nil
 }
@@ -44,14 +52,9 @@ func runImportUrlCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, importURLCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, importURLCmdMeta); err != nil {
-			return err
-		}
-	}
 	request, err := flagutil.BuildRequest[operations.PostMediasImportURLRequest](cmd, importURLCmdMeta, "", "body")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

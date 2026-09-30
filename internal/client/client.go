@@ -11,17 +11,25 @@ import (
 	"github.com/wistia/wistia-cli/internal/sdk"
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
 	"github.com/wistia/wistia-cli/internal/testclient"
+	"net"
 	"net/http"
 	"strconv"
+	"sync"
 	"time"
 )
 
 // NewClient creates a new SDK client configured from command flags and environment.
 // It handles global security, server URL/selection override, global parameters,
 // retry configuration, timeout, and test client injection.
-func NewClient(cmd *cobra.Command) (*sdk.Wistia, error) {
+// Empty allowedSecurityFields accepts every global security alternative.
+func NewClient(cmd *cobra.Command, allowedSecurityFields ...string) (*sdk.Wistia, error) {
 	var sdkOpts []sdk.SDKOption
-	sdkOpts = append(sdkOpts, sdk.WithSecurity(buildGlobalSecurity(cmd)))
+	sdkOpts = append(sdkOpts, sdk.WithSecurity(buildGlobalSecurity(cmd, allowedSecurityFields)))
+	if serverURL, _ := flagutil.GetStringFlag(cmd, "server-url"); serverURL != "" {
+		if err := flagutil.ValidateServerURL(serverURL); err != nil {
+			return nil, err
+		}
+	}
 	if serverURL, _ := flagutil.GetStringFlag(cmd, "server-url"); serverURL != "" {
 		sdkOpts = append(sdkOpts, sdk.WithServerURL(serverURL))
 	} else if serverFlag, _ := flagutil.GetStringFlag(cmd, "server"); serverFlag != "" {
@@ -35,14 +43,14 @@ func NewClient(cmd *cobra.Command) (*sdk.Wistia, error) {
 	if timeoutStr := resolveStringFlag(cmd, "timeout"); timeoutStr != "" {
 		timeout, err := time.ParseDuration(timeoutStr)
 		if err != nil {
-			return nil, fmt.Errorf("invalid --timeout value %q: %w", timeoutStr, err)
+			return nil, flagutil.WithCLIValidation(fmt.Errorf("invalid --timeout value %q: %w", timeoutStr, err))
 		}
 		sdkOpts = append(sdkOpts, sdk.WithTimeout(timeout))
 	}
 
 	// Diagnostics and test client composition.
 	// Order: test client (innermost) → diagnostics wrapper (outermost).
-	var httpClient HTTPClient = &http.Client{}
+	var httpClient HTTPClient = &http.Client{Transport: newPhaseBoundedTransport(cmd)}
 	if testClient := testclient.NewTestHTTPClient(); testClient != nil {
 		httpClient = testClient
 	}
@@ -50,6 +58,40 @@ func NewClient(cmd *cobra.Command) (*sdk.Wistia, error) {
 	sdkOpts = append(sdkOpts, sdk.WithClient(httpClient))
 	return sdk.New(sdkOpts...), nil
 }
+
+func newPhaseBoundedTransport(cmd *cobra.Command) http.RoundTripper {
+	var phase time.Duration
+	if s := resolveStringFlag(cmd, "timeout"); s != "" {
+		d, err := time.ParseDuration(s)
+		if err != nil || d <= 0 {
+			return nil
+		}
+		phase = d
+	}
+	if phase <= 0 {
+		return nil
+	}
+	if cached, ok := phaseBoundedTransports.Load(phase); ok {
+		return cached.(*http.Transport)
+	}
+	transport, ok := http.DefaultTransport.(*http.Transport)
+	if !ok {
+		return nil
+	}
+	bounded := transport.Clone()
+	// http.DefaultTransport dials with a 30s timeout and a 10s TLS handshake timeout.
+	if phase < 30*time.Second {
+		bounded.DialContext = (&net.Dialer{Timeout: phase, KeepAlive: 30 * time.Second}).DialContext
+	}
+	if phase < bounded.TLSHandshakeTimeout {
+		bounded.TLSHandshakeTimeout = phase
+	}
+	bounded.ResponseHeaderTimeout = phase
+	actual, _ := phaseBoundedTransports.LoadOrStore(phase, bounded)
+	return actual.(*http.Transport)
+}
+
+var phaseBoundedTransports sync.Map
 
 // resolveStringFlag reads a string flag with priority: flag > env > config.
 func resolveStringFlag(cmd *cobra.Command, name string) string {
@@ -59,11 +101,11 @@ func resolveStringFlag(cmd *cobra.Command, name string) string {
 	return config.GetString(name)
 }
 
-// buildGlobalSecurity reads security credentials from flags, env vars, and config file.
-// Priority: flag > env var > config file.
-func buildGlobalSecurity(cmd *cobra.Command) components.Security {
-	// Resolve security credentials: flag > env var > keyring > config file
-	bearerAuth, _ := config.ResolveSecurityCredential(cmd, "bearer-auth")
+// buildGlobalSecurity reads security credentials with priority: flag > env var > keyring > config.
+func buildGlobalSecurity(cmd *cobra.Command, allowedSecurityFields []string) components.Security {
+	_ = allowedSecurityFields
+	// Resolve request credentials: flag > env var > keyring > config file (keyring skipped for dry-run)
+	bearerAuth, _ := config.ResolveRequestSecurityCredential(cmd, "bearer-auth")
 	globalSecurity := components.Security{}
 	if bearerAuth != "" {
 		globalSecurity.BearerAuth = bearerAuth

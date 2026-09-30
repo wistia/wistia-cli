@@ -10,9 +10,11 @@ import (
 
 func InitStatsProjectsRoot(parent *cobra.Command) error {
 	var StatsProjectsCmd = &cobra.Command{
-		Use:   "stats-projects",
-		Short: "Operations for stats-projects",
-		Long:  "Operations for stats-projects",
+		Use:         "stats-projects",
+		Short:       "Operations for stats-projects",
+		Long:        "Operations for stats-projects",
+		Args:        cobra.NoArgs,
+		Annotations: map[string]string{"speakeasy_cli_group": "true"},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if usage.UsageRequested(cmd) {
 				return usage.EmitSchema(cmd, cmd.OutOrStdout())

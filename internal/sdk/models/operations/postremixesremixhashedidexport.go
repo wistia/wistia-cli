@@ -4,8 +4,6 @@
 package operations
 
 import (
-	"encoding/json"
-	"fmt"
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
 	"github.com/wistia/wistia-cli/internal/sdk/sdkinternal/utils"
 )
@@ -87,28 +85,27 @@ func (e *PostRemixesRemixHashedIDExportCode) IsExact() bool {
 	return false
 }
 
-// PostRemixesRemixHashedIDExportStatus - Export status.
+// PostRemixesRemixHashedIDExportStatus - Export status. `completed` means the media is already rendered and ready; `exporting` means the render pipeline is still working.
 type PostRemixesRemixHashedIDExportStatus string
 
 const (
 	PostRemixesRemixHashedIDExportStatusExporting PostRemixesRemixHashedIDExportStatus = "exporting"
+	PostRemixesRemixHashedIDExportStatusCompleted PostRemixesRemixHashedIDExportStatus = "completed"
 )
 
 func (e PostRemixesRemixHashedIDExportStatus) ToPointer() *PostRemixesRemixHashedIDExportStatus {
 	return &e
 }
-func (e *PostRemixesRemixHashedIDExportStatus) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *PostRemixesRemixHashedIDExportStatus) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "exporting", "completed":
+			return true
+		}
 	}
-	switch v {
-	case "exporting":
-		*e = PostRemixesRemixHashedIDExportStatus(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for PostRemixesRemixHashedIDExportStatus: %v", v)
-	}
+	return false
 }
 
 // PostRemixesRemixHashedIDExportResponseBody - Export successfully queued.
@@ -121,7 +118,7 @@ type PostRemixesRemixHashedIDExportResponseBody struct {
 	MediaName *string `json:"media_name,omitzero"`
 	// Hashed ID of the destination folder.
 	FolderHashedID *string `json:"folder_hashed_id,omitzero"`
-	// Export status.
+	// Export status. `completed` means the media is already rendered and ready; `exporting` means the render pipeline is still working.
 	Status *PostRemixesRemixHashedIDExportStatus `json:"status,omitzero"`
 }
 

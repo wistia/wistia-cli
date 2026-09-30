@@ -92,7 +92,9 @@ func (g *GetFoldersFolderIDSharingsCursor) GetAfter() *string {
 type GetFoldersFolderIDSharingsSortBy string
 
 const (
-	GetFoldersFolderIDSharingsSortByID GetFoldersFolderIDSharingsSortBy = "id"
+	GetFoldersFolderIDSharingsSortByCreated GetFoldersFolderIDSharingsSortBy = "created"
+	GetFoldersFolderIDSharingsSortByUpdated GetFoldersFolderIDSharingsSortBy = "updated"
+	GetFoldersFolderIDSharingsSortByID      GetFoldersFolderIDSharingsSortBy = "id"
 )
 
 func (e GetFoldersFolderIDSharingsSortBy) ToPointer() *GetFoldersFolderIDSharingsSortBy {
@@ -104,6 +106,10 @@ func (e *GetFoldersFolderIDSharingsSortBy) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	switch v {
+	case "created":
+		fallthrough
+	case "updated":
+		fallthrough
 	case "id":
 		*e = GetFoldersFolderIDSharingsSortBy(v)
 		return nil
@@ -256,10 +262,10 @@ func (e *GetFoldersFolderIDSharingsCode) IsExact() bool {
 }
 
 type GetFoldersFolderIDSharingsShare struct {
-	ID    int64  `json:"id"`
-	Name  string `json:"name"`
-	Type  string `json:"type"`
-	Email string `json:"email"`
+	ID    int64   `json:"id"`
+	Name  string  `json:"name"`
+	Type  string  `json:"type"`
+	Email *string `json:"email,omitzero"`
 }
 
 func (g *GetFoldersFolderIDSharingsShare) GetID() int64 {
@@ -283,9 +289,9 @@ func (g *GetFoldersFolderIDSharingsShare) GetType() string {
 	return g.Type
 }
 
-func (g *GetFoldersFolderIDSharingsShare) GetEmail() string {
+func (g *GetFoldersFolderIDSharingsShare) GetEmail() *string {
 	if g == nil {
-		return ""
+		return nil
 	}
 	return g.Email
 }

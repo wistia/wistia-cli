@@ -4,6 +4,9 @@
 package operations
 
 import (
+	"encoding/json"
+	"errors"
+	"fmt"
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
 	"github.com/wistia/wistia-cli/internal/sdk/sdkinternal/utils"
 )
@@ -70,6 +73,335 @@ func (e *GetBackgroundJobStatusBackgroundJobStatusIDStatus) IsExact() bool {
 	return false
 }
 
+// GetBackgroundJobStatusBackgroundJobStatusIDType - Discriminator identifying the wrapped resource type.
+type GetBackgroundJobStatusBackgroundJobStatusIDType string
+
+const (
+	GetBackgroundJobStatusBackgroundJobStatusIDTypeBulkOperation GetBackgroundJobStatusBackgroundJobStatusIDType = "bulk_operation"
+)
+
+func (e GetBackgroundJobStatusBackgroundJobStatusIDType) ToPointer() *GetBackgroundJobStatusBackgroundJobStatusIDType {
+	return &e
+}
+func (e *GetBackgroundJobStatusBackgroundJobStatusIDType) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "bulk_operation":
+		*e = GetBackgroundJobStatusBackgroundJobStatusIDType(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for GetBackgroundJobStatusBackgroundJobStatusIDType: %v", v)
+	}
+}
+
+// Summary - Aggregate counts for the bulk operation. While the operation is
+// running, `succeeded` and `failed` reflect progress so far.
+type Summary struct {
+	// The total number of actions in the operation.
+	Total int64 `json:"total"`
+	// The number of actions that have completed successfully.
+	Succeeded int64 `json:"succeeded"`
+	// The number of actions that have failed.
+	Failed int64 `json:"failed"`
+}
+
+func (s Summary) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(s, "", false)
+}
+
+func (s *Summary) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &s, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *Summary) GetTotal() int64 {
+	if s == nil {
+		return 0
+	}
+	return s.Total
+}
+
+func (s *Summary) GetSucceeded() int64 {
+	if s == nil {
+		return 0
+	}
+	return s.Succeeded
+}
+
+func (s *Summary) GetFailed() int64 {
+	if s == nil {
+		return 0
+	}
+	return s.Failed
+}
+
+// GetBackgroundJobStatusBackgroundJobStatusIDOperation - The operation that was performed. `purchase` appears only for
+// operations submitted through the Create Bulk Purchase endpoint.
+type GetBackgroundJobStatusBackgroundJobStatusIDOperation string
+
+const (
+	GetBackgroundJobStatusBackgroundJobStatusIDOperationCreate   GetBackgroundJobStatusBackgroundJobStatusIDOperation = "create"
+	GetBackgroundJobStatusBackgroundJobStatusIDOperationUpdate   GetBackgroundJobStatusBackgroundJobStatusIDOperation = "update"
+	GetBackgroundJobStatusBackgroundJobStatusIDOperationDelete   GetBackgroundJobStatusBackgroundJobStatusIDOperation = "delete"
+	GetBackgroundJobStatusBackgroundJobStatusIDOperationMove     GetBackgroundJobStatusBackgroundJobStatusIDOperation = "move"
+	GetBackgroundJobStatusBackgroundJobStatusIDOperationPurchase GetBackgroundJobStatusBackgroundJobStatusIDOperation = "purchase"
+)
+
+func (e GetBackgroundJobStatusBackgroundJobStatusIDOperation) ToPointer() *GetBackgroundJobStatusBackgroundJobStatusIDOperation {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetBackgroundJobStatusBackgroundJobStatusIDOperation) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "create", "update", "delete", "move", "purchase":
+			return true
+		}
+	}
+	return false
+}
+
+// ObjectStatus - The outcome of the action.
+type ObjectStatus string
+
+const (
+	ObjectStatusSucceeded ObjectStatus = "succeeded"
+	ObjectStatusFailed    ObjectStatus = "failed"
+)
+
+func (e ObjectStatus) ToPointer() *ObjectStatus {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *ObjectStatus) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "succeeded", "failed":
+			return true
+		}
+	}
+	return false
+}
+
+type GetBackgroundJobStatusBackgroundJobStatusIDResult struct {
+	// The zero-based index of the action within the submitted batch.
+	Position int64 `json:"position"`
+	// The operation that was performed. `purchase` appears only for
+	// operations submitted through the Create Bulk Purchase endpoint.
+	//
+	Operation *GetBackgroundJobStatusBackgroundJobStatusIDOperation `json:"operation,omitzero"`
+	// The type of resource the action operated on.
+	ResourceType *string `json:"resource_type,omitzero"`
+	// The hashed ID of the affected record. For successful creates this
+	// is the newly created record's ID. Absent when a create fails
+	// before a record exists.
+	//
+	ID *string `json:"id,omitzero"`
+	// The outcome of the action.
+	Status ObjectStatus `json:"status"`
+	// The failure reason. Only present for failed actions.
+	Error *string `json:"error,omitzero"`
+}
+
+func (g GetBackgroundJobStatusBackgroundJobStatusIDResult) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(g, "", false)
+}
+
+func (g *GetBackgroundJobStatusBackgroundJobStatusIDResult) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &g, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (g *GetBackgroundJobStatusBackgroundJobStatusIDResult) GetPosition() int64 {
+	if g == nil {
+		return 0
+	}
+	return g.Position
+}
+
+func (g *GetBackgroundJobStatusBackgroundJobStatusIDResult) GetOperation() *GetBackgroundJobStatusBackgroundJobStatusIDOperation {
+	if g == nil {
+		return nil
+	}
+	return g.Operation
+}
+
+func (g *GetBackgroundJobStatusBackgroundJobStatusIDResult) GetResourceType() *string {
+	if g == nil {
+		return nil
+	}
+	return g.ResourceType
+}
+
+func (g *GetBackgroundJobStatusBackgroundJobStatusIDResult) GetID() *string {
+	if g == nil {
+		return nil
+	}
+	return g.ID
+}
+
+func (g *GetBackgroundJobStatusBackgroundJobStatusIDResult) GetStatus() ObjectStatus {
+	if g == nil {
+		return ObjectStatus("")
+	}
+	return g.Status
+}
+
+func (g *GetBackgroundJobStatusBackgroundJobStatusIDResult) GetError() *string {
+	if g == nil {
+		return nil
+	}
+	return g.Error
+}
+
+// ObjectBulkOperation - Wire view of a bulk operation as it appears inside a background job status
+// poll response. Discriminated by `type`.
+type ObjectBulkOperation struct {
+	// Discriminator identifying the wrapped resource type.
+	Type GetBackgroundJobStatusBackgroundJobStatusIDType `json:"type"`
+	// Aggregate counts for the bulk operation. While the operation is
+	// running, `succeeded` and `failed` reflect progress so far.
+	//
+	Summary Summary `json:"summary"`
+	// Per-action results, in submission order. Empty until actions begin
+	// completing.
+	//
+	Results []GetBackgroundJobStatusBackgroundJobStatusIDResult `json:"results"`
+}
+
+func (o ObjectBulkOperation) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(o, "", false)
+}
+
+func (o *ObjectBulkOperation) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &o, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (o *ObjectBulkOperation) GetType() GetBackgroundJobStatusBackgroundJobStatusIDType {
+	if o == nil {
+		return GetBackgroundJobStatusBackgroundJobStatusIDType("")
+	}
+	return o.Type
+}
+
+func (o *ObjectBulkOperation) GetSummary() Summary {
+	if o == nil {
+		return Summary{}
+	}
+	return o.Summary
+}
+
+func (o *ObjectBulkOperation) GetResults() []GetBackgroundJobStatusBackgroundJobStatusIDResult {
+	if o == nil {
+		return []GetBackgroundJobStatusBackgroundJobStatusIDResult{}
+	}
+	return o.Results
+}
+
+type ObjectType string
+
+const (
+	ObjectTypeObjectBulkOperation ObjectType = "object_BulkOperation"
+	ObjectTypeUnknown             ObjectType = "Unknown"
+)
+
+// Object - The wrapped resource, present only when the job type carries typed
+// poll content. Use `type` to discriminate which shape this is.
+type Object struct {
+	ObjectBulkOperation *ObjectBulkOperation `queryParam:"inline" union:"member"`
+	UnknownRaw          json.RawMessage      `json:"-" union:"unknown"`
+
+	Type ObjectType
+}
+
+func CreateObjectObjectBulkOperation(objectBulkOperation ObjectBulkOperation) Object {
+	typ := ObjectTypeObjectBulkOperation
+
+	return Object{
+		ObjectBulkOperation: &objectBulkOperation,
+		Type:                typ,
+	}
+}
+
+func CreateObjectUnknown(raw json.RawMessage) Object {
+	return Object{
+		UnknownRaw: raw,
+		Type:       ObjectTypeUnknown,
+	}
+}
+
+func (u Object) GetUnknownRaw() json.RawMessage {
+	return u.UnknownRaw
+}
+
+func (u Object) IsUnknown() bool {
+	return u.Type == ObjectTypeUnknown
+}
+
+func (u *Object) UnmarshalJSON(data []byte) error {
+	*u = Object{}
+
+	var candidates []utils.UnionCandidate
+
+	// Collect all valid candidates
+	var objectBulkOperation ObjectBulkOperation = ObjectBulkOperation{}
+	if err := utils.UnmarshalJSON(data, &objectBulkOperation, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  ObjectTypeObjectBulkOperation,
+			Value: &objectBulkOperation,
+		})
+	}
+
+	if len(candidates) == 0 {
+		u.UnknownRaw = json.RawMessage(data)
+		u.Type = ObjectTypeUnknown
+		return nil
+	}
+
+	// Pick the best candidate using multi-stage filtering
+	best := utils.PickBestUnionCandidate(candidates, data)
+	if best == nil {
+		u.UnknownRaw = json.RawMessage(data)
+		u.Type = ObjectTypeUnknown
+		return nil
+	}
+
+	// Set the union type and value based on the best candidate
+	u.Type = best.Type.(ObjectType)
+	switch best.Type {
+	case ObjectTypeObjectBulkOperation:
+		u.ObjectBulkOperation = best.Value.(*ObjectBulkOperation)
+		return nil
+	}
+
+	u.UnknownRaw = json.RawMessage(data)
+	u.Type = ObjectTypeUnknown
+	return nil
+}
+
+func (u Object) MarshalJSON() ([]byte, error) {
+	if u.ObjectBulkOperation != nil {
+		return utils.MarshalJSON(u.ObjectBulkOperation, "", true)
+	}
+
+	if u.UnknownRaw != nil {
+		return json.RawMessage(u.UnknownRaw), nil
+	}
+	return nil, errors.New("could not marshal union type Object: all fields are null")
+}
+
 // GetBackgroundJobStatusBackgroundJobStatusIDBackgroundJobStatus - A background job keeps track of the progress of an asynchronous task, e.g
 // bulk archiving media, translating media, etc.
 type GetBackgroundJobStatusBackgroundJobStatusIDBackgroundJobStatus struct {
@@ -79,6 +411,10 @@ type GetBackgroundJobStatusBackgroundJobStatusIDBackgroundJobStatus struct {
 	HashedID string `json:"hashed_id"`
 	// The status of the background job that's been queued for the request.
 	Status GetBackgroundJobStatusBackgroundJobStatusIDStatus `json:"status"`
+	// The wrapped resource, present only when the job type carries typed
+	// poll content. Use `type` to discriminate which shape this is.
+	//
+	Object *Object `json:"object,omitzero"`
 }
 
 func (g *GetBackgroundJobStatusBackgroundJobStatusIDBackgroundJobStatus) GetID() int64 {
@@ -102,11 +438,15 @@ func (g *GetBackgroundJobStatusBackgroundJobStatusIDBackgroundJobStatus) GetStat
 	return g.Status
 }
 
+func (g *GetBackgroundJobStatusBackgroundJobStatusIDBackgroundJobStatus) GetObject() *Object {
+	if g == nil {
+		return nil
+	}
+	return g.Object
+}
+
 // GetBackgroundJobStatusBackgroundJobStatusIDResponseBody - OK
 type GetBackgroundJobStatusBackgroundJobStatusIDResponseBody struct {
-	// A background job keeps track of the progress of an asynchronous task, e.g
-	// bulk archiving media, translating media, etc.
-	//
 	BackgroundJobStatus GetBackgroundJobStatusBackgroundJobStatusIDBackgroundJobStatus `json:"background_job_status"`
 }
 

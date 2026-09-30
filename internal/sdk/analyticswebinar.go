@@ -35,12 +35,15 @@ func newAnalyticsWebinar(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hoo
 // Bottler-powered analytics including registrations, attendance, engagement,
 // chat activity, and poll results.
 //
-// <!--- HIDE-MCP -->
 // ## Requires api token with one of the following permissions
 // ```
 // Read detailed stats
 // ```
-// <!--- /HIDE-MCP -->
+//
+// Tokens with the "Act with a team member's permissions" permission
+// (`all:delegate_to_contact_permissions` scope) can also be used. Requests
+// made with such a token are authorized using the permissions of the
+// contact assigned to the token.
 func (s *AnalyticsWebinar) Get(ctx context.Context, request operations.GetAnalyticsWebinarsWebinarIDRequest, opts ...operations.Option) (*operations.GetAnalyticsWebinarsWebinarIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -80,10 +83,17 @@ func (s *AnalyticsWebinar) Get(ctx context.Context, request operations.GetAnalyt
 		timeout = s.sdkConfiguration.Timeout
 	}
 
+	var streamCancel context.CancelFunc
+
 	if timeout != nil {
 		var cancel context.CancelFunc
 		ctx, cancel = context.WithTimeout(ctx, *timeout)
-		defer cancel()
+		streamCancel = cancel
+		defer func() {
+			if streamCancel != nil {
+				streamCancel()
+			}
+		}()
 	}
 
 	req, err := http.NewRequestWithContext(ctx, "GET", opURL, nil)
@@ -145,7 +155,10 @@ func (s *AnalyticsWebinar) Get(ctx context.Context, request operations.GetAnalyt
 	case httpRes.StatusCode == 200:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			if o.SkipDeserialization == nil || !*o.SkipDeserialization {
+			if o.SkipDeserialization != nil && *o.SkipDeserialization {
+				httpRes.Body = utils.BodyWithCancel(httpRes.Body, streamCancel)
+				streamCancel = nil
+			} else {
 				rawBody, err := utils.ConsumeRawBody(httpRes)
 				if err != nil {
 					return nil, err
@@ -175,7 +188,7 @@ func (s *AnalyticsWebinar) Get(ctx context.Context, request operations.GetAnalyt
 
 			var out sdkerrors.GetAnalyticsWebinarsWebinarIDUnauthorizedError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -200,7 +213,7 @@ func (s *AnalyticsWebinar) Get(ctx context.Context, request operations.GetAnalyt
 
 			var out sdkerrors.GetAnalyticsWebinarsWebinarIDForbiddenError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -225,7 +238,7 @@ func (s *AnalyticsWebinar) Get(ctx context.Context, request operations.GetAnalyt
 
 			var out sdkerrors.GetAnalyticsWebinarsWebinarIDConflictError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -250,7 +263,7 @@ func (s *AnalyticsWebinar) Get(ctx context.Context, request operations.GetAnalyt
 
 			var out sdkerrors.GetAnalyticsWebinarsWebinarIDUnprocessableEntityError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -275,7 +288,7 @@ func (s *AnalyticsWebinar) Get(ctx context.Context, request operations.GetAnalyt
 
 			var out sdkerrors.GetAnalyticsWebinarsWebinarIDInternalServerError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -300,7 +313,7 @@ func (s *AnalyticsWebinar) Get(ctx context.Context, request operations.GetAnalyt
 
 			var out sdkerrors.GetAnalyticsWebinarsWebinarIDServiceUnavailableError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -346,12 +359,15 @@ func (s *AnalyticsWebinar) Get(ctx context.Context, request operations.GetAnalyt
 // granularity. Returns an array of timestamped registration metric buckets
 // including impressions, registrations, and completion rates.
 //
-// <!--- HIDE-MCP -->
 // ## Requires api token with one of the following permissions
 // ```
 // Read detailed stats
 // ```
-// <!--- /HIDE-MCP -->
+//
+// Tokens with the "Act with a team member's permissions" permission
+// (`all:delegate_to_contact_permissions` scope) can also be used. Requests
+// made with such a token are authorized using the permissions of the
+// contact assigned to the token.
 func (s *AnalyticsWebinar) GetRegistration(ctx context.Context, request operations.GetAnalyticsWebinarsWebinarIDRegistrationRequest, opts ...operations.Option) (*operations.GetAnalyticsWebinarsWebinarIDRegistrationResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -391,10 +407,17 @@ func (s *AnalyticsWebinar) GetRegistration(ctx context.Context, request operatio
 		timeout = s.sdkConfiguration.Timeout
 	}
 
+	var streamCancel context.CancelFunc
+
 	if timeout != nil {
 		var cancel context.CancelFunc
 		ctx, cancel = context.WithTimeout(ctx, *timeout)
-		defer cancel()
+		streamCancel = cancel
+		defer func() {
+			if streamCancel != nil {
+				streamCancel()
+			}
+		}()
 	}
 
 	req, err := http.NewRequestWithContext(ctx, "GET", opURL, nil)
@@ -456,7 +479,10 @@ func (s *AnalyticsWebinar) GetRegistration(ctx context.Context, request operatio
 	case httpRes.StatusCode == 200:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			if o.SkipDeserialization == nil || !*o.SkipDeserialization {
+			if o.SkipDeserialization != nil && *o.SkipDeserialization {
+				httpRes.Body = utils.BodyWithCancel(httpRes.Body, streamCancel)
+				streamCancel = nil
+			} else {
 				rawBody, err := utils.ConsumeRawBody(httpRes)
 				if err != nil {
 					return nil, err
@@ -486,7 +512,7 @@ func (s *AnalyticsWebinar) GetRegistration(ctx context.Context, request operatio
 
 			var out sdkerrors.GetAnalyticsWebinarsWebinarIDRegistrationBadRequestError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -511,7 +537,7 @@ func (s *AnalyticsWebinar) GetRegistration(ctx context.Context, request operatio
 
 			var out sdkerrors.GetAnalyticsWebinarsWebinarIDRegistrationUnauthorizedError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -536,7 +562,7 @@ func (s *AnalyticsWebinar) GetRegistration(ctx context.Context, request operatio
 
 			var out sdkerrors.GetAnalyticsWebinarsWebinarIDRegistrationForbiddenError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -561,7 +587,7 @@ func (s *AnalyticsWebinar) GetRegistration(ctx context.Context, request operatio
 
 			var out sdkerrors.GetAnalyticsWebinarsWebinarIDRegistrationInternalServerError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -586,7 +612,7 @@ func (s *AnalyticsWebinar) GetRegistration(ctx context.Context, request operatio
 
 			var out sdkerrors.GetAnalyticsWebinarsWebinarIDRegistrationServiceUnavailableError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -631,12 +657,15 @@ func (s *AnalyticsWebinar) GetRegistration(ctx context.Context, request operatio
 // Retrieve traffic breakdown analytics for a webinar, grouped by a specified dimension
 // such as UTM campaign, UTM source, UTM medium, or referrer domain.
 //
-// <!--- HIDE-MCP -->
 // ## Requires api token with one of the following permissions
 // ```
 // Read detailed stats
 // ```
-// <!--- /HIDE-MCP -->
+//
+// Tokens with the "Act with a team member's permissions" permission
+// (`all:delegate_to_contact_permissions` scope) can also be used. Requests
+// made with such a token are authorized using the permissions of the
+// contact assigned to the token.
 func (s *AnalyticsWebinar) GetTraffic(ctx context.Context, request operations.GetAnalyticsWebinarsWebinarIDTrafficRequest, opts ...operations.Option) (*operations.GetAnalyticsWebinarsWebinarIDTrafficResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -676,10 +705,17 @@ func (s *AnalyticsWebinar) GetTraffic(ctx context.Context, request operations.Ge
 		timeout = s.sdkConfiguration.Timeout
 	}
 
+	var streamCancel context.CancelFunc
+
 	if timeout != nil {
 		var cancel context.CancelFunc
 		ctx, cancel = context.WithTimeout(ctx, *timeout)
-		defer cancel()
+		streamCancel = cancel
+		defer func() {
+			if streamCancel != nil {
+				streamCancel()
+			}
+		}()
 	}
 
 	req, err := http.NewRequestWithContext(ctx, "GET", opURL, nil)
@@ -741,7 +777,10 @@ func (s *AnalyticsWebinar) GetTraffic(ctx context.Context, request operations.Ge
 	case httpRes.StatusCode == 200:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			if o.SkipDeserialization == nil || !*o.SkipDeserialization {
+			if o.SkipDeserialization != nil && *o.SkipDeserialization {
+				httpRes.Body = utils.BodyWithCancel(httpRes.Body, streamCancel)
+				streamCancel = nil
+			} else {
 				rawBody, err := utils.ConsumeRawBody(httpRes)
 				if err != nil {
 					return nil, err
@@ -771,7 +810,7 @@ func (s *AnalyticsWebinar) GetTraffic(ctx context.Context, request operations.Ge
 
 			var out sdkerrors.GetAnalyticsWebinarsWebinarIDTrafficBadRequestError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -796,7 +835,7 @@ func (s *AnalyticsWebinar) GetTraffic(ctx context.Context, request operations.Ge
 
 			var out sdkerrors.GetAnalyticsWebinarsWebinarIDTrafficUnauthorizedError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -821,7 +860,7 @@ func (s *AnalyticsWebinar) GetTraffic(ctx context.Context, request operations.Ge
 
 			var out sdkerrors.GetAnalyticsWebinarsWebinarIDTrafficForbiddenError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -846,7 +885,7 @@ func (s *AnalyticsWebinar) GetTraffic(ctx context.Context, request operations.Ge
 
 			var out sdkerrors.GetAnalyticsWebinarsWebinarIDTrafficInternalServerError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -871,7 +910,7 @@ func (s *AnalyticsWebinar) GetTraffic(ctx context.Context, request operations.Ge
 
 			var out sdkerrors.GetAnalyticsWebinarsWebinarIDTrafficServiceUnavailableError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -917,12 +956,15 @@ func (s *AnalyticsWebinar) GetTraffic(ctx context.Context, request operations.Ge
 // registrants with their attendance status, engagement metrics,
 // attribution data, and per-attendee histograms.
 //
-// <!--- HIDE-MCP -->
 // ## Requires api token with one of the following permissions
 // ```
 // Read detailed stats
 // ```
-// <!--- /HIDE-MCP -->
+//
+// Tokens with the "Act with a team member's permissions" permission
+// (`all:delegate_to_contact_permissions` scope) can also be used. Requests
+// made with such a token are authorized using the permissions of the
+// contact assigned to the token.
 func (s *AnalyticsWebinar) GetAudience(ctx context.Context, request operations.GetAnalyticsWebinarsWebinarIDAudienceRequest, opts ...operations.Option) (*operations.GetAnalyticsWebinarsWebinarIDAudienceResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -962,10 +1004,17 @@ func (s *AnalyticsWebinar) GetAudience(ctx context.Context, request operations.G
 		timeout = s.sdkConfiguration.Timeout
 	}
 
+	var streamCancel context.CancelFunc
+
 	if timeout != nil {
 		var cancel context.CancelFunc
 		ctx, cancel = context.WithTimeout(ctx, *timeout)
-		defer cancel()
+		streamCancel = cancel
+		defer func() {
+			if streamCancel != nil {
+				streamCancel()
+			}
+		}()
 	}
 
 	req, err := http.NewRequestWithContext(ctx, "GET", opURL, nil)
@@ -1027,7 +1076,10 @@ func (s *AnalyticsWebinar) GetAudience(ctx context.Context, request operations.G
 	case httpRes.StatusCode == 200:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			if o.SkipDeserialization == nil || !*o.SkipDeserialization {
+			if o.SkipDeserialization != nil && *o.SkipDeserialization {
+				httpRes.Body = utils.BodyWithCancel(httpRes.Body, streamCancel)
+				streamCancel = nil
+			} else {
 				rawBody, err := utils.ConsumeRawBody(httpRes)
 				if err != nil {
 					return nil, err
@@ -1057,7 +1109,7 @@ func (s *AnalyticsWebinar) GetAudience(ctx context.Context, request operations.G
 
 			var out sdkerrors.GetAnalyticsWebinarsWebinarIDAudienceUnauthorizedError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -1082,7 +1134,7 @@ func (s *AnalyticsWebinar) GetAudience(ctx context.Context, request operations.G
 
 			var out sdkerrors.GetAnalyticsWebinarsWebinarIDAudienceForbiddenError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -1107,7 +1159,7 @@ func (s *AnalyticsWebinar) GetAudience(ctx context.Context, request operations.G
 
 			var out sdkerrors.GetAnalyticsWebinarsWebinarIDAudienceInternalServerError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -1132,7 +1184,7 @@ func (s *AnalyticsWebinar) GetAudience(ctx context.Context, request operations.G
 
 			var out sdkerrors.GetAnalyticsWebinarsWebinarIDAudienceServiceUnavailableError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -1178,12 +1230,15 @@ func (s *AnalyticsWebinar) GetAudience(ctx context.Context, request operations.G
 // per-time-bucket counts for attendees, chat activity, and visual focus,
 // useful for rendering engagement visualizations.
 //
-// <!--- HIDE-MCP -->
 // ## Requires api token with one of the following permissions
 // ```
 // Read detailed stats
 // ```
-// <!--- /HIDE-MCP -->
+//
+// Tokens with the "Act with a team member's permissions" permission
+// (`all:delegate_to_contact_permissions` scope) can also be used. Requests
+// made with such a token are authorized using the permissions of the
+// contact assigned to the token.
 func (s *AnalyticsWebinar) GetHistograms(ctx context.Context, request operations.GetAnalyticsWebinarsWebinarIDHistogramsRequest, opts ...operations.Option) (*operations.GetAnalyticsWebinarsWebinarIDHistogramsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1223,10 +1278,17 @@ func (s *AnalyticsWebinar) GetHistograms(ctx context.Context, request operations
 		timeout = s.sdkConfiguration.Timeout
 	}
 
+	var streamCancel context.CancelFunc
+
 	if timeout != nil {
 		var cancel context.CancelFunc
 		ctx, cancel = context.WithTimeout(ctx, *timeout)
-		defer cancel()
+		streamCancel = cancel
+		defer func() {
+			if streamCancel != nil {
+				streamCancel()
+			}
+		}()
 	}
 
 	req, err := http.NewRequestWithContext(ctx, "GET", opURL, nil)
@@ -1284,7 +1346,10 @@ func (s *AnalyticsWebinar) GetHistograms(ctx context.Context, request operations
 	case httpRes.StatusCode == 200:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			if o.SkipDeserialization == nil || !*o.SkipDeserialization {
+			if o.SkipDeserialization != nil && *o.SkipDeserialization {
+				httpRes.Body = utils.BodyWithCancel(httpRes.Body, streamCancel)
+				streamCancel = nil
+			} else {
 				rawBody, err := utils.ConsumeRawBody(httpRes)
 				if err != nil {
 					return nil, err
@@ -1314,7 +1379,7 @@ func (s *AnalyticsWebinar) GetHistograms(ctx context.Context, request operations
 
 			var out sdkerrors.GetAnalyticsWebinarsWebinarIDHistogramsUnauthorizedError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -1339,7 +1404,7 @@ func (s *AnalyticsWebinar) GetHistograms(ctx context.Context, request operations
 
 			var out sdkerrors.GetAnalyticsWebinarsWebinarIDHistogramsForbiddenError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -1364,7 +1429,7 @@ func (s *AnalyticsWebinar) GetHistograms(ctx context.Context, request operations
 
 			var out sdkerrors.GetAnalyticsWebinarsWebinarIDHistogramsConflictError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -1389,7 +1454,7 @@ func (s *AnalyticsWebinar) GetHistograms(ctx context.Context, request operations
 
 			var out sdkerrors.GetAnalyticsWebinarsWebinarIDHistogramsInternalServerError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -1414,7 +1479,7 @@ func (s *AnalyticsWebinar) GetHistograms(ctx context.Context, request operations
 
 			var out sdkerrors.GetAnalyticsWebinarsWebinarIDHistogramsServiceUnavailableError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{

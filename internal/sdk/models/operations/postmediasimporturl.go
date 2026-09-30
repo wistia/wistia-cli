@@ -113,34 +113,21 @@ func (p *PostMediasImportURLBackgroundJobStatus) GetStatus() PostMediasImportURL
 
 // PostMediasImportURLResponseBody - Successfully queued background job for URL import.
 type PostMediasImportURLResponseBody struct {
-	Message *string `json:"message,omitzero"`
-	// A background job keeps track of the progress of an asynchronous task, e.g
-	// bulk archiving media, translating media, etc.
-	//
-	BackgroundJobStatus *PostMediasImportURLBackgroundJobStatus `json:"background_job_status,omitzero"`
+	// A confirmation message that the background job has been queued.
+	Message             string                                 `json:"message"`
+	BackgroundJobStatus PostMediasImportURLBackgroundJobStatus `json:"background_job_status"`
 }
 
-func (p PostMediasImportURLResponseBody) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(p, "", false)
-}
-
-func (p *PostMediasImportURLResponseBody) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &p, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (p *PostMediasImportURLResponseBody) GetMessage() *string {
+func (p *PostMediasImportURLResponseBody) GetMessage() string {
 	if p == nil {
-		return nil
+		return ""
 	}
 	return p.Message
 }
 
-func (p *PostMediasImportURLResponseBody) GetBackgroundJobStatus() *PostMediasImportURLBackgroundJobStatus {
+func (p *PostMediasImportURLResponseBody) GetBackgroundJobStatus() PostMediasImportURLBackgroundJobStatus {
 	if p == nil {
-		return nil
+		return PostMediasImportURLBackgroundJobStatus{}
 	}
 	return p.BackgroundJobStatus
 }

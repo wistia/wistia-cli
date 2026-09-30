@@ -220,11 +220,11 @@ type GetAnalyticsMediasMediaIDTrafficResponseBody struct {
 	// The viewer screen size (present when group_by is viewer_screen_size).
 	ViewerScreenSize optionalnullable.OptionalNullable[string] `json:"viewer_screen_size,omitzero"`
 	// The number of video loads for this group.
-	Loads *int64 `json:"loads,omitzero"`
+	Loads optionalnullable.OptionalNullable[int64] `json:"loads,omitzero"`
 	// The number of video plays for this group.
-	Plays *int64 `json:"plays,omitzero"`
+	Plays optionalnullable.OptionalNullable[int64] `json:"plays,omitzero"`
 	// The average engagement rate for this group (between 0 and 1).
-	EngagementRate *float32 `json:"engagement_rate,omitzero"`
+	EngagementRate optionalnullable.OptionalNullable[float32] `json:"engagement_rate,omitzero"`
 }
 
 func (g *GetAnalyticsMediasMediaIDTrafficResponseBody) GetUtmCampaign() optionalnullable.OptionalNullable[string] {
@@ -262,21 +262,21 @@ func (g *GetAnalyticsMediasMediaIDTrafficResponseBody) GetViewerScreenSize() opt
 	return g.ViewerScreenSize
 }
 
-func (g *GetAnalyticsMediasMediaIDTrafficResponseBody) GetLoads() *int64 {
+func (g *GetAnalyticsMediasMediaIDTrafficResponseBody) GetLoads() optionalnullable.OptionalNullable[int64] {
 	if g == nil {
 		return nil
 	}
 	return g.Loads
 }
 
-func (g *GetAnalyticsMediasMediaIDTrafficResponseBody) GetPlays() *int64 {
+func (g *GetAnalyticsMediasMediaIDTrafficResponseBody) GetPlays() optionalnullable.OptionalNullable[int64] {
 	if g == nil {
 		return nil
 	}
 	return g.Plays
 }
 
-func (g *GetAnalyticsMediasMediaIDTrafficResponseBody) GetEngagementRate() *float32 {
+func (g *GetAnalyticsMediasMediaIDTrafficResponseBody) GetEngagementRate() optionalnullable.OptionalNullable[float32] {
 	if g == nil {
 		return nil
 	}

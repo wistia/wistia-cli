@@ -4,6 +4,8 @@
 package operations
 
 import (
+	"encoding/json"
+	"fmt"
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
 	"github.com/wistia/wistia-cli/internal/sdk/sdkinternal/utils"
 )
@@ -36,6 +38,53 @@ func (p *PostRemixesRequest) GetFolderID() *string {
 		return nil
 	}
 	return p.FolderID
+}
+
+// PostRemixesBillingMode - Present when the request is blocked by insufficient Credits.
+type PostRemixesBillingMode string
+
+const (
+	PostRemixesBillingModeCredits PostRemixesBillingMode = "credits"
+)
+
+func (e PostRemixesBillingMode) ToPointer() *PostRemixesBillingMode {
+	return &e
+}
+func (e *PostRemixesBillingMode) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "credits":
+		*e = PostRemixesBillingMode(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for PostRemixesBillingMode: %v", v)
+	}
+}
+
+// PostRemixesPlanType - Account plan type, present for insufficient-Credits errors.
+type PostRemixesPlanType string
+
+const (
+	PostRemixesPlanTypeFree PostRemixesPlanType = "free"
+	PostRemixesPlanTypePaid PostRemixesPlanType = "paid"
+)
+
+func (e PostRemixesPlanType) ToPointer() *PostRemixesPlanType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *PostRemixesPlanType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "free", "paid":
+			return true
+		}
+	}
+	return false
 }
 
 // PostRemixesCode - A machine-readable identifier for the specific authorization failure.

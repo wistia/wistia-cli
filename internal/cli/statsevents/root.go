@@ -10,9 +10,11 @@ import (
 
 func InitStatsEventsRoot(parent *cobra.Command) error {
 	var StatsEventsCmd = &cobra.Command{
-		Use:   "stats-events",
-		Short: "Operations for stats-events",
-		Long:  "Operations for stats-events",
+		Use:         "stats-events",
+		Short:       "Operations for stats-events",
+		Long:        "Operations for stats-events",
+		Args:        cobra.NoArgs,
+		Annotations: map[string]string{"speakeasy_cli_group": "true"},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if usage.UsageRequested(cmd) {
 				return usage.EmitSchema(cmd, cmd.OutOrStdout())

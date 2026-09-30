@@ -126,7 +126,7 @@ func (g *GetStatsVisitorsOrg) GetTitle() optionalnullable.OptionalNullable[strin
 }
 
 type GetStatsVisitorsVisitorIdentity struct {
-	Name  *string                                   `json:"name,omitzero"`
+	Name  optionalnullable.OptionalNullable[string] `json:"name,omitzero"`
 	Email optionalnullable.OptionalNullable[string] `json:"email,omitzero"`
 	Org   *GetStatsVisitorsOrg                      `json:"org,omitzero"`
 }
@@ -142,7 +142,7 @@ func (g *GetStatsVisitorsVisitorIdentity) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (g *GetStatsVisitorsVisitorIdentity) GetName() *string {
+func (g *GetStatsVisitorsVisitorIdentity) GetName() optionalnullable.OptionalNullable[string] {
 	if g == nil {
 		return nil
 	}
@@ -206,7 +206,9 @@ type GetStatsVisitorsResponseBody struct {
 	// The last time the visitor played a video.
 	LastActiveAt *time.Time `json:"last_active_at,omitzero"`
 	// The event key for the last video play action.
-	LastEventKey *string `json:"last_event_key,omitzero"`
+	LastEventKey optionalnullable.OptionalNullable[string] `json:"last_event_key,omitzero"`
+	// The event key for the conversion event that identified the visitor. Null when the visitor has not been identified.
+	IdentifyingEventKey optionalnullable.OptionalNullable[string] `json:"identifying_event_key,omitzero"`
 	// The total number of videos loaded by the visitor.
 	LoadCount *int64 `json:"load_count,omitzero"`
 	// The total number of videos played by the visitor.
@@ -247,11 +249,18 @@ func (g *GetStatsVisitorsResponseBody) GetLastActiveAt() *time.Time {
 	return g.LastActiveAt
 }
 
-func (g *GetStatsVisitorsResponseBody) GetLastEventKey() *string {
+func (g *GetStatsVisitorsResponseBody) GetLastEventKey() optionalnullable.OptionalNullable[string] {
 	if g == nil {
 		return nil
 	}
 	return g.LastEventKey
+}
+
+func (g *GetStatsVisitorsResponseBody) GetIdentifyingEventKey() optionalnullable.OptionalNullable[string] {
+	if g == nil {
+		return nil
+	}
+	return g.IdentifyingEventKey
 }
 
 func (g *GetStatsVisitorsResponseBody) GetLoadCount() *int64 {
