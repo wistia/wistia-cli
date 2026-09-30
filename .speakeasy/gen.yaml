@@ -37,7 +37,7 @@ cli:
   cliName: wistia
   distribution:
     homebrew:
-      enabled: true
+      enabled: false
       tap: wistia/homebrew-tap
     nfpm:
       enabled: false

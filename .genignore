@@ -3,3 +3,9 @@
 /test/
 # Hand-written npm distribution packaging.
 /npm/
+# Release pipeline. Speakeasy generated these while distribution.homebrew was
+# enabled; with it disabled, generation deletes them unless they are ignored.
+/.goreleaser.yaml
+/.github/workflows/release.yaml
+/scripts/install.sh
+/scripts/install.ps1
