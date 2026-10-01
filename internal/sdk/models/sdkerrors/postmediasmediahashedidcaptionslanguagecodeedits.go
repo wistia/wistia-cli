@@ -42,9 +42,9 @@ func (e *PostMediasMediaHashedIDCaptionsLanguageCodeEditsUnprocessableEntityErro
 // active version. For `diverged`, newer inactive versions exist, so
 // re-reading will not help; wait and retry, then escalate if it persists.
 type PostMediasMediaHashedIDCaptionsLanguageCodeEditsConflictError struct {
-	Reason   operations.PostMediasMediaHashedIDCaptionsLanguageCodeEditsConflictReason `json:"reason"`
-	Errors   []string                                                                  `json:"errors"`
-	HTTPMeta components.HTTPMetadata                                                   `json:"-"`
+	Reason   operations.ConflictReason `json:"reason"`
+	Errors   []string                  `json:"errors"`
+	HTTPMeta components.HTTPMetadata   `json:"-"`
 }
 
 var _ error = &PostMediasMediaHashedIDCaptionsLanguageCodeEditsConflictError{}

@@ -3,7 +3,7 @@
 
 package sdk
 
-// Generated from OpenAPI doc version edge-version and generator version 2.943.0
+// Generated from OpenAPI doc version 2026.09.0 and generator version 2.943.0
 
 import (
 	"context"
@@ -52,20 +52,17 @@ func Pointer[T any](v T) *T { return &v }
 type Wistia struct {
 	SDKVersion                     string
 	UploadOrImportMedia            *UploadOrImportMedia
-	PushDevices                    *PushDevices
 	ReviewBundles                  *ReviewBundles
-	CustomMetadataFieldDefinitions *CustomMetadataFieldDefinitions
 	DeletedMedia                   *DeletedMedia
 	Media                          *Media
 	Customizations                 *Customizations
 	ShareLinks                     *ShareLinks
 	Captions                       *Captions
-	Speakers                       *Speakers
 	Localizations                  *Localizations
-	CustomMetadataFieldValues      *CustomMetadataFieldValues
 	Trims                          *Trims
 	MediaExtendedAudioDescriptions *MediaExtendedAudioDescriptions
 	Brands                         *Brands
+	Speakers                       *Speakers
 	Tags                           *Tags
 	BulkActions                    *BulkActions
 	Bulk                           *Bulk
@@ -88,7 +85,6 @@ type Wistia struct {
 	ExpiringAccessTokens           *ExpiringAccessTokens
 	BackgroundJobStatus            *BackgroundJobStatus
 	AllowedDomains                 *AllowedDomains
-	Remix                          *Remix
 	StatsAccount                   *StatsAccount
 	StatsProjects                  *StatsProjects
 	StatsMedia                     *StatsMedia
@@ -172,12 +168,12 @@ func WithTimeout(timeout time.Duration) SDKOption {
 // New creates a new instance of the SDK with the provided options
 func New(opts ...SDKOption) *Wistia {
 	sdk := &Wistia{
-		SDKVersion: "0.2.0",
+		SDKVersion: "0.3.0",
 		sdkConfiguration: config.SDKConfiguration{
-			UserAgent:         "speakeasy-sdk/go 0.2.0 2.943.0 edge-version github.com/wistia/wistia-cli/internal/sdk",
-			SDKVersion:        "0.2.0",
+			UserAgent:         "speakeasy-sdk/go 0.3.0 2.943.0 2026.09.0 github.com/wistia/wistia-cli/internal/sdk",
+			SDKVersion:        "0.3.0",
 			GenVersion:        "2.943.0",
-			OpenAPIDocVersion: "edge-version",
+			OpenAPIDocVersion: "2026.09.0",
 			ServerList:        ServerList,
 		},
 		hooks: hooks.New(),
@@ -194,20 +190,17 @@ func New(opts ...SDKOption) *Wistia {
 	sdk.sdkConfiguration = sdk.hooks.SDKInit(sdk.sdkConfiguration)
 
 	sdk.UploadOrImportMedia = newUploadOrImportMedia(sdk, sdk.sdkConfiguration, sdk.hooks)
-	sdk.PushDevices = newPushDevices(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.ReviewBundles = newReviewBundles(sdk, sdk.sdkConfiguration, sdk.hooks)
-	sdk.CustomMetadataFieldDefinitions = newCustomMetadataFieldDefinitions(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.DeletedMedia = newDeletedMedia(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Media = newMedia(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Customizations = newCustomizations(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.ShareLinks = newShareLinks(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Captions = newCaptions(sdk, sdk.sdkConfiguration, sdk.hooks)
-	sdk.Speakers = newSpeakers(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Localizations = newLocalizations(sdk, sdk.sdkConfiguration, sdk.hooks)
-	sdk.CustomMetadataFieldValues = newCustomMetadataFieldValues(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Trims = newTrims(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.MediaExtendedAudioDescriptions = newMediaExtendedAudioDescriptions(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Brands = newBrands(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.Speakers = newSpeakers(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Tags = newTags(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.BulkActions = newBulkActions(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Bulk = newBulk(sdk, sdk.sdkConfiguration, sdk.hooks)
@@ -230,7 +223,6 @@ func New(opts ...SDKOption) *Wistia {
 	sdk.ExpiringAccessTokens = newExpiringAccessTokens(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.BackgroundJobStatus = newBackgroundJobStatus(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.AllowedDomains = newAllowedDomains(sdk, sdk.sdkConfiguration, sdk.hooks)
-	sdk.Remix = newRemix(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.StatsAccount = newStatsAccount(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.StatsProjects = newStatsProjects(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.StatsMedia = newStatsMedia(sdk, sdk.sdkConfiguration, sdk.hooks)

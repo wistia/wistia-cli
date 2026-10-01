@@ -25,8 +25,6 @@ import (
 	"github.com/wistia/wistia-cli/internal/cli/contact"
 	"github.com/wistia/wistia-cli/internal/cli/contacts"
 	"github.com/wistia/wistia-cli/internal/cli/customizations"
-	"github.com/wistia/wistia-cli/internal/cli/custommetadatafielddefinitions"
-	"github.com/wistia/wistia-cli/internal/cli/custommetadatafieldvalues"
 	"github.com/wistia/wistia-cli/internal/cli/deletedmedia"
 	"github.com/wistia/wistia-cli/internal/cli/expiringaccesstokens"
 	"github.com/wistia/wistia-cli/internal/cli/folders"
@@ -34,8 +32,6 @@ import (
 	"github.com/wistia/wistia-cli/internal/cli/localizations"
 	"github.com/wistia/wistia-cli/internal/cli/media"
 	"github.com/wistia/wistia-cli/internal/cli/mediaextendedaudiodescriptions"
-	"github.com/wistia/wistia-cli/internal/cli/pushdevices"
-	"github.com/wistia/wistia-cli/internal/cli/remix"
 	"github.com/wistia/wistia-cli/internal/cli/resourceurls"
 	"github.com/wistia/wistia-cli/internal/cli/reviewbundles"
 	"github.com/wistia/wistia-cli/internal/cli/search"
@@ -106,14 +102,8 @@ func NewRootCommand() (*cobra.Command, error) {
 	if err := uploadorimportmedia.InitUploadOrImportMediaRoot(rootCmd); err != nil {
 		return nil, fmt.Errorf("init upload-or-import-media: %w", err)
 	}
-	if err := pushdevices.InitPushDevicesRoot(rootCmd); err != nil {
-		return nil, fmt.Errorf("init push-devices: %w", err)
-	}
 	if err := reviewbundles.InitReviewBundlesRoot(rootCmd); err != nil {
 		return nil, fmt.Errorf("init review-bundles: %w", err)
-	}
-	if err := custommetadatafielddefinitions.InitCustomMetadataFieldDefinitionsRoot(rootCmd); err != nil {
-		return nil, fmt.Errorf("init custom-metadata-field-definitions: %w", err)
 	}
 	if err := deletedmedia.InitDeletedMediaRoot(rootCmd); err != nil {
 		return nil, fmt.Errorf("init deleted-media: %w", err)
@@ -130,14 +120,8 @@ func NewRootCommand() (*cobra.Command, error) {
 	if err := captions.InitCaptionsRoot(rootCmd); err != nil {
 		return nil, fmt.Errorf("init captions: %w", err)
 	}
-	if err := speakers.InitSpeakersRoot(rootCmd); err != nil {
-		return nil, fmt.Errorf("init speakers: %w", err)
-	}
 	if err := localizations.InitLocalizationsRoot(rootCmd); err != nil {
 		return nil, fmt.Errorf("init localizations: %w", err)
-	}
-	if err := custommetadatafieldvalues.InitCustomMetadataFieldValuesRoot(rootCmd); err != nil {
-		return nil, fmt.Errorf("init custom-metadata-field-values: %w", err)
 	}
 	if err := trims.InitTrimsRoot(rootCmd); err != nil {
 		return nil, fmt.Errorf("init trims: %w", err)
@@ -147,6 +131,9 @@ func NewRootCommand() (*cobra.Command, error) {
 	}
 	if err := brands.InitBrandsRoot(rootCmd); err != nil {
 		return nil, fmt.Errorf("init brands: %w", err)
+	}
+	if err := speakers.InitSpeakersRoot(rootCmd); err != nil {
+		return nil, fmt.Errorf("init speakers: %w", err)
 	}
 	if err := tags.InitTagsRoot(rootCmd); err != nil {
 		return nil, fmt.Errorf("init tags: %w", err)
@@ -213,9 +200,6 @@ func NewRootCommand() (*cobra.Command, error) {
 	}
 	if err := alloweddomains.InitAllowedDomainsRoot(rootCmd); err != nil {
 		return nil, fmt.Errorf("init allowed-domains: %w", err)
-	}
-	if err := remix.InitRemixRoot(rootCmd); err != nil {
-		return nil, fmt.Errorf("init remix: %w", err)
 	}
 	if err := statsaccount.InitStatsAccountRoot(rootCmd); err != nil {
 		return nil, fmt.Errorf("init stats-account: %w", err)

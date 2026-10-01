@@ -52,8 +52,6 @@ wistia [flags]
 * [wistia configure](wistia_configure.md)	 - Configure authentication credentials and preferences
 * [wistia contact](wistia_contact.md)	 - Operations for contact
 * [wistia contacts](wistia_contacts.md)	 - Operations for contacts
-* [wistia custom-metadata-field-definitions](wistia_custom-metadata-field-definitions.md)	 - Operations for custom-metadata-field-definitions
-* [wistia custom-metadata-field-values](wistia_custom-metadata-field-values.md)	 - Operations for custom-metadata-field-values
 * [wistia customizations](wistia_customizations.md)	 - Operations for customizations
 * [wistia deleted-media](wistia_deleted-media.md)	 - Operations for deleted-media
 * [wistia expiring-access-tokens](wistia_expiring-access-tokens.md)	 - Operations for expiring-access-tokens
@@ -63,8 +61,6 @@ wistia [flags]
 * [wistia localizations](wistia_localizations.md)	 - Operations for localizations
 * [wistia media](wistia_media.md)	 - Operations for media
 * [wistia media-extended-audio-descriptions](wistia_media-extended-audio-descriptions.md)	 - Operations for media-extended-audio-descriptions
-* [wistia push-devices](wistia_push-devices.md)	 - Operations for push-devices
-* [wistia remix](wistia_remix.md)	 - Operations for remix
 * [wistia resource-urls](wistia_resource-urls.md)	 - Operations for resource-urls
 * [wistia review-bundles](wistia_review-bundles.md)	 - Operations for review-bundles
 * [wistia search](wistia_search.md)	 - Operations for search

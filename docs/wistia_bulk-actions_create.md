@@ -1,4 +1,4 @@
-## wistia bulk-actions post-bulk
+## wistia bulk-actions create
 
 Create Bulk Actions
 
@@ -61,13 +61,13 @@ made with such a token are authorized using the permissions of the
 contact assigned to the token.
 
 ```
-wistia bulk-actions post-bulk [flags]
+wistia bulk-actions create [flags]
 ```
 
 ### Examples
 
 ```
-  wistia bulk-actions post-bulk
+  wistia bulk-actions create
 ```
 
 ### Options
@@ -82,7 +82,7 @@ wistia bulk-actions post-bulk [flags]
                          Use 'job' instead when every record takes the same payload.
                          (JSON array)
       --body string      Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.
-  -h, --help             help for post-bulk
+  -h, --help             help for create
   -j, --job string       One change applied to many records, named by a parent ('scope') or listed
                          explicitly ('ids'). The server resolves the target and runs one action per
                          record, so a folder of 400 media takes one job rather than 400 actions.
@@ -126,8 +126,8 @@ wistia bulk-actions post-bulk [flags]
 
 ### Machine interface
 
-* `wistia bulk-actions post-bulk --usage` — this command's flags, defaults and env vars as machine-readable KDL
-* `wistia bulk-actions post-bulk --dry-run` — preview the request without OS-keychain access or a network call (human preview on stderr)
+* `wistia bulk-actions create --usage` — this command's flags, defaults and env vars as machine-readable KDL
+* `wistia bulk-actions create --dry-run` — preview the request without OS-keychain access or a network call (human preview on stderr)
 * `--dry-run --output-format json` (or a caller-explicit `--jq`) writes one preview object per request as NDJSON on stdout; jq is not applied to previews
 * `--output-format json` or `--jq <expr>` for machine-readable live output; in agent mode errors are a JSON envelope on stderr
 

@@ -200,19 +200,19 @@ func (e *EditFailure) GetHint() string {
 	return e.Hint
 }
 
-type PostMediasMediaHashedIDCaptionsLanguageCodeEditsConflictReason string
+type ConflictReason string
 
 const (
-	PostMediasMediaHashedIDCaptionsLanguageCodeEditsConflictReasonStaleVersion PostMediasMediaHashedIDCaptionsLanguageCodeEditsConflictReason = "stale_version"
-	PostMediasMediaHashedIDCaptionsLanguageCodeEditsConflictReasonDiverged     PostMediasMediaHashedIDCaptionsLanguageCodeEditsConflictReason = "diverged"
+	ConflictReasonStaleVersion ConflictReason = "stale_version"
+	ConflictReasonDiverged     ConflictReason = "diverged"
 )
 
-func (e PostMediasMediaHashedIDCaptionsLanguageCodeEditsConflictReason) ToPointer() *PostMediasMediaHashedIDCaptionsLanguageCodeEditsConflictReason {
+func (e ConflictReason) ToPointer() *ConflictReason {
 	return &e
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *PostMediasMediaHashedIDCaptionsLanguageCodeEditsConflictReason) IsExact() bool {
+func (e *ConflictReason) IsExact() bool {
 	if e != nil {
 		switch *e {
 		case "stale_version", "diverged":

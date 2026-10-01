@@ -1,18 +1,16 @@
-## wistia custom-metadata-field-values get-medias-media-hashed-id-custom-metadata-field-values-key
+## wistia deleted-media list
 
-Show Custom Metadata Field Value
+List Deleted Media
 
 ### Synopsis
 
-Get the value of a single custom metadata field on a media, addressed by the field definition's key. The lookup is case-insensitive.
-
-Only values for active field definitions are returned. Requires the custom metadata feature to be available on your account.
+Lists media that has been soft-deleted and is still inside the account's
+restore window. Media is listed only while it can still be restored — 30 days
+on most plans, 14 on free plans. After which it is permanently purged.
 
 
 ## Requires api token with one of the following permissions
 ```
-Read, update & delete anything
-Read all data
 Read all folder and media data
 ```
 
@@ -22,21 +20,35 @@ made with such a token are authorized using the permissions of the
 contact assigned to the token.
 
 ```
-wistia custom-metadata-field-values get-medias-media-hashed-id-custom-metadata-field-values-key [flags]
+wistia deleted-media list [flags]
 ```
 
 ### Examples
 
 ```
-  wistia custom-metadata-field-values get-medias-media-hashed-id-custom-metadata-field-values-key --media-hashed-id <id> --key client
+  wistia deleted-media list
 ```
 
 ### Options
 
 ```
-  -h, --help                     help for get-medias-media-hashed-id-custom-metadata-field-values-key
-  -k, --key string               The field definition's immutable key. [required]
-  -m, --media-hashed-id string   The hashed ID of the media whose custom metadata field value is to be retrieved. [required]
+  -c, --cursor string            If 'cursor[enabled]' is set to 1 then cursor pagination is enabled and the
+                                 first set of records are fetched up to the 'per_page'. Cursor
+                                 pagination will also be turned on if 'cursor[before]' or 'cursor[after]'
+                                 are set. Records returned will have a 'cursor' property set which can be used to fetch more records in the same 'sort_by' ordering.
+                                 The cursor value of the last record can be used to fetch records after the current result set and
+                                 the cursor of the first record can be used to fetch records before the result set.
+                                 
+                                 NOTE: a cursor value is only valid if the 'sort_by' value hasn't changed from the
+                                 last fetch. For example, you cannot fetch using 'sort_by' id and then pass that
+                                 cursor value to a 'sort_by' name.
+      --hashed-ids stringArray   Restrict the results to the deleted media with these hashed IDs.
+  -h, --help                     help for list
+      --page int                 The page number to retrieve. This cannot be combined with 'cursor',
+                                 pagination.
+      --per-page int             The number of medias per page. Use this for both offset pagination and cursor pagination.
+      --sort-by string           Field to order by. When omitted, results are ordered most-recently-deleted first. (options: id, deleted, name, type, created)
+      --sort-direction string    Direction to order by. (0 = desc, 1 = asc; default is 1) (options: 0, 1)
 ```
 
 ### Options inherited from parent commands
@@ -62,12 +74,12 @@ wistia custom-metadata-field-values get-medias-media-hashed-id-custom-metadata-f
 
 ### SEE ALSO
 
-* [wistia custom-metadata-field-values](wistia_custom-metadata-field-values.md)	 - Operations for custom-metadata-field-values
+* [wistia deleted-media](wistia_deleted-media.md)	 - Operations for deleted-media
 
 ### Machine interface
 
-* `wistia custom-metadata-field-values get-medias-media-hashed-id-custom-metadata-field-values-key --usage` — this command's flags, defaults and env vars as machine-readable KDL
-* `wistia custom-metadata-field-values get-medias-media-hashed-id-custom-metadata-field-values-key --dry-run` — preview the request without OS-keychain access or a network call (human preview on stderr)
+* `wistia deleted-media list --usage` — this command's flags, defaults and env vars as machine-readable KDL
+* `wistia deleted-media list --dry-run` — preview the request without OS-keychain access or a network call (human preview on stderr)
 * `--dry-run --output-format json` (or a caller-explicit `--jq`) writes one preview object per request as NDJSON on stdout; jq is not applied to previews
 * `--output-format json` or `--jq <expr>` for machine-readable live output; in agent mode errors are a JSON envelope on stderr
 
