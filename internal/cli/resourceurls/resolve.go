@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/wistia/wistia-cli/internal/client"
 	"github.com/wistia/wistia-cli/internal/flagutil"
-	"github.com/wistia/wistia-cli/internal/interactive"
 	"github.com/wistia/wistia-cli/internal/output"
 	"github.com/wistia/wistia-cli/internal/sdk"
 	"github.com/wistia/wistia-cli/internal/sdk/models/operations"
@@ -27,7 +26,11 @@ func initResolveCmd(parent *cobra.Command) error {
 		Short:   "Resolve Resource URLs",
 		Long:    "Resolves a resource's hashed ID and type to its canonical app URL(s) — deep\nlinks an authorized user can open in the Wistia UI. The URL is only returned\nwhen the authenticated user is allowed to view the resource.\n\n## Requires api token with one of the following permissions\n```\nRead all data\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
 		Example: "  wistia resource-urls resolve --type remix --hashed-id 4d23503f70",
+		Args:    cobra.NoArgs,
 		RunE:    runResolveCmd,
+		Annotations: map[string]string{
+			"speakeasy_operation": "get_/resource_urls",
+		},
 	}
 	flagutil.RegisterFlags(cmd, resolveCmdMeta)
 	if err := flagutil.ValidateMeta[operations.GetResourceUrlsRequest](resolveCmdMeta); err != nil {
@@ -42,14 +45,9 @@ func runResolveCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, resolveCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, resolveCmdMeta); err != nil {
-			return err
-		}
-	}
 	req, err := flagutil.BuildRequest[operations.GetResourceUrlsRequest](cmd, resolveCmdMeta, "", "")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/wistia/wistia-cli/internal/client"
 	"github.com/wistia/wistia-cli/internal/flagutil"
-	"github.com/wistia/wistia-cli/internal/interactive"
 	"github.com/wistia/wistia-cli/internal/output"
 	"github.com/wistia/wistia-cli/internal/sdk"
 	"github.com/wistia/wistia-cli/internal/sdk/models/operations"
@@ -27,7 +26,11 @@ func initGetCmd(parent *cobra.Command) error {
 		Short:   "Show Account Analytics",
 		Long:    "Retrieve aggregate analytics for the entire account over a date range. This endpoint\nprovides Bottler-powered analytics across all of the account's media including plays,\nloads, engagement rate, play rate, and conversion metrics.\n\nThe date range between `start_date` and `end_date` must not exceed 2 years.\n\n\n## Requires api token with one of the following permissions\n```\nRead detailed stats\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
 		Example: "  wistia analytics-account get --start-date 2024-04-09 --end-date 2025-11-25",
+		Args:    cobra.NoArgs,
 		RunE:    runGetCmd,
+		Annotations: map[string]string{
+			"speakeasy_operation": "get_/analytics/account",
+		},
 	}
 	flagutil.RegisterFlags(cmd, getCmdMeta)
 	if err := flagutil.ValidateMeta[operations.GetAnalyticsAccountRequest](getCmdMeta); err != nil {
@@ -42,14 +45,9 @@ func runGetCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, getCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, getCmdMeta); err != nil {
-			return err
-		}
-	}
 	req, err := flagutil.BuildRequest[operations.GetAnalyticsAccountRequest](cmd, getCmdMeta, "", "")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

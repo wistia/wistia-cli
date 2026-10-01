@@ -10,9 +10,11 @@ import (
 
 func InitContactsRoot(parent *cobra.Command) error {
 	var ContactsCmd = &cobra.Command{
-		Use:   "contacts",
-		Short: "Operations for contacts",
-		Long:  "Operations for contacts",
+		Use:         "contacts",
+		Short:       "Operations for contacts",
+		Long:        "Operations for contacts",
+		Args:        cobra.NoArgs,
+		Annotations: map[string]string{"speakeasy_cli_group": "true"},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if usage.UsageRequested(cmd) {
 				return usage.EmitSchema(cmd, cmd.OutOrStdout())

@@ -24,17 +24,34 @@ var createCmdMeta = []flagutil.FlagMeta{
 // initCreateCmd initializes the create command.
 func initCreateCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
-		Use:     "create",
+		Use:     "create [channel-hashed-id]",
 		Short:   "Create Channel Collaborator",
 		Long:    "Invites a collaborator to a channel by specifying their email address and role. Creates a new contact if one doesn't exist with that email.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
 		Example: "  wistia channel-collaborators create --channel-hashed-id <id> --email jim@wistia.com --role admin",
+		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runCreateCmd,
+		Annotations: map[string]string{
+			"speakeasy_operation": "post_/channels/{channelHashedId}/collaborators",
+		},
 	}
 	flagutil.RegisterFlags(cmd, createCmdMeta)
 	if err := flagutil.ValidateMeta[operations.PostChannelsChannelHashedIDCollaboratorsRequest](createCmdMeta); err != nil {
 		return fmt.Errorf("invalid metadata for create: %w", err)
 	}
-	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin.")
+	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
+	if err := flagutil.AnnotateBodyFields(cmd, createCmdMeta, "Body", "body"); err != nil {
+		return fmt.Errorf("annotate body fields for create: %w", err)
+	}
+	if err := flagutil.DeclarePositionalFlag(cmd, "channel-hashed-id", "Hashed ID of the channel (or pass it as the [channel-hashed-id] argument)", true); err != nil {
+		return err
+	}
+	if err := interactive.Declare(cmd, interactive.CommandSpec{Args: []interactive.ArgSpec{
+		{Name: "channel-hashed-id", Summary: "Hashed ID of the channel", Required: true, SatisfiedBy: []string{"channel-hashed-id"}},
+	}}); err != nil {
+		return fmt.Errorf("declare interactive arguments for create: %w", err)
+	}
 	parent.AddCommand(cmd)
 	return nil
 }
@@ -44,14 +61,12 @@ func runCreateCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, createCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, createCmdMeta); err != nil {
-			return err
-		}
+	if err := flagutil.ResolvePositionalFlag(cmd, args); err != nil {
+		return err
 	}
 	req, err := flagutil.BuildRequest[operations.PostChannelsChannelHashedIDCollaboratorsRequest](cmd, createCmdMeta, "Body", "body")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

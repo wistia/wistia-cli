@@ -6,6 +6,7 @@ package cli
 import (
 	"fmt"
 	"github.com/spf13/cobra"
+	"github.com/wistia/wistia-cli/internal/output"
 	"github.com/wistia/wistia-cli/internal/usage"
 )
 
@@ -30,21 +31,33 @@ The version defaults to the SDK version set during generation, but can be
 overridden at build time using Go linker flags:
 
   go build -ldflags "-X main.version=x.y.z -X main.buildTime=$(date -u +%Y-%m-%dT%H:%M:%SZ)" ./cmd/wistia`,
+		Args: cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if usage.UsageRequested(cmd) {
 				return usage.EmitSchema(cmd, cmd.OutOrStdout())
 			}
-			if _, err := fmt.Fprintf(cmd.OutOrStdout(), "wistia %s\n", Version); err != nil {
-				return err
-			}
-			if BuildTime != "" {
-				if _, err := fmt.Fprintf(cmd.OutOrStdout(), "Built: %s\n", BuildTime); err != nil {
-					return err
-				}
-			}
-			return nil
+			return printVersion(cmd)
 		},
 	}
 	parent.AddCommand(cmd)
+	return nil
+}
+
+func printVersion(cmd *cobra.Command) error {
+	if output.IsMachineMode(cmd) {
+		info := map[string]any{"name": "wistia", "version": Version}
+		if BuildTime != "" {
+			info["build_time"] = BuildTime
+		}
+		return output.LocalResult(cmd, info)
+	}
+	if _, err := fmt.Fprintf(cmd.OutOrStdout(), "wistia %s\n", Version); err != nil {
+		return err
+	}
+	if BuildTime != "" {
+		if _, err := fmt.Fprintf(cmd.OutOrStdout(), "Built: %s\n", BuildTime); err != nil {
+			return err
+		}
+	}
 	return nil
 }

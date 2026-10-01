@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/wistia/wistia-cli/internal/client"
 	"github.com/wistia/wistia-cli/internal/flagutil"
-	"github.com/wistia/wistia-cli/internal/interactive"
 	"github.com/wistia/wistia-cli/internal/output"
 	"github.com/wistia/wistia-cli/internal/sdk"
 	"github.com/wistia/wistia-cli/internal/sdk/models/operations"
@@ -16,8 +15,8 @@ import (
 )
 
 var updateBrandPreloadCmdMeta = []flagutil.FlagMeta{
-	{FlagName: "selected-player-color", FieldPath: "SelectedPlayerColor", Kind: flagutil.FlagKindString, Optional: true, Description: "Hex color string (e.g. \"#3366FF\") for the account's default player\ncolor — 6 hex digits, with or without the leading `#`. Omit or send\nan empty string to leave the current color untouched (there is no\nclear operation — color always has a value). Malformed values are\nrejected at the API boundary; without this check, the model's\nsanitize step would return nil and silently reset the account color\nto the global default.\n"},
-	{FlagName: "selected-logo-hashed-id", FieldPath: "SelectedLogoHashedID", Kind: flagutil.FlagKindString, Optional: true, Description: "Bakery hashed_id of an uploaded logo image, which will become the\naccount's default page logo. Omit to leave the current logo\nuntouched. Pass an empty string to clear the logo.\n"},
+	{FlagName: "selected-player-color", FieldPath: "SelectedPlayerColor", Kind: flagutil.FlagKindString, Optional: true, Description: "Hex color string (e.g. \"#3366FF\") for the account's default player\ncolor — 6 hex digits, with or without the leading '#'. Omit or send\nan empty string to leave the current color untouched (there is no\nclear operation — color always has a value). Malformed values are\nrejected at the API boundary; without this check, the model's\nsanitize step would return nil and silently reset the account color\nto the global default."},
+	{FlagName: "selected-logo-hashed-id", FieldPath: "SelectedLogoHashedID", Kind: flagutil.FlagKindString, Optional: true, Description: "Bakery hashed_id of an uploaded logo image, which will become the\naccount's default page logo. Omit to leave the current logo\nuntouched. Pass an empty string to clear the logo."},
 }
 
 // initUpdateBrandPreloadCmd initializes the update-brand-preload command.
@@ -27,14 +26,25 @@ func initUpdateBrandPreloadCmd(parent *cobra.Command) error {
 		Short:   "Update Brand Preload",
 		Long:    "Persists the account's default page logo (by Bakery hashed_id) and\ndefault player color. Both fields are optional independently — omit a\nfield to leave that account setting untouched. Passing an empty string\nfor `selected_logo_hashed_id` clears the logo.\n\nRequires the OAuth contact to be an owner or manager of the account\n(or a Wistia admin) — mirrors the auth check on the underlying\n`updateWtwBrandKitAccountSettings` GraphQL mutation.\n\nDeliberately narrower than the mutation: this endpoint does not\ncreate/update BrandKits or set body font family. Glass's onboarding\ncustomize step writes only these two fields; broader brand-kit\nediting continues to happen through the WTW web UI + GraphQL.\n\n## Requires api token with one of the following permissions\n```\n(any scope allowed)\n```",
 		Example: "  wistia account update-brand-preload",
+		Args:    cobra.NoArgs,
 		RunE:    runUpdateBrandPreloadCmd,
 		Aliases: []string{"ubp"},
+		Annotations: map[string]string{
+			"speakeasy_operation": "updateBrandPreload",
+		},
 	}
 	flagutil.RegisterFlags(cmd, updateBrandPreloadCmdMeta)
 	if err := flagutil.ValidateMeta[operations.UpdateBrandPreloadRequest](updateBrandPreloadCmdMeta); err != nil {
 		return fmt.Errorf("invalid metadata for update-brand-preload: %w", err)
 	}
-	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin.")
+	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF. Use --schema to print the exact JSON Schema.")
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
+	if err := flagutil.AnnotateBodyFields(cmd, updateBrandPreloadCmdMeta, "", "body"); err != nil {
+		return fmt.Errorf("annotate body fields for update-brand-preload: %w", err)
+	}
+	cmd.Flags().Bool("schema", false, "Print the exact JSON Schema of the request body and exit")
+	_ = flagutil.AnnotatePromptFlag(cmd, "schema", flagutil.PromptFlagSpec{Kind: "bool", DocSurface: true})
 	parent.AddCommand(cmd)
 	return nil
 }
@@ -44,14 +54,12 @@ func runUpdateBrandPreloadCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, updateBrandPreloadCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, updateBrandPreloadCmdMeta); err != nil {
-			return err
-		}
+	if requested, _ := cmd.Flags().GetBool("schema"); requested {
+		return usage.EmitBodySchema(cmd.OutOrStdout(), "updateBrandPreload")
 	}
 	request, err := flagutil.BuildRequest[operations.UpdateBrandPreloadRequest](cmd, updateBrandPreloadCmdMeta, "", "body")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

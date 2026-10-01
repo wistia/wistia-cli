@@ -16,7 +16,7 @@ import (
 )
 
 var createCmdMeta = []flagutil.FlagMeta{
-	{FlagName: "media-id", FieldPath: "MediaID", Kind: flagutil.FlagKindString, Required: true, Description: "The hashed ID of the video. [required]"},
+	{FlagName: "media-id", Shorthand: "m", FieldPath: "MediaID", Kind: flagutil.FlagKindString, Required: true, Description: "The hashed ID of the video. [required]"},
 	{FlagName: "auto-play", Shorthand: "a", FieldPath: "Body.AutoPlay", Kind: flagutil.FlagKindBool, Optional: true, Description: "If set to true, the video will play as soon as it’s ready. Note that autoplay might not work on some devices and browsers."},
 	{FlagName: "controls-visible-on-load", FieldPath: "Body.ControlsVisibleOnLoad", Kind: flagutil.FlagKindBool, Optional: true, Description: "If set to true, controls like the big play button, playbar, volume, etc. will be visible as soon as the video is embedded."},
 	{FlagName: "copy-link-and-thumbnail-enabled", FieldPath: "Body.CopyLinkAndThumbnailEnabled", Kind: flagutil.FlagKindBool, Optional: true, Description: "If set to false, the option to “Copy Link and Thumbnail” will be removed when right-clicking on the video."},
@@ -51,7 +51,7 @@ var createCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "still-url", FieldPath: "Body.StillURL", Kind: flagutil.FlagKindString, Optional: true, Description: "Overrides the thumbnail image that appears before the video plays."},
 	{FlagName: "time", FieldPath: "Body.Time", Kind: flagutil.FlagKindString, Optional: true, Description: "Sets the starting time of the video."},
 	{FlagName: "thumbnail-alt-text", FieldPath: "Body.ThumbnailAltText", Kind: flagutil.FlagKindString, Optional: true, Description: "Sets the Thumbnail Alt Text for the media."},
-	{FlagName: "video-foam", FieldPath: "Body.VideoFoam", Kind: flagutil.FlagKindUnion, Union: &flagutil.UnionMeta{Discriminated: false, Optional: true, TypeDescription: "JSON value (one of: boolean | { minWidth: integer, maxWidth: integer, minHeight: integer, maxHeight: integer })"}},
+	{FlagName: "video-foam", FieldPath: "Body.VideoFoam", Kind: flagutil.FlagKindUnion, Union: &flagutil.UnionMeta{Discriminated: false, Optional: true, TypeDescription: "JSON value (one of: boolean | { \"minWidth\": integer, \"maxWidth\": integer, \"minHeight\": integer, \"maxHeight\": integer })"}},
 	{FlagName: "volume", FieldPath: "Body.Volume", Kind: flagutil.FlagKindFloat64, Optional: true, Description: "Sets the volume of the video."},
 	{FlagName: "volume-control", FieldPath: "Body.VolumeControl", Kind: flagutil.FlagKindBool, Optional: true, Description: "When set to true, a volume control is available over the video."},
 	{FlagName: "wmode", Shorthand: "w", FieldPath: "Body.Wmode", Kind: flagutil.FlagKindString, Optional: true, Description: "If set to transparent, the background behind the player will be transparent instead of black."},
@@ -60,17 +60,34 @@ var createCmdMeta = []flagutil.FlagMeta{
 // initCreateCmd initializes the create command.
 func initCreateCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
-		Use:     "create",
+		Use:     "create [media-id]",
 		Short:   "Create Customizations",
 		Long:    "Set customizations for a video. Replaces the customizations explicitly set for this video.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
 		Example: "  wistia customizations create --media-id <id>",
+		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runCreateCmd,
+		Annotations: map[string]string{
+			"speakeasy_operation": "post_/medias/{mediaId}/customizations",
+		},
 	}
 	flagutil.RegisterFlags(cmd, createCmdMeta)
 	if err := flagutil.ValidateMeta[operations.PostMediasMediaIDCustomizationsRequest](createCmdMeta); err != nil {
 		return fmt.Errorf("invalid metadata for create: %w", err)
 	}
-	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin.")
+	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
+	if err := flagutil.AnnotateBodyFields(cmd, createCmdMeta, "Body", "body"); err != nil {
+		return fmt.Errorf("annotate body fields for create: %w", err)
+	}
+	if err := flagutil.DeclarePositionalFlag(cmd, "media-id", "The hashed ID of the video. (or pass it as the [media-id] argument)", true); err != nil {
+		return err
+	}
+	if err := interactive.Declare(cmd, interactive.CommandSpec{Args: []interactive.ArgSpec{
+		{Name: "media-id", Summary: "The hashed ID of the video.", Required: true, SatisfiedBy: []string{"media-id"}},
+	}}); err != nil {
+		return fmt.Errorf("declare interactive arguments for create: %w", err)
+	}
 	parent.AddCommand(cmd)
 	return nil
 }
@@ -80,14 +97,12 @@ func runCreateCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, createCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, createCmdMeta); err != nil {
-			return err
-		}
+	if err := flagutil.ResolvePositionalFlag(cmd, args); err != nil {
+		return err
 	}
 	req, err := flagutil.BuildRequest[operations.PostMediasMediaIDCustomizationsRequest](cmd, createCmdMeta, "Body", "body")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

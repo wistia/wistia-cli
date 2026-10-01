@@ -10,9 +10,11 @@ import (
 
 func InitSearchRoot(parent *cobra.Command) error {
 	var SearchCmd = &cobra.Command{
-		Use:   "search",
-		Short: "Operations for search",
-		Long:  "Operations for search",
+		Use:         "search",
+		Short:       "Operations for search",
+		Long:        "Operations for search",
+		Args:        cobra.NoArgs,
+		Annotations: map[string]string{"speakeasy_cli_group": "true"},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if usage.UsageRequested(cmd) {
 				return usage.EmitSchema(cmd, cmd.OutOrStdout())

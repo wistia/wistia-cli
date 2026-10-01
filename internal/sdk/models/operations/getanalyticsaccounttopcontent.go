@@ -638,6 +638,7 @@ func (u ResponseBody) IsUnknown() bool {
 }
 
 func (u *ResponseBody) UnmarshalJSON(data []byte) error {
+	*u = ResponseBody{}
 
 	var candidates []utils.UnionCandidate
 

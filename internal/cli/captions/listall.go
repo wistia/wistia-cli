@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/wistia/wistia-cli/internal/client"
 	"github.com/wistia/wistia-cli/internal/flagutil"
-	"github.com/wistia/wistia-cli/internal/interactive"
 	"github.com/wistia/wistia-cli/internal/output"
 	"github.com/wistia/wistia-cli/internal/sdk"
 	"github.com/wistia/wistia-cli/internal/sdk/models/operations"
@@ -17,13 +16,13 @@ import (
 
 var listAllCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "media-id", FieldPath: "MediaID", Kind: flagutil.FlagKindString, Optional: true, Description: "Find captions for a particular media by providing the media hashed ID"},
-	{FlagName: "media-ids", FieldPath: "MediaIds", Kind: flagutil.FlagKindStringArray, Optional: true, Description: "Find captions belonging to any of these media hashed IDs. IDs that don't match\na media the token can access are ignored rather than returning an error.\n"},
-	{FlagName: "languages", Shorthand: "l", FieldPath: "Languages", Kind: flagutil.FlagKindStringArray, Optional: true, Description: "Find captions in any of these languages, using the codes returned in each\ncaption's `language` field (for example `eng` or `spa`). When combined with\n`media_ids[]`, captions must match both.\n"},
-	{FlagName: "include", Shorthand: "i", FieldPath: "Include", Kind: flagutil.FlagKindEnum, Optional: true, EnumValues: []string{"metadata"}, Description: "Set to `metadata` to omit caption text and return only track metadata.\nOmitting this parameter preserves the existing response, including SRT text.\n (options: metadata)"},
-	{FlagName: "page", FieldPath: "Page", Kind: flagutil.FlagKindInt64, Optional: true, Description: "The page number to retrieve. This cannot be combined with `cursor`,\npagination.\n"},
+	{FlagName: "media-ids", FieldPath: "MediaIds", Kind: flagutil.FlagKindStringArray, Optional: true, Description: "Find captions belonging to any of these media hashed IDs. IDs that don't match\na media the token can access are ignored rather than returning an error."},
+	{FlagName: "languages", Shorthand: "l", FieldPath: "Languages", Kind: flagutil.FlagKindStringArray, Optional: true, Description: "Find captions in any of these languages, using the codes returned in each\ncaption's 'language' field (for example 'eng' or 'spa'). When combined with\n'media_ids[]', captions must match both."},
+	{FlagName: "include", Shorthand: "i", FieldPath: "Include", Kind: flagutil.FlagKindEnum, Optional: true, EnumValues: []string{"metadata"}, Description: "Set to 'metadata' to omit caption text and return only track metadata.\nOmitting this parameter preserves the existing response, including SRT text.\n(options: metadata)"},
+	{FlagName: "page", FieldPath: "Page", Kind: flagutil.FlagKindInt64, Optional: true, Description: "The page number to retrieve. This cannot be combined with 'cursor',\npagination."},
 	{FlagName: "per-page", FieldPath: "PerPage", Kind: flagutil.FlagKindInt64, Optional: true, Description: "The number of medias per page. Use this for both offset pagination and cursor pagination."},
-	{FlagName: "cursor", Shorthand: "c", FieldPath: "Cursor", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `queryParam:"style=deepObject,explode=true,name=cursor"`, Description: "If `cursor[enabled]` is set to 1 then cursor pagination is enabled and the\nfirst set of records are fetched up to the `per_page`. Cursor\npagination will also be turned on if `cursor[before]` or `cursor[after]`\nare set. Records returned will have a `cursor` property set which can be used to fetch more records in the same `sort_by` ordering.\nThe cursor value of the last record can be used to fetch records after the current result set and\nthe cursor of the first record can be used to fetch records before the result set.\n\nNOTE: a cursor value is only valid if the `sort_by` value hasn't changed from the\nlast fetch. For example, you cannot fetch using `sort_by` id and then pass that\ncursor value to a `sort_by` name.\n"},
-	{FlagName: "sort-by", FieldPath: "SortBy", Kind: flagutil.FlagKindEnum, Optional: true, HasDefault: true, DefaultStr: "id", EnumValues: []string{"id", "created", "updated", "language"}, Description: "Ordering. When using cursor pagination (see cursor param),\nonly `id` is supported.\n (options: id, created, updated, language)"},
+	{FlagName: "cursor", Shorthand: "c", FieldPath: "Cursor", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `queryParam:"style=deepObject,explode=true,name=cursor"`, Description: "If 'cursor[enabled]' is set to 1 then cursor pagination is enabled and the\nfirst set of records are fetched up to the 'per_page'. Cursor\npagination will also be turned on if 'cursor[before]' or 'cursor[after]'\nare set. Records returned will have a 'cursor' property set which can be used to fetch more records in the same 'sort_by' ordering.\nThe cursor value of the last record can be used to fetch records after the current result set and\nthe cursor of the first record can be used to fetch records before the result set.\n\nNOTE: a cursor value is only valid if the 'sort_by' value hasn't changed from the\nlast fetch. For example, you cannot fetch using 'sort_by' id and then pass that\ncursor value to a 'sort_by' name."},
+	{FlagName: "sort-by", FieldPath: "SortBy", Kind: flagutil.FlagKindEnum, Optional: true, HasDefault: true, DefaultStr: "id", EnumValues: []string{"id", "created", "updated", "language"}, Description: "Ordering. When using cursor pagination (see cursor param),\nonly 'id' is supported.\n(options: id, created, updated, language)"},
 	{FlagName: "sort-direction", FieldPath: "SortDirection", Kind: flagutil.FlagKindIntEnum, Optional: true, HasDefault: true, DefaultStr: "1", EnumValues: []string{"0", "1"}, Description: "Ordering Sort Direction (0 = desc, 1 = asc; default is 1) (options: 0, 1)"},
 }
 
@@ -34,8 +33,12 @@ func initListAllCmd(parent *cobra.Command) error {
 		Short:   "List Captions",
 		Long:    "Lists captions belonging to the account. Results can be narrowed to a specific media\nwith `media_id`, or to several media and languages at once with `media_ids[]` and\n`languages[]`. Each caption includes its text, so combining these filters with\npagination fetches transcripts for many media in a few requests. Pass\n`include=metadata` to omit transcript text when only track and language\ninformation is needed.\n\n## Requires api token with one of the following permissions\n```\nRead all folder and media data\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
 		Example: "  wistia captions list-all",
+		Args:    cobra.NoArgs,
 		RunE:    runListAllCmd,
 		Aliases: []string{"la"},
+		Annotations: map[string]string{
+			"speakeasy_operation": "get_/captions",
+		},
 	}
 	flagutil.RegisterFlags(cmd, listAllCmdMeta)
 	if err := flagutil.ValidateMeta[operations.GetCaptionsRequest](listAllCmdMeta); err != nil {
@@ -50,14 +53,9 @@ func runListAllCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, listAllCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, listAllCmdMeta); err != nil {
-			return err
-		}
-	}
 	req, err := flagutil.BuildRequest[operations.GetCaptionsRequest](cmd, listAllCmdMeta, "", "")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

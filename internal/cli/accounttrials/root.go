@@ -10,9 +10,11 @@ import (
 
 func InitAccountTrialsRoot(parent *cobra.Command) error {
 	var AccountTrialsCmd = &cobra.Command{
-		Use:   "account-trials",
-		Short: "Operations for account-trials",
-		Long:  "Operations for account-trials",
+		Use:         "account-trials",
+		Short:       "Operations for account-trials",
+		Long:        "Operations for account-trials",
+		Args:        cobra.NoArgs,
+		Annotations: map[string]string{"speakeasy_cli_group": "true"},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if usage.UsageRequested(cmd) {
 				return usage.EmitSchema(cmd, cmd.OutOrStdout())

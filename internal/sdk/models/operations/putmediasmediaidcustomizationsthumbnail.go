@@ -297,6 +297,7 @@ func (u PutMediasMediaIDCustomizationsThumbnailUnalteredStillImageAssetUnion) Is
 }
 
 func (u *PutMediasMediaIDCustomizationsThumbnailUnalteredStillImageAssetUnion) UnmarshalJSON(data []byte) error {
+	*u = PutMediasMediaIDCustomizationsThumbnailUnalteredStillImageAssetUnion{}
 
 	var candidates []utils.UnionCandidate
 

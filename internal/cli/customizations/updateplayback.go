@@ -16,7 +16,7 @@ import (
 )
 
 var updatePlaybackCmdMeta = []flagutil.FlagMeta{
-	{FlagName: "media-id", FieldPath: "MediaID", Kind: flagutil.FlagKindString, Required: true, Description: "The hashed ID of the video to be customized. [required]"},
+	{FlagName: "media-id", Shorthand: "m", FieldPath: "MediaID", Kind: flagutil.FlagKindString, Required: true, Description: "The hashed ID of the video to be customized. [required]"},
 	{FlagName: "auto-play", Shorthand: "a", FieldPath: "Body.AutoPlay", Kind: flagutil.FlagKindBool, Optional: true, Description: "If set to true, the video will play as soon as it’s ready. Note that autoplay might not work on some devices and browsers."},
 	{FlagName: "silent-auto-play", FieldPath: "Body.SilentAutoPlay", Kind: flagutil.FlagKindString, Optional: true, Description: "Determines how videos handle autoplay in contexts where normal autoplay might be blocked. Options are \"true\", \"allow\", and \"false\"."},
 	{FlagName: "muted", FieldPath: "Body.Muted", Kind: flagutil.FlagKindBool, Optional: true, Description: "If set to true, the video will start in a muted state."},
@@ -46,7 +46,7 @@ var updatePlaybackCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "key-moments", Shorthand: "k", FieldPath: "Body.KeyMoments", Kind: flagutil.FlagKindBool, Optional: true, Description: "If set to false, the key moments feature will be disabled."},
 	{FlagName: "fullscreen-on-rotate-to-landscape", FieldPath: "Body.FullscreenOnRotateToLandscape", Kind: flagutil.FlagKindBool, Optional: true, Description: "If set to false, the video will not automatically go to fullscreen mode on mobile when rotated to landscape."},
 	{FlagName: "fake-full-screen", FieldPath: "Body.FakeFullScreen", Kind: flagutil.FlagKindBool, Optional: true, Description: "If set to true, the video will try to play in a pseudo-fullscreen mode on certain mobile devices."},
-	{FlagName: "video-foam", FieldPath: "Body.VideoFoam", Kind: flagutil.FlagKindUnion, Union: &flagutil.UnionMeta{Discriminated: false, Optional: true, TypeDescription: "JSON value (one of: boolean | { minWidth: integer, maxWidth: integer, minHeight: integer, maxHeight: integer })"}},
+	{FlagName: "video-foam", FieldPath: "Body.VideoFoam", Kind: flagutil.FlagKindUnion, Union: &flagutil.UnionMeta{Discriminated: false, Optional: true, TypeDescription: "JSON value (one of: boolean | { \"minWidth\": integer, \"maxWidth\": integer, \"minHeight\": integer, \"maxHeight\": integer })"}},
 	{FlagName: "wmode", Shorthand: "w", FieldPath: "Body.Wmode", Kind: flagutil.FlagKindString, Optional: true, Description: "If set to transparent, the background behind the player will be transparent instead of black."},
 	{FlagName: "bpb-time", Shorthand: "b", FieldPath: "Body.BpbTime", Kind: flagutil.FlagKindString, Optional: true, Description: "Controls when the big play button appears, expressed as a string."},
 	{FlagName: "spherical", FieldPath: "Body.Spherical", Kind: flagutil.FlagKindBool, Optional: true, Description: "If set to true, the video is rendered as a spherical (360-degree) video."},
@@ -61,18 +61,35 @@ var updatePlaybackCmdMeta = []flagutil.FlagMeta{
 // initUpdatePlaybackCmd initializes the update-playback command.
 func initUpdatePlaybackCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
-		Use:     "update-playback",
+		Use:     "update-playback [media-id]",
 		Short:   "Update Playback Customizations",
 		Long:    "Applies a partial update to a video's playback customizations. Only the\nfields supplied are changed; sending a field as null deletes it (reverting to\nthe default).\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
 		Example: "  wistia customizations update-playback --media-id <id>",
+		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runUpdatePlaybackCmd,
 		Aliases: []string{"up"},
+		Annotations: map[string]string{
+			"speakeasy_operation": "put_/medias/{mediaId}/customizations/playback",
+		},
 	}
 	flagutil.RegisterFlags(cmd, updatePlaybackCmdMeta)
 	if err := flagutil.ValidateMeta[operations.PutMediasMediaIDCustomizationsPlaybackRequest](updatePlaybackCmdMeta); err != nil {
 		return fmt.Errorf("invalid metadata for update-playback: %w", err)
 	}
-	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin.")
+	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
+	if err := flagutil.AnnotateBodyFields(cmd, updatePlaybackCmdMeta, "Body", "body"); err != nil {
+		return fmt.Errorf("annotate body fields for update-playback: %w", err)
+	}
+	if err := flagutil.DeclarePositionalFlag(cmd, "media-id", "The hashed ID of the video to be customized. (or pass it as the [media-id] argument)", true); err != nil {
+		return err
+	}
+	if err := interactive.Declare(cmd, interactive.CommandSpec{Args: []interactive.ArgSpec{
+		{Name: "media-id", Summary: "The hashed ID of the video to be customized.", Required: true, SatisfiedBy: []string{"media-id"}},
+	}}); err != nil {
+		return fmt.Errorf("declare interactive arguments for update-playback: %w", err)
+	}
 	parent.AddCommand(cmd)
 	return nil
 }
@@ -82,14 +99,12 @@ func runUpdatePlaybackCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, updatePlaybackCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, updatePlaybackCmdMeta); err != nil {
-			return err
-		}
+	if err := flagutil.ResolvePositionalFlag(cmd, args); err != nil {
+		return err
 	}
 	req, err := flagutil.BuildRequest[operations.PutMediasMediaIDCustomizationsPlaybackRequest](cmd, updatePlaybackCmdMeta, "Body", "body")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

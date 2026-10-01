@@ -111,7 +111,14 @@ func CreatePutMediasMediaIDCustomizationsPlaybackVideoFoamRequestUnionPutMediasM
 	}
 }
 
-func (u *PutMediasMediaIDCustomizationsPlaybackVideoFoamRequestUnion) UnmarshalJSON(data []byte) error {
+func (u *PutMediasMediaIDCustomizationsPlaybackVideoFoamRequestUnion) UnmarshalJSON(data []byte) (err error) {
+	previous := *u
+	*u = PutMediasMediaIDCustomizationsPlaybackVideoFoamRequestUnion{}
+	defer func() {
+		if err != nil {
+			*u = previous
+		}
+	}()
 
 	var candidates []utils.UnionCandidate
 
@@ -668,6 +675,7 @@ func (u PutMediasMediaIDCustomizationsPlaybackVideoFoamResponseUnion) IsUnknown(
 }
 
 func (u *PutMediasMediaIDCustomizationsPlaybackVideoFoamResponseUnion) UnmarshalJSON(data []byte) error {
+	*u = PutMediasMediaIDCustomizationsPlaybackVideoFoamResponseUnion{}
 
 	var candidates []utils.UnionCandidate
 
@@ -797,6 +805,7 @@ func (u PutMediasMediaIDCustomizationsPlaybackClickForSoundUnion) IsUnknown() bo
 }
 
 func (u *PutMediasMediaIDCustomizationsPlaybackClickForSoundUnion) UnmarshalJSON(data []byte) error {
+	*u = PutMediasMediaIDCustomizationsPlaybackClickForSoundUnion{}
 
 	var candidates []utils.UnionCandidate
 

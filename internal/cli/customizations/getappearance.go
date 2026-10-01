@@ -22,16 +22,28 @@ var getAppearanceCmdMeta = []flagutil.FlagMeta{
 // initGetAppearanceCmd initializes the get-appearance command.
 func initGetAppearanceCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
-		Use:     "get-appearance",
+		Use:     "get-appearance [media-id]",
 		Short:   "Show Appearance Customizations",
 		Long:    "Fetches the explicitly-set appearance customizations (player color, gradient,\nrounded corners, control contrast, and customer logo) for the video.\n\n## Requires api token with one of the following permissions\n```\nRead all folder and media data\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
 		Example: "  wistia customizations get-appearance --media-id <id>",
+		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runGetAppearanceCmd,
 		Aliases: []string{"gap"},
+		Annotations: map[string]string{
+			"speakeasy_operation": "get_/medias/{mediaId}/customizations/appearance",
+		},
 	}
 	flagutil.RegisterFlags(cmd, getAppearanceCmdMeta)
 	if err := flagutil.ValidateMeta[operations.GetMediasMediaIDCustomizationsAppearanceRequest](getAppearanceCmdMeta); err != nil {
 		return fmt.Errorf("invalid metadata for get-appearance: %w", err)
+	}
+	if err := flagutil.DeclarePositionalFlag(cmd, "media-id", "The hashed ID of the video. (or pass it as the [media-id] argument)", true); err != nil {
+		return err
+	}
+	if err := interactive.Declare(cmd, interactive.CommandSpec{Args: []interactive.ArgSpec{
+		{Name: "media-id", Summary: "The hashed ID of the video.", Required: true, SatisfiedBy: []string{"media-id"}},
+	}}); err != nil {
+		return fmt.Errorf("declare interactive arguments for get-appearance: %w", err)
 	}
 	parent.AddCommand(cmd)
 	return nil
@@ -42,14 +54,12 @@ func runGetAppearanceCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, getAppearanceCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, getAppearanceCmdMeta); err != nil {
-			return err
-		}
+	if err := flagutil.ResolvePositionalFlag(cmd, args); err != nil {
+		return err
 	}
 	req, err := flagutil.BuildRequest[operations.GetMediasMediaIDCustomizationsAppearanceRequest](cmd, getAppearanceCmdMeta, "", "")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

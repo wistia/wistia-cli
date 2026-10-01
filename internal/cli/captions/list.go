@@ -22,15 +22,27 @@ var listCmdMeta = []flagutil.FlagMeta{
 // initListCmd initializes the list command.
 func initListCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
-		Use:     "list",
+		Use:     "list [media-hashed-id]",
 		Short:   "List Captions by Media",
 		Long:    "Lists captions belonging to a specific media.\n\n## Requires api token with one of the following permissions\n```\nRead all folder and media data\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
 		Example: "  wistia captions list --media-hashed-id <id>",
+		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runListCmd,
+		Annotations: map[string]string{
+			"speakeasy_operation": "get_/medias/{mediaHashedId}/captions",
+		},
 	}
 	flagutil.RegisterFlags(cmd, listCmdMeta)
 	if err := flagutil.ValidateMeta[operations.GetMediasMediaHashedIDCaptionsRequest](listCmdMeta); err != nil {
 		return fmt.Errorf("invalid metadata for list: %w", err)
+	}
+	if err := flagutil.DeclarePositionalFlag(cmd, "media-hashed-id", "The hashed ID of the media for which captions are to be retrieved. (or pass it as the [media-hashed-id] argument)", true); err != nil {
+		return err
+	}
+	if err := interactive.Declare(cmd, interactive.CommandSpec{Args: []interactive.ArgSpec{
+		{Name: "media-hashed-id", Summary: "The hashed ID of the media for which captions are to be retrieved.", Required: true, SatisfiedBy: []string{"media-hashed-id"}},
+	}}); err != nil {
+		return fmt.Errorf("declare interactive arguments for list: %w", err)
 	}
 	parent.AddCommand(cmd)
 	return nil
@@ -41,14 +53,12 @@ func runListCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, listCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, listCmdMeta); err != nil {
-			return err
-		}
+	if err := flagutil.ResolvePositionalFlag(cmd, args); err != nil {
+		return err
 	}
 	req, err := flagutil.BuildRequest[operations.GetMediasMediaHashedIDCaptionsRequest](cmd, listCmdMeta, "", "")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

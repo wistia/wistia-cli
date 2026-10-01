@@ -43,7 +43,14 @@ func CreatePutMediasMediaIDCustomizationsEngagementTimeNumber(number float64) Pu
 	}
 }
 
-func (u *PutMediasMediaIDCustomizationsEngagementTime) UnmarshalJSON(data []byte) error {
+func (u *PutMediasMediaIDCustomizationsEngagementTime) UnmarshalJSON(data []byte) (err error) {
+	previous := *u
+	*u = PutMediasMediaIDCustomizationsEngagementTime{}
+	defer func() {
+		if err != nil {
+			*u = previous
+		}
+	}()
 
 	var candidates []utils.UnionCandidate
 

@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/wistia/wistia-cli/internal/client"
 	"github.com/wistia/wistia-cli/internal/flagutil"
-	"github.com/wistia/wistia-cli/internal/interactive"
 	"github.com/wistia/wistia-cli/internal/output"
 	"github.com/wistia/wistia-cli/internal/sdk"
 	"github.com/wistia/wistia-cli/internal/sdk/models/operations"
@@ -20,7 +19,7 @@ var getEmbedLocationsCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "end-date", Shorthand: "e", FieldPath: "EndDate", Kind: flagutil.FlagKindDate, Required: true, Description: "End date for the analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date. [required]"},
 	{FlagName: "sort-by", FieldPath: "SortBy", Kind: flagutil.FlagKindEnum, Optional: true, HasDefault: true, DefaultStr: "plays", EnumValues: []string{"plays", "loads", "engagement_rate", "play_rate", "played_time", "unique_visitors"}, Description: "The metric to sort embed locations by. (options: plays, loads, engagement_rate, play_rate, played_time, unique_visitors)"},
 	{FlagName: "sort-direction", FieldPath: "SortDirection", Kind: flagutil.FlagKindEnum, Optional: true, HasDefault: true, DefaultStr: "desc", EnumValues: []string{"asc", "desc"}, Description: "The sort direction. (options: asc, desc)"},
-	{FlagName: "per-page", Shorthand: "p", FieldPath: "PerPage", Kind: flagutil.FlagKindInt64, Optional: true, HasDefault: true, DefaultInt: 10, Description: "Number of results to return (max 100)."},
+	{FlagName: "per-page", Shorthand: "p", FieldPath: "PerPage", Kind: flagutil.FlagKindInt64, Optional: true, HasDefault: true, DefaultInt: 10, HasMinimum: true, Minimum: 1, HasMaximum: true, Maximum: 100, Description: "Number of results to return (max 100)."},
 }
 
 // initGetEmbedLocationsCmd initializes the get-embed-locations command.
@@ -30,8 +29,12 @@ func initGetEmbedLocationsCmd(parent *cobra.Command) error {
 		Short:   "Show Account Embed Locations",
 		Long:    "Retrieve embed location analytics for the entire account. Returns a list of domains\nwhere the account's media are embedded, ranked by the chosen metric.\n\nThe date range between `start_date` and `end_date` must not exceed 2 years.\n\n\n## Requires api token with one of the following permissions\n```\nRead detailed stats\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
 		Example: "  wistia analytics-account get-embed-locations --start-date 2024-04-04 --end-date 2026-04-14",
+		Args:    cobra.NoArgs,
 		RunE:    runGetEmbedLocationsCmd,
 		Aliases: []string{"gel"},
+		Annotations: map[string]string{
+			"speakeasy_operation": "get_/analytics/account/embed_locations",
+		},
 	}
 	flagutil.RegisterFlags(cmd, getEmbedLocationsCmdMeta)
 	if err := flagutil.ValidateMeta[operations.GetAnalyticsAccountEmbedLocationsRequest](getEmbedLocationsCmdMeta); err != nil {
@@ -46,14 +49,9 @@ func runGetEmbedLocationsCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, getEmbedLocationsCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, getEmbedLocationsCmdMeta); err != nil {
-			return err
-		}
-	}
 	req, err := flagutil.BuildRequest[operations.GetAnalyticsAccountEmbedLocationsRequest](cmd, getEmbedLocationsCmdMeta, "", "")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

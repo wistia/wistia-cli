@@ -10,9 +10,11 @@ import (
 
 func InitAccountRoot(parent *cobra.Command) error {
 	var AccountCmd = &cobra.Command{
-		Use:   "account",
-		Short: "Operations for account",
-		Long:  "Operations for account",
+		Use:         "account",
+		Short:       "Operations for account",
+		Long:        "Operations for account",
+		Args:        cobra.NoArgs,
+		Annotations: map[string]string{"speakeasy_cli_group": "true"},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if usage.UsageRequested(cmd) {
 				return usage.EmitSchema(cmd, cmd.OutOrStdout())

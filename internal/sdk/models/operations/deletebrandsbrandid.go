@@ -109,6 +109,7 @@ func (u DeleteBrandsBrandIDPrimaryColor) IsUnknown() bool {
 }
 
 func (u *DeleteBrandsBrandIDPrimaryColor) UnmarshalJSON(data []byte) error {
+	*u = DeleteBrandsBrandIDPrimaryColor{}
 
 	var candidates []utils.UnionCandidate
 
@@ -225,6 +226,7 @@ func (u DeleteBrandsBrandIDPageBackgroundColor) IsUnknown() bool {
 }
 
 func (u *DeleteBrandsBrandIDPageBackgroundColor) UnmarshalJSON(data []byte) error {
+	*u = DeleteBrandsBrandIDPageBackgroundColor{}
 
 	var candidates []utils.UnionCandidate
 

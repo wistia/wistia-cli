@@ -25,18 +25,35 @@ var updateLeadCaptureCmdMeta = []flagutil.FlagMeta{
 // initUpdateLeadCaptureCmd initializes the update-lead-capture command.
 func initUpdateLeadCaptureCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
-		Use:     "update-lead-capture",
+		Use:     "update-lead-capture [media-id]",
 		Short:   "Update Lead Capture Customizations",
 		Long:    "Configures a single lead-capture provider for the video, mapping it to the\nappropriate underlying plugin. Only the selected provider is changed.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
 		Example: "  wistia customizations update-lead-capture --media-id <id> --provider marketo",
+		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runUpdateLeadCaptureCmd,
 		Aliases: []string{"ulc"},
+		Annotations: map[string]string{
+			"speakeasy_operation": "put_/medias/{mediaId}/customizations/lead_capture",
+		},
 	}
 	flagutil.RegisterFlags(cmd, updateLeadCaptureCmdMeta)
 	if err := flagutil.ValidateMeta[operations.PutMediasMediaIDCustomizationsLeadCaptureRequest](updateLeadCaptureCmdMeta); err != nil {
 		return fmt.Errorf("invalid metadata for update-lead-capture: %w", err)
 	}
-	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin.")
+	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
+	if err := flagutil.AnnotateBodyFields(cmd, updateLeadCaptureCmdMeta, "Body", "body"); err != nil {
+		return fmt.Errorf("annotate body fields for update-lead-capture: %w", err)
+	}
+	if err := flagutil.DeclarePositionalFlag(cmd, "media-id", "The hashed ID of the video to be customized. (or pass it as the [media-id] argument)", true); err != nil {
+		return err
+	}
+	if err := interactive.Declare(cmd, interactive.CommandSpec{Args: []interactive.ArgSpec{
+		{Name: "media-id", Summary: "The hashed ID of the video to be customized.", Required: true, SatisfiedBy: []string{"media-id"}},
+	}}); err != nil {
+		return fmt.Errorf("declare interactive arguments for update-lead-capture: %w", err)
+	}
 	parent.AddCommand(cmd)
 	return nil
 }
@@ -46,14 +63,12 @@ func runUpdateLeadCaptureCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, updateLeadCaptureCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, updateLeadCaptureCmdMeta); err != nil {
-			return err
-		}
+	if err := flagutil.ResolvePositionalFlag(cmd, args); err != nil {
+		return err
 	}
 	req, err := flagutil.BuildRequest[operations.PutMediasMediaIDCustomizationsLeadCaptureRequest](cmd, updateLeadCaptureCmdMeta, "Body", "body")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

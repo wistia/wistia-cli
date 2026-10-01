@@ -22,16 +22,28 @@ var getThumbnailCmdMeta = []flagutil.FlagMeta{
 // initGetThumbnailCmd initializes the get-thumbnail command.
 func initGetThumbnailCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
-		Use:     "get-thumbnail",
+		Use:     "get-thumbnail [media-id]",
 		Short:   "Show Thumbnail Customizations",
 		Long:    "Fetches the explicitly-set thumbnail customizations (still image URL, alt\ntext, fit strategy, and the looping video thumbnail / text-overlay plugins)\nfor the video.\n\n## Requires api token with one of the following permissions\n```\nRead all folder and media data\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
 		Example: "  wistia customizations get-thumbnail --media-id <id>",
+		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runGetThumbnailCmd,
 		Aliases: []string{"gt"},
+		Annotations: map[string]string{
+			"speakeasy_operation": "get_/medias/{mediaId}/customizations/thumbnail",
+		},
 	}
 	flagutil.RegisterFlags(cmd, getThumbnailCmdMeta)
 	if err := flagutil.ValidateMeta[operations.GetMediasMediaIDCustomizationsThumbnailRequest](getThumbnailCmdMeta); err != nil {
 		return fmt.Errorf("invalid metadata for get-thumbnail: %w", err)
+	}
+	if err := flagutil.DeclarePositionalFlag(cmd, "media-id", "The hashed ID of the video. (or pass it as the [media-id] argument)", true); err != nil {
+		return err
+	}
+	if err := interactive.Declare(cmd, interactive.CommandSpec{Args: []interactive.ArgSpec{
+		{Name: "media-id", Summary: "The hashed ID of the video.", Required: true, SatisfiedBy: []string{"media-id"}},
+	}}); err != nil {
+		return fmt.Errorf("declare interactive arguments for get-thumbnail: %w", err)
 	}
 	parent.AddCommand(cmd)
 	return nil
@@ -42,14 +54,12 @@ func runGetThumbnailCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, getThumbnailCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, getThumbnailCmdMeta); err != nil {
-			return err
-		}
+	if err := flagutil.ResolvePositionalFlag(cmd, args); err != nil {
+		return err
 	}
 	req, err := flagutil.BuildRequest[operations.GetMediasMediaIDCustomizationsThumbnailRequest](cmd, getThumbnailCmdMeta, "", "")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

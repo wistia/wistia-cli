@@ -145,6 +145,7 @@ func (u GetMediasMediaIDCustomizationsPlaybackVideoFoamUnion) IsUnknown() bool {
 }
 
 func (u *GetMediasMediaIDCustomizationsPlaybackVideoFoamUnion) UnmarshalJSON(data []byte) error {
+	*u = GetMediasMediaIDCustomizationsPlaybackVideoFoamUnion{}
 
 	var candidates []utils.UnionCandidate
 
@@ -274,6 +275,7 @@ func (u GetMediasMediaIDCustomizationsPlaybackClickForSoundUnion) IsUnknown() bo
 }
 
 func (u *GetMediasMediaIDCustomizationsPlaybackClickForSoundUnion) UnmarshalJSON(data []byte) error {
+	*u = GetMediasMediaIDCustomizationsPlaybackClickForSoundUnion{}
 
 	var candidates []utils.UnionCandidate
 

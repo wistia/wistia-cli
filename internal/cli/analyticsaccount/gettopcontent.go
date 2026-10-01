@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/wistia/wistia-cli/internal/client"
 	"github.com/wistia/wistia-cli/internal/flagutil"
-	"github.com/wistia/wistia-cli/internal/interactive"
 	"github.com/wistia/wistia-cli/internal/output"
 	"github.com/wistia/wistia-cli/internal/sdk"
 	"github.com/wistia/wistia-cli/internal/sdk/models/operations"
@@ -22,7 +21,7 @@ var getTopContentCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "hashed-ids", FieldPath: "HashedIds", Kind: flagutil.FlagKindStringArray, Optional: true, Description: "Scope the ranking to these specific media's hashed IDs, rather than the whole account. Only valid with group_by=media."},
 	{FlagName: "sort-by", FieldPath: "SortBy", Kind: flagutil.FlagKindEnum, Optional: true, HasDefault: true, DefaultStr: "plays", EnumValues: []string{"plays", "loads", "play_rate", "engagement_rate", "played_time", "unique_visitors"}, Description: "The metric to rank content by. (options: plays, loads, play_rate, engagement_rate, played_time, unique_visitors)"},
 	{FlagName: "sort-direction", FieldPath: "SortDirection", Kind: flagutil.FlagKindEnum, Optional: true, HasDefault: true, DefaultStr: "desc", EnumValues: []string{"asc", "desc"}, Description: "The sort direction. (options: asc, desc)"},
-	{FlagName: "per-page", Shorthand: "p", FieldPath: "PerPage", Kind: flagutil.FlagKindInt64, Optional: true, Description: "Number of results to return. Defaults to the number of hashed_ids requested, or 10 when hashed_ids is not given."},
+	{FlagName: "per-page", Shorthand: "p", FieldPath: "PerPage", Kind: flagutil.FlagKindInt64, Optional: true, HasMinimum: true, Minimum: 1, HasMaximum: true, Maximum: 1000, Description: "Number of results to return. Defaults to the number of hashed_ids requested, or 10 when hashed_ids is not given."},
 }
 
 // initGetTopContentCmd initializes the get-top-content command.
@@ -32,8 +31,12 @@ func initGetTopContentCmd(parent *cobra.Command) error {
 		Short:   "Show Account Top Content",
 		Long:    "Rank the account's content by a chosen metric over a date range. Returns the top\nmedia, channels, or folders (controlled by `group_by`) with their analytics,\nanswering questions like \"what were my most-played videos last month?\".\n\nOptionally pass `hashed_ids` to scope the ranking to a specific set of media\ninstead of the whole account — useful for fetching analytics for a known list\nof videos, still sorted by `sort_by`.\n\nThe date range between `start_date` and `end_date` must not exceed 2 years.\n\n\n## Requires api token with one of the following permissions\n```\nRead detailed stats\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
 		Example: "  wistia analytics-account get-top-content --start-date 2025-12-19 --end-date 2024-11-20",
+		Args:    cobra.NoArgs,
 		RunE:    runGetTopContentCmd,
 		Aliases: []string{"gtc"},
+		Annotations: map[string]string{
+			"speakeasy_operation": "get_/analytics/account/top_content",
+		},
 	}
 	flagutil.RegisterFlags(cmd, getTopContentCmdMeta)
 	if err := flagutil.ValidateMeta[operations.GetAnalyticsAccountTopContentRequest](getTopContentCmdMeta); err != nil {
@@ -48,14 +51,9 @@ func runGetTopContentCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, getTopContentCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, getTopContentCmdMeta); err != nil {
-			return err
-		}
-	}
 	req, err := flagutil.BuildRequest[operations.GetAnalyticsAccountTopContentRequest](cmd, getTopContentCmdMeta, "", "")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

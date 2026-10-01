@@ -10,9 +10,11 @@ import (
 
 func InitCustomizationsRoot(parent *cobra.Command) error {
 	var CustomizationsCmd = &cobra.Command{
-		Use:   "customizations",
-		Short: "Operations for customizations",
-		Long:  "Operations for customizations",
+		Use:         "customizations",
+		Short:       "Operations for customizations",
+		Long:        "Operations for customizations",
+		Args:        cobra.NoArgs,
+		Annotations: map[string]string{"speakeasy_cli_group": "true"},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if usage.UsageRequested(cmd) {
 				return usage.EmitSchema(cmd, cmd.OutOrStdout())

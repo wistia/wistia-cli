@@ -23,15 +23,27 @@ var deleteCmdMeta = []flagutil.FlagMeta{
 // initDeleteCmd initializes the delete command.
 func initDeleteCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
-		Use:     "delete",
+		Use:     "delete [brand-id]",
 		Short:   "Delete Brand",
 		Long:    "Deletes a brand. Anything the brand was applied to falls back to the\naccount-level default brand, unless `sync_to_customizations` is set, in\nwhich case the brand's values are written into each item's own\ncustomizations first so they keep their current look.\n\nThe account-level default brand (`is_default: true`) can't be deleted.\n\n## Requires api token with one of the following permissions\n```\nAll data\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
 		Example: "  wistia brands delete --brand-id <id>",
+		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runDeleteCmd,
+		Annotations: map[string]string{
+			"speakeasy_operation": "delete_/brands/{brandId}",
+		},
 	}
 	flagutil.RegisterFlags(cmd, deleteCmdMeta)
 	if err := flagutil.ValidateMeta[operations.DeleteBrandsBrandIDRequest](deleteCmdMeta); err != nil {
 		return fmt.Errorf("invalid metadata for delete: %w", err)
+	}
+	if err := flagutil.DeclarePositionalFlag(cmd, "brand-id", "The id of the brand (or pass it as the [brand-id] argument)", true); err != nil {
+		return err
+	}
+	if err := interactive.Declare(cmd, interactive.CommandSpec{Args: []interactive.ArgSpec{
+		{Name: "brand-id", Summary: "The id of the brand", Required: true, SatisfiedBy: []string{"brand-id"}},
+	}}); err != nil {
+		return fmt.Errorf("declare interactive arguments for delete: %w", err)
 	}
 	parent.AddCommand(cmd)
 	return nil
@@ -42,14 +54,12 @@ func runDeleteCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, deleteCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, deleteCmdMeta); err != nil {
-			return err
-		}
+	if err := flagutil.ResolvePositionalFlag(cmd, args); err != nil {
+		return err
 	}
 	req, err := flagutil.BuildRequest[operations.DeleteBrandsBrandIDRequest](cmd, deleteCmdMeta, "", "")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

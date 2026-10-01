@@ -10,9 +10,11 @@ import (
 
 func InitMediaExtendedAudioDescriptionsRoot(parent *cobra.Command) error {
 	var MediaExtendedAudioDescriptionsCmd = &cobra.Command{
-		Use:   "media-extended-audio-descriptions",
-		Short: "Operations for media-extended-audio-descriptions",
-		Long:  "Operations for media-extended-audio-descriptions",
+		Use:         "media-extended-audio-descriptions",
+		Short:       "Operations for media-extended-audio-descriptions",
+		Long:        "Operations for media-extended-audio-descriptions",
+		Args:        cobra.NoArgs,
+		Annotations: map[string]string{"speakeasy_cli_group": "true"},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if usage.UsageRequested(cmd) {
 				return usage.EmitSchema(cmd, cmd.OutOrStdout())

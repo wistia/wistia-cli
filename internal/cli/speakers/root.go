@@ -10,9 +10,11 @@ import (
 
 func InitSpeakersRoot(parent *cobra.Command) error {
 	var SpeakersCmd = &cobra.Command{
-		Use:   "speakers",
-		Short: "Operations for speakers",
-		Long:  "Operations for speakers",
+		Use:         "speakers",
+		Short:       "Operations for speakers",
+		Long:        "Operations for speakers",
+		Args:        cobra.NoArgs,
+		Annotations: map[string]string{"speakeasy_cli_group": "true"},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if usage.UsageRequested(cmd) {
 				return usage.EmitSchema(cmd, cmd.OutOrStdout())

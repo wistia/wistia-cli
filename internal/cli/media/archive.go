@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/wistia/wistia-cli/internal/client"
 	"github.com/wistia/wistia-cli/internal/flagutil"
-	"github.com/wistia/wistia-cli/internal/interactive"
 	"github.com/wistia/wistia-cli/internal/output"
 	"github.com/wistia/wistia-cli/internal/sdk"
 	"github.com/wistia/wistia-cli/internal/sdk/models/operations"
@@ -25,14 +24,23 @@ func initArchiveCmd(parent *cobra.Command) error {
 		Use:     "archive",
 		Short:   "Archive Media",
 		Long:    "This method accepts a list of up to 100 medias to archive per request. It processes requests asynchronously and will return a background_job_status object rather than the typical Media response object. Note that webinar medias and Soapbox videos imported to Wistia before September 1, 2023 cannot be archived.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
-		Example: "  wistia media archive --hashed-ids '[]'",
+		Example: "  wistia media archive --hashed-ids <value>",
+		Args:    cobra.NoArgs,
 		RunE:    runArchiveCmd,
+		Annotations: map[string]string{
+			"speakeasy_operation": "put_/medias/archive",
+		},
 	}
 	flagutil.RegisterFlags(cmd, archiveCmdMeta)
 	if err := flagutil.ValidateMeta[operations.PutMediasArchiveRequest](archiveCmdMeta); err != nil {
 		return fmt.Errorf("invalid metadata for archive: %w", err)
 	}
-	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin.")
+	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
+	if err := flagutil.AnnotateBodyFields(cmd, archiveCmdMeta, "", "body"); err != nil {
+		return fmt.Errorf("annotate body fields for archive: %w", err)
+	}
 	parent.AddCommand(cmd)
 	return nil
 }
@@ -42,14 +50,9 @@ func runArchiveCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, archiveCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, archiveCmdMeta); err != nil {
-			return err
-		}
-	}
 	request, err := flagutil.BuildRequest[operations.PutMediasArchiveRequest](cmd, archiveCmdMeta, "", "body")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

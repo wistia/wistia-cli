@@ -19,7 +19,11 @@ func initGetCmd(parent *cobra.Command) error {
 		Short:   "Show Current Account Stats",
 		Long:    "Retrieve account-wide video stats. Get statistics like the number of video loads, plays, and hours watched for the entire account.\n\n\n## Requires api token with one of the following permissions\n```\nRead detailed stats\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
 		Example: "  wistia stats-account get",
+		Args:    cobra.NoArgs,
 		RunE:    runGetCmd,
+		Annotations: map[string]string{
+			"speakeasy_operation": "get_/stats/account",
+		},
 	}
 	parent.AddCommand(cmd)
 	return nil

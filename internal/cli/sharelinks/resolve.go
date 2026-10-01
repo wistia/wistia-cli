@@ -22,15 +22,27 @@ var resolveCmdMeta = []flagutil.FlagMeta{
 // initResolveCmd initializes the resolve command.
 func initResolveCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
-		Use:     "resolve",
+		Use:     "resolve [identifier]",
 		Short:   "Resolve share link",
 		Long:    "Resolves a share link URL segment — the part after `/s/` in a share\nlink like `https://example.wistia.com/s/summer-sale` — to the share\nlink and the media it points to, including the media's hashed ID.\n\nThe identifier may be the share link's hashed ID or its custom slug.\nHistorical slugs that were later changed still resolve to the link.\n\n## Requires api token with one of the following permissions\n```\nRead all folder and media data\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
 		Example: "  wistia share-links resolve --identifier <value>",
+		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runResolveCmd,
+		Annotations: map[string]string{
+			"speakeasy_operation": "get_/share_links/{identifier}",
+		},
 	}
 	flagutil.RegisterFlags(cmd, resolveCmdMeta)
 	if err := flagutil.ValidateMeta[operations.GetShareLinksIdentifierRequest](resolveCmdMeta); err != nil {
 		return fmt.Errorf("invalid metadata for resolve: %w", err)
+	}
+	if err := flagutil.DeclarePositionalFlag(cmd, "identifier", "The share link's URL segment — its hashed ID or custom slug. (or pass it as the [identifier] argument)", true); err != nil {
+		return err
+	}
+	if err := interactive.Declare(cmd, interactive.CommandSpec{Args: []interactive.ArgSpec{
+		{Name: "identifier", Summary: "The share link's URL segment — its hashed ID or custom slug.", Required: true, SatisfiedBy: []string{"identifier"}},
+	}}); err != nil {
+		return fmt.Errorf("declare interactive arguments for resolve: %w", err)
 	}
 	parent.AddCommand(cmd)
 	return nil
@@ -41,14 +53,12 @@ func runResolveCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, resolveCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, resolveCmdMeta); err != nil {
-			return err
-		}
+	if err := flagutil.ResolvePositionalFlag(cmd, args); err != nil {
+		return err
 	}
 	req, err := flagutil.BuildRequest[operations.GetShareLinksIdentifierRequest](cmd, resolveCmdMeta, "", "")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

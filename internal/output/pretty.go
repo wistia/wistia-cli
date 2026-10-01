@@ -15,17 +15,8 @@ import (
 // For objects it produces aligned "key: value" pairs; for arrays of objects
 // it prints numbered entries. Nested structures use 2-space indentation.
 func prettyPrint(w io.Writer, content interface{}, colorize bool) error {
-	// First marshal to JSON, then parse into generic types so we have a
-	// uniform representation regardless of the concrete Go struct.
-	data, err := marshalJSON(content)
+	parsed, err := normalizeForOutput(content)
 	if err != nil {
-		return err
-	}
-
-	var parsed interface{}
-	if err := json.Unmarshal(data, &parsed); err != nil {
-		// Fallback: just print the JSON
-		_, err = fmt.Fprintln(w, string(data))
 		return err
 	}
 
@@ -73,6 +64,9 @@ func (p *prettyPrinter) printValue(v interface{}, indent int) {
 	case float64:
 		formatted := formatNumber(val)
 		p.write(p.colorStr(colorNumber, formatted))
+		p.write("\n")
+	case json.Number:
+		p.write(p.colorStr(colorNumber, formatJSONNumber(val)))
 		p.write("\n")
 	case bool:
 		p.write(p.colorStr(colorBool, fmt.Sprintf("%v", val)))
@@ -225,6 +219,8 @@ func (p *prettyPrinter) printInlineValue(v interface{}) {
 		p.write(p.colorStr(colorString, val))
 	case float64:
 		p.write(p.colorStr(colorNumber, formatNumber(val)))
+	case json.Number:
+		p.write(p.colorStr(colorNumber, formatJSONNumber(val)))
 	case bool:
 		p.write(p.colorStr(colorBool, fmt.Sprintf("%v", val)))
 	case nil:
@@ -240,4 +236,15 @@ func formatNumber(f float64) string {
 		return fmt.Sprintf("%d", int64(f))
 	}
 	return fmt.Sprintf("%g", f)
+}
+
+func formatJSONNumber(n json.Number) string {
+	// The integer form is used only when it reproduces the wire lexeme:
+	// Int64 canonicalizes values like -0 or 1e2, which must print verbatim.
+	if i, err := n.Int64(); err == nil {
+		if formatted := fmt.Sprintf("%d", i); formatted == n.String() {
+			return formatted
+		}
+	}
+	return n.String()
 }

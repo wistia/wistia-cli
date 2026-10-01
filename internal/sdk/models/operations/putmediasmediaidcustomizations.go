@@ -166,7 +166,14 @@ func CreatePutMediasMediaIDCustomizationsTimeNumber(number float64) PutMediasMed
 	}
 }
 
-func (u *PutMediasMediaIDCustomizationsTime) UnmarshalJSON(data []byte) error {
+func (u *PutMediasMediaIDCustomizationsTime) UnmarshalJSON(data []byte) (err error) {
+	previous := *u
+	*u = PutMediasMediaIDCustomizationsTime{}
+	defer func() {
+		if err != nil {
+			*u = previous
+		}
+	}()
 
 	var candidates []utils.UnionCandidate
 
@@ -514,7 +521,14 @@ func CreatePutMediasMediaIDCustomizationsVideoFoamUnionPutMediasMediaIDCustomiza
 	}
 }
 
-func (u *PutMediasMediaIDCustomizationsVideoFoamUnion) UnmarshalJSON(data []byte) error {
+func (u *PutMediasMediaIDCustomizationsVideoFoamUnion) UnmarshalJSON(data []byte) (err error) {
+	previous := *u
+	*u = PutMediasMediaIDCustomizationsVideoFoamUnion{}
+	defer func() {
+		if err != nil {
+			*u = previous
+		}
+	}()
 
 	var candidates []utils.UnionCandidate
 

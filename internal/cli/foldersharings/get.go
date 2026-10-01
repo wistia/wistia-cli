@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/wistia/wistia-cli/internal/client"
 	"github.com/wistia/wistia-cli/internal/flagutil"
-	"github.com/wistia/wistia-cli/internal/interactive"
 	"github.com/wistia/wistia-cli/internal/output"
 	"github.com/wistia/wistia-cli/internal/sdk"
 	"github.com/wistia/wistia-cli/internal/sdk/models/operations"
@@ -27,7 +26,11 @@ func initGetCmd(parent *cobra.Command) error {
 		Short:   "Show Folder Sharing",
 		Long:    "Retrieves the details of a specific sharing object for a given folder.\n\n## Requires api token with one of the following permissions\n```\nRead all data\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
 		Example: "  wistia folder-sharings get --folder-id <id> --sharing-id 616202",
+		Args:    cobra.NoArgs,
 		RunE:    runGetCmd,
+		Annotations: map[string]string{
+			"speakeasy_operation": "get_/folders/{folderId}/sharings/{sharingId}",
+		},
 	}
 	flagutil.RegisterFlags(cmd, getCmdMeta)
 	if err := flagutil.ValidateMeta[operations.GetFoldersFolderIDSharingsSharingIDRequest](getCmdMeta); err != nil {
@@ -42,14 +45,9 @@ func runGetCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, getCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, getCmdMeta); err != nil {
-			return err
-		}
-	}
 	req, err := flagutil.BuildRequest[operations.GetFoldersFolderIDSharingsSharingIDRequest](cmd, getCmdMeta, "", "")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

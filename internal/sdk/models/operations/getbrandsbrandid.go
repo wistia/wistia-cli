@@ -100,6 +100,7 @@ func (u GetBrandsBrandIDPrimaryColor) IsUnknown() bool {
 }
 
 func (u *GetBrandsBrandIDPrimaryColor) UnmarshalJSON(data []byte) error {
+	*u = GetBrandsBrandIDPrimaryColor{}
 
 	var candidates []utils.UnionCandidate
 
@@ -216,6 +217,7 @@ func (u GetBrandsBrandIDPageBackgroundColor) IsUnknown() bool {
 }
 
 func (u *GetBrandsBrandIDPageBackgroundColor) UnmarshalJSON(data []byte) error {
+	*u = GetBrandsBrandIDPageBackgroundColor{}
 
 	var candidates []utils.UnionCandidate
 

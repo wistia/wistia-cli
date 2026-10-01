@@ -10,9 +10,11 @@ import (
 
 func InitFoldersRoot(parent *cobra.Command) error {
 	var FoldersCmd = &cobra.Command{
-		Use:   "folders",
-		Short: "Operations for folders",
-		Long:  "Operations for folders",
+		Use:         "folders",
+		Short:       "Operations for folders",
+		Long:        "Operations for folders",
+		Args:        cobra.NoArgs,
+		Annotations: map[string]string{"speakeasy_cli_group": "true"},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if usage.UsageRequested(cmd) {
 				return usage.EmitSchema(cmd, cmd.OutOrStdout())

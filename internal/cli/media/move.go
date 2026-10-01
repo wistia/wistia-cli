@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/wistia/wistia-cli/internal/client"
 	"github.com/wistia/wistia-cli/internal/flagutil"
-	"github.com/wistia/wistia-cli/internal/interactive"
 	"github.com/wistia/wistia-cli/internal/output"
 	"github.com/wistia/wistia-cli/internal/sdk"
 	"github.com/wistia/wistia-cli/internal/sdk/models/operations"
@@ -27,14 +26,23 @@ func initMoveCmd(parent *cobra.Command) error {
 		Use:     "move",
 		Short:   "Move Media",
 		Long:    "Moves up to 100 media to a folder and optional subfolder. The subfolder must\nbelong to the specified folder.\n\nThis endpoint allows 10 requests per 5 minutes, separate from the general\nAPI rate limit. Returns a Background Job because the move is asynchronous.\n\nFor more than 100 media, multiple destinations, or mixed actions, use the\nCreate Bulk Actions endpoint with `move` actions.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and\nauthorizations granting the `update` permission on every media being moved\nand on the destination folder can also be used. `subfolder_id` is not\navailable to expiring access tokens.",
-		Example: "  wistia media move --hashed-ids '[\"<value 1>\",\"<value 2>\"]' --folder-id <id>",
+		Example: "  wistia media move --hashed-ids <value 1> --hashed-ids <value 2> --folder-id <id>",
+		Args:    cobra.NoArgs,
 		RunE:    runMoveCmd,
+		Annotations: map[string]string{
+			"speakeasy_operation": "put_/medias/move",
+		},
 	}
 	flagutil.RegisterFlags(cmd, moveCmdMeta)
 	if err := flagutil.ValidateMeta[operations.PutMediasMoveRequest](moveCmdMeta); err != nil {
 		return fmt.Errorf("invalid metadata for move: %w", err)
 	}
-	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin.")
+	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
+	if err := flagutil.AnnotateBodyFields(cmd, moveCmdMeta, "", "body"); err != nil {
+		return fmt.Errorf("annotate body fields for move: %w", err)
+	}
 	parent.AddCommand(cmd)
 	return nil
 }
@@ -44,14 +52,9 @@ func runMoveCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, moveCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, moveCmdMeta); err != nil {
-			return err
-		}
-	}
 	request, err := flagutil.BuildRequest[operations.PutMediasMoveRequest](cmd, moveCmdMeta, "", "body")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

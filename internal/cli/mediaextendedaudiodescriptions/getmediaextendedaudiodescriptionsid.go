@@ -22,16 +22,28 @@ var getMediaExtendedAudioDescriptionsIDCmdMeta = []flagutil.FlagMeta{
 // initGetMediaExtendedAudioDescriptionsIdCmd initializes the get-media-extended-audio-descriptions-id command.
 func initGetMediaExtendedAudioDescriptionsIdCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
-		Use:     "get-media-extended-audio-descriptions-id",
+		Use:     "get-media-extended-audio-descriptions-id [id]",
 		Short:   "Show Media Extended Audio Description",
 		Long:    "Retrieves a single extended audio description by its hashed id, including download links.",
 		Example: "  wistia media-extended-audio-descriptions get-media-extended-audio-descriptions-id --id <id>",
+		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runGetMediaExtendedAudioDescriptionsIdCmd,
 		Aliases: []string{"gmeadi"},
+		Annotations: map[string]string{
+			"speakeasy_operation": "get_/media_extended_audio_descriptions/{id}",
+		},
 	}
 	flagutil.RegisterFlags(cmd, getMediaExtendedAudioDescriptionsIDCmdMeta)
 	if err := flagutil.ValidateMeta[operations.GetMediaExtendedAudioDescriptionsIDRequest](getMediaExtendedAudioDescriptionsIDCmdMeta); err != nil {
 		return fmt.Errorf("invalid metadata for get-media-extended-audio-descriptions-id: %w", err)
+	}
+	if err := flagutil.DeclarePositionalFlag(cmd, "id", "The hashed id of the Media Extended Audio Description (or pass it as the [id] argument)", true); err != nil {
+		return err
+	}
+	if err := interactive.Declare(cmd, interactive.CommandSpec{Args: []interactive.ArgSpec{
+		{Name: "id", Summary: "The hashed id of the Media Extended Audio Description", Required: true, SatisfiedBy: []string{"id"}},
+	}}); err != nil {
+		return fmt.Errorf("declare interactive arguments for get-media-extended-audio-descriptions-id: %w", err)
 	}
 	parent.AddCommand(cmd)
 	return nil
@@ -42,14 +54,12 @@ func runGetMediaExtendedAudioDescriptionsIdCmd(cmd *cobra.Command, args []string
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, getMediaExtendedAudioDescriptionsIDCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, getMediaExtendedAudioDescriptionsIDCmdMeta); err != nil {
-			return err
-		}
+	if err := flagutil.ResolvePositionalFlag(cmd, args); err != nil {
+		return err
 	}
 	req, err := flagutil.BuildRequest[operations.GetMediaExtendedAudioDescriptionsIDRequest](cmd, getMediaExtendedAudioDescriptionsIDCmdMeta, "", "")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

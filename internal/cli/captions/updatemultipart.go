@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/wistia/wistia-cli/internal/client"
 	"github.com/wistia/wistia-cli/internal/flagutil"
-	"github.com/wistia/wistia-cli/internal/interactive"
 	"github.com/wistia/wistia-cli/internal/output"
 	"github.com/wistia/wistia-cli/internal/sdk"
 	"github.com/wistia/wistia-cli/internal/sdk/models/operations"
@@ -27,9 +26,13 @@ func initUpdateMultipartCmd(parent *cobra.Command) error {
 		Use:     "update-multipart",
 		Short:   "Update Captions",
 		Long:    "This method is for replacing the captions on a video or audio media for the specified language.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
-		Example: "  wistia captions update-multipart --media-hashed-id <id> --language-code <value>",
+		Example: "  wistia captions update-multipart --media-hashed-id <id> --language-code <value> --caption-file ./path/to/file",
+		Args:    cobra.NoArgs,
 		RunE:    runUpdateMultipartCmd,
 		Aliases: []string{"um"},
+		Annotations: map[string]string{
+			"speakeasy_operation": "put_/medias/{mediaHashedId}/captions/{languageCode}",
+		},
 	}
 	flagutil.RegisterFlags(cmd, updateMultipartCmdMeta)
 	if err := flagutil.ValidateMeta[operations.PutMediasMediaHashedIDCaptionsLanguageCodeMultipartRequest](updateMultipartCmdMeta); err != nil {
@@ -44,14 +47,9 @@ func runUpdateMultipartCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, updateMultipartCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, updateMultipartCmdMeta); err != nil {
-			return err
-		}
-	}
 	req, err := flagutil.BuildRequest[operations.PutMediasMediaHashedIDCaptionsLanguageCodeMultipartRequest](cmd, updateMultipartCmdMeta, "Body", "")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

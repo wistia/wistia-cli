@@ -25,16 +25,28 @@ var getTimeseriesCmdMeta = []flagutil.FlagMeta{
 // initGetTimeseriesCmd initializes the get-timeseries command.
 func initGetTimeseriesCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
-		Use:     "get-timeseries",
+		Use:     "get-timeseries [media-id]",
 		Short:   "Show Media Analytics Timeseries",
 		Long:    "Retrieve analytics timeseries data for a video over a date range with configurable\ngranularity. Returns an array of timestamped metric buckets.\n\nThe date range between `start_date` and `end_date` must not exceed 2 years.\n\n\n## Requires api token with one of the following permissions\n```\nRead detailed stats\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
 		Example: "  wistia analytics-media get-timeseries --media-id <id> --start-date 2024-05-04 --end-date 2025-12-15 --granularity daily",
+		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runGetTimeseriesCmd,
 		Aliases: []string{"gt"},
+		Annotations: map[string]string{
+			"speakeasy_operation": "get_/analytics/medias/{mediaId}/timeseries",
+		},
 	}
 	flagutil.RegisterFlags(cmd, getTimeseriesCmdMeta)
 	if err := flagutil.ValidateMeta[operations.GetAnalyticsMediasMediaIDTimeseriesRequest](getTimeseriesCmdMeta); err != nil {
 		return fmt.Errorf("invalid metadata for get-timeseries: %w", err)
+	}
+	if err := flagutil.DeclarePositionalFlag(cmd, "media-id", "The hashed ID of the video. (or pass it as the [media-id] argument)", true); err != nil {
+		return err
+	}
+	if err := interactive.Declare(cmd, interactive.CommandSpec{Args: []interactive.ArgSpec{
+		{Name: "media-id", Summary: "The hashed ID of the video.", Required: true, SatisfiedBy: []string{"media-id"}},
+	}}); err != nil {
+		return fmt.Errorf("declare interactive arguments for get-timeseries: %w", err)
 	}
 	parent.AddCommand(cmd)
 	return nil
@@ -45,14 +57,12 @@ func runGetTimeseriesCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, getTimeseriesCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, getTimeseriesCmdMeta); err != nil {
-			return err
-		}
+	if err := flagutil.ResolvePositionalFlag(cmd, args); err != nil {
+		return err
 	}
 	req, err := flagutil.BuildRequest[operations.GetAnalyticsMediasMediaIDTimeseriesRequest](cmd, getTimeseriesCmdMeta, "", "")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

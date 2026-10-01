@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/wistia/wistia-cli/internal/client"
 	"github.com/wistia/wistia-cli/internal/flagutil"
-	"github.com/wistia/wistia-cli/internal/interactive"
 	"github.com/wistia/wistia-cli/internal/output"
 	"github.com/wistia/wistia-cli/internal/sdk"
 	"github.com/wistia/wistia-cli/internal/sdk/models/operations"
@@ -26,14 +25,23 @@ func initRestoreCmd(parent *cobra.Command) error {
 		Use:     "restore",
 		Short:   "Restore Deleted Media",
 		Long:    "Restores one or more soft-deleted media. By default each media returns to the\nfolder it was deleted from; pass folder_id to restore them into a specific\nfolder instead. Only media still inside the restore window can be recovered.\nThe restore runs asynchronously and the response includes a background job\nstatus.\n\n\n## Requires api token with one of the following permissions\n```\nUpload and view media\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
-		Example: "  wistia deleted-media restore --media-hashed-ids '[\"abc123\"]'",
+		Example: "  wistia deleted-media restore --media-hashed-ids abc123",
+		Args:    cobra.NoArgs,
 		RunE:    runRestoreCmd,
+		Annotations: map[string]string{
+			"speakeasy_operation": "post_/deleted_media/restore",
+		},
 	}
 	flagutil.RegisterFlags(cmd, restoreCmdMeta)
 	if err := flagutil.ValidateMeta[operations.PostDeletedMediaRestoreRequest](restoreCmdMeta); err != nil {
 		return fmt.Errorf("invalid metadata for restore: %w", err)
 	}
-	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin.")
+	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
+	if err := flagutil.AnnotateBodyFields(cmd, restoreCmdMeta, "", "body"); err != nil {
+		return fmt.Errorf("annotate body fields for restore: %w", err)
+	}
 	parent.AddCommand(cmd)
 	return nil
 }
@@ -43,14 +51,9 @@ func runRestoreCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, restoreCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, restoreCmdMeta); err != nil {
-			return err
-		}
-	}
 	request, err := flagutil.BuildRequest[operations.PostDeletedMediaRestoreRequest](cmd, restoreCmdMeta, "", "body")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

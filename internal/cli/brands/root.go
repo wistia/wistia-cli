@@ -10,9 +10,11 @@ import (
 
 func InitBrandsRoot(parent *cobra.Command) error {
 	var BrandsCmd = &cobra.Command{
-		Use:   "brands",
-		Short: "Operations for brands",
-		Long:  "Operations for brands",
+		Use:         "brands",
+		Short:       "Operations for brands",
+		Long:        "Operations for brands",
+		Args:        cobra.NoArgs,
+		Annotations: map[string]string{"speakeasy_cli_group": "true"},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if usage.UsageRequested(cmd) {
 				return usage.EmitSchema(cmd, cmd.OutOrStdout())

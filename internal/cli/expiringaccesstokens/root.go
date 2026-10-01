@@ -10,9 +10,11 @@ import (
 
 func InitExpiringAccessTokensRoot(parent *cobra.Command) error {
 	var ExpiringAccessTokensCmd = &cobra.Command{
-		Use:   "expiring-access-tokens",
-		Short: "Operations for expiring-access-tokens",
-		Long:  "Operations for expiring-access-tokens",
+		Use:         "expiring-access-tokens",
+		Short:       "Operations for expiring-access-tokens",
+		Long:        "Operations for expiring-access-tokens",
+		Args:        cobra.NoArgs,
+		Annotations: map[string]string{"speakeasy_cli_group": "true"},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if usage.UsageRequested(cmd) {
 				return usage.EmitSchema(cmd, cmd.OutOrStdout())

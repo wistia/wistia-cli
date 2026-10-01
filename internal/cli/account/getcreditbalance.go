@@ -19,8 +19,12 @@ func initGetCreditBalanceCmd(parent *cobra.Command) error {
 		Short:   "Get Credit Balance",
 		Long:    "Retrieves the current account's available credit balance and expected next recurring credit grant time.\n\nThe balance is a near-real-time hint and can lag one in-flight metered operation. A `402`\nresponse from an operation is authoritative when deciding whether more credits are required.\nNegative ledger balances are returned as `0` available credits.\n\n`next_grant_at` comes from the account's billing schedule, not an existing grant's expiration.\nIt is null when no scheduled grant can be determined. Processing may occur later, and other\ngrants may arrive sooner.\n\n## Requires api token with one of the following permissions\n```\n(any scope allowed)\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. The account is always derived\nfrom the authenticated token; this endpoint does not accept an account identifier.",
 		Example: "  wistia account get-credit-balance",
+		Args:    cobra.NoArgs,
 		RunE:    runGetCreditBalanceCmd,
 		Aliases: []string{"gcb"},
+		Annotations: map[string]string{
+			"speakeasy_operation": "getCreditBalance",
+		},
 	}
 	parent.AddCommand(cmd)
 	return nil

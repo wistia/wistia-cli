@@ -19,8 +19,12 @@ func initGetBrandKitColorsCmd(parent *cobra.Command) error {
 		Short:   "Get Brand Kit Colors",
 		Long:    "Retrieves the current account's brand colors for the Wistia desktop\napp's background picker.\n\n`colors` lists solid colors: every brand kit's color tokens (the colors\nthe web editor offers as \"Brand colors\"), then each brand's primary and\npage background color when it is solid, default brand first. Values are\nsix-digit hex strings, and a repeated color is listed once. Tokens whose\nvalue isn't a hex color are left out. An account without a brand kit\ngets its player color in place of the kit, which is what its default\nbrand kit would hold.\n\n`brand_gradients` lists each brand's primary and page background color\nthat is set to a gradient, as color stops sorted by position, default\nbrand first. Stops whose color isn't a hex color are left out, and a\ngradient with fewer than two hex stops left isn't listed.\n\n## Requires api token with one of the following permissions\n```\n(any scope allowed)\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
 		Example: "  wistia account get-brand-kit-colors",
+		Args:    cobra.NoArgs,
 		RunE:    runGetBrandKitColorsCmd,
 		Aliases: []string{"gbkc"},
+		Annotations: map[string]string{
+			"speakeasy_operation": "getBrandKitColors",
+		},
 	}
 	parent.AddCommand(cmd)
 	return nil

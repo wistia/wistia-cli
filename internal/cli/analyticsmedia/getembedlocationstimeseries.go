@@ -21,23 +21,35 @@ var getEmbedLocationsTimeseriesCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "end-date", FieldPath: "EndDate", Kind: flagutil.FlagKindDate, Required: true, Description: "End date for the analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date. [required]"},
 	{FlagName: "granularity", Shorthand: "g", FieldPath: "Granularity", Kind: flagutil.FlagKindEnum, Required: true, EnumValues: []string{"daily", "weekly", "monthly"}, Description: "The time granularity for the timeseries data. (options: daily, weekly, monthly) [required]"},
 	{FlagName: "sort-by", FieldPath: "SortBy", Kind: flagutil.FlagKindEnum, Optional: true, HasDefault: true, DefaultStr: "plays", EnumValues: []string{"plays", "loads", "engagement_rate", "play_rate", "played_time", "unique_visitors"}, Description: "The metric used to rank and select the top embed locations. (options: plays, loads, engagement_rate, play_rate, played_time, unique_visitors)"},
-	{FlagName: "embed-url", FieldPath: "EmbedURL", Kind: flagutil.FlagKindString, Optional: true, Description: "Filter results to a single embed URL. When provided, only analytics for\nthe page matching this URL are returned. The protocol is optional (https is assumed).\n"},
-	{FlagName: "per-page", Shorthand: "p", FieldPath: "PerPage", Kind: flagutil.FlagKindInt64, Optional: true, HasDefault: true, DefaultInt: 5, Description: "Number of top embed locations per time bucket (max 100). Remaining locations are aggregated into an \"All other\" entry."},
+	{FlagName: "embed-url", FieldPath: "EmbedURL", Kind: flagutil.FlagKindString, Optional: true, Description: "Filter results to a single embed URL. When provided, only analytics for\nthe page matching this URL are returned. The protocol is optional (https is assumed)."},
+	{FlagName: "per-page", Shorthand: "p", FieldPath: "PerPage", Kind: flagutil.FlagKindInt64, Optional: true, HasDefault: true, DefaultInt: 5, HasMinimum: true, Minimum: 1, HasMaximum: true, Maximum: 100, Description: "Number of top embed locations per time bucket (max 100). Remaining locations are aggregated into an \"All other\" entry."},
 }
 
 // initGetEmbedLocationsTimeseriesCmd initializes the get-embed-locations-timeseries command.
 func initGetEmbedLocationsTimeseriesCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
-		Use:     "get-embed-locations-timeseries",
+		Use:     "get-embed-locations-timeseries [media-id]",
 		Short:   "Show Media Embed Locations Timeseries",
 		Long:    "Retrieve timeseries analytics for a video broken down by embed location. Returns\nan array of timestamped buckets, each containing metrics for the top embed\nlocations (ranked by the chosen metric) plus an \"All other\" entry aggregating\nthe remaining locations.\n\nThe date range between `start_date` and `end_date` must not exceed 2 years.\n\n\n## Requires api token with one of the following permissions\n```\nRead detailed stats\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
 		Example: "  wistia analytics-media get-embed-locations-timeseries --media-id <id> --start-date 2025-02-07 --end-date 2025-10-04 --granularity weekly",
+		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runGetEmbedLocationsTimeseriesCmd,
 		Aliases: []string{"gelt"},
+		Annotations: map[string]string{
+			"speakeasy_operation": "get_/analytics/medias/{mediaId}/embed_locations_timeseries",
+		},
 	}
 	flagutil.RegisterFlags(cmd, getEmbedLocationsTimeseriesCmdMeta)
 	if err := flagutil.ValidateMeta[operations.GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesRequest](getEmbedLocationsTimeseriesCmdMeta); err != nil {
 		return fmt.Errorf("invalid metadata for get-embed-locations-timeseries: %w", err)
+	}
+	if err := flagutil.DeclarePositionalFlag(cmd, "media-id", "The hashed ID of the video. (or pass it as the [media-id] argument)", true); err != nil {
+		return err
+	}
+	if err := interactive.Declare(cmd, interactive.CommandSpec{Args: []interactive.ArgSpec{
+		{Name: "media-id", Summary: "The hashed ID of the video.", Required: true, SatisfiedBy: []string{"media-id"}},
+	}}); err != nil {
+		return fmt.Errorf("declare interactive arguments for get-embed-locations-timeseries: %w", err)
 	}
 	parent.AddCommand(cmd)
 	return nil
@@ -48,14 +60,12 @@ func runGetEmbedLocationsTimeseriesCmd(cmd *cobra.Command, args []string) error 
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, getEmbedLocationsTimeseriesCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, getEmbedLocationsTimeseriesCmdMeta); err != nil {
-			return err
-		}
+	if err := flagutil.ResolvePositionalFlag(cmd, args); err != nil {
+		return err
 	}
 	req, err := flagutil.BuildRequest[operations.GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesRequest](cmd, getEmbedLocationsTimeseriesCmdMeta, "", "")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

@@ -19,23 +19,35 @@ var getConversionsCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "media-id", Shorthand: "m", FieldPath: "MediaID", Kind: flagutil.FlagKindString, Required: true, Description: "The hashed ID of the video. [required]"},
 	{FlagName: "start-date", Shorthand: "s", FieldPath: "StartDate", Kind: flagutil.FlagKindDate, Required: true, Description: "Start date for the analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date. [required]"},
 	{FlagName: "end-date", Shorthand: "e", FieldPath: "EndDate", Kind: flagutil.FlagKindDate, Required: true, Description: "End date for the analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date. [required]"},
-	{FlagName: "per-page", Shorthand: "p", FieldPath: "PerPage", Kind: flagutil.FlagKindInt64, Optional: true, HasDefault: true, DefaultInt: 25, Description: "Number of results to return (max 100)."},
+	{FlagName: "per-page", Shorthand: "p", FieldPath: "PerPage", Kind: flagutil.FlagKindInt64, Optional: true, HasDefault: true, DefaultInt: 25, HasMinimum: true, Minimum: 1, HasMaximum: true, Maximum: 100, Description: "Number of results to return (max 100)."},
 	{FlagName: "cursor", Shorthand: "c", FieldPath: "Cursor", Kind: flagutil.FlagKindString, Optional: true, Description: "Cursor for pagination. Use the value from the previous response's page_info.end_cursor."},
 }
 
 // initGetConversionsCmd initializes the get-conversions command.
 func initGetConversionsCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
-		Use:     "get-conversions",
+		Use:     "get-conversions [media-id]",
 		Short:   "Show Media Form Conversions",
 		Long:    "Retrieve form conversion data for a video. Returns a paginated list of form\nsubmissions with visitor details and timestamps.\n\nThe date range between `start_date` and `end_date` must not exceed 2 years.\n\n\n## Requires api token with one of the following permissions\n```\nRead detailed stats\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
 		Example: "  wistia analytics-media get-conversions --media-id <id> --start-date 2024-02-20 --end-date 2026-07-17",
+		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runGetConversionsCmd,
 		Aliases: []string{"gc"},
+		Annotations: map[string]string{
+			"speakeasy_operation": "get_/analytics/medias/{mediaId}/conversions",
+		},
 	}
 	flagutil.RegisterFlags(cmd, getConversionsCmdMeta)
 	if err := flagutil.ValidateMeta[operations.GetAnalyticsMediasMediaIDConversionsRequest](getConversionsCmdMeta); err != nil {
 		return fmt.Errorf("invalid metadata for get-conversions: %w", err)
+	}
+	if err := flagutil.DeclarePositionalFlag(cmd, "media-id", "The hashed ID of the video. (or pass it as the [media-id] argument)", true); err != nil {
+		return err
+	}
+	if err := interactive.Declare(cmd, interactive.CommandSpec{Args: []interactive.ArgSpec{
+		{Name: "media-id", Summary: "The hashed ID of the video.", Required: true, SatisfiedBy: []string{"media-id"}},
+	}}); err != nil {
+		return fmt.Errorf("declare interactive arguments for get-conversions: %w", err)
 	}
 	parent.AddCommand(cmd)
 	return nil
@@ -46,14 +58,12 @@ func runGetConversionsCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, getConversionsCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, getConversionsCmdMeta); err != nil {
-			return err
-		}
+	if err := flagutil.ResolvePositionalFlag(cmd, args); err != nil {
+		return err
 	}
 	req, err := flagutil.BuildRequest[operations.GetAnalyticsMediasMediaIDConversionsRequest](cmd, getConversionsCmdMeta, "", "")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

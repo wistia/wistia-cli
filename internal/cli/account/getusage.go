@@ -19,8 +19,12 @@ func initGetUsageCmd(parent *cobra.Command) error {
 		Short:   "Get Account Usage",
 		Long:    "Retrieves plan, usage, and limit information for the current account.\n\nThe response includes plan tier, upload eligibility, and links to billing pages.\nUsage and limit details (media counts, storage, seats, bandwidth) are only visible\nto account owners and managers — other contacts receive `null` for the `limits` field.\n\n## Requires api token with one of the following permissions\n```\n(any scope allowed)\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
 		Example: "  wistia account get-usage",
+		Args:    cobra.NoArgs,
 		RunE:    runGetUsageCmd,
 		Aliases: []string{"gu"},
+		Annotations: map[string]string{
+			"speakeasy_operation": "getAccountUsage",
+		},
 	}
 	parent.AddCommand(cmd)
 	return nil

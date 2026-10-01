@@ -3,7 +3,7 @@
 
 package sdk
 
-// Generated from OpenAPI doc version 2026.09.0 and generator version 2.911.0
+// Generated from OpenAPI doc version 2026.09.0 and generator version 2.943.0
 
 import (
 	"context"
@@ -64,6 +64,7 @@ type Wistia struct {
 	Brands                         *Brands
 	Speakers                       *Speakers
 	Tags                           *Tags
+	BulkActions                    *BulkActions
 	Bulk                           *Bulk
 	Taggings                       *Taggings
 	Folders                        *Folders
@@ -79,34 +80,19 @@ type Wistia struct {
 	Contacts                       *Contacts
 	Contact                        *Contact
 	AccountTrials                  *AccountTrials
-	// Search
-	// Searches across folders, subfolders, medias, channels, channel episodes, and webinars.
-	// Also searches through video transcripts, so media results may include transcript matches with
-	// timestamps when the query matches spoken content.
-	//
-	// ## Requires api token with one of the following permissions
-	// ```
-	// Read all data
-	// ```
-	//
-	// Tokens with the "Act with a team member's permissions" permission
-	// (`all:delegate_to_contact_permissions` scope) can also be used. Requests
-	// made with such a token are authorized using the permissions of the
-	// contact assigned to the token.
-	//
-	Search               *Search
-	ResourceUrls         *ResourceUrls
-	ExpiringAccessTokens *ExpiringAccessTokens
-	BackgroundJobStatus  *BackgroundJobStatus
-	AllowedDomains       *AllowedDomains
-	StatsAccount         *StatsAccount
-	StatsProjects        *StatsProjects
-	StatsMedia           *StatsMedia
-	StatsVisitors        *StatsVisitors
-	StatsEvents          *StatsEvents
-	AnalyticsAccount     *AnalyticsAccount
-	AnalyticsMedia       *AnalyticsMedia
-	AnalyticsWebinar     *AnalyticsWebinar
+	Search                         *Search
+	ResourceUrls                   *ResourceUrls
+	ExpiringAccessTokens           *ExpiringAccessTokens
+	BackgroundJobStatus            *BackgroundJobStatus
+	AllowedDomains                 *AllowedDomains
+	StatsAccount                   *StatsAccount
+	StatsProjects                  *StatsProjects
+	StatsMedia                     *StatsMedia
+	StatsVisitors                  *StatsVisitors
+	StatsEvents                    *StatsEvents
+	AnalyticsAccount               *AnalyticsAccount
+	AnalyticsMedia                 *AnalyticsMedia
+	AnalyticsWebinar               *AnalyticsWebinar
 
 	sdkConfiguration config.SDKConfiguration
 	hooks            *hooks.Hooks
@@ -182,10 +168,13 @@ func WithTimeout(timeout time.Duration) SDKOption {
 // New creates a new instance of the SDK with the provided options
 func New(opts ...SDKOption) *Wistia {
 	sdk := &Wistia{
-		SDKVersion: "0.0.1",
+		SDKVersion: "0.1.2",
 		sdkConfiguration: config.SDKConfiguration{
-			UserAgent:  "speakeasy-sdk/go 0.0.1 2.911.0 2026.09.0 github.com/wistia/wistia-cli/internal/sdk",
-			ServerList: ServerList,
+			UserAgent:         "speakeasy-sdk/go 0.1.2 2.943.0 2026.09.0 github.com/wistia/wistia-cli/internal/sdk",
+			SDKVersion:        "0.1.2",
+			GenVersion:        "2.943.0",
+			OpenAPIDocVersion: "2026.09.0",
+			ServerList:        ServerList,
 		},
 		hooks: hooks.New(),
 	}
@@ -213,6 +202,7 @@ func New(opts ...SDKOption) *Wistia {
 	sdk.Brands = newBrands(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Speakers = newSpeakers(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Tags = newTags(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.BulkActions = newBulkActions(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Bulk = newBulk(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Taggings = newTaggings(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Folders = newFolders(sdk, sdk.sdkConfiguration, sdk.hooks)

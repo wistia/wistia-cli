@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/wistia/wistia-cli/internal/client"
 	"github.com/wistia/wistia-cli/internal/flagutil"
-	"github.com/wistia/wistia-cli/internal/interactive"
 	"github.com/wistia/wistia-cli/internal/output"
 	"github.com/wistia/wistia-cli/internal/sdk"
 	"github.com/wistia/wistia-cli/internal/sdk/models/operations"
@@ -32,13 +31,22 @@ func initCreateCmd(parent *cobra.Command) error {
 		Short:   "Create Folder",
 		Long:    "Creates a new folder (previously called project). If the folder is created successfully the Location HTTP header will point to the new folder.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\n`account` authorization granting the `create-folders` permission can also\nbe used. The folder's creator is the contact behind the token (the account\nowner for a token minted from an account-level token); `adminEmail` selects\nthe folder's administrator (defaults to the account owner). `personalLibrary`\ncreates the folder inside the My Library of the contact behind the token.\nThe new folder is not covered by the token that created it, so follow-up\nrequests need a token whose authorizations name the returned hashed id.",
 		Example: "  wistia folders create",
+		Args:    cobra.NoArgs,
 		RunE:    runCreateCmd,
+		Annotations: map[string]string{
+			"speakeasy_operation": "post_/folders",
+		},
 	}
 	flagutil.RegisterFlags(cmd, createCmdMeta)
 	if err := flagutil.ValidateMeta[operations.PostFoldersRequest](createCmdMeta); err != nil {
 		return fmt.Errorf("invalid metadata for create: %w", err)
 	}
-	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin.")
+	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
+	if err := flagutil.AnnotateBodyFields(cmd, createCmdMeta, "", "body"); err != nil {
+		return fmt.Errorf("annotate body fields for create: %w", err)
+	}
 	parent.AddCommand(cmd)
 	return nil
 }
@@ -48,14 +56,9 @@ func runCreateCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, createCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, createCmdMeta); err != nil {
-			return err
-		}
-	}
 	request, err := flagutil.BuildRequest[operations.PostFoldersRequest](cmd, createCmdMeta, "", "body")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

@@ -4,6 +4,7 @@
 package config
 
 import (
+	"errors"
 	"sync"
 
 	"github.com/zalando/go-keyring"
@@ -73,6 +74,27 @@ func GetKeyringValue(key string) string {
 		return ""
 	}
 	return val
+}
+
+func GetStoredSecret(key, fallback string) string {
+	if val := GetKeyringValue(key); val != "" {
+		return val
+	}
+	return fallback
+}
+
+var ErrKeyringUnavailable = errors.New("OS keychain unavailable")
+
+func StoreSecret(key, value string, fallback *string) error {
+	if !KeyringAvailable() {
+		*fallback = value
+		return ErrKeyringUnavailable
+	}
+	if err := SetKeyringValue(key, value); err != nil {
+		*fallback = value
+		return err
+	}
+	return nil
 }
 
 // SetKeyringValue stores a credential in the OS keychain.

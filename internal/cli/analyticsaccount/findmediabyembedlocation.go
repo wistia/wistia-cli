@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/wistia/wistia-cli/internal/client"
 	"github.com/wistia/wistia-cli/internal/flagutil"
-	"github.com/wistia/wistia-cli/internal/interactive"
 	"github.com/wistia/wistia-cli/internal/output"
 	"github.com/wistia/wistia-cli/internal/sdk"
 	"github.com/wistia/wistia-cli/internal/sdk/models/operations"
@@ -16,11 +15,11 @@ import (
 )
 
 var findMediaByEmbedLocationCmdMeta = []flagutil.FlagMeta{
-	{FlagName: "embed-url", FieldPath: "EmbedURL", Kind: flagutil.FlagKindString, Required: true, Description: "The URL of the page to look up, e.g. `https://example.com/pricing`. The protocol is optional (https is assumed), so `example.com/pricing` also works. [required]"},
+	{FlagName: "embed-url", FieldPath: "EmbedURL", Kind: flagutil.FlagKindString, Required: true, Description: "The URL of the page to look up, e.g. 'https://example.com/pricing'. The protocol is optional (https is assumed), so 'example.com/pricing' also works. [required]"},
 	{FlagName: "start-date", Shorthand: "s", FieldPath: "StartDate", Kind: flagutil.FlagKindDate, Optional: true, Description: "Start date for the analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date. Must be within the last 6 months. Defaults to 6 months ago, the start of the queryable window."},
 	{FlagName: "end-date", FieldPath: "EndDate", Kind: flagutil.FlagKindDate, Optional: true, Description: "End date for the analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date. Defaults to tomorrow, so today's activity is included."},
-	{FlagName: "path-match", FieldPath: "PathMatch", Kind: flagutil.FlagKindEnum, Optional: true, HasDefault: true, DefaultStr: "exact", EnumValues: []string{"exact", "prefix"}, Description: "How to match the path of `embed_url` against embed locations. `exact` requires the path to match exactly; `prefix` matches any embed path starting with it. (options: exact, prefix)"},
-	{FlagName: "per-page", FieldPath: "PerPage", Kind: flagutil.FlagKindInt64, Optional: true, HasDefault: true, DefaultInt: 100, Description: "Number of media hashed IDs to return (max 1000)."},
+	{FlagName: "path-match", FieldPath: "PathMatch", Kind: flagutil.FlagKindEnum, Optional: true, HasDefault: true, DefaultStr: "exact", EnumValues: []string{"exact", "prefix"}, Description: "How to match the path of 'embed_url' against embed locations. 'exact' requires the path to match exactly; 'prefix' matches any embed path starting with it. (options: exact, prefix)"},
+	{FlagName: "per-page", FieldPath: "PerPage", Kind: flagutil.FlagKindInt64, Optional: true, HasDefault: true, DefaultInt: 100, HasMinimum: true, Minimum: 1, HasMaximum: true, Maximum: 1000, Description: "Number of media hashed IDs to return (max 1000)."},
 }
 
 // initFindMediaByEmbedLocationCmd initializes the find-media-by-embed-location command.
@@ -30,8 +29,12 @@ func initFindMediaByEmbedLocationCmd(parent *cobra.Command) error {
 		Short:   "Find Media By Embed Location",
 		Long:    "Find the media embedded at a given URL. Returns the hashed IDs of the\naccount's media that recorded activity at that embed location during the\ndate range, ranked by plays. The resulting hashed IDs can be passed to\nother endpoints, such as Show Account Top Content's `hashed_ids[]` filter,\nto fetch analytics for those media.\n\nThe domain of `embed_url` is always matched exactly. Its path is matched\nexactly by default, or as a prefix with `path_match=prefix` (e.g.\n`/pricing` also matching `/pricing/plans`). A path that is empty or `/`\nis ignored, returning media across all paths on the domain.\n\nEmbed location data is retained for 6 months; a `start_date` older than\nthat returns a 422 error. When `start_date` and `end_date` are omitted,\nthe full 6-month queryable window is used.\n\n\n## Requires api token with one of the following permissions\n```\nRead detailed stats\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
 		Example: "  wistia analytics-account find-media-by-embed-location --embed-url https://milky-jury.com/",
+		Args:    cobra.NoArgs,
 		RunE:    runFindMediaByEmbedLocationCmd,
 		Aliases: []string{"fmbel"},
+		Annotations: map[string]string{
+			"speakeasy_operation": "get_/analytics/account/media_by_embed_location",
+		},
 	}
 	flagutil.RegisterFlags(cmd, findMediaByEmbedLocationCmdMeta)
 	if err := flagutil.ValidateMeta[operations.GetAnalyticsAccountMediaByEmbedLocationRequest](findMediaByEmbedLocationCmdMeta); err != nil {
@@ -46,14 +49,9 @@ func runFindMediaByEmbedLocationCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, findMediaByEmbedLocationCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, findMediaByEmbedLocationCmdMeta); err != nil {
-			return err
-		}
-	}
 	req, err := flagutil.BuildRequest[operations.GetAnalyticsAccountMediaByEmbedLocationRequest](cmd, findMediaByEmbedLocationCmdMeta, "", "")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

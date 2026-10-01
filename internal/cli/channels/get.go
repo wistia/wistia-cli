@@ -22,15 +22,27 @@ var getCmdMeta = []flagutil.FlagMeta{
 // initGetCmd initializes the get command.
 func initGetCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
-		Use:     "get",
+		Use:     "get [channel-hashed-id]",
 		Short:   "Show Channel",
 		Long:    "Returns the Channel associated with the hashedId.\n\n## Requires api token with one of the following permissions\n```\nRead all folder and media data\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
 		Example: "  wistia channels get --channel-hashed-id <id>",
+		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runGetCmd,
+		Annotations: map[string]string{
+			"speakeasy_operation": "get_/channels/{channelHashedId}",
+		},
 	}
 	flagutil.RegisterFlags(cmd, getCmdMeta)
 	if err := flagutil.ValidateMeta[operations.GetChannelsChannelHashedIDRequest](getCmdMeta); err != nil {
 		return fmt.Errorf("invalid metadata for get: %w", err)
+	}
+	if err := flagutil.DeclarePositionalFlag(cmd, "channel-hashed-id", "The hashed ID of the channel. (or pass it as the [channel-hashed-id] argument)", true); err != nil {
+		return err
+	}
+	if err := interactive.Declare(cmd, interactive.CommandSpec{Args: []interactive.ArgSpec{
+		{Name: "channel-hashed-id", Summary: "The hashed ID of the channel.", Required: true, SatisfiedBy: []string{"channel-hashed-id"}},
+	}}); err != nil {
+		return fmt.Errorf("declare interactive arguments for get: %w", err)
 	}
 	parent.AddCommand(cmd)
 	return nil
@@ -41,14 +53,12 @@ func runGetCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, getCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, getCmdMeta); err != nil {
-			return err
-		}
+	if err := flagutil.ResolvePositionalFlag(cmd, args); err != nil {
+		return err
 	}
 	req, err := flagutil.BuildRequest[operations.GetChannelsChannelHashedIDRequest](cmd, getCmdMeta, "", "")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

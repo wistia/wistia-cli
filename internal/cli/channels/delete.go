@@ -22,15 +22,27 @@ var deleteCmdMeta = []flagutil.FlagMeta{
 // initDeleteCmd initializes the delete command.
 func initDeleteCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
-		Use:     "delete",
+		Use:     "delete [channel-hashed-id]",
 		Short:   "Delete Channel",
 		Long:    "Deletes a channel.",
 		Example: "  wistia channels delete --channel-hashed-id <id>",
+		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runDeleteCmd,
+		Annotations: map[string]string{
+			"speakeasy_operation": "delete_/channels/{channelHashedId}",
+		},
 	}
 	flagutil.RegisterFlags(cmd, deleteCmdMeta)
 	if err := flagutil.ValidateMeta[operations.DeleteChannelsChannelHashedIDRequest](deleteCmdMeta); err != nil {
 		return fmt.Errorf("invalid metadata for delete: %w", err)
+	}
+	if err := flagutil.DeclarePositionalFlag(cmd, "channel-hashed-id", "The hashed id of the Channel (or pass it as the [channel-hashed-id] argument)", true); err != nil {
+		return err
+	}
+	if err := interactive.Declare(cmd, interactive.CommandSpec{Args: []interactive.ArgSpec{
+		{Name: "channel-hashed-id", Summary: "The hashed id of the Channel", Required: true, SatisfiedBy: []string{"channel-hashed-id"}},
+	}}); err != nil {
+		return fmt.Errorf("declare interactive arguments for delete: %w", err)
 	}
 	parent.AddCommand(cmd)
 	return nil
@@ -41,14 +53,12 @@ func runDeleteCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, deleteCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, deleteCmdMeta); err != nil {
-			return err
-		}
+	if err := flagutil.ResolvePositionalFlag(cmd, args); err != nil {
+		return err
 	}
 	req, err := flagutil.BuildRequest[operations.DeleteChannelsChannelHashedIDRequest](cmd, deleteCmdMeta, "", "")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

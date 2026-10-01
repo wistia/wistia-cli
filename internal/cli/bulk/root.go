@@ -10,19 +10,17 @@ import (
 
 func InitBulkRoot(parent *cobra.Command) error {
 	var BulkCmd = &cobra.Command{
-		Use:   "bulk",
-		Short: "Operations for bulk",
-		Long:  "Operations for bulk",
+		Use:         "bulk",
+		Short:       "Operations for bulk",
+		Long:        "Operations for bulk",
+		Args:        cobra.NoArgs,
+		Annotations: map[string]string{"speakeasy_cli_group": "true"},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if usage.UsageRequested(cmd) {
 				return usage.EmitSchema(cmd, cmd.OutOrStdout())
 			}
 			return cmd.Help()
 		},
-	}
-
-	if err := initCreateCmd(BulkCmd); err != nil {
-		return err
 	}
 
 	if err := initPurchaseCmd(BulkCmd); err != nil {

@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/wistia/wistia-cli/internal/client"
 	"github.com/wistia/wistia-cli/internal/flagutil"
-	"github.com/wistia/wistia-cli/internal/interactive"
 	"github.com/wistia/wistia-cli/internal/output"
 	"github.com/wistia/wistia-cli/internal/sdk"
 	"github.com/wistia/wistia-cli/internal/sdk/models/operations"
@@ -17,8 +16,8 @@ import (
 
 var editCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "media-hashed-id", Shorthand: "m", FieldPath: "MediaHashedID", Kind: flagutil.FlagKindString, Required: true, Description: "The hashed ID of the media whose transcript should be edited. [required]"},
-	{FlagName: "language-code", Shorthand: "l", FieldPath: "LanguageCode", Kind: flagutil.FlagKindString, Required: true, Description: "The 3-character ISO 639-2 language code of the caption track to edit (e.g., `eng`, `fra`, `spa`). Some languages use extended IETF subtags (e.g., `zh-Hant`). [required]"},
-	{FlagName: "edits", FieldPath: "Body.Edits", Kind: flagutil.FlagKindJSON, Required: true, Annotations: `json:"edits"`, Description: "The corrections to apply, all-or-nothing, in one new version. [required]"},
+	{FlagName: "language-code", Shorthand: "l", FieldPath: "LanguageCode", Kind: flagutil.FlagKindString, Required: true, Description: "The 3-character ISO 639-2 language code of the caption track to edit (e.g., 'eng', 'fra', 'spa'). Some languages use extended IETF subtags (e.g., 'zh-Hant'). [required]"},
+	{FlagName: "edits", FieldPath: "Body.Edits", Kind: flagutil.FlagKindJSON, Required: true, Annotations: `json:"edits"`, Description: "The corrections to apply, all-or-nothing, in one new version. (JSON array) [required]"},
 	{FlagName: "expected-version", FieldPath: "Body.ExpectedVersion", Kind: flagutil.FlagKindInt64, Required: true, Description: "The active caption version returned with the caption content used to prepare these edits. The edit applies only if that is still the active version; otherwise it returns 409 so you re-read and retry. [required]"},
 }
 
@@ -29,13 +28,22 @@ func initEditCmd(parent *cobra.Command) error {
 		Short:   "Edit Captions Text",
 		Long:    "Applies targeted find-and-replace corrections to a media's transcript for\nthe specified language, preserving the timings of unchanged words. The whole\nbatch is applied atomically against a specific caption version, or nothing is.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
 		Example: "  wistia captions edit --media-hashed-id <id> --language-code <value> --edits '[{\"target_text\":\"<value>\",\"replacement_text\":\"<value>\"}]' --expected-version 751935",
+		Args:    cobra.NoArgs,
 		RunE:    runEditCmd,
+		Annotations: map[string]string{
+			"speakeasy_operation": "post_/medias/{mediaHashedId}/captions/{languageCode}/edits",
+		},
 	}
 	flagutil.RegisterFlags(cmd, editCmdMeta)
 	if err := flagutil.ValidateMeta[operations.PostMediasMediaHashedIDCaptionsLanguageCodeEditsRequest](editCmdMeta); err != nil {
 		return fmt.Errorf("invalid metadata for edit: %w", err)
 	}
-	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin.")
+	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
+	if err := flagutil.AnnotateBodyFields(cmd, editCmdMeta, "Body", "body"); err != nil {
+		return fmt.Errorf("annotate body fields for edit: %w", err)
+	}
 	parent.AddCommand(cmd)
 	return nil
 }
@@ -45,14 +53,9 @@ func runEditCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, editCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, editCmdMeta); err != nil {
-			return err
-		}
-	}
 	req, err := flagutil.BuildRequest[operations.PostMediasMediaHashedIDCaptionsLanguageCodeEditsRequest](cmd, editCmdMeta, "Body", "body")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

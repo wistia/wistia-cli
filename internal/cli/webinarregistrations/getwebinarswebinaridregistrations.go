@@ -17,8 +17,8 @@ import (
 
 var getWebinarsWebinarIDRegistrationsCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "webinar-id", Shorthand: "w", FieldPath: "WebinarID", Kind: flagutil.FlagKindString, Required: true, Description: "Hashed ID of the webinar. [required]"},
-	{FlagName: "per-page", Shorthand: "p", FieldPath: "PerPage", Kind: flagutil.FlagKindInt64, Optional: true, HasDefault: true, DefaultInt: 100, Description: "Number of results to return per page (max 100)."},
-	{FlagName: "cursor", Shorthand: "c", FieldPath: "Cursor", Kind: flagutil.FlagKindString, Optional: true, Description: "Cursor for pagination. Use the value from the previous response's `page_info.end_cursor` or `page_info.start_cursor`."},
+	{FlagName: "per-page", Shorthand: "p", FieldPath: "PerPage", Kind: flagutil.FlagKindInt64, Optional: true, HasDefault: true, DefaultInt: 100, HasMinimum: true, Minimum: 1, HasMaximum: true, Maximum: 100, Description: "Number of results to return per page (max 100)."},
+	{FlagName: "cursor", Shorthand: "c", FieldPath: "Cursor", Kind: flagutil.FlagKindString, Optional: true, Description: "Cursor for pagination. Use the value from the previous response's 'page_info.end_cursor' or 'page_info.start_cursor'."},
 	{FlagName: "sort-direction", Shorthand: "s", FieldPath: "SortDirection", Kind: flagutil.FlagKindIntEnum, Optional: true, HasDefault: true, DefaultStr: "1", EnumValues: []string{"0", "1"}, Description: "Sort direction (0 = desc/previous page, 1 = asc/next page; default is 1) (options: 0, 1)"},
 	{FlagName: "attendance", Shorthand: "a", FieldPath: "Attendance", Kind: flagutil.FlagKindEnum, Optional: true, HasDefault: true, DefaultStr: "all", EnumValues: []string{"all", "attendees", "non_attendees"}, Description: "Filter registrations by attendance status. (options: all, attendees, non_attendees)"},
 	{FlagName: "restriction", Shorthand: "r", FieldPath: "Restriction", Kind: flagutil.FlagKindEnum, Optional: true, HasDefault: true, DefaultStr: "all", EnumValues: []string{"all", "restricted", "allowed"}, Description: "Filter registrations by restriction status. (options: all, restricted, allowed)"},
@@ -28,16 +28,28 @@ var getWebinarsWebinarIDRegistrationsCmdMeta = []flagutil.FlagMeta{
 // initGetWebinarsWebinarIdRegistrationsCmd initializes the get-webinars-webinar-id-registrations command.
 func initGetWebinarsWebinarIdRegistrationsCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
-		Use:     "get-webinars-webinar-id-registrations",
+		Use:     "get-webinars-webinar-id-registrations [webinar-id]",
 		Short:   "List Webinar Registrations",
 		Long:    "Retrieve a paginated list of registrations for a webinar. Returns contact\ninformation, attendance status, engagement metrics, and attribution data\nfor each registrant.\n\nPagination uses cursor-based pagination with a `page_info` object in the\nresponse rather than per-record cursors. Use `page_info.end_cursor` as\nthe `cursor` parameter to fetch the next page.\n\n## Requires api token with one of the following permissions\n```\nRead all data\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
 		Example: "  wistia webinar-registrations get-webinars-webinar-id-registrations --webinar-id <id>",
+		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runGetWebinarsWebinarIdRegistrationsCmd,
 		Aliases: []string{"gwwir"},
+		Annotations: map[string]string{
+			"speakeasy_operation": "get_/webinars/{webinarId}/registrations",
+		},
 	}
 	flagutil.RegisterFlags(cmd, getWebinarsWebinarIDRegistrationsCmdMeta)
 	if err := flagutil.ValidateMeta[operations.GetWebinarsWebinarIDRegistrationsRequest](getWebinarsWebinarIDRegistrationsCmdMeta); err != nil {
 		return fmt.Errorf("invalid metadata for get-webinars-webinar-id-registrations: %w", err)
+	}
+	if err := flagutil.DeclarePositionalFlag(cmd, "webinar-id", "Hashed ID of the webinar. (or pass it as the [webinar-id] argument)", true); err != nil {
+		return err
+	}
+	if err := interactive.Declare(cmd, interactive.CommandSpec{Args: []interactive.ArgSpec{
+		{Name: "webinar-id", Summary: "Hashed ID of the webinar.", Required: true, SatisfiedBy: []string{"webinar-id"}},
+	}}); err != nil {
+		return fmt.Errorf("declare interactive arguments for get-webinars-webinar-id-registrations: %w", err)
 	}
 	parent.AddCommand(cmd)
 	return nil
@@ -48,14 +60,12 @@ func runGetWebinarsWebinarIdRegistrationsCmd(cmd *cobra.Command, args []string) 
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, getWebinarsWebinarIDRegistrationsCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, getWebinarsWebinarIDRegistrationsCmdMeta); err != nil {
-			return err
-		}
+	if err := flagutil.ResolvePositionalFlag(cmd, args); err != nil {
+		return err
 	}
 	req, err := flagutil.BuildRequest[operations.GetWebinarsWebinarIDRegistrationsRequest](cmd, getWebinarsWebinarIDRegistrationsCmdMeta, "", "")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

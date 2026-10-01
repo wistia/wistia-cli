@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/wistia/wistia-cli/internal/client"
 	"github.com/wistia/wistia-cli/internal/flagutil"
-	"github.com/wistia/wistia-cli/internal/interactive"
 	"github.com/wistia/wistia-cli/internal/output"
 	"github.com/wistia/wistia-cli/internal/sdk"
 	"github.com/wistia/wistia-cli/internal/sdk/models/operations"
@@ -28,8 +27,12 @@ func initGetTimeseriesCmd(parent *cobra.Command) error {
 		Short:   "Show Account Analytics Timeseries",
 		Long:    "Retrieve analytics timeseries data for the entire account over a date range with\nconfigurable granularity. Returns an array of timestamped metric buckets aggregated\nacross all of the account's media.\n\nThe date range between `start_date` and `end_date` must not exceed 2 years.\n\n\n## Requires api token with one of the following permissions\n```\nRead detailed stats\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
 		Example: "  wistia analytics-account get-timeseries --start-date 2025-08-24 --end-date 2025-08-13 --granularity weekly",
+		Args:    cobra.NoArgs,
 		RunE:    runGetTimeseriesCmd,
 		Aliases: []string{"gt"},
+		Annotations: map[string]string{
+			"speakeasy_operation": "get_/analytics/account/timeseries",
+		},
 	}
 	flagutil.RegisterFlags(cmd, getTimeseriesCmdMeta)
 	if err := flagutil.ValidateMeta[operations.GetAnalyticsAccountTimeseriesRequest](getTimeseriesCmdMeta); err != nil {
@@ -44,14 +47,9 @@ func runGetTimeseriesCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, getTimeseriesCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, getTimeseriesCmdMeta); err != nil {
-			return err
-		}
-	}
 	req, err := flagutil.BuildRequest[operations.GetAnalyticsAccountTimeseriesRequest](cmd, getTimeseriesCmdMeta, "", "")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

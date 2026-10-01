@@ -10,9 +10,11 @@ import (
 
 func InitSubfoldersRoot(parent *cobra.Command) error {
 	var SubfoldersCmd = &cobra.Command{
-		Use:   "subfolders",
-		Short: "Operations for subfolders",
-		Long:  "Operations for subfolders",
+		Use:         "subfolders",
+		Short:       "Operations for subfolders",
+		Long:        "Operations for subfolders",
+		Args:        cobra.NoArgs,
+		Annotations: map[string]string{"speakeasy_cli_group": "true"},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if usage.UsageRequested(cmd) {
 				return usage.EmitSchema(cmd, cmd.OutOrStdout())

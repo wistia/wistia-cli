@@ -22,15 +22,27 @@ var getCmdMeta = []flagutil.FlagMeta{
 // initGetCmd initializes the get command.
 func initGetCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
-		Use:     "get",
+		Use:     "get [background-job-status-id]",
 		Short:   "Show Background Job Status",
 		Long:    "Retrieves the status of a background job.\n\n## Requires api token with one of the following permissions\n```\nRead all data\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
 		Example: "  wistia background-job-status get --background-job-status-id 108030",
+		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runGetCmd,
+		Annotations: map[string]string{
+			"speakeasy_operation": "get_/background_job_status/{backgroundJobStatusId}",
+		},
 	}
 	flagutil.RegisterFlags(cmd, getCmdMeta)
 	if err := flagutil.ValidateMeta[operations.GetBackgroundJobStatusBackgroundJobStatusIDRequest](getCmdMeta); err != nil {
 		return fmt.Errorf("invalid metadata for get: %w", err)
+	}
+	if err := flagutil.DeclarePositionalFlag(cmd, "background-job-status-id", "The hashed ID or numeric ID of the background job (or pass it as the [background-job-status-id] argument)", true); err != nil {
+		return err
+	}
+	if err := interactive.Declare(cmd, interactive.CommandSpec{Args: []interactive.ArgSpec{
+		{Name: "background-job-status-id", Summary: "The hashed ID or numeric ID of the background job", Required: true, SatisfiedBy: []string{"background-job-status-id"}},
+	}}); err != nil {
+		return fmt.Errorf("declare interactive arguments for get: %w", err)
 	}
 	parent.AddCommand(cmd)
 	return nil
@@ -41,14 +53,12 @@ func runGetCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, getCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, getCmdMeta); err != nil {
-			return err
-		}
+	if err := flagutil.ResolvePositionalFlag(cmd, args); err != nil {
+		return err
 	}
 	req, err := flagutil.BuildRequest[operations.GetBackgroundJobStatusBackgroundJobStatusIDRequest](cmd, getCmdMeta, "", "")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

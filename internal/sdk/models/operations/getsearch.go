@@ -174,7 +174,14 @@ func CreateCustomMetadataUnionCustomMetadata(customMetadata CustomMetadata) Cust
 	}
 }
 
-func (u *CustomMetadataUnion) UnmarshalJSON(data []byte) error {
+func (u *CustomMetadataUnion) UnmarshalJSON(data []byte) (err error) {
+	previous := *u
+	*u = CustomMetadataUnion{}
+	defer func() {
+		if err != nil {
+			*u = previous
+		}
+	}()
 
 	var candidates []utils.UnionCandidate
 
@@ -973,6 +980,7 @@ func (u ValueUnion) IsUnknown() bool {
 }
 
 func (u *ValueUnion) UnmarshalJSON(data []byte) error {
+	*u = ValueUnion{}
 
 	var candidates []utils.UnionCandidate
 

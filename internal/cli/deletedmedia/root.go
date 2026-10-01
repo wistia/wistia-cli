@@ -10,9 +10,11 @@ import (
 
 func InitDeletedMediaRoot(parent *cobra.Command) error {
 	var DeletedMediaCmd = &cobra.Command{
-		Use:   "deleted-media",
-		Short: "Operations for deleted-media",
-		Long:  "Operations for deleted-media",
+		Use:         "deleted-media",
+		Short:       "Operations for deleted-media",
+		Long:        "Operations for deleted-media",
+		Args:        cobra.NoArgs,
+		Annotations: map[string]string{"speakeasy_cli_group": "true"},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if usage.UsageRequested(cmd) {
 				return usage.EmitSchema(cmd, cmd.OutOrStdout())

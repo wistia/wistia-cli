@@ -19,7 +19,11 @@ func initCreateCmd(parent *cobra.Command) error {
 		Short:   "Start Account Trial",
 		Long:    "Starts a business-tier trial on the current account. The plan tier is\nhardcoded — the only caller is the Wistia desktop app's \"Invite and\nstart trial\" onboarding CTA.\n\nRequires the current contact to be authorized to start the trial via\nthe account's AccountPolicy — otherwise returns 403.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
 		Example: "  wistia account-trials create",
+		Args:    cobra.NoArgs,
 		RunE:    runCreateCmd,
+		Annotations: map[string]string{
+			"speakeasy_operation": "post_/account/trials",
+		},
 	}
 	parent.AddCommand(cmd)
 	return nil

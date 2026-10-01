@@ -10,9 +10,11 @@ import (
 
 func InitAllowedDomainsRoot(parent *cobra.Command) error {
 	var AllowedDomainsCmd = &cobra.Command{
-		Use:   "allowed-domains",
-		Short: "Operations for allowed-domains",
-		Long:  "Operations for allowed-domains",
+		Use:         "allowed-domains",
+		Short:       "Operations for allowed-domains",
+		Long:        "Operations for allowed-domains",
+		Args:        cobra.NoArgs,
+		Annotations: map[string]string{"speakeasy_cli_group": "true"},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if usage.UsageRequested(cmd) {
 				return usage.EmitSchema(cmd, cmd.OutOrStdout())

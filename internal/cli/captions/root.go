@@ -10,9 +10,11 @@ import (
 
 func InitCaptionsRoot(parent *cobra.Command) error {
 	var CaptionsCmd = &cobra.Command{
-		Use:   "captions",
-		Short: "Operations for captions",
-		Long:  "Operations for captions",
+		Use:         "captions",
+		Short:       "Operations for captions",
+		Long:        "Operations for captions",
+		Args:        cobra.NoArgs,
+		Annotations: map[string]string{"speakeasy_cli_group": "true"},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if usage.UsageRequested(cmd) {
 				return usage.EmitSchema(cmd, cmd.OutOrStdout())

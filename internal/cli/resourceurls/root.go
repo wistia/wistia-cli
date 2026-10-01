@@ -10,9 +10,11 @@ import (
 
 func InitResourceUrlsRoot(parent *cobra.Command) error {
 	var ResourceUrlsCmd = &cobra.Command{
-		Use:   "resource-urls",
-		Short: "Operations for resource-urls",
-		Long:  "Operations for resource-urls",
+		Use:         "resource-urls",
+		Short:       "Operations for resource-urls",
+		Long:        "Operations for resource-urls",
+		Args:        cobra.NoArgs,
+		Annotations: map[string]string{"speakeasy_cli_group": "true"},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if usage.UsageRequested(cmd) {
 				return usage.EmitSchema(cmd, cmd.OutOrStdout())

@@ -280,6 +280,7 @@ func (u ExpectedBilledPricePerMinute) IsUnknown() bool {
 }
 
 func (u *ExpectedBilledPricePerMinute) UnmarshalJSON(data []byte) error {
+	*u = ExpectedBilledPricePerMinute{}
 
 	var candidates []utils.UnionCandidate
 
@@ -396,6 +397,7 @@ func (u ExpectedBilledPrice) IsUnknown() bool {
 }
 
 func (u *ExpectedBilledPrice) UnmarshalJSON(data []byte) error {
+	*u = ExpectedBilledPrice{}
 
 	var candidates []utils.UnionCandidate
 

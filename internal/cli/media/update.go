@@ -18,26 +18,43 @@ import (
 var updateCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "media-hashed-id", Shorthand: "m", FieldPath: "MediaHashedID", Kind: flagutil.FlagKindString, Required: true, Description: "The hashed ID of the media. [required]"},
 	{FlagName: "name", FieldPath: "Body.Name", Kind: flagutil.FlagKindString, Optional: true, Description: "The media’s new name."},
-	{FlagName: "new-still-media-id", FieldPath: "Body.NewStillMediaID", Kind: flagutil.FlagKindString, Optional: true, Description: "The Wistia hashed ID of an image that will replace the still that’s displayed before the player starts playing.\n"},
+	{FlagName: "new-still-media-id", FieldPath: "Body.NewStillMediaID", Kind: flagutil.FlagKindString, Optional: true, Description: "The Wistia hashed ID of an image that will replace the still that’s displayed before the player starts playing."},
 	{FlagName: "description", FieldPath: "Body.Description", Kind: flagutil.FlagKindString, Optional: true, Description: "A new description for this media. Accepts plain text or markdown."},
 	{FlagName: "tags", Shorthand: "t", FieldPath: "Body.Tags", Kind: flagutil.FlagKindStringArray, Optional: true, Description: "An array of tag names to apply to the media. This replaces any existing tags. To add tags without replacing existing tags, use bulk-tag-media."},
-	{FlagName: "custom-metadata", Shorthand: "c", FieldPath: "Body.CustomMetadata", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"custom_metadata,omitempty"`, Description: "Custom metadata field values to set, keyed by field key. Values take the\nsame shapes as the Set Custom Metadata Field Value endpoint; a null value\nclears that field and omitted fields are untouched. Requires the custom\nmetadata feature on the account.\n"},
+	{FlagName: "custom-metadata", Shorthand: "c", FieldPath: "Body.CustomMetadata", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"custom_metadata,omitempty"`, Description: "Custom metadata field values to set, keyed by field key. Values take the\nsame shapes as the Set Custom Metadata Field Value endpoint; a null value\nclears that field and omitted fields are untouched. Requires the custom\nmetadata feature on the account."},
 }
 
 // initUpdateCmd initializes the update command.
 func initUpdateCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
-		Use:     "update",
+		Use:     "update [media-hashed-id]",
 		Short:   "Update Media",
 		Long:    "Updates the attributes on a media.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\nauthorization granting the `update` permission on this media can also be\nused.",
 		Example: "  wistia media update --media-hashed-id <id>",
+		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runUpdateCmd,
+		Annotations: map[string]string{
+			"speakeasy_operation": "put_/medias/{mediaHashedId}",
+		},
 	}
 	flagutil.RegisterFlags(cmd, updateCmdMeta)
 	if err := flagutil.ValidateMeta[operations.PutMediasMediaHashedIDRequest](updateCmdMeta); err != nil {
 		return fmt.Errorf("invalid metadata for update: %w", err)
 	}
-	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin.")
+	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
+	if err := flagutil.AnnotateBodyFields(cmd, updateCmdMeta, "Body", "body"); err != nil {
+		return fmt.Errorf("annotate body fields for update: %w", err)
+	}
+	if err := flagutil.DeclarePositionalFlag(cmd, "media-hashed-id", "The hashed ID of the media. (or pass it as the [media-hashed-id] argument)", true); err != nil {
+		return err
+	}
+	if err := interactive.Declare(cmd, interactive.CommandSpec{Args: []interactive.ArgSpec{
+		{Name: "media-hashed-id", Summary: "The hashed ID of the media.", Required: true, SatisfiedBy: []string{"media-hashed-id"}},
+	}}); err != nil {
+		return fmt.Errorf("declare interactive arguments for update: %w", err)
+	}
 	parent.AddCommand(cmd)
 	return nil
 }
@@ -47,14 +64,12 @@ func runUpdateCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, updateCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, updateCmdMeta); err != nil {
-			return err
-		}
+	if err := flagutil.ResolvePositionalFlag(cmd, args); err != nil {
+		return err
 	}
 	req, err := flagutil.BuildRequest[operations.PutMediasMediaHashedIDRequest](cmd, updateCmdMeta, "Body", "body")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

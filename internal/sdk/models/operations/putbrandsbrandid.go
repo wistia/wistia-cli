@@ -46,7 +46,14 @@ func CreatePutBrandsBrandIDPrimaryColorRequestArrayOfArrayOfAny(arrayOfArrayOfAn
 	}
 }
 
-func (u *PutBrandsBrandIDPrimaryColorRequest) UnmarshalJSON(data []byte) error {
+func (u *PutBrandsBrandIDPrimaryColorRequest) UnmarshalJSON(data []byte) (err error) {
+	previous := *u
+	*u = PutBrandsBrandIDPrimaryColorRequest{}
+	defer func() {
+		if err != nil {
+			*u = previous
+		}
+	}()
 
 	var candidates []utils.UnionCandidate
 
@@ -136,7 +143,14 @@ func CreatePutBrandsBrandIDPageBackgroundColorRequestArrayOfArrayOfAny(arrayOfAr
 	}
 }
 
-func (u *PutBrandsBrandIDPageBackgroundColorRequest) UnmarshalJSON(data []byte) error {
+func (u *PutBrandsBrandIDPageBackgroundColorRequest) UnmarshalJSON(data []byte) (err error) {
+	previous := *u
+	*u = PutBrandsBrandIDPageBackgroundColorRequest{}
+	defer func() {
+		if err != nil {
+			*u = previous
+		}
+	}()
 
 	var candidates []utils.UnionCandidate
 
@@ -612,6 +626,7 @@ func (u PutBrandsBrandIDPrimaryColorResponse) IsUnknown() bool {
 }
 
 func (u *PutBrandsBrandIDPrimaryColorResponse) UnmarshalJSON(data []byte) error {
+	*u = PutBrandsBrandIDPrimaryColorResponse{}
 
 	var candidates []utils.UnionCandidate
 
@@ -728,6 +743,7 @@ func (u PutBrandsBrandIDPageBackgroundColorResponse) IsUnknown() bool {
 }
 
 func (u *PutBrandsBrandIDPageBackgroundColorResponse) UnmarshalJSON(data []byte) error {
+	*u = PutBrandsBrandIDPageBackgroundColorResponse{}
 
 	var candidates []utils.UnionCandidate
 

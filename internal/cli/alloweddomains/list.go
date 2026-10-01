@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/wistia/wistia-cli/internal/client"
 	"github.com/wistia/wistia-cli/internal/flagutil"
-	"github.com/wistia/wistia-cli/internal/interactive"
 	"github.com/wistia/wistia-cli/internal/output"
 	"github.com/wistia/wistia-cli/internal/sdk"
 	"github.com/wistia/wistia-cli/internal/sdk/models/operations"
@@ -16,10 +15,10 @@ import (
 )
 
 var listCmdMeta = []flagutil.FlagMeta{
-	{FlagName: "page", FieldPath: "Page", Kind: flagutil.FlagKindInt64, Optional: true, Description: "The page number to retrieve. This cannot be combined with `cursor`,\npagination.\n"},
+	{FlagName: "page", FieldPath: "Page", Kind: flagutil.FlagKindInt64, Optional: true, Description: "The page number to retrieve. This cannot be combined with 'cursor',\npagination."},
 	{FlagName: "per-page", FieldPath: "PerPage", Kind: flagutil.FlagKindInt64, Optional: true, Description: "The number of medias per page. Use this for both offset pagination and cursor pagination."},
-	{FlagName: "cursor", Shorthand: "c", FieldPath: "Cursor", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `queryParam:"style=deepObject,explode=true,name=cursor"`, Description: "If `cursor[enabled]` is set to 1 then cursor pagination is enabled and the\nfirst set of records are fetched up to the `per_page`. Cursor\npagination will also be turned on if `cursor[before]` or `cursor[after]`\nare set. Records returned will have a `cursor` property set which can be used to fetch more records in the same `sort_by` ordering.\nThe cursor value of the last record can be used to fetch records after the current result set and\nthe cursor of the first record can be used to fetch records before the result set.\n\nNOTE: a cursor value is only valid if the `sort_by` value hasn't changed from the\nlast fetch. For example, you cannot fetch using `sort_by` id and then pass that\ncursor value to a `sort_by` name.\n"},
-	{FlagName: "sort-by", FieldPath: "SortBy", Kind: flagutil.FlagKindEnum, Optional: true, HasDefault: true, DefaultStr: "id", EnumValues: []string{"id", "domain", "created"}, Description: "Ordering. When using cursor pagination (see cursor param),\nonly `id` and `domain` are supported.\n (options: id, domain, created)"},
+	{FlagName: "cursor", Shorthand: "c", FieldPath: "Cursor", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `queryParam:"style=deepObject,explode=true,name=cursor"`, Description: "If 'cursor[enabled]' is set to 1 then cursor pagination is enabled and the\nfirst set of records are fetched up to the 'per_page'. Cursor\npagination will also be turned on if 'cursor[before]' or 'cursor[after]'\nare set. Records returned will have a 'cursor' property set which can be used to fetch more records in the same 'sort_by' ordering.\nThe cursor value of the last record can be used to fetch records after the current result set and\nthe cursor of the first record can be used to fetch records before the result set.\n\nNOTE: a cursor value is only valid if the 'sort_by' value hasn't changed from the\nlast fetch. For example, you cannot fetch using 'sort_by' id and then pass that\ncursor value to a 'sort_by' name."},
+	{FlagName: "sort-by", FieldPath: "SortBy", Kind: flagutil.FlagKindEnum, Optional: true, HasDefault: true, DefaultStr: "id", EnumValues: []string{"id", "domain", "created"}, Description: "Ordering. When using cursor pagination (see cursor param),\nonly 'id' and 'domain' are supported.\n(options: id, domain, created)"},
 	{FlagName: "sort-direction", FieldPath: "SortDirection", Kind: flagutil.FlagKindIntEnum, Optional: true, HasDefault: true, DefaultStr: "1", EnumValues: []string{"0", "1"}, Description: "Ordering Sort Direction (0 = desc, 1 = asc; default is 1) (options: 0, 1)"},
 }
 
@@ -30,7 +29,11 @@ func initListCmd(parent *cobra.Command) error {
 		Short:   "List Allowed Domains",
 		Long:    "Lists allowed domains belonging to the account.\n\n## Requires api token with one of the following permissions\n```\nRead all data\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
 		Example: "  wistia allowed-domains list",
+		Args:    cobra.NoArgs,
 		RunE:    runListCmd,
+		Annotations: map[string]string{
+			"speakeasy_operation": "get_/allowed_domains",
+		},
 	}
 	flagutil.RegisterFlags(cmd, listCmdMeta)
 	if err := flagutil.ValidateMeta[operations.GetAllowedDomainsRequest](listCmdMeta); err != nil {
@@ -45,14 +48,9 @@ func runListCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, listCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, listCmdMeta); err != nil {
-			return err
-		}
-	}
 	req, err := flagutil.BuildRequest[operations.GetAllowedDomainsRequest](cmd, listCmdMeta, "", "")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/wistia/wistia-cli/internal/client"
 	"github.com/wistia/wistia-cli/internal/flagutil"
-	"github.com/wistia/wistia-cli/internal/interactive"
 	"github.com/wistia/wistia-cli/internal/output"
 	"github.com/wistia/wistia-cli/internal/sdk"
 	"github.com/wistia/wistia-cli/internal/sdk/models/operations"
@@ -16,7 +15,7 @@ import (
 )
 
 var createCmdMeta = []flagutil.FlagMeta{
-	{FlagName: "contacts", Shorthand: "c", FieldPath: "Contacts", Kind: flagutil.FlagKindString, Required: true, Description: "A comma-, whitespace-, or newline-separated list of email addresses to\ninvite to the account. Each entry becomes a new contact if one does not\nalready exist for that email.\n [required]"},
+	{FlagName: "contacts", Shorthand: "c", FieldPath: "Contacts", Kind: flagutil.FlagKindString, Required: true, Description: "A comma-, whitespace-, or newline-separated list of email addresses to\ninvite to the account. Each entry becomes a new contact if one does not\nalready exist for that email.\n[required]"},
 }
 
 // initCreateCmd initializes the create command.
@@ -25,14 +24,23 @@ func initCreateCmd(parent *cobra.Command) error {
 		Use:     "create",
 		Short:   "Invite Contacts",
 		Long:    "Invites one or more people to the account by email. Accepts a\ncomma/whitespace/newline-separated list; each entry becomes a new contact\nif one does not already exist for that email.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
-		Example: "  wistia contacts create --contacts alice@example.com, bob@example.com",
+		Example: "  wistia contacts create --contacts 'alice@example.com, bob@example.com'",
+		Args:    cobra.NoArgs,
 		RunE:    runCreateCmd,
+		Annotations: map[string]string{
+			"speakeasy_operation": "post_/contacts",
+		},
 	}
 	flagutil.RegisterFlags(cmd, createCmdMeta)
 	if err := flagutil.ValidateMeta[operations.PostContactsRequest](createCmdMeta); err != nil {
 		return fmt.Errorf("invalid metadata for create: %w", err)
 	}
-	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin.")
+	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
+	if err := flagutil.AnnotateBodyFields(cmd, createCmdMeta, "", "body"); err != nil {
+		return fmt.Errorf("annotate body fields for create: %w", err)
+	}
 	parent.AddCommand(cmd)
 	return nil
 }
@@ -42,14 +50,9 @@ func runCreateCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, createCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, createCmdMeta); err != nil {
-			return err
-		}
-	}
 	request, err := flagutil.BuildRequest[operations.PostContactsRequest](cmd, createCmdMeta, "", "body")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

@@ -25,17 +25,34 @@ var purchaseCmdMeta = []flagutil.FlagMeta{
 // initPurchaseCmd initializes the purchase command.
 func initPurchaseCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
-		Use:     "purchase",
+		Use:     "purchase [media-hashed-id]",
 		Short:   "Purchase Captions",
 		Long:    "This method is for purchasing English captions for a media. The request will charge the credit card on the account if successful. A saved credit card is required to use this endpoint.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
 		Example: "  wistia captions purchase --media-hashed-id <id>",
+		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runPurchaseCmd,
+		Annotations: map[string]string{
+			"speakeasy_operation": "post_/medias/{mediaHashedId}/captions/purchase",
+		},
 	}
 	flagutil.RegisterFlags(cmd, purchaseCmdMeta)
 	if err := flagutil.ValidateMeta[operations.PostMediasMediaHashedIDCaptionsPurchaseRequest](purchaseCmdMeta); err != nil {
 		return fmt.Errorf("invalid metadata for purchase: %w", err)
 	}
-	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin.")
+	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
+	if err := flagutil.AnnotateBodyFields(cmd, purchaseCmdMeta, "Body", "body"); err != nil {
+		return fmt.Errorf("annotate body fields for purchase: %w", err)
+	}
+	if err := flagutil.DeclarePositionalFlag(cmd, "media-hashed-id", "Unique identifier for the media. (or pass it as the [media-hashed-id] argument)", true); err != nil {
+		return err
+	}
+	if err := interactive.Declare(cmd, interactive.CommandSpec{Args: []interactive.ArgSpec{
+		{Name: "media-hashed-id", Summary: "Unique identifier for the media.", Required: true, SatisfiedBy: []string{"media-hashed-id"}},
+	}}); err != nil {
+		return fmt.Errorf("declare interactive arguments for purchase: %w", err)
+	}
 	parent.AddCommand(cmd)
 	return nil
 }
@@ -45,14 +62,12 @@ func runPurchaseCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, purchaseCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, purchaseCmdMeta); err != nil {
-			return err
-		}
+	if err := flagutil.ResolvePositionalFlag(cmd, args); err != nil {
+		return err
 	}
 	req, err := flagutil.BuildRequest[operations.PostMediasMediaHashedIDCaptionsPurchaseRequest](cmd, purchaseCmdMeta, "Body", "body")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

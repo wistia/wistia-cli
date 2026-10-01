@@ -351,6 +351,7 @@ func (u Object) IsUnknown() bool {
 }
 
 func (u *Object) UnmarshalJSON(data []byte) error {
+	*u = Object{}
 
 	var candidates []utils.UnionCandidate
 

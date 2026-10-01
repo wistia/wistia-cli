@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/wistia/wistia-cli/internal/client"
 	"github.com/wistia/wistia-cli/internal/flagutil"
-	"github.com/wistia/wistia-cli/internal/interactive"
 	"github.com/wistia/wistia-cli/internal/output"
 	"github.com/wistia/wistia-cli/internal/sdk/models/operations"
 	"github.com/wistia/wistia-cli/internal/usage"
@@ -30,9 +29,13 @@ func initPostMultipartCmd(parent *cobra.Command) error {
 		Use:     "post-multipart",
 		Short:   "Upload or Import Media",
 		Long:    "Endpoint to upload media files from a local system or import from a web URL.\n\n- Use `multipart/form-data` with a `file` parameter to upload from local system\n- Use `application/x-www-form-urlencoded` with a `url` parameter to import from web URL",
-		Example: "  wistia upload-or-import-media post-multipart --request '{\"url\":\"http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4\",\"low_priority\":true}'",
+		Example: "  wistia upload-or-import-media post-multipart --file <path/to/file>",
+		Args:    cobra.NoArgs,
 		RunE:    runPostMultipartCmd,
 		Aliases: []string{"pm"},
+		Annotations: map[string]string{
+			"speakeasy_operation": "post_/",
+		},
 	}
 	flagutil.RegisterFlags(cmd, postMultipartCmdMeta)
 	if err := flagutil.ValidateMeta[operations.PostMultipartRequest](postMultipartCmdMeta); err != nil {
@@ -47,14 +50,9 @@ func runPostMultipartCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, postMultipartCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, postMultipartCmdMeta); err != nil {
-			return err
-		}
-	}
 	request, err := flagutil.BuildRequest[operations.PostMultipartRequest](cmd, postMultipartCmdMeta, "", "")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {
