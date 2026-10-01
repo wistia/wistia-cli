@@ -17,10 +17,14 @@ func initGetRemixAccountStatusCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "get-remix-account-status",
 		Short:   "Get Remix Account Status",
-		Long:    "Check the current account's remix credit usage and limits.\n\n<!--- HIDE-MCP -->\n## Requires api token with one of the following permissions\n```\nRead all folder and media data\n```\n<!--- /HIDE-MCP -->",
+		Long:    "Check the current account's Remix billing mode and ability to create a Remix.\n\n\n## Requires api token with one of the following permissions\n```\nRead all folder and media data\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
 		Example: "  wistia remix get-remix-account-status",
+		Args:    cobra.NoArgs,
 		RunE:    runGetRemixAccountStatusCmd,
 		Aliases: []string{"gras"},
+		Annotations: map[string]string{
+			"speakeasy_operation": "get_/remix_account_status",
+		},
 	}
 	parent.AddCommand(cmd)
 	return nil

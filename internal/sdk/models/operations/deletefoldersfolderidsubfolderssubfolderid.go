@@ -59,7 +59,7 @@ func (e *DeleteFoldersFolderIDSubfoldersSubfolderIDCode) IsExact() bool {
 // DeleteFoldersFolderIDSubfoldersSubfolderIDResponseBody - A subfolder within a folder that contains media.
 type DeleteFoldersFolderIDSubfoldersSubfolderIDResponseBody struct {
 	// A unique alphanumeric identifier for this subfolder.
-	HashedID string `json:"hashed_id"`
+	HashedID *string `json:"hashed_id"`
 	// The display name of the subfolder.
 	Name optionalnullable.OptionalNullable[string] `json:"name,omitzero"`
 	// A description for the subfolder.
@@ -85,9 +85,9 @@ func (d *DeleteFoldersFolderIDSubfoldersSubfolderIDResponseBody) UnmarshalJSON(d
 	return nil
 }
 
-func (d *DeleteFoldersFolderIDSubfoldersSubfolderIDResponseBody) GetHashedID() string {
+func (d *DeleteFoldersFolderIDSubfoldersSubfolderIDResponseBody) GetHashedID() *string {
 	if d == nil {
-		return ""
+		return nil
 	}
 	return d.HashedID
 }

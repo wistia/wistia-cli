@@ -10,9 +10,11 @@ import (
 
 func InitCaptionsRoot(parent *cobra.Command) error {
 	var CaptionsCmd = &cobra.Command{
-		Use:   "captions",
-		Short: "Operations for captions",
-		Long:  "Operations for captions",
+		Use:         "captions",
+		Short:       "Operations for captions",
+		Long:        "Operations for captions",
+		Args:        cobra.NoArgs,
+		Annotations: map[string]string{"speakeasy_cli_group": "true"},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if usage.UsageRequested(cmd) {
 				return usage.EmitSchema(cmd, cmd.OutOrStdout())
@@ -37,6 +39,10 @@ func InitCaptionsRoot(parent *cobra.Command) error {
 		return err
 	}
 
+	if err := initFindMatchesCmd(CaptionsCmd); err != nil {
+		return err
+	}
+
 	if err := initPurchaseCmd(CaptionsCmd); err != nil {
 		return err
 	}
@@ -54,6 +60,10 @@ func InitCaptionsRoot(parent *cobra.Command) error {
 	}
 
 	if err := initDeleteCmd(CaptionsCmd); err != nil {
+		return err
+	}
+
+	if err := initEditCmd(CaptionsCmd); err != nil {
 		return err
 	}
 

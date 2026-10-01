@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/wistia/wistia-cli/internal/client"
 	"github.com/wistia/wistia-cli/internal/flagutil"
-	"github.com/wistia/wistia-cli/internal/interactive"
 	"github.com/wistia/wistia-cli/internal/output"
 	"github.com/wistia/wistia-cli/internal/sdk"
 	"github.com/wistia/wistia-cli/internal/sdk/models/operations"
@@ -17,7 +16,7 @@ import (
 
 var updateCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "folder-id", Shorthand: "f", FieldPath: "FolderID", Kind: flagutil.FlagKindString, Required: true, Description: "ID of the folder [required]"},
-	{FlagName: "sharing-id", FieldPath: "SharingID", Kind: flagutil.FlagKindString, Required: true, Description: "ID of the sharing to be updated [required]"},
+	{FlagName: "sharing-id", Shorthand: "s", FieldPath: "SharingID", Kind: flagutil.FlagKindString, Required: true, Description: "ID of the sharing to be updated [required]"},
 	{FlagName: "sharing", FieldPath: "Body.Sharing", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"sharing,omitempty"`, Description: "JSON object"},
 }
 
@@ -26,15 +25,24 @@ func initUpdateCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "update",
 		Short:   "Update Folder Sharing",
-		Long:    "Updates a sharing on a folder.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
+		Long:    "Updates a sharing on a folder.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
 		Example: "  wistia folder-sharings update --folder-id <id> --sharing-id <id>",
+		Args:    cobra.NoArgs,
 		RunE:    runUpdateCmd,
+		Annotations: map[string]string{
+			"speakeasy_operation": "put_/folders/{folderId}/sharings/{sharingId}",
+		},
 	}
 	flagutil.RegisterFlags(cmd, updateCmdMeta)
 	if err := flagutil.ValidateMeta[operations.PutFoldersFolderIDSharingsSharingIDRequest](updateCmdMeta); err != nil {
 		return fmt.Errorf("invalid metadata for update: %w", err)
 	}
-	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin.")
+	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
+	if err := flagutil.AnnotateBodyFields(cmd, updateCmdMeta, "Body", "body"); err != nil {
+		return fmt.Errorf("annotate body fields for update: %w", err)
+	}
 	parent.AddCommand(cmd)
 	return nil
 }
@@ -44,14 +52,9 @@ func runUpdateCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, updateCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, updateCmdMeta); err != nil {
-			return err
-		}
-	}
 	req, err := flagutil.BuildRequest[operations.PutFoldersFolderIDSharingsSharingIDRequest](cmd, updateCmdMeta, "Body", "body")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

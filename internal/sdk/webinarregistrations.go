@@ -43,6 +43,11 @@ func newWebinarRegistrations(rootSDK *Wistia, sdkConfig config.SDKConfiguration,
 // ```
 // Read all data
 // ```
+//
+// Tokens with the "Act with a team member's permissions" permission
+// (`all:delegate_to_contact_permissions` scope) can also be used. Requests
+// made with such a token are authorized using the permissions of the
+// contact assigned to the token.
 func (s *WebinarRegistrations) GetWebinarsWebinarIDRegistrations(ctx context.Context, request operations.GetWebinarsWebinarIDRegistrationsRequest, opts ...operations.Option) (*operations.GetWebinarsWebinarIDRegistrationsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -82,10 +87,17 @@ func (s *WebinarRegistrations) GetWebinarsWebinarIDRegistrations(ctx context.Con
 		timeout = s.sdkConfiguration.Timeout
 	}
 
+	var streamCancel context.CancelFunc
+
 	if timeout != nil {
 		var cancel context.CancelFunc
 		ctx, cancel = context.WithTimeout(ctx, *timeout)
-		defer cancel()
+		streamCancel = cancel
+		defer func() {
+			if streamCancel != nil {
+				streamCancel()
+			}
+		}()
 	}
 
 	req, err := http.NewRequestWithContext(ctx, "GET", opURL, nil)
@@ -147,7 +159,10 @@ func (s *WebinarRegistrations) GetWebinarsWebinarIDRegistrations(ctx context.Con
 	case httpRes.StatusCode == 200:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			if o.SkipDeserialization == nil || !*o.SkipDeserialization {
+			if o.SkipDeserialization != nil && *o.SkipDeserialization {
+				httpRes.Body = utils.BodyWithCancel(httpRes.Body, streamCancel)
+				streamCancel = nil
+			} else {
 				rawBody, err := utils.ConsumeRawBody(httpRes)
 				if err != nil {
 					return nil, err
@@ -177,7 +192,7 @@ func (s *WebinarRegistrations) GetWebinarsWebinarIDRegistrations(ctx context.Con
 
 			var out sdkerrors.GetWebinarsWebinarIDRegistrationsUnauthorizedError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -202,7 +217,7 @@ func (s *WebinarRegistrations) GetWebinarsWebinarIDRegistrations(ctx context.Con
 
 			var out sdkerrors.GetWebinarsWebinarIDRegistrationsForbiddenError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -227,7 +242,7 @@ func (s *WebinarRegistrations) GetWebinarsWebinarIDRegistrations(ctx context.Con
 
 			var out sdkerrors.GetWebinarsWebinarIDRegistrationsNotFoundError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -252,7 +267,7 @@ func (s *WebinarRegistrations) GetWebinarsWebinarIDRegistrations(ctx context.Con
 
 			var out sdkerrors.GetWebinarsWebinarIDRegistrationsInternalServerError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -300,6 +315,11 @@ func (s *WebinarRegistrations) GetWebinarsWebinarIDRegistrations(ctx context.Con
 // ```
 // Read, update & delete anything
 // ```
+//
+// Tokens with the "Act with a team member's permissions" permission
+// (`all:delegate_to_contact_permissions` scope) can also be used. Requests
+// made with such a token are authorized using the permissions of the
+// contact assigned to the token.
 func (s *WebinarRegistrations) Create(ctx context.Context, request operations.PostWebinarsWebinarIDRegistrationsRequest, opts ...operations.Option) (*operations.PostWebinarsWebinarIDRegistrationsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -343,10 +363,17 @@ func (s *WebinarRegistrations) Create(ctx context.Context, request operations.Po
 		timeout = s.sdkConfiguration.Timeout
 	}
 
+	var streamCancel context.CancelFunc
+
 	if timeout != nil {
 		var cancel context.CancelFunc
 		ctx, cancel = context.WithTimeout(ctx, *timeout)
-		defer cancel()
+		streamCancel = cancel
+		defer func() {
+			if streamCancel != nil {
+				streamCancel()
+			}
+		}()
 	}
 
 	req, err := http.NewRequestWithContext(ctx, "POST", opURL, bodyReader)
@@ -407,7 +434,10 @@ func (s *WebinarRegistrations) Create(ctx context.Context, request operations.Po
 	case httpRes.StatusCode == 201:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			if o.SkipDeserialization == nil || !*o.SkipDeserialization {
+			if o.SkipDeserialization != nil && *o.SkipDeserialization {
+				httpRes.Body = utils.BodyWithCancel(httpRes.Body, streamCancel)
+				streamCancel = nil
+			} else {
 				rawBody, err := utils.ConsumeRawBody(httpRes)
 				if err != nil {
 					return nil, err
@@ -437,7 +467,7 @@ func (s *WebinarRegistrations) Create(ctx context.Context, request operations.Po
 
 			var out sdkerrors.PostWebinarsWebinarIDRegistrationsUnauthorizedError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -462,7 +492,7 @@ func (s *WebinarRegistrations) Create(ctx context.Context, request operations.Po
 
 			var out sdkerrors.PostWebinarsWebinarIDRegistrationsForbiddenError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -487,7 +517,7 @@ func (s *WebinarRegistrations) Create(ctx context.Context, request operations.Po
 
 			var out sdkerrors.PostWebinarsWebinarIDRegistrationsNotFoundError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -512,7 +542,7 @@ func (s *WebinarRegistrations) Create(ctx context.Context, request operations.Po
 
 			var out sdkerrors.PostWebinarsWebinarIDRegistrationsUnprocessableEntityError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -537,7 +567,7 @@ func (s *WebinarRegistrations) Create(ctx context.Context, request operations.Po
 
 			var out sdkerrors.PostWebinarsWebinarIDRegistrationsInternalServerError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{

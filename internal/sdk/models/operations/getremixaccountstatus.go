@@ -6,6 +6,7 @@ package operations
 import (
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
 	"github.com/wistia/wistia-cli/internal/sdk/sdkinternal/utils"
+	"time"
 )
 
 // GetRemixAccountStatusCode - A machine-readable identifier for the specific authorization failure.
@@ -33,16 +34,65 @@ func (e *GetRemixAccountStatusCode) IsExact() bool {
 	return false
 }
 
+// GetRemixAccountStatusBillingMode - Whether Remix uses Credits or the legacy monthly allowance.
+type GetRemixAccountStatusBillingMode string
+
+const (
+	GetRemixAccountStatusBillingModeCredits      GetRemixAccountStatusBillingMode = "credits"
+	GetRemixAccountStatusBillingModeMonthlyLimit GetRemixAccountStatusBillingMode = "monthly_limit"
+)
+
+func (e GetRemixAccountStatusBillingMode) ToPointer() *GetRemixAccountStatusBillingMode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetRemixAccountStatusBillingMode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "credits", "monthly_limit":
+			return true
+		}
+	}
+	return false
+}
+
 // GetRemixAccountStatusResponseBody - Remix account status.
 type GetRemixAccountStatusResponseBody struct {
-	// Maximum number of remix credits per month.
+	// Whether Remix uses Credits or the legacy monthly allowance.
+	BillingMode *GetRemixAccountStatusBillingMode `json:"billing_mode,omitzero"`
+	// Legacy monthly Remix allowance. Does not determine affordability in Credits mode.
 	MonthlyLimit *int64 `json:"monthly_limit,omitzero"`
-	// Number of remix credits used this month.
+	// Number of Remixes counted toward the legacy monthly allowance.
 	MonthlyUsage *int64 `json:"monthly_usage,omitzero"`
-	// Number of remix credits remaining this month.
+	// Remaining legacy monthly allowance. Does not determine affordability in Credits mode.
 	Remaining *int64 `json:"remaining,omitzero"`
-	// Whether the account can create a new remix.
+	// Whether the account has enough Credits or legacy monthly allowance to create or continue a Remix.
 	CanCreateRemix *bool `json:"can_create_remix,omitzero"`
+	// Available Credit balance, present in Credits mode.
+	CreditBalance *float64 `json:"credit_balance,omitzero"`
+	// Account-specific Credit cost of one Remix creation or iteration, present in Credits mode.
+	RemixCreditCost *float64 `json:"remix_credit_cost,omitzero"`
+	// Next scheduled plan Credit grant (ISO 8601), when available in Credits mode.
+	CreditsRenewAt *time.Time `json:"credits_renew_at,omitzero"`
+}
+
+func (g GetRemixAccountStatusResponseBody) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(g, "", false)
+}
+
+func (g *GetRemixAccountStatusResponseBody) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &g, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (g *GetRemixAccountStatusResponseBody) GetBillingMode() *GetRemixAccountStatusBillingMode {
+	if g == nil {
+		return nil
+	}
+	return g.BillingMode
 }
 
 func (g *GetRemixAccountStatusResponseBody) GetMonthlyLimit() *int64 {
@@ -71,6 +121,27 @@ func (g *GetRemixAccountStatusResponseBody) GetCanCreateRemix() *bool {
 		return nil
 	}
 	return g.CanCreateRemix
+}
+
+func (g *GetRemixAccountStatusResponseBody) GetCreditBalance() *float64 {
+	if g == nil {
+		return nil
+	}
+	return g.CreditBalance
+}
+
+func (g *GetRemixAccountStatusResponseBody) GetRemixCreditCost() *float64 {
+	if g == nil {
+		return nil
+	}
+	return g.RemixCreditCost
+}
+
+func (g *GetRemixAccountStatusResponseBody) GetCreditsRenewAt() *time.Time {
+	if g == nil {
+		return nil
+	}
+	return g.CreditsRenewAt
 }
 
 type GetRemixAccountStatusResponse struct {

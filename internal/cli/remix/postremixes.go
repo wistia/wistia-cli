@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/wistia/wistia-cli/internal/client"
 	"github.com/wistia/wistia-cli/internal/flagutil"
-	"github.com/wistia/wistia-cli/internal/interactive"
 	"github.com/wistia/wistia-cli/internal/output"
 	"github.com/wistia/wistia-cli/internal/sdk"
 	"github.com/wistia/wistia-cli/internal/sdk/models/operations"
@@ -26,16 +25,25 @@ func initPostRemixesCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "post-remixes",
 		Short:   "Create Remix",
-		Long:    "Start a new video remix job. The remix is processed asynchronously — poll\nthe show endpoint to check status and get preview URLs when ready.\n\nRemix uses AI to analyze video transcripts and create edited versions\n(highlight reels, trailers, cut-downs, etc.) based on your instructions.\n\nThe remix is automatically exported (rendered) upon completion. When the\nstatus reaches \"completed\", the output media is available in the\ndestination folder. If no `folder_id` is provided, the remix is exported\nto the source media's folder.\n\n<!--- HIDE-MCP -->\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n<!--- /HIDE-MCP -->",
-		Example: "  wistia remix post-remixes --media-hashed-ids '[\"abc123\",\"def456\"]' --instructions Create a 60-second highlight reel focusing on the product demo section",
+		Long:    "Start a new video remix job. The remix is processed asynchronously — poll\nthe show endpoint to check status and get preview URLs when ready.\n\nRemix uses AI to analyze video transcripts and create edited versions\n(highlight reels, trailers, cut-downs, etc.) based on your instructions.\n\nThe remix is automatically exported (rendered) upon completion. When the\nstatus reaches \"completed\", the output media is available in the\ndestination folder. If no `folder_id` is provided, the remix is exported\nto the source media's folder.\n\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
+		Example: "  wistia remix post-remixes --media-hashed-ids abc123 --media-hashed-ids def456 --instructions 'Create a 60-second highlight reel focusing on the product demo section'",
+		Args:    cobra.NoArgs,
 		RunE:    runPostRemixesCmd,
 		Aliases: []string{"pr"},
+		Annotations: map[string]string{
+			"speakeasy_operation": "post_/remixes",
+		},
 	}
 	flagutil.RegisterFlags(cmd, postRemixesCmdMeta)
 	if err := flagutil.ValidateMeta[operations.PostRemixesRequest](postRemixesCmdMeta); err != nil {
 		return fmt.Errorf("invalid metadata for post-remixes: %w", err)
 	}
-	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin.")
+	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
+	if err := flagutil.AnnotateBodyFields(cmd, postRemixesCmdMeta, "", "body"); err != nil {
+		return fmt.Errorf("annotate body fields for post-remixes: %w", err)
+	}
 	parent.AddCommand(cmd)
 	return nil
 }
@@ -45,14 +53,9 @@ func runPostRemixesCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, postRemixesCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, postRemixesCmdMeta); err != nil {
-			return err
-		}
-	}
 	request, err := flagutil.BuildRequest[operations.PostRemixesRequest](cmd, postRemixesCmdMeta, "", "body")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

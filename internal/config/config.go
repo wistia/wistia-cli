@@ -75,14 +75,14 @@ func Init(name, prefix string) error {
 		data, err := os.ReadFile(configPath)
 		if err != nil {
 			if !os.IsNotExist(err) {
-				initErr = fmt.Errorf("failed to read config file %s: %w", configPath, err)
+				initErr = flagutil.WithCLIValidation(fmt.Errorf("failed to read config file %s: %w", configPath, err))
 			}
 			// No config file is fine - initErr stays nil for IsNotExist
 		} else {
 			// Surface YAML parse errors - if user has a config file, they expect it to work
 			parsedCfg := &Config{}
 			if err := yaml.Unmarshal(data, parsedCfg); err != nil {
-				initErr = fmt.Errorf("failed to parse config file %s: %w", configPath, err)
+				initErr = flagutil.WithCLIValidation(fmt.Errorf("failed to parse config file %s: %w", configPath, err))
 			} else {
 				loadedCfg = parsedCfg
 			}
@@ -185,6 +185,96 @@ func ResolveSecurityCredential(cmd *cobra.Command, flagName string) (value, sour
 		return val, "config"
 	}
 	return "", "unset"
+}
+
+// ResolveRequestSecurityCredential skips the OS keychain on --dry-run (keychain reads can prompt).
+func ResolveRequestSecurityCredential(cmd *cobra.Command, flagName string) (value, source string) {
+	if val, changed := flagutil.GetStringFlag(cmd, flagName); changed && val != "" {
+		return val, "flag"
+	}
+	if val := GetEnvValue(flagName); val != "" {
+		return val, "env"
+	}
+	dryRun, _ := flagutil.GetBoolFlag(cmd, "dry-run")
+	if !dryRun {
+		if val := GetKeyringValue(flagName); val != "" {
+			return val, "keyring"
+		}
+	}
+	if val := GetConfigValue(flagName); val != "" {
+		return val, "config"
+	}
+	return "", "unset"
+}
+
+const credentialRankUnset = 4
+
+// CredentialSourceRank ranks a credential source; lower is more explicit and unset ranks last.
+func CredentialSourceRank(source string) int {
+	switch source {
+	case "flag":
+		return 0
+	case "env":
+		return 1
+	case "keyring":
+		return 2
+	case "config":
+		return 3
+	}
+	return credentialRankUnset
+}
+
+type CredentialCandidate struct {
+	// Field is the Go field name of the alternative on the Security struct.
+	Field string
+	// Complete reports whether every mandatory member of the alternative is set.
+	Complete bool
+	// Sources are the sources of the alternative's members ("unset" allowed).
+	Sources []string
+}
+
+func (c CredentialCandidate) bestSourceRank() int {
+	best := credentialRankUnset
+	for _, source := range c.Sources {
+		if rank := CredentialSourceRank(source); rank < best {
+			best = rank
+		}
+	}
+	return best
+}
+
+// PickCredential returns the index of the alternative to send, or -1 when none is eligible.
+func PickCredential(candidates []CredentialCandidate, allowedFields []string) int {
+	order := make([]int, 0, len(candidates))
+	if len(allowedFields) > 0 {
+		for _, field := range allowedFields {
+			for i, candidate := range candidates {
+				if candidate.Field == field {
+					order = append(order, i)
+				}
+			}
+		}
+	} else {
+		for i := range candidates {
+			order = append(order, i)
+		}
+	}
+
+	best, bestKey := -1, [2]int{}
+	for _, i := range order {
+		rank := candidates[i].bestSourceRank()
+		if rank == credentialRankUnset {
+			continue
+		}
+		key := [2]int{rank, 1}
+		if candidates[i].Complete {
+			key[1] = 0
+		}
+		if best == -1 || key[0] < bestKey[0] || (key[0] == bestKey[0] && key[1] < bestKey[1]) {
+			best, bestKey = i, key
+		}
+	}
+	return best
 }
 
 // GetConfigPath returns the path to the configuration file.

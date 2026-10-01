@@ -89,11 +89,15 @@ func (g *GetWebinarsCursor) GetAfter() *string {
 }
 
 // GetWebinarsSortBy - Field to sort by. When using cursor pagination (see cursor param),
-// only `id` and `scheduled_for` are supported.
+// only `id` and `scheduled_for` are supported. All other sort_by options
+// (`title`, `created`, `updated`) require offset pagination.
 type GetWebinarsSortBy string
 
 const (
 	GetWebinarsSortByScheduledFor GetWebinarsSortBy = "scheduled_for"
+	GetWebinarsSortByTitle        GetWebinarsSortBy = "title"
+	GetWebinarsSortByCreated      GetWebinarsSortBy = "created"
+	GetWebinarsSortByUpdated      GetWebinarsSortBy = "updated"
 	GetWebinarsSortByID           GetWebinarsSortBy = "id"
 )
 
@@ -107,6 +111,12 @@ func (e *GetWebinarsSortBy) UnmarshalJSON(data []byte) error {
 	}
 	switch v {
 	case "scheduled_for":
+		fallthrough
+	case "title":
+		fallthrough
+	case "created":
+		fallthrough
+	case "updated":
 		fallthrough
 	case "id":
 		*e = GetWebinarsSortBy(v)
@@ -190,7 +200,8 @@ type GetWebinarsRequest struct {
 	//
 	Cursor *GetWebinarsCursor `queryParam:"style=deepObject,explode=true,name=cursor"`
 	// Field to sort by. When using cursor pagination (see cursor param),
-	// only `id` and `scheduled_for` are supported.
+	// only `id` and `scheduled_for` are supported. All other sort_by options
+	// (`title`, `created`, `updated`) require offset pagination.
 	//
 	SortBy *GetWebinarsSortBy `queryParam:"style=form,explode=true,name=sort_by"`
 	// Sort direction (0 = desc, 1 = asc; default is 1)
@@ -286,6 +297,34 @@ func (e *GetWebinarsCode) IsExact() bool {
 	return false
 }
 
+// GetWebinarsLifecycleStatus - The current lifecycle status of the webinar. This is a read-only, system-managed field that Wistia updates as the event moves through its lifecycle; it cannot be set or changed via the API.
+type GetWebinarsLifecycleStatus string
+
+const (
+	GetWebinarsLifecycleStatusPending  GetWebinarsLifecycleStatus = "pending"
+	GetWebinarsLifecycleStatusReady    GetWebinarsLifecycleStatus = "ready"
+	GetWebinarsLifecycleStatusStarting GetWebinarsLifecycleStatus = "starting"
+	GetWebinarsLifecycleStatusStarted  GetWebinarsLifecycleStatus = "started"
+	GetWebinarsLifecycleStatusEnded    GetWebinarsLifecycleStatus = "ended"
+	GetWebinarsLifecycleStatusVodReady GetWebinarsLifecycleStatus = "vod_ready"
+	GetWebinarsLifecycleStatusFailed   GetWebinarsLifecycleStatus = "failed"
+)
+
+func (e GetWebinarsLifecycleStatus) ToPointer() *GetWebinarsLifecycleStatus {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetWebinarsLifecycleStatus) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "pending", "ready", "starting", "started", "ended", "vod_ready", "failed":
+			return true
+		}
+	}
+	return false
+}
+
 type GetWebinarsFolder struct {
 	// A unique alphanumeric identifier for the record.
 	ID string `json:"id"`
@@ -324,6 +363,8 @@ func (g *GetWebinarsFolder) GetURL() string {
 type GetWebinarsResponseBody struct {
 	// The hashed ID of the webinar
 	ID string `json:"id"`
+	// The hashed ID of the webinar. Identical to `id`, named to match every other Wistia resource.
+	HashedID string `json:"hashed_id"`
 	// The title of the webinar
 	Title string `json:"title"`
 	// The description of the webinar
@@ -334,8 +375,8 @@ type GetWebinarsResponseBody struct {
 	EventDuration optionalnullable.OptionalNullable[int64] `json:"event_duration,omitzero"`
 	// The IANA time zone identifier the webinar is scheduled in
 	TimeZone string `json:"time_zone"`
-	// Current lifecycle status of the event
-	LifecycleStatus string `json:"lifecycle_status"`
+	// The current lifecycle status of the webinar. This is a read-only, system-managed field that Wistia updates as the event moves through its lifecycle; it cannot be set or changed via the API.
+	LifecycleStatus GetWebinarsLifecycleStatus `json:"lifecycle_status"`
 	// Registration status of the event
 	RegistrationStatus string `json:"registration_status"`
 	// When the event was created (UTC)
@@ -348,6 +389,8 @@ type GetWebinarsResponseBody struct {
 	HostLink string `json:"host_link"`
 	// Link for panelists to join the event
 	PanelistLink string `json:"panelist_link"`
+	// URL of the webinar's custom thumbnail image, or null if no custom thumbnail has been set
+	ThumbnailURL optionalnullable.OptionalNullable[string] `json:"thumbnail_url,omitzero"`
 	// The folder (project) this webinar belongs to
 	Folder optionalnullable.OptionalNullable[GetWebinarsFolder] `json:"folder,omitzero"`
 	// A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
@@ -370,6 +413,13 @@ func (g *GetWebinarsResponseBody) GetID() string {
 		return ""
 	}
 	return g.ID
+}
+
+func (g *GetWebinarsResponseBody) GetHashedID() string {
+	if g == nil {
+		return ""
+	}
+	return g.HashedID
 }
 
 func (g *GetWebinarsResponseBody) GetTitle() string {
@@ -407,9 +457,9 @@ func (g *GetWebinarsResponseBody) GetTimeZone() string {
 	return g.TimeZone
 }
 
-func (g *GetWebinarsResponseBody) GetLifecycleStatus() string {
+func (g *GetWebinarsResponseBody) GetLifecycleStatus() GetWebinarsLifecycleStatus {
 	if g == nil {
-		return ""
+		return GetWebinarsLifecycleStatus("")
 	}
 	return g.LifecycleStatus
 }
@@ -454,6 +504,13 @@ func (g *GetWebinarsResponseBody) GetPanelistLink() string {
 		return ""
 	}
 	return g.PanelistLink
+}
+
+func (g *GetWebinarsResponseBody) GetThumbnailURL() optionalnullable.OptionalNullable[string] {
+	if g == nil {
+		return nil
+	}
+	return g.ThumbnailURL
 }
 
 func (g *GetWebinarsResponseBody) GetFolder() optionalnullable.OptionalNullable[GetWebinarsFolder] {

@@ -9,11 +9,11 @@ import (
 )
 
 type PostMediasMediaHashedIDCaptionsPurchaseRequestBody struct {
-	// Order computer-generated captions (free) or human-generated captions ($2.50/minute).
+	// Order computer-generated captions or human-reviewed ones. What each costs depends on the account's plan and billing settings; computer-generated captions are included at no cost on some plans and billed per minute on others.
 	Automated *bool `default:"false" json:"automated"`
-	// Enable rush order for one business day turnaround ($4.00/minute) or standard four business day turnaround for human-generated captions ($2.50/minute). Rush can only be used for human-generated captions.
+	// Enable rush order for one business day turnaround instead of the standard four, for human-reviewed captions only. Rush bills at the account's higher per-minute rate.
 	Rush *bool `default:"true" json:"rush"`
-	// Automatically enable captions for the video once the order is ready or hold the captions for review before manually enabling.
+	// Automatically enable captions for the media once the order is ready or hold the captions for review before manually enabling.
 	AutomaticallyEnable *bool `default:"true" json:"automatically_enable"`
 }
 
@@ -50,7 +50,7 @@ func (p *PostMediasMediaHashedIDCaptionsPurchaseRequestBody) GetAutomaticallyEna
 }
 
 type PostMediasMediaHashedIDCaptionsPurchaseRequest struct {
-	// Unique identifier for the video.
+	// Unique identifier for the media.
 	MediaHashedID string                                             `pathParam:"style=simple,explode=false,name=mediaHashedId"`
 	Body          PostMediasMediaHashedIDCaptionsPurchaseRequestBody `request:"mediaType=application/json"`
 }

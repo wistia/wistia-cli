@@ -10,9 +10,11 @@ import (
 
 func InitTagsRoot(parent *cobra.Command) error {
 	var TagsCmd = &cobra.Command{
-		Use:   "tags",
-		Short: "Operations for tags",
-		Long:  "Operations for tags",
+		Use:         "tags",
+		Short:       "Operations for tags",
+		Long:        "Operations for tags",
+		Args:        cobra.NoArgs,
+		Annotations: map[string]string{"speakeasy_cli_group": "true"},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if usage.UsageRequested(cmd) {
 				return usage.EmitSchema(cmd, cmd.OutOrStdout())

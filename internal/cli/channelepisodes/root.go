@@ -10,9 +10,11 @@ import (
 
 func InitChannelEpisodesRoot(parent *cobra.Command) error {
 	var ChannelEpisodesCmd = &cobra.Command{
-		Use:   "channel-episodes",
-		Short: "Operations for channel-episodes",
-		Long:  "Operations for channel-episodes",
+		Use:         "channel-episodes",
+		Short:       "Operations for channel-episodes",
+		Long:        "Operations for channel-episodes",
+		Args:        cobra.NoArgs,
+		Annotations: map[string]string{"speakeasy_cli_group": "true"},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if usage.UsageRequested(cmd) {
 				return usage.EmitSchema(cmd, cmd.OutOrStdout())

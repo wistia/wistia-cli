@@ -42,7 +42,6 @@ func (e *PutChannelEpisodesChannelEpisodeHashedIDPublishStatus) UnmarshalJSON(da
 	}
 }
 
-// PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeRequest - The type of episode.
 type PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeRequest string
 
 const (
@@ -76,32 +75,32 @@ func (e *PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeRequest) UnmarshalJS
 // if podcasting is enabled for the channel.
 type PutChannelEpisodesChannelEpisodeHashedIDPodcastSettingsRequest struct {
 	// The type of episode.
-	EpisodeType *PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeRequest `json:"episode_type,omitzero"`
+	EpisodeType optionalnullable.OptionalNullable[PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeRequest] `json:"episode_type,omitzero"`
 	// The number of the episode.
-	EpisodeNumber *int64 `json:"episode_number,omitzero"`
+	EpisodeNumber optionalnullable.OptionalNullable[int64] `json:"episode_number,omitzero"`
 	// The season number of the episode.
-	SeasonNumber *int64 `json:"season_number,omitzero"`
+	SeasonNumber optionalnullable.OptionalNullable[int64] `json:"season_number,omitzero"`
 	// Whether the episode contains explicit content.
 	ExplicitContent *bool `json:"explicit_content,omitzero"`
 	// Whether to hide the episode from the podcast feed.
 	HideFromFeed *bool `json:"hide_from_feed,omitzero"`
 }
 
-func (p *PutChannelEpisodesChannelEpisodeHashedIDPodcastSettingsRequest) GetEpisodeType() *PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeRequest {
+func (p *PutChannelEpisodesChannelEpisodeHashedIDPodcastSettingsRequest) GetEpisodeType() optionalnullable.OptionalNullable[PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeRequest] {
 	if p == nil {
 		return nil
 	}
 	return p.EpisodeType
 }
 
-func (p *PutChannelEpisodesChannelEpisodeHashedIDPodcastSettingsRequest) GetEpisodeNumber() *int64 {
+func (p *PutChannelEpisodesChannelEpisodeHashedIDPodcastSettingsRequest) GetEpisodeNumber() optionalnullable.OptionalNullable[int64] {
 	if p == nil {
 		return nil
 	}
 	return p.EpisodeNumber
 }
 
-func (p *PutChannelEpisodesChannelEpisodeHashedIDPodcastSettingsRequest) GetSeasonNumber() *int64 {
+func (p *PutChannelEpisodesChannelEpisodeHashedIDPodcastSettingsRequest) GetSeasonNumber() optionalnullable.OptionalNullable[int64] {
 	if p == nil {
 		return nil
 	}
@@ -275,7 +274,6 @@ func (e *PutChannelEpisodesChannelEpisodeHashedIDCode) IsExact() bool {
 	return false
 }
 
-// PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeResponse - The type of episode.
 type PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeResponse string
 
 const (
@@ -303,32 +301,32 @@ func (e *PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeResponse) IsExact() 
 // is enabled for the channel.
 type PutChannelEpisodesChannelEpisodeHashedIDPodcastSettingsResponse struct {
 	// The type of episode.
-	EpisodeType *PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeResponse `json:"episode_type,omitzero"`
+	EpisodeType optionalnullable.OptionalNullable[PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeResponse] `json:"episode_type,omitzero"`
 	// The number of the episode.
-	EpisodeNumber *int64 `json:"episode_number,omitzero"`
+	EpisodeNumber optionalnullable.OptionalNullable[int64] `json:"episode_number,omitzero"`
 	// The season number of the episode.
-	SeasonNumber *int64 `json:"season_number,omitzero"`
+	SeasonNumber optionalnullable.OptionalNullable[int64] `json:"season_number,omitzero"`
 	// Whether the episode contains explicit content.
 	ExplicitContent *bool `json:"explicit_content,omitzero"`
 	// Whether to hide the episode from the podcast feed.
 	HideFromFeed *bool `json:"hide_from_feed,omitzero"`
 }
 
-func (p *PutChannelEpisodesChannelEpisodeHashedIDPodcastSettingsResponse) GetEpisodeType() *PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeResponse {
+func (p *PutChannelEpisodesChannelEpisodeHashedIDPodcastSettingsResponse) GetEpisodeType() optionalnullable.OptionalNullable[PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeResponse] {
 	if p == nil {
 		return nil
 	}
 	return p.EpisodeType
 }
 
-func (p *PutChannelEpisodesChannelEpisodeHashedIDPodcastSettingsResponse) GetEpisodeNumber() *int64 {
+func (p *PutChannelEpisodesChannelEpisodeHashedIDPodcastSettingsResponse) GetEpisodeNumber() optionalnullable.OptionalNullable[int64] {
 	if p == nil {
 		return nil
 	}
 	return p.EpisodeNumber
 }
 
-func (p *PutChannelEpisodesChannelEpisodeHashedIDPodcastSettingsResponse) GetSeasonNumber() *int64 {
+func (p *PutChannelEpisodesChannelEpisodeHashedIDPodcastSettingsResponse) GetSeasonNumber() optionalnullable.OptionalNullable[int64] {
 	if p == nil {
 		return nil
 	}

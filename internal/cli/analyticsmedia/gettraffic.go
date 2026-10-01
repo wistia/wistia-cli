@@ -22,22 +22,34 @@ var getTrafficCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "group-by", Shorthand: "g", FieldPath: "GroupBy", Kind: flagutil.FlagKindEnum, Required: true, EnumValues: []string{"utm_campaign", "utm_source", "utm_medium", "referrer_domain", "viewer_screen_size"}, Description: "The dimension to group traffic data by. (options: utm_campaign, utm_source, utm_medium, referrer_domain, viewer_screen_size) [required]"},
 	{FlagName: "sort-by", FieldPath: "SortBy", Kind: flagutil.FlagKindEnum, Optional: true, HasDefault: true, DefaultStr: "plays", EnumValues: []string{"plays", "loads", "engagement_rate"}, Description: "The metric to sort results by. (options: plays, loads, engagement_rate)"},
 	{FlagName: "sort-direction", FieldPath: "SortDirection", Kind: flagutil.FlagKindEnum, Optional: true, HasDefault: true, DefaultStr: "desc", EnumValues: []string{"asc", "desc"}, Description: "The sort direction. (options: asc, desc)"},
-	{FlagName: "per-page", Shorthand: "p", FieldPath: "PerPage", Kind: flagutil.FlagKindInt64, Optional: true, HasDefault: true, DefaultInt: 100, Description: "Number of results to return (max 100)."},
+	{FlagName: "per-page", Shorthand: "p", FieldPath: "PerPage", Kind: flagutil.FlagKindInt64, Optional: true, HasDefault: true, DefaultInt: 100, HasMinimum: true, Minimum: 1, HasMaximum: true, Maximum: 100, Description: "Number of results to return (max 100)."},
 }
 
 // initGetTrafficCmd initializes the get-traffic command.
 func initGetTrafficCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
-		Use:     "get-traffic",
+		Use:     "get-traffic [media-id]",
 		Short:   "Show Media Traffic Breakdown",
-		Long:    "Retrieve traffic breakdown analytics for a video, grouped by a specified dimension\nsuch as UTM campaign, UTM source, UTM medium, referrer domain, or viewer screen size.\n\nThe date range between `start_date` and `end_date` must not exceed 2 years.\n\n<!--- HIDE-MCP -->\n## Requires api token with one of the following permissions\n```\nRead detailed stats\n```\n<!--- /HIDE-MCP -->",
+		Long:    "Retrieve traffic breakdown analytics for a video, grouped by a specified dimension\nsuch as UTM campaign, UTM source, UTM medium, referrer domain, or viewer screen size.\n\nThe date range between `start_date` and `end_date` must not exceed 2 years.\n\n\n## Requires api token with one of the following permissions\n```\nRead detailed stats\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
 		Example: "  wistia analytics-media get-traffic --media-id <id> --start-date 2026-11-05 --end-date 2026-08-31 --group-by utm_source",
+		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runGetTrafficCmd,
 		Aliases: []string{"gtr"},
+		Annotations: map[string]string{
+			"speakeasy_operation": "get_/analytics/medias/{mediaId}/traffic",
+		},
 	}
 	flagutil.RegisterFlags(cmd, getTrafficCmdMeta)
 	if err := flagutil.ValidateMeta[operations.GetAnalyticsMediasMediaIDTrafficRequest](getTrafficCmdMeta); err != nil {
 		return fmt.Errorf("invalid metadata for get-traffic: %w", err)
+	}
+	if err := flagutil.DeclarePositionalFlag(cmd, "media-id", "The hashed ID of the video. (or pass it as the [media-id] argument)", true); err != nil {
+		return err
+	}
+	if err := interactive.Declare(cmd, interactive.CommandSpec{Args: []interactive.ArgSpec{
+		{Name: "media-id", Summary: "The hashed ID of the video.", Required: true, SatisfiedBy: []string{"media-id"}},
+	}}); err != nil {
+		return fmt.Errorf("declare interactive arguments for get-traffic: %w", err)
 	}
 	parent.AddCommand(cmd)
 	return nil
@@ -48,14 +60,12 @@ func runGetTrafficCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, getTrafficCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, getTrafficCmdMeta); err != nil {
-			return err
-		}
+	if err := flagutil.ResolvePositionalFlag(cmd, args); err != nil {
+		return err
 	}
 	req, err := flagutil.BuildRequest[operations.GetAnalyticsMediasMediaIDTrafficRequest](cmd, getTrafficCmdMeta, "", "")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

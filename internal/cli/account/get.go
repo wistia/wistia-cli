@@ -17,9 +17,13 @@ func initGetCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "get",
 		Short:   "Get Current Account",
-		Long:    "Retrieves a summary of the Wistia account including account name, description, URL and counts of records.\n\n## Requires api token with one of the following permissions\n```\n(any scope allowed)\n```",
+		Long:    "Retrieves a summary of the Wistia account including account name, description, URL and counts of records.\n\n## Requires api token with one of the following permissions\n```\n(any scope allowed)\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
 		Example: "  wistia account get",
+		Args:    cobra.NoArgs,
 		RunE:    runGetCmd,
+		Annotations: map[string]string{
+			"speakeasy_operation": "getAccountDetails",
+		},
 	}
 	parent.AddCommand(cmd)
 	return nil

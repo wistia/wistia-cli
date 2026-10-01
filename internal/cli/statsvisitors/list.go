@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/wistia/wistia-cli/internal/client"
 	"github.com/wistia/wistia-cli/internal/flagutil"
-	"github.com/wistia/wistia-cli/internal/interactive"
 	"github.com/wistia/wistia-cli/internal/output"
 	"github.com/wistia/wistia-cli/internal/sdk"
 	"github.com/wistia/wistia-cli/internal/sdk/models/operations"
@@ -27,9 +26,13 @@ func initListCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "list",
 		Short:   "List Visitors",
-		Long:    "This endpoint provides a list of visitors that have watched videos in your account.\n\n<!--- HIDE-MCP -->\n## Requires api token with one of the following permissions\n```\nRead detailed stats\n```\n<!--- /HIDE-MCP -->",
+		Long:    "This endpoint provides a list of visitors that have watched videos in your account.\n\n\n## Requires api token with one of the following permissions\n```\nRead detailed stats\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
 		Example: "  wistia stats-visitors list",
+		Args:    cobra.NoArgs,
 		RunE:    runListCmd,
+		Annotations: map[string]string{
+			"speakeasy_operation": "get_/stats/visitors",
+		},
 	}
 	flagutil.RegisterFlags(cmd, listCmdMeta)
 	if err := flagutil.ValidateMeta[operations.GetStatsVisitorsRequest](listCmdMeta); err != nil {
@@ -44,14 +47,9 @@ func runListCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, listCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, listCmdMeta); err != nil {
-			return err
-		}
-	}
 	req, err := flagutil.BuildRequest[operations.GetStatsVisitorsRequest](cmd, listCmdMeta, "", "")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
 	"github.com/wistia/wistia-cli/internal/sdk/models/operations"
+	"time"
 )
 
 // PostRemixesRemixHashedIDContinueInternalServerError - Internal server error
@@ -22,15 +23,25 @@ func (e *PostRemixesRemixHashedIDContinueInternalServerError) Error() string {
 	return string(data)
 }
 
-// PostRemixesRemixHashedIDContinueUnprocessableEntityError - Unprocessable entity (e.g., conversation not found).
-type PostRemixesRemixHashedIDContinueUnprocessableEntityError struct {
-	Error_   *string                 `json:"error,omitzero"`
-	HTTPMeta components.HTTPMetadata `json:"-"`
+// PostRemixesRemixHashedIDContinueCreditsError - Unprocessable entity (e.g., insufficient Credits, conversation not found).
+type PostRemixesRemixHashedIDContinueCreditsError struct {
+	Error_ *string `json:"error,omitzero"`
+	// Present when the request is blocked by insufficient Credits.
+	BillingMode *operations.PostRemixesRemixHashedIDContinueBillingMode `json:"billing_mode,omitzero"`
+	// Available Credit balance when the request was rejected.
+	CreditBalance *float64 `json:"credit_balance,omitzero"`
+	// Account-specific Credit cost of the requested Remix iteration.
+	CreditsRequired *float64 `json:"credits_required,omitzero"`
+	// Next scheduled plan Credit grant (ISO 8601), when available.
+	CreditsRenewAt *time.Time `json:"credits_renew_at,omitzero"`
+	// Account plan type, present for insufficient-Credits errors.
+	PlanType *operations.PostRemixesRemixHashedIDContinuePlanType `json:"plan_type,omitzero"`
+	HTTPMeta components.HTTPMetadata                              `json:"-"`
 }
 
-var _ error = &PostRemixesRemixHashedIDContinueUnprocessableEntityError{}
+var _ error = &PostRemixesRemixHashedIDContinueCreditsError{}
 
-func (e *PostRemixesRemixHashedIDContinueUnprocessableEntityError) Error() string {
+func (e *PostRemixesRemixHashedIDContinueCreditsError) Error() string {
 	data, _ := json.Marshal(e)
 	return string(data)
 }
@@ -44,6 +55,19 @@ type PostRemixesRemixHashedIDContinueNotFoundError struct {
 var _ error = &PostRemixesRemixHashedIDContinueNotFoundError{}
 
 func (e *PostRemixesRemixHashedIDContinueNotFoundError) Error() string {
+	data, _ := json.Marshal(e)
+	return string(data)
+}
+
+// PostRemixesRemixHashedIDContinueForbiddenError - Forbidden, token is valid but account does not have access to feature
+type PostRemixesRemixHashedIDContinueForbiddenError struct {
+	Error_   *string                 `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata `json:"-"`
+}
+
+var _ error = &PostRemixesRemixHashedIDContinueForbiddenError{}
+
+func (e *PostRemixesRemixHashedIDContinueForbiddenError) Error() string {
 	data, _ := json.Marshal(e)
 	return string(data)
 }

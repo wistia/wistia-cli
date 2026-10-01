@@ -35,12 +35,15 @@ func newStatsEvents(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks *h
 // Retrieve a list of events. Please note that due to our data retention policy,
 // only events from the last 2 years are available.
 //
-// <!--- HIDE-MCP -->
 // ## Requires api token with one of the following permissions
 // ```
 // Read detailed stats
 // ```
-// <!--- /HIDE-MCP -->
+//
+// Tokens with the "Act with a team member's permissions" permission
+// (`all:delegate_to_contact_permissions` scope) can also be used. Requests
+// made with such a token are authorized using the permissions of the
+// contact assigned to the token.
 func (s *StatsEvents) List(ctx context.Context, request *operations.GetStatsEventsRequest, opts ...operations.Option) (*operations.GetStatsEventsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -80,10 +83,17 @@ func (s *StatsEvents) List(ctx context.Context, request *operations.GetStatsEven
 		timeout = s.sdkConfiguration.Timeout
 	}
 
+	var streamCancel context.CancelFunc
+
 	if timeout != nil {
 		var cancel context.CancelFunc
 		ctx, cancel = context.WithTimeout(ctx, *timeout)
-		defer cancel()
+		streamCancel = cancel
+		defer func() {
+			if streamCancel != nil {
+				streamCancel()
+			}
+		}()
 	}
 
 	req, err := http.NewRequestWithContext(ctx, "GET", opURL, nil)
@@ -145,7 +155,10 @@ func (s *StatsEvents) List(ctx context.Context, request *operations.GetStatsEven
 	case httpRes.StatusCode == 200:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			if o.SkipDeserialization == nil || !*o.SkipDeserialization {
+			if o.SkipDeserialization != nil && *o.SkipDeserialization {
+				httpRes.Body = utils.BodyWithCancel(httpRes.Body, streamCancel)
+				streamCancel = nil
+			} else {
 				rawBody, err := utils.ConsumeRawBody(httpRes)
 				if err != nil {
 					return nil, err
@@ -175,7 +188,7 @@ func (s *StatsEvents) List(ctx context.Context, request *operations.GetStatsEven
 
 			var out sdkerrors.GetStatsEventsUnauthorizedError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -200,7 +213,7 @@ func (s *StatsEvents) List(ctx context.Context, request *operations.GetStatsEven
 
 			var out sdkerrors.GetStatsEventsForbiddenError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -225,7 +238,7 @@ func (s *StatsEvents) List(ctx context.Context, request *operations.GetStatsEven
 
 			var out sdkerrors.GetStatsEventsUnprocessableEntityError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -250,7 +263,7 @@ func (s *StatsEvents) List(ctx context.Context, request *operations.GetStatsEven
 
 			var out sdkerrors.GetStatsEventsInternalServerError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -293,12 +306,15 @@ func (s *StatsEvents) List(ctx context.Context, request *operations.GetStatsEven
 // Retrieve information for a single event. Please note that due to our data retention policy,
 // only events from the last 2 years are available.
 //
-// <!--- HIDE-MCP -->
 // ## Requires api token with one of the following permissions
 // ```
 // Read detailed stats
 // ```
-// <!--- /HIDE-MCP -->
+//
+// Tokens with the "Act with a team member's permissions" permission
+// (`all:delegate_to_contact_permissions` scope) can also be used. Requests
+// made with such a token are authorized using the permissions of the
+// contact assigned to the token.
 func (s *StatsEvents) Get(ctx context.Context, request operations.GetStatsEventsEventKeyRequest, opts ...operations.Option) (*operations.GetStatsEventsEventKeyResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -338,10 +354,17 @@ func (s *StatsEvents) Get(ctx context.Context, request operations.GetStatsEvents
 		timeout = s.sdkConfiguration.Timeout
 	}
 
+	var streamCancel context.CancelFunc
+
 	if timeout != nil {
 		var cancel context.CancelFunc
 		ctx, cancel = context.WithTimeout(ctx, *timeout)
-		defer cancel()
+		streamCancel = cancel
+		defer func() {
+			if streamCancel != nil {
+				streamCancel()
+			}
+		}()
 	}
 
 	req, err := http.NewRequestWithContext(ctx, "GET", opURL, nil)
@@ -399,7 +422,10 @@ func (s *StatsEvents) Get(ctx context.Context, request operations.GetStatsEvents
 	case httpRes.StatusCode == 200:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			if o.SkipDeserialization == nil || !*o.SkipDeserialization {
+			if o.SkipDeserialization != nil && *o.SkipDeserialization {
+				httpRes.Body = utils.BodyWithCancel(httpRes.Body, streamCancel)
+				streamCancel = nil
+			} else {
 				rawBody, err := utils.ConsumeRawBody(httpRes)
 				if err != nil {
 					return nil, err
@@ -429,7 +455,7 @@ func (s *StatsEvents) Get(ctx context.Context, request operations.GetStatsEvents
 
 			var out sdkerrors.GetStatsEventsEventKeyUnauthorizedError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -454,7 +480,7 @@ func (s *StatsEvents) Get(ctx context.Context, request operations.GetStatsEvents
 
 			var out sdkerrors.GetStatsEventsEventKeyForbiddenError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -479,7 +505,7 @@ func (s *StatsEvents) Get(ctx context.Context, request operations.GetStatsEvents
 
 			var out sdkerrors.GetStatsEventsEventKeyInternalServerError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{

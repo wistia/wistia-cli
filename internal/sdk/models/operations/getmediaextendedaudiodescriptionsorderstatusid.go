@@ -143,7 +143,9 @@ type GetMediaExtendedAudioDescriptionsOrderStatusIDOrder struct {
 	OrderStatus GetMediaExtendedAudioDescriptionsOrderStatusIDOrderStatus `json:"order_status"`
 	CreatedAt   time.Time                                                 `json:"created_at"`
 	UpdatedAt   time.Time                                                 `json:"updated_at"`
-	Media       GetMediaExtendedAudioDescriptionsOrderStatusIDMedia       `json:"media"`
+	// IETF language tag the audio description was ordered in (e.g. `eng`, `es-419`).
+	IetfLanguageTag string                                              `json:"ietf_language_tag"`
+	Media           GetMediaExtendedAudioDescriptionsOrderStatusIDMedia `json:"media"`
 	// Link to the resulting media extended audio description. Null while the order is in progress.
 	MediaExtendedAudioDescription optionalnullable.OptionalNullable[GetMediaExtendedAudioDescriptionsOrderStatusIDMediaExtendedAudioDescription] `json:"media_extended_audio_description,omitzero"`
 }
@@ -185,6 +187,13 @@ func (g *GetMediaExtendedAudioDescriptionsOrderStatusIDOrder) GetUpdatedAt() tim
 		return time.Time{}
 	}
 	return g.UpdatedAt
+}
+
+func (g *GetMediaExtendedAudioDescriptionsOrderStatusIDOrder) GetIetfLanguageTag() string {
+	if g == nil {
+		return ""
+	}
+	return g.IetfLanguageTag
 }
 
 func (g *GetMediaExtendedAudioDescriptionsOrderStatusIDOrder) GetMedia() GetMediaExtendedAudioDescriptionsOrderStatusIDMedia {

@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
+	"github.com/wistia/wistia-cli/internal/sdk/optionalnullable"
 	"github.com/wistia/wistia-cli/internal/sdk/sdkinternal/utils"
 	"github.com/wistia/wistia-cli/internal/sdk/types"
 )
@@ -19,6 +20,8 @@ const (
 	GetAnalyticsMediasMediaIDEmbedLocationsSortByLoads          GetAnalyticsMediasMediaIDEmbedLocationsSortBy = "loads"
 	GetAnalyticsMediasMediaIDEmbedLocationsSortByEngagementRate GetAnalyticsMediasMediaIDEmbedLocationsSortBy = "engagement_rate"
 	GetAnalyticsMediasMediaIDEmbedLocationsSortByPlayRate       GetAnalyticsMediasMediaIDEmbedLocationsSortBy = "play_rate"
+	GetAnalyticsMediasMediaIDEmbedLocationsSortByPlayedTime     GetAnalyticsMediasMediaIDEmbedLocationsSortBy = "played_time"
+	GetAnalyticsMediasMediaIDEmbedLocationsSortByUniqueVisitors GetAnalyticsMediasMediaIDEmbedLocationsSortBy = "unique_visitors"
 )
 
 func (e GetAnalyticsMediasMediaIDEmbedLocationsSortBy) ToPointer() *GetAnalyticsMediasMediaIDEmbedLocationsSortBy {
@@ -37,6 +40,10 @@ func (e *GetAnalyticsMediasMediaIDEmbedLocationsSortBy) UnmarshalJSON(data []byt
 	case "engagement_rate":
 		fallthrough
 	case "play_rate":
+		fallthrough
+	case "played_time":
+		fallthrough
+	case "unique_visitors":
 		*e = GetAnalyticsMediasMediaIDEmbedLocationsSortBy(v)
 		return nil
 	default:
@@ -83,7 +90,7 @@ type GetAnalyticsMediasMediaIDEmbedLocationsRequest struct {
 	// The sort direction.
 	SortDirection *GetAnalyticsMediasMediaIDEmbedLocationsSortDirection `default:"desc" queryParam:"style=form,explode=true,name=sort_direction"`
 	// Filter results to a single embed URL. When provided, only analytics for
-	// the page matching this URL are returned. Must be a valid HTTP or HTTPS URL.
+	// the page matching this URL are returned. The protocol is optional (https is assumed).
 	//
 	EmbedURL *string `queryParam:"style=form,explode=true,name=embed_url"`
 	// Number of results to return (max 100).
@@ -177,118 +184,118 @@ func (e *GetAnalyticsMediasMediaIDEmbedLocationsCode) IsExact() bool {
 
 type GetAnalyticsMediasMediaIDEmbedLocationsResponseBody struct {
 	// The domain where the video is embedded.
-	EmbedDomain *string `json:"embed_domain,omitzero"`
+	EmbedDomain optionalnullable.OptionalNullable[string] `json:"embed_domain,omitzero"`
 	// The path on the domain where the video is embedded.
-	EmbedPath *string `json:"embed_path,omitzero"`
+	EmbedPath optionalnullable.OptionalNullable[string] `json:"embed_path,omitzero"`
 	// The full URL where the video is embedded.
-	EmbedURL *string `json:"embed_url,omitzero"`
+	EmbedURL optionalnullable.OptionalNullable[string] `json:"embed_url,omitzero"`
 	// The title of the page where the video is embedded.
-	PageTitle *string `json:"page_title,omitzero"`
+	PageTitle optionalnullable.OptionalNullable[string] `json:"page_title,omitzero"`
 	// The number of video loads from this location.
-	Loads *int64 `json:"loads,omitzero"`
+	Loads optionalnullable.OptionalNullable[int64] `json:"loads,omitzero"`
 	// The number of unique video loads from this location (one per visitor session).
-	UniqueLoads *int64 `json:"unique_loads,omitzero"`
+	UniqueLoads optionalnullable.OptionalNullable[int64] `json:"unique_loads,omitzero"`
 	// The number of video plays from this location.
-	Plays *int64 `json:"plays,omitzero"`
+	Plays optionalnullable.OptionalNullable[int64] `json:"plays,omitzero"`
 	// The number of unique video plays from this location (one per visitor session).
-	UniquePlays *int64 `json:"unique_plays,omitzero"`
+	UniquePlays optionalnullable.OptionalNullable[int64] `json:"unique_plays,omitzero"`
 	// The play rate from this location (between 0 and 1).
-	PlayRate *float32 `json:"play_rate,omitzero"`
+	PlayRate optionalnullable.OptionalNullable[float32] `json:"play_rate,omitzero"`
 	// Total time spent watching from this location in seconds.
-	PlayedTime *float32 `json:"played_time,omitzero"`
+	PlayedTime optionalnullable.OptionalNullable[float32] `json:"played_time,omitzero"`
 	// The average engagement rate from this location (between 0 and 1).
-	EngagementRate *float32 `json:"engagement_rate,omitzero"`
+	EngagementRate optionalnullable.OptionalNullable[float32] `json:"engagement_rate,omitzero"`
 	// The number of unique visitors from this location.
-	UniqueVisitors *int64 `json:"unique_visitors,omitzero"`
+	UniqueVisitors optionalnullable.OptionalNullable[int64] `json:"unique_visitors,omitzero"`
 	// The CTA conversion rate from this location (between 0 and 1).
-	CtaConversionRate *float32 `json:"cta_conversion_rate,omitzero"`
+	CtaConversionRate optionalnullable.OptionalNullable[float32] `json:"cta_conversion_rate,omitzero"`
 }
 
-func (g *GetAnalyticsMediasMediaIDEmbedLocationsResponseBody) GetEmbedDomain() *string {
+func (g *GetAnalyticsMediasMediaIDEmbedLocationsResponseBody) GetEmbedDomain() optionalnullable.OptionalNullable[string] {
 	if g == nil {
 		return nil
 	}
 	return g.EmbedDomain
 }
 
-func (g *GetAnalyticsMediasMediaIDEmbedLocationsResponseBody) GetEmbedPath() *string {
+func (g *GetAnalyticsMediasMediaIDEmbedLocationsResponseBody) GetEmbedPath() optionalnullable.OptionalNullable[string] {
 	if g == nil {
 		return nil
 	}
 	return g.EmbedPath
 }
 
-func (g *GetAnalyticsMediasMediaIDEmbedLocationsResponseBody) GetEmbedURL() *string {
+func (g *GetAnalyticsMediasMediaIDEmbedLocationsResponseBody) GetEmbedURL() optionalnullable.OptionalNullable[string] {
 	if g == nil {
 		return nil
 	}
 	return g.EmbedURL
 }
 
-func (g *GetAnalyticsMediasMediaIDEmbedLocationsResponseBody) GetPageTitle() *string {
+func (g *GetAnalyticsMediasMediaIDEmbedLocationsResponseBody) GetPageTitle() optionalnullable.OptionalNullable[string] {
 	if g == nil {
 		return nil
 	}
 	return g.PageTitle
 }
 
-func (g *GetAnalyticsMediasMediaIDEmbedLocationsResponseBody) GetLoads() *int64 {
+func (g *GetAnalyticsMediasMediaIDEmbedLocationsResponseBody) GetLoads() optionalnullable.OptionalNullable[int64] {
 	if g == nil {
 		return nil
 	}
 	return g.Loads
 }
 
-func (g *GetAnalyticsMediasMediaIDEmbedLocationsResponseBody) GetUniqueLoads() *int64 {
+func (g *GetAnalyticsMediasMediaIDEmbedLocationsResponseBody) GetUniqueLoads() optionalnullable.OptionalNullable[int64] {
 	if g == nil {
 		return nil
 	}
 	return g.UniqueLoads
 }
 
-func (g *GetAnalyticsMediasMediaIDEmbedLocationsResponseBody) GetPlays() *int64 {
+func (g *GetAnalyticsMediasMediaIDEmbedLocationsResponseBody) GetPlays() optionalnullable.OptionalNullable[int64] {
 	if g == nil {
 		return nil
 	}
 	return g.Plays
 }
 
-func (g *GetAnalyticsMediasMediaIDEmbedLocationsResponseBody) GetUniquePlays() *int64 {
+func (g *GetAnalyticsMediasMediaIDEmbedLocationsResponseBody) GetUniquePlays() optionalnullable.OptionalNullable[int64] {
 	if g == nil {
 		return nil
 	}
 	return g.UniquePlays
 }
 
-func (g *GetAnalyticsMediasMediaIDEmbedLocationsResponseBody) GetPlayRate() *float32 {
+func (g *GetAnalyticsMediasMediaIDEmbedLocationsResponseBody) GetPlayRate() optionalnullable.OptionalNullable[float32] {
 	if g == nil {
 		return nil
 	}
 	return g.PlayRate
 }
 
-func (g *GetAnalyticsMediasMediaIDEmbedLocationsResponseBody) GetPlayedTime() *float32 {
+func (g *GetAnalyticsMediasMediaIDEmbedLocationsResponseBody) GetPlayedTime() optionalnullable.OptionalNullable[float32] {
 	if g == nil {
 		return nil
 	}
 	return g.PlayedTime
 }
 
-func (g *GetAnalyticsMediasMediaIDEmbedLocationsResponseBody) GetEngagementRate() *float32 {
+func (g *GetAnalyticsMediasMediaIDEmbedLocationsResponseBody) GetEngagementRate() optionalnullable.OptionalNullable[float32] {
 	if g == nil {
 		return nil
 	}
 	return g.EngagementRate
 }
 
-func (g *GetAnalyticsMediasMediaIDEmbedLocationsResponseBody) GetUniqueVisitors() *int64 {
+func (g *GetAnalyticsMediasMediaIDEmbedLocationsResponseBody) GetUniqueVisitors() optionalnullable.OptionalNullable[int64] {
 	if g == nil {
 		return nil
 	}
 	return g.UniqueVisitors
 }
 
-func (g *GetAnalyticsMediasMediaIDEmbedLocationsResponseBody) GetCtaConversionRate() *float32 {
+func (g *GetAnalyticsMediasMediaIDEmbedLocationsResponseBody) GetCtaConversionRate() optionalnullable.OptionalNullable[float32] {
 	if g == nil {
 		return nil
 	}

@@ -10,9 +10,11 @@ import (
 
 func InitAnalyticsWebinarRoot(parent *cobra.Command) error {
 	var AnalyticsWebinarCmd = &cobra.Command{
-		Use:   "analytics-webinar",
-		Short: "Operations for analytics-webinar",
-		Long:  "Operations for analytics-webinar",
+		Use:         "analytics-webinar",
+		Short:       "Operations for analytics-webinar",
+		Long:        "Operations for analytics-webinar",
+		Args:        cobra.NoArgs,
+		Annotations: map[string]string{"speakeasy_cli_group": "true"},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if usage.UsageRequested(cmd) {
 				return usage.EmitSchema(cmd, cmd.OutOrStdout())

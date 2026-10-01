@@ -125,34 +125,20 @@ func (d *DeleteFoldersFolderIDSubfoldersBulkDeleteBackgroundJobStatus) GetStatus
 // DeleteFoldersFolderIDSubfoldersBulkDeleteResponseBody - Successful queuing of subfolder deletion.
 type DeleteFoldersFolderIDSubfoldersBulkDeleteResponseBody struct {
 	// A confirmation message that the background job has been queued.
-	Message *string `json:"message,omitzero"`
-	// A background job keeps track of the progress of an asynchronous task, e.g
-	// bulk archiving media, translating media, etc.
-	//
-	BackgroundJobStatus *DeleteFoldersFolderIDSubfoldersBulkDeleteBackgroundJobStatus `json:"background_job_status,omitzero"`
+	Message             string                                                       `json:"message"`
+	BackgroundJobStatus DeleteFoldersFolderIDSubfoldersBulkDeleteBackgroundJobStatus `json:"background_job_status"`
 }
 
-func (d DeleteFoldersFolderIDSubfoldersBulkDeleteResponseBody) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(d, "", false)
-}
-
-func (d *DeleteFoldersFolderIDSubfoldersBulkDeleteResponseBody) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &d, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (d *DeleteFoldersFolderIDSubfoldersBulkDeleteResponseBody) GetMessage() *string {
+func (d *DeleteFoldersFolderIDSubfoldersBulkDeleteResponseBody) GetMessage() string {
 	if d == nil {
-		return nil
+		return ""
 	}
 	return d.Message
 }
 
-func (d *DeleteFoldersFolderIDSubfoldersBulkDeleteResponseBody) GetBackgroundJobStatus() *DeleteFoldersFolderIDSubfoldersBulkDeleteBackgroundJobStatus {
+func (d *DeleteFoldersFolderIDSubfoldersBulkDeleteResponseBody) GetBackgroundJobStatus() DeleteFoldersFolderIDSubfoldersBulkDeleteBackgroundJobStatus {
 	if d == nil {
-		return nil
+		return DeleteFoldersFolderIDSubfoldersBulkDeleteBackgroundJobStatus{}
 	}
 	return d.BackgroundJobStatus
 }

@@ -40,6 +40,11 @@ func newSearch(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks *hooks.
 // ```
 // Read all data
 // ```
+//
+// Tokens with the "Act with a team member's permissions" permission
+// (`all:delegate_to_contact_permissions` scope) can also be used. Requests
+// made with such a token are authorized using the permissions of the
+// contact assigned to the token.
 func (s *Search) Search(ctx context.Context, request operations.GetSearchRequest, opts ...operations.Option) (*operations.GetSearchResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -79,10 +84,17 @@ func (s *Search) Search(ctx context.Context, request operations.GetSearchRequest
 		timeout = s.sdkConfiguration.Timeout
 	}
 
+	var streamCancel context.CancelFunc
+
 	if timeout != nil {
 		var cancel context.CancelFunc
 		ctx, cancel = context.WithTimeout(ctx, *timeout)
-		defer cancel()
+		streamCancel = cancel
+		defer func() {
+			if streamCancel != nil {
+				streamCancel()
+			}
+		}()
 	}
 
 	req, err := http.NewRequestWithContext(ctx, "GET", opURL, nil)
@@ -144,7 +156,10 @@ func (s *Search) Search(ctx context.Context, request operations.GetSearchRequest
 	case httpRes.StatusCode == 200:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			if o.SkipDeserialization == nil || !*o.SkipDeserialization {
+			if o.SkipDeserialization != nil && *o.SkipDeserialization {
+				httpRes.Body = utils.BodyWithCancel(httpRes.Body, streamCancel)
+				streamCancel = nil
+			} else {
 				rawBody, err := utils.ConsumeRawBody(httpRes)
 				if err != nil {
 					return nil, err
@@ -174,7 +189,7 @@ func (s *Search) Search(ctx context.Context, request operations.GetSearchRequest
 
 			var out sdkerrors.GetSearchBadRequestError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -199,7 +214,32 @@ func (s *Search) Search(ctx context.Context, request operations.GetSearchRequest
 
 			var out sdkerrors.GetSearchUnauthorizedError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
+			}
+
+			out.HTTPMeta = components.HTTPMetadata{
+				Request:  req,
+				Response: httpRes,
+			}
+			return nil, &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
 				return nil, err
+			}
+			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
+	case httpRes.StatusCode == 403:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out sdkerrors.GetSearchForbiddenError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -224,7 +264,7 @@ func (s *Search) Search(ctx context.Context, request operations.GetSearchRequest
 
 			var out sdkerrors.GetSearchInternalServerError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{

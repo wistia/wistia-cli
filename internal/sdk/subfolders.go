@@ -37,6 +37,11 @@ func newSubfolders(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks *ho
 // ```
 // Read all folder and media data
 // ```
+//
+// Tokens with the "Act with a team member's permissions" permission
+// (`all:delegate_to_contact_permissions` scope) can also be used. Requests
+// made with such a token are authorized using the permissions of the
+// contact assigned to the token.
 func (s *Subfolders) List(ctx context.Context, request operations.GetFoldersFolderIDSubfoldersRequest, opts ...operations.Option) (*operations.GetFoldersFolderIDSubfoldersResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -76,10 +81,17 @@ func (s *Subfolders) List(ctx context.Context, request operations.GetFoldersFold
 		timeout = s.sdkConfiguration.Timeout
 	}
 
+	var streamCancel context.CancelFunc
+
 	if timeout != nil {
 		var cancel context.CancelFunc
 		ctx, cancel = context.WithTimeout(ctx, *timeout)
-		defer cancel()
+		streamCancel = cancel
+		defer func() {
+			if streamCancel != nil {
+				streamCancel()
+			}
+		}()
 	}
 
 	req, err := http.NewRequestWithContext(ctx, "GET", opURL, nil)
@@ -141,7 +153,10 @@ func (s *Subfolders) List(ctx context.Context, request operations.GetFoldersFold
 	case httpRes.StatusCode == 200:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			if o.SkipDeserialization == nil || !*o.SkipDeserialization {
+			if o.SkipDeserialization != nil && *o.SkipDeserialization {
+				httpRes.Body = utils.BodyWithCancel(httpRes.Body, streamCancel)
+				streamCancel = nil
+			} else {
 				rawBody, err := utils.ConsumeRawBody(httpRes)
 				if err != nil {
 					return nil, err
@@ -171,7 +186,7 @@ func (s *Subfolders) List(ctx context.Context, request operations.GetFoldersFold
 
 			var out sdkerrors.GetFoldersFolderIDSubfoldersBadRequestError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -196,7 +211,7 @@ func (s *Subfolders) List(ctx context.Context, request operations.GetFoldersFold
 
 			var out sdkerrors.GetFoldersFolderIDSubfoldersUnauthorizedError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -221,7 +236,7 @@ func (s *Subfolders) List(ctx context.Context, request operations.GetFoldersFold
 
 			var out sdkerrors.GetFoldersFolderIDSubfoldersNotFoundError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -246,7 +261,7 @@ func (s *Subfolders) List(ctx context.Context, request operations.GetFoldersFold
 
 			var out sdkerrors.GetFoldersFolderIDSubfoldersInternalServerError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -292,6 +307,11 @@ func (s *Subfolders) List(ctx context.Context, request operations.GetFoldersFold
 // ```
 // Read, update & delete anything
 // ```
+//
+// Tokens with the "Act with a team member's permissions" permission
+// (`all:delegate_to_contact_permissions` scope) can also be used. Requests
+// made with such a token are authorized using the permissions of the
+// contact assigned to the token.
 func (s *Subfolders) Create(ctx context.Context, request operations.PostFoldersFolderIDSubfoldersRequest, opts ...operations.Option) (*operations.PostFoldersFolderIDSubfoldersResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -335,10 +355,17 @@ func (s *Subfolders) Create(ctx context.Context, request operations.PostFoldersF
 		timeout = s.sdkConfiguration.Timeout
 	}
 
+	var streamCancel context.CancelFunc
+
 	if timeout != nil {
 		var cancel context.CancelFunc
 		ctx, cancel = context.WithTimeout(ctx, *timeout)
-		defer cancel()
+		streamCancel = cancel
+		defer func() {
+			if streamCancel != nil {
+				streamCancel()
+			}
+		}()
 	}
 
 	req, err := http.NewRequestWithContext(ctx, "POST", opURL, bodyReader)
@@ -399,7 +426,10 @@ func (s *Subfolders) Create(ctx context.Context, request operations.PostFoldersF
 	case httpRes.StatusCode == 201:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			if o.SkipDeserialization == nil || !*o.SkipDeserialization {
+			if o.SkipDeserialization != nil && *o.SkipDeserialization {
+				httpRes.Body = utils.BodyWithCancel(httpRes.Body, streamCancel)
+				streamCancel = nil
+			} else {
 				rawBody, err := utils.ConsumeRawBody(httpRes)
 				if err != nil {
 					return nil, err
@@ -419,6 +449,31 @@ func (s *Subfolders) Create(ctx context.Context, request operations.PostFoldersF
 			}
 			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
+	case httpRes.StatusCode == 400:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out sdkerrors.PostFoldersFolderIDSubfoldersBadRequestError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
+			}
+
+			out.HTTPMeta = components.HTTPMetadata{
+				Request:  req,
+				Response: httpRes,
+			}
+			return nil, &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
 	case httpRes.StatusCode == 401:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
@@ -429,7 +484,7 @@ func (s *Subfolders) Create(ctx context.Context, request operations.PostFoldersF
 
 			var out sdkerrors.PostFoldersFolderIDSubfoldersUnauthorizedError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -454,7 +509,7 @@ func (s *Subfolders) Create(ctx context.Context, request operations.PostFoldersF
 
 			var out sdkerrors.PostFoldersFolderIDSubfoldersForbiddenError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -479,7 +534,7 @@ func (s *Subfolders) Create(ctx context.Context, request operations.PostFoldersF
 
 			var out sdkerrors.PostFoldersFolderIDSubfoldersNotFoundError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -504,7 +559,7 @@ func (s *Subfolders) Create(ctx context.Context, request operations.PostFoldersF
 
 			var out sdkerrors.PostFoldersFolderIDSubfoldersInternalServerError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -550,6 +605,11 @@ func (s *Subfolders) Create(ctx context.Context, request operations.PostFoldersF
 // ```
 // Read all folder and media data
 // ```
+//
+// Tokens with the "Act with a team member's permissions" permission
+// (`all:delegate_to_contact_permissions` scope) can also be used. Requests
+// made with such a token are authorized using the permissions of the
+// contact assigned to the token.
 func (s *Subfolders) Get(ctx context.Context, request operations.GetFoldersFolderIDSubfoldersSubfolderIDRequest, opts ...operations.Option) (*operations.GetFoldersFolderIDSubfoldersSubfolderIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -589,10 +649,17 @@ func (s *Subfolders) Get(ctx context.Context, request operations.GetFoldersFolde
 		timeout = s.sdkConfiguration.Timeout
 	}
 
+	var streamCancel context.CancelFunc
+
 	if timeout != nil {
 		var cancel context.CancelFunc
 		ctx, cancel = context.WithTimeout(ctx, *timeout)
-		defer cancel()
+		streamCancel = cancel
+		defer func() {
+			if streamCancel != nil {
+				streamCancel()
+			}
+		}()
 	}
 
 	req, err := http.NewRequestWithContext(ctx, "GET", opURL, nil)
@@ -654,7 +721,10 @@ func (s *Subfolders) Get(ctx context.Context, request operations.GetFoldersFolde
 	case httpRes.StatusCode == 200:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			if o.SkipDeserialization == nil || !*o.SkipDeserialization {
+			if o.SkipDeserialization != nil && *o.SkipDeserialization {
+				httpRes.Body = utils.BodyWithCancel(httpRes.Body, streamCancel)
+				streamCancel = nil
+			} else {
 				rawBody, err := utils.ConsumeRawBody(httpRes)
 				if err != nil {
 					return nil, err
@@ -684,7 +754,7 @@ func (s *Subfolders) Get(ctx context.Context, request operations.GetFoldersFolde
 
 			var out sdkerrors.GetFoldersFolderIDSubfoldersSubfolderIDUnauthorizedError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -709,7 +779,7 @@ func (s *Subfolders) Get(ctx context.Context, request operations.GetFoldersFolde
 
 			var out sdkerrors.GetFoldersFolderIDSubfoldersSubfolderIDNotFoundError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -734,7 +804,7 @@ func (s *Subfolders) Get(ctx context.Context, request operations.GetFoldersFolde
 
 			var out sdkerrors.GetFoldersFolderIDSubfoldersSubfolderIDInternalServerError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -780,6 +850,11 @@ func (s *Subfolders) Get(ctx context.Context, request operations.GetFoldersFolde
 // ```
 // Read, update & delete anything
 // ```
+//
+// Tokens with the "Act with a team member's permissions" permission
+// (`all:delegate_to_contact_permissions` scope) can also be used. Requests
+// made with such a token are authorized using the permissions of the
+// contact assigned to the token.
 func (s *Subfolders) Update(ctx context.Context, request operations.PutFoldersFolderIDSubfoldersSubfolderIDRequest, opts ...operations.Option) (*operations.PutFoldersFolderIDSubfoldersSubfolderIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -823,10 +898,17 @@ func (s *Subfolders) Update(ctx context.Context, request operations.PutFoldersFo
 		timeout = s.sdkConfiguration.Timeout
 	}
 
+	var streamCancel context.CancelFunc
+
 	if timeout != nil {
 		var cancel context.CancelFunc
 		ctx, cancel = context.WithTimeout(ctx, *timeout)
-		defer cancel()
+		streamCancel = cancel
+		defer func() {
+			if streamCancel != nil {
+				streamCancel()
+			}
+		}()
 	}
 
 	req, err := http.NewRequestWithContext(ctx, "PUT", opURL, bodyReader)
@@ -887,7 +969,10 @@ func (s *Subfolders) Update(ctx context.Context, request operations.PutFoldersFo
 	case httpRes.StatusCode == 200:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			if o.SkipDeserialization == nil || !*o.SkipDeserialization {
+			if o.SkipDeserialization != nil && *o.SkipDeserialization {
+				httpRes.Body = utils.BodyWithCancel(httpRes.Body, streamCancel)
+				streamCancel = nil
+			} else {
 				rawBody, err := utils.ConsumeRawBody(httpRes)
 				if err != nil {
 					return nil, err
@@ -917,7 +1002,7 @@ func (s *Subfolders) Update(ctx context.Context, request operations.PutFoldersFo
 
 			var out sdkerrors.PutFoldersFolderIDSubfoldersSubfolderIDUnauthorizedError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -942,7 +1027,7 @@ func (s *Subfolders) Update(ctx context.Context, request operations.PutFoldersFo
 
 			var out sdkerrors.PutFoldersFolderIDSubfoldersSubfolderIDNotFoundError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -967,7 +1052,7 @@ func (s *Subfolders) Update(ctx context.Context, request operations.PutFoldersFo
 
 			var out sdkerrors.PutFoldersFolderIDSubfoldersSubfolderIDInternalServerError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -1007,14 +1092,17 @@ func (s *Subfolders) Update(ctx context.Context, request operations.PutFoldersFo
 }
 
 // Delete Subfolder
-// Deletes a subfolder from a folder. All media files in the subfolder will be moved to the folder's root level.
-//
-// The subfolder is soft-deleted and may be recoverable through other means, but is no longer accessible via the API.
+// Deletes one subfolder and moves its media to the folder's root level. The subfolder is soft-deleted and is no longer accessible via the API. To delete multiple subfolders and their media, use the Bulk Delete Subfolders endpoint.
 //
 // ## Requires api token with one of the following permissions
 // ```
 // Read, update & delete anything
 // ```
+//
+// Tokens with the "Act with a team member's permissions" permission
+// (`all:delegate_to_contact_permissions` scope) can also be used. Requests
+// made with such a token are authorized using the permissions of the
+// contact assigned to the token.
 func (s *Subfolders) Delete(ctx context.Context, request operations.DeleteFoldersFolderIDSubfoldersSubfolderIDRequest, opts ...operations.Option) (*operations.DeleteFoldersFolderIDSubfoldersSubfolderIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1054,10 +1142,17 @@ func (s *Subfolders) Delete(ctx context.Context, request operations.DeleteFolder
 		timeout = s.sdkConfiguration.Timeout
 	}
 
+	var streamCancel context.CancelFunc
+
 	if timeout != nil {
 		var cancel context.CancelFunc
 		ctx, cancel = context.WithTimeout(ctx, *timeout)
-		defer cancel()
+		streamCancel = cancel
+		defer func() {
+			if streamCancel != nil {
+				streamCancel()
+			}
+		}()
 	}
 
 	req, err := http.NewRequestWithContext(ctx, "DELETE", opURL, nil)
@@ -1115,7 +1210,10 @@ func (s *Subfolders) Delete(ctx context.Context, request operations.DeleteFolder
 	case httpRes.StatusCode == 200:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			if o.SkipDeserialization == nil || !*o.SkipDeserialization {
+			if o.SkipDeserialization != nil && *o.SkipDeserialization {
+				httpRes.Body = utils.BodyWithCancel(httpRes.Body, streamCancel)
+				streamCancel = nil
+			} else {
 				rawBody, err := utils.ConsumeRawBody(httpRes)
 				if err != nil {
 					return nil, err
@@ -1145,7 +1243,7 @@ func (s *Subfolders) Delete(ctx context.Context, request operations.DeleteFolder
 
 			var out sdkerrors.DeleteFoldersFolderIDSubfoldersSubfolderIDUnauthorizedError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -1170,7 +1268,7 @@ func (s *Subfolders) Delete(ctx context.Context, request operations.DeleteFolder
 
 			var out sdkerrors.DeleteFoldersFolderIDSubfoldersSubfolderIDNotFoundError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -1195,7 +1293,7 @@ func (s *Subfolders) Delete(ctx context.Context, request operations.DeleteFolder
 
 			var out sdkerrors.DeleteFoldersFolderIDSubfoldersSubfolderIDInternalServerError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -1235,12 +1333,22 @@ func (s *Subfolders) Delete(ctx context.Context, request operations.DeleteFolder
 }
 
 // BulkDelete - Bulk Delete Subfolders
-// This method accepts a list of subfolders to delete. It processes requests asynchronously and will return a background_job_status object. All media files in each deleted subfolder will be moved to the folder's root level.
+// Deletes multiple subfolders asynchronously. Their media is also soft-deleted and can be restored from the trash by an account owner or manager until it is purged. To keep the media, use the Delete Subfolder endpoint, which moves it to the folder's root level.
 //
 // ## Requires api token with one of the following permissions
 // ```
 // Read, update & delete anything
 // ```
+//
+// Tokens with the "Act with a team member's permissions" permission
+// (`all:delegate_to_contact_permissions` scope) can also be used. Requests
+// made with such a token are authorized using the permissions of the
+// contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `update` permission on the folder can also be
+// used.
 func (s *Subfolders) BulkDelete(ctx context.Context, request operations.DeleteFoldersFolderIDSubfoldersBulkDeleteRequest, opts ...operations.Option) (*operations.DeleteFoldersFolderIDSubfoldersBulkDeleteResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1284,10 +1392,17 @@ func (s *Subfolders) BulkDelete(ctx context.Context, request operations.DeleteFo
 		timeout = s.sdkConfiguration.Timeout
 	}
 
+	var streamCancel context.CancelFunc
+
 	if timeout != nil {
 		var cancel context.CancelFunc
 		ctx, cancel = context.WithTimeout(ctx, *timeout)
-		defer cancel()
+		streamCancel = cancel
+		defer func() {
+			if streamCancel != nil {
+				streamCancel()
+			}
+		}()
 	}
 
 	req, err := http.NewRequestWithContext(ctx, "DELETE", opURL, bodyReader)
@@ -1348,7 +1463,10 @@ func (s *Subfolders) BulkDelete(ctx context.Context, request operations.DeleteFo
 	case httpRes.StatusCode == 200:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			if o.SkipDeserialization == nil || !*o.SkipDeserialization {
+			if o.SkipDeserialization != nil && *o.SkipDeserialization {
+				httpRes.Body = utils.BodyWithCancel(httpRes.Body, streamCancel)
+				streamCancel = nil
+			} else {
 				rawBody, err := utils.ConsumeRawBody(httpRes)
 				if err != nil {
 					return nil, err
@@ -1378,7 +1496,32 @@ func (s *Subfolders) BulkDelete(ctx context.Context, request operations.DeleteFo
 
 			var out sdkerrors.DeleteFoldersFolderIDSubfoldersBulkDeleteUnauthorizedError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
+			}
+
+			out.HTTPMeta = components.HTTPMetadata{
+				Request:  req,
+				Response: httpRes,
+			}
+			return nil, &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
 				return nil, err
+			}
+			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
+	case httpRes.StatusCode == 403:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out sdkerrors.DeleteFoldersFolderIDSubfoldersBulkDeleteForbiddenError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -1403,7 +1546,7 @@ func (s *Subfolders) BulkDelete(ctx context.Context, request operations.DeleteFo
 
 			var out sdkerrors.DeleteFoldersFolderIDSubfoldersBulkDeleteNotFoundError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -1428,7 +1571,7 @@ func (s *Subfolders) BulkDelete(ctx context.Context, request operations.DeleteFo
 
 			var out sdkerrors.DeleteFoldersFolderIDSubfoldersBulkDeleteUnprocessableEntityError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -1453,7 +1596,7 @@ func (s *Subfolders) BulkDelete(ctx context.Context, request operations.DeleteFo
 
 			var out sdkerrors.DeleteFoldersFolderIDSubfoldersBulkDeleteInternalServerError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{

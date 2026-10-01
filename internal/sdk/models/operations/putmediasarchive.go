@@ -105,34 +105,20 @@ func (p *PutMediasArchiveBackgroundJobStatus) GetStatus() PutMediasArchiveStatus
 // PutMediasArchiveResponseBody - Successful archival of media.
 type PutMediasArchiveResponseBody struct {
 	// A confirmation message that the background job has been queued.
-	Message *string `json:"message,omitzero"`
-	// A background job keeps track of the progress of an asynchronous task, e.g
-	// bulk archiving media, translating media, etc.
-	//
-	BackgroundJobStatus *PutMediasArchiveBackgroundJobStatus `json:"background_job_status,omitzero"`
+	Message             string                              `json:"message"`
+	BackgroundJobStatus PutMediasArchiveBackgroundJobStatus `json:"background_job_status"`
 }
 
-func (p PutMediasArchiveResponseBody) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(p, "", false)
-}
-
-func (p *PutMediasArchiveResponseBody) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &p, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (p *PutMediasArchiveResponseBody) GetMessage() *string {
+func (p *PutMediasArchiveResponseBody) GetMessage() string {
 	if p == nil {
-		return nil
+		return ""
 	}
 	return p.Message
 }
 
-func (p *PutMediasArchiveResponseBody) GetBackgroundJobStatus() *PutMediasArchiveBackgroundJobStatus {
+func (p *PutMediasArchiveResponseBody) GetBackgroundJobStatus() PutMediasArchiveBackgroundJobStatus {
 	if p == nil {
-		return nil
+		return PutMediasArchiveBackgroundJobStatus{}
 	}
 	return p.BackgroundJobStatus
 }

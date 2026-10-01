@@ -23,18 +23,35 @@ var bulkDeleteCmdMeta = []flagutil.FlagMeta{
 // initBulkDeleteCmd initializes the bulk-delete command.
 func initBulkDeleteCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
-		Use:     "bulk-delete",
+		Use:     "bulk-delete [folder-id]",
 		Short:   "Bulk Delete Subfolders",
-		Long:    "This method accepts a list of subfolders to delete. It processes requests asynchronously and will return a background_job_status object. All media files in each deleted subfolder will be moved to the folder's root level.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
-		Example: "  wistia subfolders bulk-delete --folder-id abc123def4 --hashed-ids '[\"<value 1>\",\"<value 2>\"]'",
+		Long:    "Deletes multiple subfolders asynchronously. Their media is also soft-deleted and can be restored from the trash by an account owner or manager until it is purged. To keep the media, use the Delete Subfolder endpoint, which moves it to the folder's root level.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\nauthorization granting the `update` permission on the folder can also be\nused.",
+		Example: "  wistia subfolders bulk-delete --folder-id abc123def4 --hashed-ids <value 1> --hashed-ids <value 2>",
+		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runBulkDeleteCmd,
 		Aliases: []string{"bd"},
+		Annotations: map[string]string{
+			"speakeasy_operation": "delete_/folders/{folderId}/subfolders/bulk_delete",
+		},
 	}
 	flagutil.RegisterFlags(cmd, bulkDeleteCmdMeta)
 	if err := flagutil.ValidateMeta[operations.DeleteFoldersFolderIDSubfoldersBulkDeleteRequest](bulkDeleteCmdMeta); err != nil {
 		return fmt.Errorf("invalid metadata for bulk-delete: %w", err)
 	}
-	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin.")
+	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
+	if err := flagutil.AnnotateBodyFields(cmd, bulkDeleteCmdMeta, "Body", "body"); err != nil {
+		return fmt.Errorf("annotate body fields for bulk-delete: %w", err)
+	}
+	if err := flagutil.DeclarePositionalFlag(cmd, "folder-id", "The hashed ID of the folder containing the subfolders (or pass it as the [folder-id] argument)", true); err != nil {
+		return err
+	}
+	if err := interactive.Declare(cmd, interactive.CommandSpec{Args: []interactive.ArgSpec{
+		{Name: "folder-id", Summary: "The hashed ID of the folder containing the subfolders", Required: true, SatisfiedBy: []string{"folder-id"}},
+	}}); err != nil {
+		return fmt.Errorf("declare interactive arguments for bulk-delete: %w", err)
+	}
 	parent.AddCommand(cmd)
 	return nil
 }
@@ -44,14 +61,12 @@ func runBulkDeleteCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, bulkDeleteCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, bulkDeleteCmdMeta); err != nil {
-			return err
-		}
+	if err := flagutil.ResolvePositionalFlag(cmd, args); err != nil {
+		return err
 	}
 	req, err := flagutil.BuildRequest[operations.DeleteFoldersFolderIDSubfoldersBulkDeleteRequest](cmd, bulkDeleteCmdMeta, "Body", "body")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

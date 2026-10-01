@@ -85,7 +85,7 @@ func (e *GetAnalyticsWebinarsWebinarIDCode) IsExact() bool {
 	return false
 }
 
-type OptionObj struct {
+type GetAnalyticsWebinarsWebinarIDOption struct {
 	// The option ID.
 	ID *int64 `json:"id,omitzero"`
 	// The option text.
@@ -96,32 +96,32 @@ type OptionObj struct {
 	Percent *float32 `json:"percent,omitzero"`
 }
 
-func (o *OptionObj) GetID() *int64 {
-	if o == nil {
+func (g *GetAnalyticsWebinarsWebinarIDOption) GetID() *int64 {
+	if g == nil {
 		return nil
 	}
-	return o.ID
+	return g.ID
 }
 
-func (o *OptionObj) GetText() *string {
-	if o == nil {
+func (g *GetAnalyticsWebinarsWebinarIDOption) GetText() *string {
+	if g == nil {
 		return nil
 	}
-	return o.Text
+	return g.Text
 }
 
-func (o *OptionObj) GetCount() *int64 {
-	if o == nil {
+func (g *GetAnalyticsWebinarsWebinarIDOption) GetCount() *int64 {
+	if g == nil {
 		return nil
 	}
-	return o.Count
+	return g.Count
 }
 
-func (o *OptionObj) GetPercent() *float32 {
-	if o == nil {
+func (g *GetAnalyticsWebinarsWebinarIDOption) GetPercent() *float32 {
+	if g == nil {
 		return nil
 	}
-	return o.Percent
+	return g.Percent
 }
 
 type PollQuestion struct {
@@ -134,7 +134,7 @@ type PollQuestion struct {
 	// The total number of responses.
 	ResponseCount *int64 `json:"response_count,omitzero"`
 	// The available answer options and their response counts.
-	Options optionalnullable.OptionalNullable[[]OptionObj] `json:"options,omitzero"`
+	Options optionalnullable.OptionalNullable[[]GetAnalyticsWebinarsWebinarIDOption] `json:"options,omitzero"`
 }
 
 func (p PollQuestion) MarshalJSON() ([]byte, error) {
@@ -176,7 +176,7 @@ func (p *PollQuestion) GetResponseCount() *int64 {
 	return p.ResponseCount
 }
 
-func (p *PollQuestion) GetOptions() optionalnullable.OptionalNullable[[]OptionObj] {
+func (p *PollQuestion) GetOptions() optionalnullable.OptionalNullable[[]GetAnalyticsWebinarsWebinarIDOption] {
 	if p == nil {
 		return nil
 	}

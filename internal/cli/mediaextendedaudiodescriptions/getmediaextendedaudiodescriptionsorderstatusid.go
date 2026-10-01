@@ -22,16 +22,28 @@ var getMediaExtendedAudioDescriptionsOrderStatusIDCmdMeta = []flagutil.FlagMeta{
 // initGetMediaExtendedAudioDescriptionsOrderStatusIdCmd initializes the get-media-extended-audio-descriptions-order-status-id command.
 func initGetMediaExtendedAudioDescriptionsOrderStatusIdCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
-		Use:     "get-media-extended-audio-descriptions-order-status-id",
+		Use:     "get-media-extended-audio-descriptions-order-status-id [id]",
 		Short:   "Get Order Status",
 		Long:    "Returns the current status of an extended audio description order. Use the order id returned\nfrom the order endpoint to poll for status updates.",
 		Example: "  wistia media-extended-audio-descriptions get-media-extended-audio-descriptions-order-status-id --id <id>",
+		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runGetMediaExtendedAudioDescriptionsOrderStatusIdCmd,
 		Aliases: []string{"gmeadosi"},
+		Annotations: map[string]string{
+			"speakeasy_operation": "get_/media_extended_audio_descriptions/order_status/{id}",
+		},
 	}
 	flagutil.RegisterFlags(cmd, getMediaExtendedAudioDescriptionsOrderStatusIDCmdMeta)
 	if err := flagutil.ValidateMeta[operations.GetMediaExtendedAudioDescriptionsOrderStatusIDRequest](getMediaExtendedAudioDescriptionsOrderStatusIDCmdMeta); err != nil {
 		return fmt.Errorf("invalid metadata for get-media-extended-audio-descriptions-order-status-id: %w", err)
+	}
+	if err := flagutil.DeclarePositionalFlag(cmd, "id", "The hashed ID of the order returned from the order endpoint. (or pass it as the [id] argument)", true); err != nil {
+		return err
+	}
+	if err := interactive.Declare(cmd, interactive.CommandSpec{Args: []interactive.ArgSpec{
+		{Name: "id", Summary: "The hashed ID of the order returned from the order endpoint.", Required: true, SatisfiedBy: []string{"id"}},
+	}}); err != nil {
+		return fmt.Errorf("declare interactive arguments for get-media-extended-audio-descriptions-order-status-id: %w", err)
 	}
 	parent.AddCommand(cmd)
 	return nil
@@ -42,14 +54,12 @@ func runGetMediaExtendedAudioDescriptionsOrderStatusIdCmd(cmd *cobra.Command, ar
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, getMediaExtendedAudioDescriptionsOrderStatusIDCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, getMediaExtendedAudioDescriptionsOrderStatusIDCmdMeta); err != nil {
-			return err
-		}
+	if err := flagutil.ResolvePositionalFlag(cmd, args); err != nil {
+		return err
 	}
 	req, err := flagutil.BuildRequest[operations.GetMediaExtendedAudioDescriptionsOrderStatusIDRequest](cmd, getMediaExtendedAudioDescriptionsOrderStatusIDCmdMeta, "", "")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/wistia/wistia-cli/internal/client"
 	"github.com/wistia/wistia-cli/internal/flagutil"
-	"github.com/wistia/wistia-cli/internal/interactive"
 	"github.com/wistia/wistia-cli/internal/output"
 	"github.com/wistia/wistia-cli/internal/sdk"
 	"github.com/wistia/wistia-cli/internal/sdk/models/operations"
@@ -16,10 +15,10 @@ import (
 )
 
 var listCmdMeta = []flagutil.FlagMeta{
-	{FlagName: "page", FieldPath: "Page", Kind: flagutil.FlagKindInt64, Optional: true, Description: "The page number to retrieve. This cannot be combined with `cursor`,\npagination.\n"},
+	{FlagName: "page", FieldPath: "Page", Kind: flagutil.FlagKindInt64, Optional: true, Description: "The page number to retrieve. This cannot be combined with 'cursor',\npagination."},
 	{FlagName: "per-page", FieldPath: "PerPage", Kind: flagutil.FlagKindInt64, Optional: true, Description: "The number of medias per page. Use this for both offset pagination and cursor pagination."},
-	{FlagName: "cursor", Shorthand: "c", FieldPath: "Cursor", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `queryParam:"style=deepObject,explode=true,name=cursor"`, Description: "If `cursor[enabled]` is set to 1 then cursor pagination is enabled and the\nfirst set of records are fetched up to the `per_page`. Cursor\npagination will also be turned on if `cursor[before]` or `cursor[after]`\nare set. Records returned will have a `cursor` property set which can be used to fetch more records in the same `sort_by` ordering.\nThe cursor value of the last record can be used to fetch records after the current result set and\nthe cursor of the first record can be used to fetch records before the result set.\n\nNOTE: a cursor value is only valid if the `sort_by` value hasn't changed from the\nlast fetch. For example, you cannot fetch using `sort_by` id and then pass that\ncursor value to a `sort_by` name.\n"},
-	{FlagName: "sort-by", FieldPath: "SortBy", Kind: flagutil.FlagKindEnum, Optional: true, EnumValues: []string{"scheduled_for", "id"}, Description: "Field to sort by. When using cursor pagination (see cursor param),\nonly `id` and `scheduled_for` are supported.\n (options: scheduled_for, id)"},
+	{FlagName: "cursor", Shorthand: "c", FieldPath: "Cursor", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `queryParam:"style=deepObject,explode=true,name=cursor"`, Description: "If 'cursor[enabled]' is set to 1 then cursor pagination is enabled and the\nfirst set of records are fetched up to the 'per_page'. Cursor\npagination will also be turned on if 'cursor[before]' or 'cursor[after]'\nare set. Records returned will have a 'cursor' property set which can be used to fetch more records in the same 'sort_by' ordering.\nThe cursor value of the last record can be used to fetch records after the current result set and\nthe cursor of the first record can be used to fetch records before the result set.\n\nNOTE: a cursor value is only valid if the 'sort_by' value hasn't changed from the\nlast fetch. For example, you cannot fetch using 'sort_by' id and then pass that\ncursor value to a 'sort_by' name."},
+	{FlagName: "sort-by", FieldPath: "SortBy", Kind: flagutil.FlagKindEnum, Optional: true, EnumValues: []string{"scheduled_for", "title", "created", "updated", "id"}, Description: "Field to sort by. When using cursor pagination (see cursor param),\nonly 'id' and 'scheduled_for' are supported. All other sort_by options\n('title', 'created', 'updated') require offset pagination.\n(options: scheduled_for, title, created, updated, id)"},
 	{FlagName: "sort-direction", FieldPath: "SortDirection", Kind: flagutil.FlagKindIntEnum, Optional: true, EnumValues: []string{"0", "1"}, Description: "Sort direction (0 = desc, 1 = asc; default is 1) (options: 0, 1)"},
 	{FlagName: "hashed-ids", FieldPath: "HashedIds", Kind: flagutil.FlagKindStringArray, Optional: true, Description: "Filter by specific webinars IDs"},
 	{FlagName: "started", FieldPath: "Started", Kind: flagutil.FlagKindEnum, Optional: true, EnumValues: []string{"true", "false"}, Description: "Filter by whether the webinar has started. Use \"true\" for webinars that have started, \"false\" for webinars that have not started yet (options: true, false)"},
@@ -30,9 +29,13 @@ func initListCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "list",
 		Short:   "List Webinars",
-		Long:    "Lists webinars belonging to the account. This endpoint can also be used to\ndo a batch fetch based off of the hashed id.\n\n## Requires api token with one of the following permissions\n```\nRead all data\n```",
+		Long:    "Lists webinars belonging to the account. This endpoint can also be used to\ndo a batch fetch based off of the hashed id.\n\n## Requires api token with one of the following permissions\n```\nRead all data\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
 		Example: "  wistia webinars list",
+		Args:    cobra.NoArgs,
 		RunE:    runListCmd,
+		Annotations: map[string]string{
+			"speakeasy_operation": "get_/webinars",
+		},
 	}
 	flagutil.RegisterFlags(cmd, listCmdMeta)
 	if err := flagutil.ValidateMeta[operations.GetWebinarsRequest](listCmdMeta); err != nil {
@@ -47,14 +50,9 @@ func runListCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, listCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, listCmdMeta); err != nil {
-			return err
-		}
-	}
 	req, err := flagutil.BuildRequest[operations.GetWebinarsRequest](cmd, listCmdMeta, "", "")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

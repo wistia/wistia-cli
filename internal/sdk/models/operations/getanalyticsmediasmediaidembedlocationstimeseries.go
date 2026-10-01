@@ -51,6 +51,8 @@ const (
 	GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesSortByLoads          GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesSortBy = "loads"
 	GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesSortByEngagementRate GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesSortBy = "engagement_rate"
 	GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesSortByPlayRate       GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesSortBy = "play_rate"
+	GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesSortByPlayedTime     GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesSortBy = "played_time"
+	GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesSortByUniqueVisitors GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesSortBy = "unique_visitors"
 )
 
 func (e GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesSortBy) ToPointer() *GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesSortBy {
@@ -69,6 +71,10 @@ func (e *GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesSortBy) UnmarshalJSON(
 	case "engagement_rate":
 		fallthrough
 	case "play_rate":
+		fallthrough
+	case "played_time":
+		fallthrough
+	case "unique_visitors":
 		*e = GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesSortBy(v)
 		return nil
 	default:
@@ -88,7 +94,7 @@ type GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesRequest struct {
 	// The metric used to rank and select the top embed locations.
 	SortBy *GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesSortBy `default:"plays" queryParam:"style=form,explode=true,name=sort_by"`
 	// Filter results to a single embed URL. When provided, only analytics for
-	// the page matching this URL are returned. Must be a valid HTTP or HTTPS URL.
+	// the page matching this URL are returned. The protocol is optional (https is assumed).
 	//
 	EmbedURL *string `queryParam:"style=form,explode=true,name=embed_url"`
 	// Number of top embed locations per time bucket (max 100). Remaining locations are aggregated into an "All other" entry.
@@ -190,23 +196,23 @@ type Entry struct {
 	// The title of the page where the video is embedded. "All other" for the aggregated remainder entry.
 	PageTitle optionalnullable.OptionalNullable[string] `json:"page_title,omitzero"`
 	// The number of video loads from this location.
-	Loads *int64 `json:"loads,omitzero"`
+	Loads optionalnullable.OptionalNullable[int64] `json:"loads,omitzero"`
 	// The number of unique video loads from this location (one per visitor session).
-	UniqueLoads *int64 `json:"unique_loads,omitzero"`
+	UniqueLoads optionalnullable.OptionalNullable[int64] `json:"unique_loads,omitzero"`
 	// The number of video plays from this location.
-	Plays *int64 `json:"plays,omitzero"`
+	Plays optionalnullable.OptionalNullable[int64] `json:"plays,omitzero"`
 	// The number of unique video plays from this location (one per visitor session).
-	UniquePlays *int64 `json:"unique_plays,omitzero"`
+	UniquePlays optionalnullable.OptionalNullable[int64] `json:"unique_plays,omitzero"`
 	// The play rate from this location (between 0 and 1).
-	PlayRate *float32 `json:"play_rate,omitzero"`
+	PlayRate optionalnullable.OptionalNullable[float32] `json:"play_rate,omitzero"`
 	// Total time spent watching from this location in seconds.
-	PlayedTime *float32 `json:"played_time,omitzero"`
+	PlayedTime optionalnullable.OptionalNullable[float32] `json:"played_time,omitzero"`
 	// The average engagement rate from this location (between 0 and 1).
-	EngagementRate *float32 `json:"engagement_rate,omitzero"`
+	EngagementRate optionalnullable.OptionalNullable[float32] `json:"engagement_rate,omitzero"`
 	// The number of unique visitors from this location.
-	UniqueVisitors *int64 `json:"unique_visitors,omitzero"`
+	UniqueVisitors optionalnullable.OptionalNullable[int64] `json:"unique_visitors,omitzero"`
 	// The CTA conversion rate from this location (between 0 and 1).
-	CtaConversionRate *float32 `json:"cta_conversion_rate,omitzero"`
+	CtaConversionRate optionalnullable.OptionalNullable[float32] `json:"cta_conversion_rate,omitzero"`
 }
 
 func (e *Entry) GetEmbedDomain() optionalnullable.OptionalNullable[string] {
@@ -237,63 +243,63 @@ func (e *Entry) GetPageTitle() optionalnullable.OptionalNullable[string] {
 	return e.PageTitle
 }
 
-func (e *Entry) GetLoads() *int64 {
+func (e *Entry) GetLoads() optionalnullable.OptionalNullable[int64] {
 	if e == nil {
 		return nil
 	}
 	return e.Loads
 }
 
-func (e *Entry) GetUniqueLoads() *int64 {
+func (e *Entry) GetUniqueLoads() optionalnullable.OptionalNullable[int64] {
 	if e == nil {
 		return nil
 	}
 	return e.UniqueLoads
 }
 
-func (e *Entry) GetPlays() *int64 {
+func (e *Entry) GetPlays() optionalnullable.OptionalNullable[int64] {
 	if e == nil {
 		return nil
 	}
 	return e.Plays
 }
 
-func (e *Entry) GetUniquePlays() *int64 {
+func (e *Entry) GetUniquePlays() optionalnullable.OptionalNullable[int64] {
 	if e == nil {
 		return nil
 	}
 	return e.UniquePlays
 }
 
-func (e *Entry) GetPlayRate() *float32 {
+func (e *Entry) GetPlayRate() optionalnullable.OptionalNullable[float32] {
 	if e == nil {
 		return nil
 	}
 	return e.PlayRate
 }
 
-func (e *Entry) GetPlayedTime() *float32 {
+func (e *Entry) GetPlayedTime() optionalnullable.OptionalNullable[float32] {
 	if e == nil {
 		return nil
 	}
 	return e.PlayedTime
 }
 
-func (e *Entry) GetEngagementRate() *float32 {
+func (e *Entry) GetEngagementRate() optionalnullable.OptionalNullable[float32] {
 	if e == nil {
 		return nil
 	}
 	return e.EngagementRate
 }
 
-func (e *Entry) GetUniqueVisitors() *int64 {
+func (e *Entry) GetUniqueVisitors() optionalnullable.OptionalNullable[int64] {
 	if e == nil {
 		return nil
 	}
 	return e.UniqueVisitors
 }
 
-func (e *Entry) GetCtaConversionRate() *float32 {
+func (e *Entry) GetCtaConversionRate() optionalnullable.OptionalNullable[float32] {
 	if e == nil {
 		return nil
 	}

@@ -4,12 +4,15 @@
 package cli
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/charmbracelet/huh"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/spf13/cobra"
+	"github.com/wistia/wistia-cli/internal/client"
 	"github.com/wistia/wistia-cli/internal/config"
-	"github.com/wistia/wistia-cli/internal/output"
+	"github.com/wistia/wistia-cli/internal/flagutil"
+	"github.com/wistia/wistia-cli/internal/interactive"
 	"github.com/wistia/wistia-cli/internal/usage"
 	"golang.org/x/term"
 	"os"
@@ -25,9 +28,10 @@ Settings are stored in ~/.config/wistia/config.yaml.
 Secret credentials are stored in the OS keychain when available.
 
 You can also set values via environment variables with the WISTIA_CLI_ prefix
-(e.g., WISTIA_CLI_API_KEY) or pass them as flags to individual commands.
+(e.g., WISTIA_CLI_BEARER_AUTH) or pass them as flags to individual commands.
 
 Priority: CLI flags > environment variables > OS keychain > config file`,
+		Args: cobra.NoArgs,
 		RunE: runConfigureCmd,
 	}
 	parent.AddCommand(cmd)
@@ -39,43 +43,33 @@ func runConfigureCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	// Agent mode: reject interactive configure — agents should use env vars/flags.
-	if output.IsAgentMode() {
-		return output.AgentModeError(cmd,
-			"configure_blocked",
-			"the 'configure' command is interactive and cannot be used in agent mode",
-			[]string{
-				fmt.Sprintf("Set credentials via environment variables (prefix: %s_)", "WISTIA_CLI"),
-				"Pass credentials directly as CLI flags for each command",
-				fmt.Sprintf("Run '%s whoami' to verify current authentication", "wistia"),
-			},
-		)
+	if dryRunLocalNoop(cmd, "configure changes local settings only (no API request); nothing was changed.") {
+		return nil
 	}
-
 	cfg := config.GetConfig()
 	if cfg == nil {
 		cfg = &config.Config{}
 	}
-	if noInteractive, _ := cmd.Flags().GetBool("no-interactive"); noInteractive {
+
+	keychainStored := false
+
+	formMode := interactive.Resolve(cmd).FormMode()
+	if formMode == interactive.FormOff {
 		changed := false
 		if f := cmd.Flags().Lookup("bearer-auth"); f != nil && f.Changed {
 			v, _ := cmd.Flags().GetString("bearer-auth")
-			if config.KeyringAvailable() {
-				if err := config.SetKeyringValue("bearer-auth", v); err != nil {
-					cfg.Security.BearerAuth = v // keyring failed, store in config
-				}
-			} else {
-				cfg.Security.BearerAuth = v // no keyring, store in config
+			if config.StoreSecret("bearer-auth", v, &cfg.Security.BearerAuth) == nil {
+				keychainStored = true
 			}
 			changed = true
 		}
 
 		if !changed {
-			return fmt.Errorf("no flags provided; use flags to set values non-interactively, or remove --no-interactive")
+			return flagutil.WithCLIValidation(fmt.Errorf("no flags provided; use flags to store values in %s, or pass --interactive to open the form", config.GetConfigPath()))
 		}
 	} else {
 		var authBearerAuth string
-		accessible := !configureIsInteractive(cmd)
+		accessible := formMode == interactive.FormAccessible
 
 		var groups []*huh.Group
 		securityFields := []huh.Field{
@@ -83,7 +77,7 @@ func runConfigureCmd(cmd *cobra.Command, args []string) error {
 				Title("HTTP Bearer").
 				Description("--bearer-auth").
 				EchoMode(huh.EchoModePassword).
-				Placeholder(maskSecret(cfg.Security.BearerAuth)).
+				Placeholder(maskSecret(config.GetStoredSecret("bearer-auth", cfg.Security.BearerAuth))).
 				Value(&authBearerAuth),
 		}
 		groups = append(groups, huh.NewGroup(securityFields...).Title("Authentication"))
@@ -120,12 +114,8 @@ func runConfigureCmd(cmd *cobra.Command, args []string) error {
 			return fmt.Errorf("configure: %w", err)
 		}
 		if authBearerAuth != "" {
-			if config.KeyringAvailable() {
-				if err := config.SetKeyringValue("bearer-auth", authBearerAuth); err != nil {
-					cfg.Security.BearerAuth = authBearerAuth // keyring failed, store in config
-				}
-			} else {
-				cfg.Security.BearerAuth = authBearerAuth // no keyring, store in config
+			if config.StoreSecret("bearer-auth", authBearerAuth, &cfg.Security.BearerAuth) == nil {
+				keychainStored = true
 			}
 		}
 		if !accessible {
@@ -143,23 +133,34 @@ func runConfigureCmd(cmd *cobra.Command, args []string) error {
 	}
 
 	out := cmd.OutOrStdout()
-	if config.KeyringAvailable() {
+	if keychainStored {
 		fmt.Fprintln(out, "Secret credentials stored in OS keychain")
 	}
 	fmt.Fprintf(out, "Configuration saved to %s\n", config.GetConfigPath())
 	return nil
 }
 
-// configureIsInteractive returns true when the configure command should use rich TUI forms.
-// Returns false in agent mode — agents should never see TUI rendering.
-func configureIsInteractive(cmd *cobra.Command) bool {
-	if noInteractive, _ := cmd.Flags().GetBool("no-interactive"); noInteractive {
+// dryRunLocalNoop implements the append-safe dry-run contract for local
+// mutation commands: no prompts, keychain access, or filesystem writes. The
+// machine preview protocol still receives an explicit local no-op record —
+// silence would be indistinguishable from a failed preview.
+func dryRunLocalNoop(cmd *cobra.Command, message string) bool {
+	if !client.IsDryRun(cmd) {
 		return false
 	}
-	if output.IsAgentMode() {
-		return false
+	if client.IsJSONDryRun(cmd) {
+		enc := json.NewEncoder(cmd.OutOrStdout())
+		enc.SetEscapeHTML(false)
+		_ = enc.Encode(struct {
+			DryRun  bool   `json:"dry_run"`
+			Local   bool   `json:"local"`
+			Command string `json:"command"`
+			Message string `json:"message"`
+		}{DryRun: true, Local: true, Command: cmd.CommandPath(), Message: message})
+	} else {
+		fmt.Fprintln(cmd.ErrOrStderr(), "[DRY-RUN] "+message)
 	}
-	return term.IsTerminal(int(os.Stdin.Fd())) && term.IsTerminal(int(os.Stdout.Fd()))
+	return true
 }
 
 // configureFormTheme builds the form theme for the configure command.

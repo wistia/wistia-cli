@@ -114,34 +114,20 @@ func (p *PostTaggingsBulkCreateBackgroundJobStatus) GetStatus() PostTaggingsBulk
 // PostTaggingsBulkCreateResponseBody - Successful tagging of media.
 type PostTaggingsBulkCreateResponseBody struct {
 	// A confirmation message that the background job has been queued.
-	Message *string `json:"message,omitzero"`
-	// A background job keeps track of the progress of an asynchronous task, e.g
-	// bulk archiving media, translating media, etc.
-	//
-	BackgroundJobStatus *PostTaggingsBulkCreateBackgroundJobStatus `json:"background_job_status,omitzero"`
+	Message             string                                    `json:"message"`
+	BackgroundJobStatus PostTaggingsBulkCreateBackgroundJobStatus `json:"background_job_status"`
 }
 
-func (p PostTaggingsBulkCreateResponseBody) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(p, "", false)
-}
-
-func (p *PostTaggingsBulkCreateResponseBody) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &p, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (p *PostTaggingsBulkCreateResponseBody) GetMessage() *string {
+func (p *PostTaggingsBulkCreateResponseBody) GetMessage() string {
 	if p == nil {
-		return nil
+		return ""
 	}
 	return p.Message
 }
 
-func (p *PostTaggingsBulkCreateResponseBody) GetBackgroundJobStatus() *PostTaggingsBulkCreateBackgroundJobStatus {
+func (p *PostTaggingsBulkCreateResponseBody) GetBackgroundJobStatus() PostTaggingsBulkCreateBackgroundJobStatus {
 	if p == nil {
-		return nil
+		return PostTaggingsBulkCreateBackgroundJobStatus{}
 	}
 	return p.BackgroundJobStatus
 }

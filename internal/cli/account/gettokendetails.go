@@ -19,8 +19,12 @@ func initGetTokenDetailsCmd(parent *cobra.Command) error {
 		Short:   "Get Current Token",
 		Long:    "Retrieves a summary of the token used to make the API request. This endpoint can primarily be used to\ndebug permission issues with the API.",
 		Example: "  wistia account get-token-details",
+		Args:    cobra.NoArgs,
 		RunE:    runGetTokenDetailsCmd,
 		Aliases: []string{"gtd"},
+		Annotations: map[string]string{
+			"speakeasy_operation": "getTokenDetails",
+		},
 	}
 	parent.AddCommand(cmd)
 	return nil

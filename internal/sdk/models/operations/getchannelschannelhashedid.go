@@ -47,7 +47,6 @@ func (e *GetChannelsChannelHashedIDCode) IsExact() bool {
 	return false
 }
 
-// GetChannelsChannelHashedIDEpisodeFormat - The format for episodes for the podcast channel.
 type GetChannelsChannelHashedIDEpisodeFormat string
 
 const (
@@ -71,42 +70,51 @@ func (e *GetChannelsChannelHashedIDEpisodeFormat) IsExact() bool {
 	return false
 }
 
-// GetChannelsChannelHashedIDCategory1 - The primary category for the channel.
 type GetChannelsChannelHashedIDCategory1 string
 
 const (
+	GetChannelsChannelHashedIDCategory1Arts                                           GetChannelsChannelHashedIDCategory1 = "arts"
 	GetChannelsChannelHashedIDCategory1ArtsGreaterThanBooks                           GetChannelsChannelHashedIDCategory1 = "arts > books"
 	GetChannelsChannelHashedIDCategory1ArtsGreaterThanDesign                          GetChannelsChannelHashedIDCategory1 = "arts > design"
 	GetChannelsChannelHashedIDCategory1ArtsGreaterThanFashionAndBeauty                GetChannelsChannelHashedIDCategory1 = "arts > fashion_and_beauty"
 	GetChannelsChannelHashedIDCategory1ArtsGreaterThanFood                            GetChannelsChannelHashedIDCategory1 = "arts > food"
 	GetChannelsChannelHashedIDCategory1ArtsGreaterThanPerformingArts                  GetChannelsChannelHashedIDCategory1 = "arts > performing_arts"
 	GetChannelsChannelHashedIDCategory1ArtsGreaterThanVisualArts                      GetChannelsChannelHashedIDCategory1 = "arts > visual_arts"
+	GetChannelsChannelHashedIDCategory1Business                                       GetChannelsChannelHashedIDCategory1 = "business"
 	GetChannelsChannelHashedIDCategory1BusinessGreaterThanCareers                     GetChannelsChannelHashedIDCategory1 = "business > careers"
 	GetChannelsChannelHashedIDCategory1BusinessGreaterThanEntrepreneurship            GetChannelsChannelHashedIDCategory1 = "business > entrepreneurship"
 	GetChannelsChannelHashedIDCategory1BusinessGreaterThanInvesting                   GetChannelsChannelHashedIDCategory1 = "business > investing"
 	GetChannelsChannelHashedIDCategory1BusinessGreaterThanManagement                  GetChannelsChannelHashedIDCategory1 = "business > management"
 	GetChannelsChannelHashedIDCategory1BusinessGreaterThanMarketing                   GetChannelsChannelHashedIDCategory1 = "business > marketing"
 	GetChannelsChannelHashedIDCategory1BusinessGreaterThanNonProfit                   GetChannelsChannelHashedIDCategory1 = "business > non_profit"
+	GetChannelsChannelHashedIDCategory1Comedy                                         GetChannelsChannelHashedIDCategory1 = "comedy"
 	GetChannelsChannelHashedIDCategory1ComedyGreaterThanComedyInterviews              GetChannelsChannelHashedIDCategory1 = "comedy > comedy_interviews"
 	GetChannelsChannelHashedIDCategory1ComedyGreaterThanImprov                        GetChannelsChannelHashedIDCategory1 = "comedy > improv"
 	GetChannelsChannelHashedIDCategory1ComedyGreaterThanStandUp                       GetChannelsChannelHashedIDCategory1 = "comedy > stand_up"
+	GetChannelsChannelHashedIDCategory1Education                                      GetChannelsChannelHashedIDCategory1 = "education"
 	GetChannelsChannelHashedIDCategory1EducationGreaterThanCourses                    GetChannelsChannelHashedIDCategory1 = "education > courses"
 	GetChannelsChannelHashedIDCategory1EducationGreaterThanHowTo                      GetChannelsChannelHashedIDCategory1 = "education > how_to"
 	GetChannelsChannelHashedIDCategory1EducationGreaterThanLanguageLearning           GetChannelsChannelHashedIDCategory1 = "education > language_learning"
 	GetChannelsChannelHashedIDCategory1EducationGreaterThanSelfImprovement            GetChannelsChannelHashedIDCategory1 = "education > self_improvement"
+	GetChannelsChannelHashedIDCategory1Fiction                                        GetChannelsChannelHashedIDCategory1 = "fiction"
 	GetChannelsChannelHashedIDCategory1FictionGreaterThanComedyFiction                GetChannelsChannelHashedIDCategory1 = "fiction > comedy_fiction"
 	GetChannelsChannelHashedIDCategory1FictionGreaterThanDrama                        GetChannelsChannelHashedIDCategory1 = "fiction > drama"
 	GetChannelsChannelHashedIDCategory1FictionGreaterThanScienceFiction               GetChannelsChannelHashedIDCategory1 = "fiction > science_fiction"
+	GetChannelsChannelHashedIDCategory1Government                                     GetChannelsChannelHashedIDCategory1 = "government"
+	GetChannelsChannelHashedIDCategory1HealthAndFitness                               GetChannelsChannelHashedIDCategory1 = "health_and_fitness"
 	GetChannelsChannelHashedIDCategory1HealthAndFitnessGreaterThanAlternativeHealth   GetChannelsChannelHashedIDCategory1 = "health_and_fitness > alternative_health"
 	GetChannelsChannelHashedIDCategory1HealthAndFitnessGreaterThanFitness             GetChannelsChannelHashedIDCategory1 = "health_and_fitness > fitness"
 	GetChannelsChannelHashedIDCategory1HealthAndFitnessGreaterThanMedicine            GetChannelsChannelHashedIDCategory1 = "health_and_fitness > medicine"
 	GetChannelsChannelHashedIDCategory1HealthAndFitnessGreaterThanMentalHealth        GetChannelsChannelHashedIDCategory1 = "health_and_fitness > mental_health"
 	GetChannelsChannelHashedIDCategory1HealthAndFitnessGreaterThanNutrition           GetChannelsChannelHashedIDCategory1 = "health_and_fitness > nutrition"
 	GetChannelsChannelHashedIDCategory1HealthAndFitnessGreaterThanSexuality           GetChannelsChannelHashedIDCategory1 = "health_and_fitness > sexuality"
+	GetChannelsChannelHashedIDCategory1History                                        GetChannelsChannelHashedIDCategory1 = "history"
+	GetChannelsChannelHashedIDCategory1KidsAndFamily                                  GetChannelsChannelHashedIDCategory1 = "kids_and_family"
 	GetChannelsChannelHashedIDCategory1KidsAndFamilyGreaterThanEducationForKids       GetChannelsChannelHashedIDCategory1 = "kids_and_family > education_for_kids"
 	GetChannelsChannelHashedIDCategory1KidsAndFamilyGreaterThanParenting              GetChannelsChannelHashedIDCategory1 = "kids_and_family > parenting"
 	GetChannelsChannelHashedIDCategory1KidsAndFamilyGreaterThanPetsAndAnimals         GetChannelsChannelHashedIDCategory1 = "kids_and_family > pets_and_animals"
 	GetChannelsChannelHashedIDCategory1KidsAndFamilyGreaterThanStoriesForKids         GetChannelsChannelHashedIDCategory1 = "kids_and_family > stories_for_kids"
+	GetChannelsChannelHashedIDCategory1Leisure                                        GetChannelsChannelHashedIDCategory1 = "leisure"
 	GetChannelsChannelHashedIDCategory1LeisureGreaterThanAnimationAndManga            GetChannelsChannelHashedIDCategory1 = "leisure > animation_and_manga"
 	GetChannelsChannelHashedIDCategory1LeisureGreaterThanAutomotive                   GetChannelsChannelHashedIDCategory1 = "leisure > automotive"
 	GetChannelsChannelHashedIDCategory1LeisureGreaterThanAviation                     GetChannelsChannelHashedIDCategory1 = "leisure > aviation"
@@ -115,9 +123,11 @@ const (
 	GetChannelsChannelHashedIDCategory1LeisureGreaterThanHobbies                      GetChannelsChannelHashedIDCategory1 = "leisure > hobbies"
 	GetChannelsChannelHashedIDCategory1LeisureGreaterThanHomeAndGarden                GetChannelsChannelHashedIDCategory1 = "leisure > home_and_garden"
 	GetChannelsChannelHashedIDCategory1LeisureGreaterThanVideoGames                   GetChannelsChannelHashedIDCategory1 = "leisure > video_games"
+	GetChannelsChannelHashedIDCategory1Music                                          GetChannelsChannelHashedIDCategory1 = "music"
 	GetChannelsChannelHashedIDCategory1MusicGreaterThanMusicCommentary                GetChannelsChannelHashedIDCategory1 = "music > music_commentary"
 	GetChannelsChannelHashedIDCategory1MusicGreaterThanMusicHistory                   GetChannelsChannelHashedIDCategory1 = "music > music_history"
 	GetChannelsChannelHashedIDCategory1MusicGreaterThanMusicInterviews                GetChannelsChannelHashedIDCategory1 = "music > music_interviews"
+	GetChannelsChannelHashedIDCategory1News                                           GetChannelsChannelHashedIDCategory1 = "news"
 	GetChannelsChannelHashedIDCategory1NewsGreaterThanBusinessNews                    GetChannelsChannelHashedIDCategory1 = "news > business_news"
 	GetChannelsChannelHashedIDCategory1NewsGreaterThanDailyNews                       GetChannelsChannelHashedIDCategory1 = "news > daily_news"
 	GetChannelsChannelHashedIDCategory1NewsGreaterThanEntertainmentNews               GetChannelsChannelHashedIDCategory1 = "news > entertainment_news"
@@ -125,6 +135,7 @@ const (
 	GetChannelsChannelHashedIDCategory1NewsGreaterThanPolitics                        GetChannelsChannelHashedIDCategory1 = "news > politics"
 	GetChannelsChannelHashedIDCategory1NewsGreaterThanSportsNews                      GetChannelsChannelHashedIDCategory1 = "news > sports_news"
 	GetChannelsChannelHashedIDCategory1NewsGreaterThanTechNews                        GetChannelsChannelHashedIDCategory1 = "news > tech_news"
+	GetChannelsChannelHashedIDCategory1ReligionAndSpirituality                        GetChannelsChannelHashedIDCategory1 = "religion_and_spirituality"
 	GetChannelsChannelHashedIDCategory1ReligionAndSpiritualityGreaterThanBuddhism     GetChannelsChannelHashedIDCategory1 = "religion_and_spirituality > buddhism"
 	GetChannelsChannelHashedIDCategory1ReligionAndSpiritualityGreaterThanChristianity GetChannelsChannelHashedIDCategory1 = "religion_and_spirituality > christianity"
 	GetChannelsChannelHashedIDCategory1ReligionAndSpiritualityGreaterThanHinduism     GetChannelsChannelHashedIDCategory1 = "religion_and_spirituality > hinduism"
@@ -132,6 +143,7 @@ const (
 	GetChannelsChannelHashedIDCategory1ReligionAndSpiritualityGreaterThanJudaism      GetChannelsChannelHashedIDCategory1 = "religion_and_spirituality > judaism"
 	GetChannelsChannelHashedIDCategory1ReligionAndSpiritualityGreaterThanReligion     GetChannelsChannelHashedIDCategory1 = "religion_and_spirituality > religion"
 	GetChannelsChannelHashedIDCategory1ReligionAndSpiritualityGreaterThanSpirituality GetChannelsChannelHashedIDCategory1 = "religion_and_spirituality > spirituality"
+	GetChannelsChannelHashedIDCategory1Science                                        GetChannelsChannelHashedIDCategory1 = "science"
 	GetChannelsChannelHashedIDCategory1ScienceGreaterThanAstronomy                    GetChannelsChannelHashedIDCategory1 = "science > astronomy"
 	GetChannelsChannelHashedIDCategory1ScienceGreaterThanChemistry                    GetChannelsChannelHashedIDCategory1 = "science > chemistry"
 	GetChannelsChannelHashedIDCategory1ScienceGreaterThanEarthSciences                GetChannelsChannelHashedIDCategory1 = "science > earth_sciences"
@@ -141,11 +153,13 @@ const (
 	GetChannelsChannelHashedIDCategory1ScienceGreaterThanNature                       GetChannelsChannelHashedIDCategory1 = "science > nature"
 	GetChannelsChannelHashedIDCategory1ScienceGreaterThanPhysics                      GetChannelsChannelHashedIDCategory1 = "science > physics"
 	GetChannelsChannelHashedIDCategory1ScienceGreaterThanSocialSciences               GetChannelsChannelHashedIDCategory1 = "science > social_sciences"
+	GetChannelsChannelHashedIDCategory1SocietyAndCulture                              GetChannelsChannelHashedIDCategory1 = "society_and_culture"
 	GetChannelsChannelHashedIDCategory1SocietyAndCultureGreaterThanDocumentary        GetChannelsChannelHashedIDCategory1 = "society_and_culture > documentary"
 	GetChannelsChannelHashedIDCategory1SocietyAndCultureGreaterThanPersonalJournals   GetChannelsChannelHashedIDCategory1 = "society_and_culture > personal_journals"
 	GetChannelsChannelHashedIDCategory1SocietyAndCultureGreaterThanPhilosophy         GetChannelsChannelHashedIDCategory1 = "society_and_culture > philosophy"
 	GetChannelsChannelHashedIDCategory1SocietyAndCultureGreaterThanPlacesAndTravel    GetChannelsChannelHashedIDCategory1 = "society_and_culture > places_and_travel"
 	GetChannelsChannelHashedIDCategory1SocietyAndCultureGreaterThanRelationships      GetChannelsChannelHashedIDCategory1 = "society_and_culture > relationships"
+	GetChannelsChannelHashedIDCategory1Sports                                         GetChannelsChannelHashedIDCategory1 = "sports"
 	GetChannelsChannelHashedIDCategory1SportsGreaterThanBaseball                      GetChannelsChannelHashedIDCategory1 = "sports > baseball"
 	GetChannelsChannelHashedIDCategory1SportsGreaterThanBasketball                    GetChannelsChannelHashedIDCategory1 = "sports > basketball"
 	GetChannelsChannelHashedIDCategory1SportsGreaterThanCricket                       GetChannelsChannelHashedIDCategory1 = "sports > cricket"
@@ -161,6 +175,9 @@ const (
 	GetChannelsChannelHashedIDCategory1SportsGreaterThanVolleyball                    GetChannelsChannelHashedIDCategory1 = "sports > volleyball"
 	GetChannelsChannelHashedIDCategory1SportsGreaterThanWilderness                    GetChannelsChannelHashedIDCategory1 = "sports > wilderness"
 	GetChannelsChannelHashedIDCategory1SportsGreaterThanWrestling                     GetChannelsChannelHashedIDCategory1 = "sports > wrestling"
+	GetChannelsChannelHashedIDCategory1Technology                                     GetChannelsChannelHashedIDCategory1 = "technology"
+	GetChannelsChannelHashedIDCategory1TrueCrime                                      GetChannelsChannelHashedIDCategory1 = "true_crime"
+	GetChannelsChannelHashedIDCategory1TvAndFilm                                      GetChannelsChannelHashedIDCategory1 = "tv_and_film"
 	GetChannelsChannelHashedIDCategory1TvAndFilmGreaterThanAfterShows                 GetChannelsChannelHashedIDCategory1 = "tv_and_film > after_shows"
 	GetChannelsChannelHashedIDCategory1TvAndFilmGreaterThanFilmHistory                GetChannelsChannelHashedIDCategory1 = "tv_and_film > film_history"
 	GetChannelsChannelHashedIDCategory1TvAndFilmGreaterThanFilmInterviews             GetChannelsChannelHashedIDCategory1 = "tv_and_film > film_interviews"
@@ -176,49 +193,58 @@ func (e GetChannelsChannelHashedIDCategory1) ToPointer() *GetChannelsChannelHash
 func (e *GetChannelsChannelHashedIDCategory1) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "arts > books", "arts > design", "arts > fashion_and_beauty", "arts > food", "arts > performing_arts", "arts > visual_arts", "business > careers", "business > entrepreneurship", "business > investing", "business > management", "business > marketing", "business > non_profit", "comedy > comedy_interviews", "comedy > improv", "comedy > stand_up", "education > courses", "education > how_to", "education > language_learning", "education > self_improvement", "fiction > comedy_fiction", "fiction > drama", "fiction > science_fiction", "health_and_fitness > alternative_health", "health_and_fitness > fitness", "health_and_fitness > medicine", "health_and_fitness > mental_health", "health_and_fitness > nutrition", "health_and_fitness > sexuality", "kids_and_family > education_for_kids", "kids_and_family > parenting", "kids_and_family > pets_and_animals", "kids_and_family > stories_for_kids", "leisure > animation_and_manga", "leisure > automotive", "leisure > aviation", "leisure > crafts", "leisure > games", "leisure > hobbies", "leisure > home_and_garden", "leisure > video_games", "music > music_commentary", "music > music_history", "music > music_interviews", "news > business_news", "news > daily_news", "news > entertainment_news", "news > news_commentary", "news > politics", "news > sports_news", "news > tech_news", "religion_and_spirituality > buddhism", "religion_and_spirituality > christianity", "religion_and_spirituality > hinduism", "religion_and_spirituality > islam", "religion_and_spirituality > judaism", "religion_and_spirituality > religion", "religion_and_spirituality > spirituality", "science > astronomy", "science > chemistry", "science > earth_sciences", "science > life_sciences", "science > mathematics", "science > natural_sciences", "science > nature", "science > physics", "science > social_sciences", "society_and_culture > documentary", "society_and_culture > personal_journals", "society_and_culture > philosophy", "society_and_culture > places_and_travel", "society_and_culture > relationships", "sports > baseball", "sports > basketball", "sports > cricket", "sports > fantasy_sports", "sports > football", "sports > golf", "sports > hockey", "sports > rugby", "sports > running", "sports > soccer", "sports > swimming", "sports > tennis", "sports > volleyball", "sports > wilderness", "sports > wrestling", "tv_and_film > after_shows", "tv_and_film > film_history", "tv_and_film > film_interviews", "tv_and_film > film_reviews", "tv_and_film > tv_reviews":
+		case "arts", "arts > books", "arts > design", "arts > fashion_and_beauty", "arts > food", "arts > performing_arts", "arts > visual_arts", "business", "business > careers", "business > entrepreneurship", "business > investing", "business > management", "business > marketing", "business > non_profit", "comedy", "comedy > comedy_interviews", "comedy > improv", "comedy > stand_up", "education", "education > courses", "education > how_to", "education > language_learning", "education > self_improvement", "fiction", "fiction > comedy_fiction", "fiction > drama", "fiction > science_fiction", "government", "health_and_fitness", "health_and_fitness > alternative_health", "health_and_fitness > fitness", "health_and_fitness > medicine", "health_and_fitness > mental_health", "health_and_fitness > nutrition", "health_and_fitness > sexuality", "history", "kids_and_family", "kids_and_family > education_for_kids", "kids_and_family > parenting", "kids_and_family > pets_and_animals", "kids_and_family > stories_for_kids", "leisure", "leisure > animation_and_manga", "leisure > automotive", "leisure > aviation", "leisure > crafts", "leisure > games", "leisure > hobbies", "leisure > home_and_garden", "leisure > video_games", "music", "music > music_commentary", "music > music_history", "music > music_interviews", "news", "news > business_news", "news > daily_news", "news > entertainment_news", "news > news_commentary", "news > politics", "news > sports_news", "news > tech_news", "religion_and_spirituality", "religion_and_spirituality > buddhism", "religion_and_spirituality > christianity", "religion_and_spirituality > hinduism", "religion_and_spirituality > islam", "religion_and_spirituality > judaism", "religion_and_spirituality > religion", "religion_and_spirituality > spirituality", "science", "science > astronomy", "science > chemistry", "science > earth_sciences", "science > life_sciences", "science > mathematics", "science > natural_sciences", "science > nature", "science > physics", "science > social_sciences", "society_and_culture", "society_and_culture > documentary", "society_and_culture > personal_journals", "society_and_culture > philosophy", "society_and_culture > places_and_travel", "society_and_culture > relationships", "sports", "sports > baseball", "sports > basketball", "sports > cricket", "sports > fantasy_sports", "sports > football", "sports > golf", "sports > hockey", "sports > rugby", "sports > running", "sports > soccer", "sports > swimming", "sports > tennis", "sports > volleyball", "sports > wilderness", "sports > wrestling", "technology", "true_crime", "tv_and_film", "tv_and_film > after_shows", "tv_and_film > film_history", "tv_and_film > film_interviews", "tv_and_film > film_reviews", "tv_and_film > tv_reviews":
 			return true
 		}
 	}
 	return false
 }
 
-// GetChannelsChannelHashedIDCategory2 - The secondary category for the channel.
 type GetChannelsChannelHashedIDCategory2 string
 
 const (
+	GetChannelsChannelHashedIDCategory2Arts                                           GetChannelsChannelHashedIDCategory2 = "arts"
 	GetChannelsChannelHashedIDCategory2ArtsGreaterThanBooks                           GetChannelsChannelHashedIDCategory2 = "arts > books"
 	GetChannelsChannelHashedIDCategory2ArtsGreaterThanDesign                          GetChannelsChannelHashedIDCategory2 = "arts > design"
 	GetChannelsChannelHashedIDCategory2ArtsGreaterThanFashionAndBeauty                GetChannelsChannelHashedIDCategory2 = "arts > fashion_and_beauty"
 	GetChannelsChannelHashedIDCategory2ArtsGreaterThanFood                            GetChannelsChannelHashedIDCategory2 = "arts > food"
 	GetChannelsChannelHashedIDCategory2ArtsGreaterThanPerformingArts                  GetChannelsChannelHashedIDCategory2 = "arts > performing_arts"
 	GetChannelsChannelHashedIDCategory2ArtsGreaterThanVisualArts                      GetChannelsChannelHashedIDCategory2 = "arts > visual_arts"
+	GetChannelsChannelHashedIDCategory2Business                                       GetChannelsChannelHashedIDCategory2 = "business"
 	GetChannelsChannelHashedIDCategory2BusinessGreaterThanCareers                     GetChannelsChannelHashedIDCategory2 = "business > careers"
 	GetChannelsChannelHashedIDCategory2BusinessGreaterThanEntrepreneurship            GetChannelsChannelHashedIDCategory2 = "business > entrepreneurship"
 	GetChannelsChannelHashedIDCategory2BusinessGreaterThanInvesting                   GetChannelsChannelHashedIDCategory2 = "business > investing"
 	GetChannelsChannelHashedIDCategory2BusinessGreaterThanManagement                  GetChannelsChannelHashedIDCategory2 = "business > management"
 	GetChannelsChannelHashedIDCategory2BusinessGreaterThanMarketing                   GetChannelsChannelHashedIDCategory2 = "business > marketing"
 	GetChannelsChannelHashedIDCategory2BusinessGreaterThanNonProfit                   GetChannelsChannelHashedIDCategory2 = "business > non_profit"
+	GetChannelsChannelHashedIDCategory2Comedy                                         GetChannelsChannelHashedIDCategory2 = "comedy"
 	GetChannelsChannelHashedIDCategory2ComedyGreaterThanComedyInterviews              GetChannelsChannelHashedIDCategory2 = "comedy > comedy_interviews"
 	GetChannelsChannelHashedIDCategory2ComedyGreaterThanImprov                        GetChannelsChannelHashedIDCategory2 = "comedy > improv"
 	GetChannelsChannelHashedIDCategory2ComedyGreaterThanStandUp                       GetChannelsChannelHashedIDCategory2 = "comedy > stand_up"
+	GetChannelsChannelHashedIDCategory2Education                                      GetChannelsChannelHashedIDCategory2 = "education"
 	GetChannelsChannelHashedIDCategory2EducationGreaterThanCourses                    GetChannelsChannelHashedIDCategory2 = "education > courses"
 	GetChannelsChannelHashedIDCategory2EducationGreaterThanHowTo                      GetChannelsChannelHashedIDCategory2 = "education > how_to"
 	GetChannelsChannelHashedIDCategory2EducationGreaterThanLanguageLearning           GetChannelsChannelHashedIDCategory2 = "education > language_learning"
 	GetChannelsChannelHashedIDCategory2EducationGreaterThanSelfImprovement            GetChannelsChannelHashedIDCategory2 = "education > self_improvement"
+	GetChannelsChannelHashedIDCategory2Fiction                                        GetChannelsChannelHashedIDCategory2 = "fiction"
 	GetChannelsChannelHashedIDCategory2FictionGreaterThanComedyFiction                GetChannelsChannelHashedIDCategory2 = "fiction > comedy_fiction"
 	GetChannelsChannelHashedIDCategory2FictionGreaterThanDrama                        GetChannelsChannelHashedIDCategory2 = "fiction > drama"
 	GetChannelsChannelHashedIDCategory2FictionGreaterThanScienceFiction               GetChannelsChannelHashedIDCategory2 = "fiction > science_fiction"
+	GetChannelsChannelHashedIDCategory2Government                                     GetChannelsChannelHashedIDCategory2 = "government"
+	GetChannelsChannelHashedIDCategory2HealthAndFitness                               GetChannelsChannelHashedIDCategory2 = "health_and_fitness"
 	GetChannelsChannelHashedIDCategory2HealthAndFitnessGreaterThanAlternativeHealth   GetChannelsChannelHashedIDCategory2 = "health_and_fitness > alternative_health"
 	GetChannelsChannelHashedIDCategory2HealthAndFitnessGreaterThanFitness             GetChannelsChannelHashedIDCategory2 = "health_and_fitness > fitness"
 	GetChannelsChannelHashedIDCategory2HealthAndFitnessGreaterThanMedicine            GetChannelsChannelHashedIDCategory2 = "health_and_fitness > medicine"
 	GetChannelsChannelHashedIDCategory2HealthAndFitnessGreaterThanMentalHealth        GetChannelsChannelHashedIDCategory2 = "health_and_fitness > mental_health"
 	GetChannelsChannelHashedIDCategory2HealthAndFitnessGreaterThanNutrition           GetChannelsChannelHashedIDCategory2 = "health_and_fitness > nutrition"
 	GetChannelsChannelHashedIDCategory2HealthAndFitnessGreaterThanSexuality           GetChannelsChannelHashedIDCategory2 = "health_and_fitness > sexuality"
+	GetChannelsChannelHashedIDCategory2History                                        GetChannelsChannelHashedIDCategory2 = "history"
+	GetChannelsChannelHashedIDCategory2KidsAndFamily                                  GetChannelsChannelHashedIDCategory2 = "kids_and_family"
 	GetChannelsChannelHashedIDCategory2KidsAndFamilyGreaterThanEducationForKids       GetChannelsChannelHashedIDCategory2 = "kids_and_family > education_for_kids"
 	GetChannelsChannelHashedIDCategory2KidsAndFamilyGreaterThanParenting              GetChannelsChannelHashedIDCategory2 = "kids_and_family > parenting"
 	GetChannelsChannelHashedIDCategory2KidsAndFamilyGreaterThanPetsAndAnimals         GetChannelsChannelHashedIDCategory2 = "kids_and_family > pets_and_animals"
 	GetChannelsChannelHashedIDCategory2KidsAndFamilyGreaterThanStoriesForKids         GetChannelsChannelHashedIDCategory2 = "kids_and_family > stories_for_kids"
+	GetChannelsChannelHashedIDCategory2Leisure                                        GetChannelsChannelHashedIDCategory2 = "leisure"
 	GetChannelsChannelHashedIDCategory2LeisureGreaterThanAnimationAndManga            GetChannelsChannelHashedIDCategory2 = "leisure > animation_and_manga"
 	GetChannelsChannelHashedIDCategory2LeisureGreaterThanAutomotive                   GetChannelsChannelHashedIDCategory2 = "leisure > automotive"
 	GetChannelsChannelHashedIDCategory2LeisureGreaterThanAviation                     GetChannelsChannelHashedIDCategory2 = "leisure > aviation"
@@ -227,9 +253,11 @@ const (
 	GetChannelsChannelHashedIDCategory2LeisureGreaterThanHobbies                      GetChannelsChannelHashedIDCategory2 = "leisure > hobbies"
 	GetChannelsChannelHashedIDCategory2LeisureGreaterThanHomeAndGarden                GetChannelsChannelHashedIDCategory2 = "leisure > home_and_garden"
 	GetChannelsChannelHashedIDCategory2LeisureGreaterThanVideoGames                   GetChannelsChannelHashedIDCategory2 = "leisure > video_games"
+	GetChannelsChannelHashedIDCategory2Music                                          GetChannelsChannelHashedIDCategory2 = "music"
 	GetChannelsChannelHashedIDCategory2MusicGreaterThanMusicCommentary                GetChannelsChannelHashedIDCategory2 = "music > music_commentary"
 	GetChannelsChannelHashedIDCategory2MusicGreaterThanMusicHistory                   GetChannelsChannelHashedIDCategory2 = "music > music_history"
 	GetChannelsChannelHashedIDCategory2MusicGreaterThanMusicInterviews                GetChannelsChannelHashedIDCategory2 = "music > music_interviews"
+	GetChannelsChannelHashedIDCategory2News                                           GetChannelsChannelHashedIDCategory2 = "news"
 	GetChannelsChannelHashedIDCategory2NewsGreaterThanBusinessNews                    GetChannelsChannelHashedIDCategory2 = "news > business_news"
 	GetChannelsChannelHashedIDCategory2NewsGreaterThanDailyNews                       GetChannelsChannelHashedIDCategory2 = "news > daily_news"
 	GetChannelsChannelHashedIDCategory2NewsGreaterThanEntertainmentNews               GetChannelsChannelHashedIDCategory2 = "news > entertainment_news"
@@ -237,6 +265,7 @@ const (
 	GetChannelsChannelHashedIDCategory2NewsGreaterThanPolitics                        GetChannelsChannelHashedIDCategory2 = "news > politics"
 	GetChannelsChannelHashedIDCategory2NewsGreaterThanSportsNews                      GetChannelsChannelHashedIDCategory2 = "news > sports_news"
 	GetChannelsChannelHashedIDCategory2NewsGreaterThanTechNews                        GetChannelsChannelHashedIDCategory2 = "news > tech_news"
+	GetChannelsChannelHashedIDCategory2ReligionAndSpirituality                        GetChannelsChannelHashedIDCategory2 = "religion_and_spirituality"
 	GetChannelsChannelHashedIDCategory2ReligionAndSpiritualityGreaterThanBuddhism     GetChannelsChannelHashedIDCategory2 = "religion_and_spirituality > buddhism"
 	GetChannelsChannelHashedIDCategory2ReligionAndSpiritualityGreaterThanChristianity GetChannelsChannelHashedIDCategory2 = "religion_and_spirituality > christianity"
 	GetChannelsChannelHashedIDCategory2ReligionAndSpiritualityGreaterThanHinduism     GetChannelsChannelHashedIDCategory2 = "religion_and_spirituality > hinduism"
@@ -244,6 +273,7 @@ const (
 	GetChannelsChannelHashedIDCategory2ReligionAndSpiritualityGreaterThanJudaism      GetChannelsChannelHashedIDCategory2 = "religion_and_spirituality > judaism"
 	GetChannelsChannelHashedIDCategory2ReligionAndSpiritualityGreaterThanReligion     GetChannelsChannelHashedIDCategory2 = "religion_and_spirituality > religion"
 	GetChannelsChannelHashedIDCategory2ReligionAndSpiritualityGreaterThanSpirituality GetChannelsChannelHashedIDCategory2 = "religion_and_spirituality > spirituality"
+	GetChannelsChannelHashedIDCategory2Science                                        GetChannelsChannelHashedIDCategory2 = "science"
 	GetChannelsChannelHashedIDCategory2ScienceGreaterThanAstronomy                    GetChannelsChannelHashedIDCategory2 = "science > astronomy"
 	GetChannelsChannelHashedIDCategory2ScienceGreaterThanChemistry                    GetChannelsChannelHashedIDCategory2 = "science > chemistry"
 	GetChannelsChannelHashedIDCategory2ScienceGreaterThanEarthSciences                GetChannelsChannelHashedIDCategory2 = "science > earth_sciences"
@@ -253,11 +283,13 @@ const (
 	GetChannelsChannelHashedIDCategory2ScienceGreaterThanNature                       GetChannelsChannelHashedIDCategory2 = "science > nature"
 	GetChannelsChannelHashedIDCategory2ScienceGreaterThanPhysics                      GetChannelsChannelHashedIDCategory2 = "science > physics"
 	GetChannelsChannelHashedIDCategory2ScienceGreaterThanSocialSciences               GetChannelsChannelHashedIDCategory2 = "science > social_sciences"
+	GetChannelsChannelHashedIDCategory2SocietyAndCulture                              GetChannelsChannelHashedIDCategory2 = "society_and_culture"
 	GetChannelsChannelHashedIDCategory2SocietyAndCultureGreaterThanDocumentary        GetChannelsChannelHashedIDCategory2 = "society_and_culture > documentary"
 	GetChannelsChannelHashedIDCategory2SocietyAndCultureGreaterThanPersonalJournals   GetChannelsChannelHashedIDCategory2 = "society_and_culture > personal_journals"
 	GetChannelsChannelHashedIDCategory2SocietyAndCultureGreaterThanPhilosophy         GetChannelsChannelHashedIDCategory2 = "society_and_culture > philosophy"
 	GetChannelsChannelHashedIDCategory2SocietyAndCultureGreaterThanPlacesAndTravel    GetChannelsChannelHashedIDCategory2 = "society_and_culture > places_and_travel"
 	GetChannelsChannelHashedIDCategory2SocietyAndCultureGreaterThanRelationships      GetChannelsChannelHashedIDCategory2 = "society_and_culture > relationships"
+	GetChannelsChannelHashedIDCategory2Sports                                         GetChannelsChannelHashedIDCategory2 = "sports"
 	GetChannelsChannelHashedIDCategory2SportsGreaterThanBaseball                      GetChannelsChannelHashedIDCategory2 = "sports > baseball"
 	GetChannelsChannelHashedIDCategory2SportsGreaterThanBasketball                    GetChannelsChannelHashedIDCategory2 = "sports > basketball"
 	GetChannelsChannelHashedIDCategory2SportsGreaterThanCricket                       GetChannelsChannelHashedIDCategory2 = "sports > cricket"
@@ -273,6 +305,9 @@ const (
 	GetChannelsChannelHashedIDCategory2SportsGreaterThanVolleyball                    GetChannelsChannelHashedIDCategory2 = "sports > volleyball"
 	GetChannelsChannelHashedIDCategory2SportsGreaterThanWilderness                    GetChannelsChannelHashedIDCategory2 = "sports > wilderness"
 	GetChannelsChannelHashedIDCategory2SportsGreaterThanWrestling                     GetChannelsChannelHashedIDCategory2 = "sports > wrestling"
+	GetChannelsChannelHashedIDCategory2Technology                                     GetChannelsChannelHashedIDCategory2 = "technology"
+	GetChannelsChannelHashedIDCategory2TrueCrime                                      GetChannelsChannelHashedIDCategory2 = "true_crime"
+	GetChannelsChannelHashedIDCategory2TvAndFilm                                      GetChannelsChannelHashedIDCategory2 = "tv_and_film"
 	GetChannelsChannelHashedIDCategory2TvAndFilmGreaterThanAfterShows                 GetChannelsChannelHashedIDCategory2 = "tv_and_film > after_shows"
 	GetChannelsChannelHashedIDCategory2TvAndFilmGreaterThanFilmHistory                GetChannelsChannelHashedIDCategory2 = "tv_and_film > film_history"
 	GetChannelsChannelHashedIDCategory2TvAndFilmGreaterThanFilmInterviews             GetChannelsChannelHashedIDCategory2 = "tv_and_film > film_interviews"
@@ -288,49 +323,58 @@ func (e GetChannelsChannelHashedIDCategory2) ToPointer() *GetChannelsChannelHash
 func (e *GetChannelsChannelHashedIDCategory2) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "arts > books", "arts > design", "arts > fashion_and_beauty", "arts > food", "arts > performing_arts", "arts > visual_arts", "business > careers", "business > entrepreneurship", "business > investing", "business > management", "business > marketing", "business > non_profit", "comedy > comedy_interviews", "comedy > improv", "comedy > stand_up", "education > courses", "education > how_to", "education > language_learning", "education > self_improvement", "fiction > comedy_fiction", "fiction > drama", "fiction > science_fiction", "health_and_fitness > alternative_health", "health_and_fitness > fitness", "health_and_fitness > medicine", "health_and_fitness > mental_health", "health_and_fitness > nutrition", "health_and_fitness > sexuality", "kids_and_family > education_for_kids", "kids_and_family > parenting", "kids_and_family > pets_and_animals", "kids_and_family > stories_for_kids", "leisure > animation_and_manga", "leisure > automotive", "leisure > aviation", "leisure > crafts", "leisure > games", "leisure > hobbies", "leisure > home_and_garden", "leisure > video_games", "music > music_commentary", "music > music_history", "music > music_interviews", "news > business_news", "news > daily_news", "news > entertainment_news", "news > news_commentary", "news > politics", "news > sports_news", "news > tech_news", "religion_and_spirituality > buddhism", "religion_and_spirituality > christianity", "religion_and_spirituality > hinduism", "religion_and_spirituality > islam", "religion_and_spirituality > judaism", "religion_and_spirituality > religion", "religion_and_spirituality > spirituality", "science > astronomy", "science > chemistry", "science > earth_sciences", "science > life_sciences", "science > mathematics", "science > natural_sciences", "science > nature", "science > physics", "science > social_sciences", "society_and_culture > documentary", "society_and_culture > personal_journals", "society_and_culture > philosophy", "society_and_culture > places_and_travel", "society_and_culture > relationships", "sports > baseball", "sports > basketball", "sports > cricket", "sports > fantasy_sports", "sports > football", "sports > golf", "sports > hockey", "sports > rugby", "sports > running", "sports > soccer", "sports > swimming", "sports > tennis", "sports > volleyball", "sports > wilderness", "sports > wrestling", "tv_and_film > after_shows", "tv_and_film > film_history", "tv_and_film > film_interviews", "tv_and_film > film_reviews", "tv_and_film > tv_reviews":
+		case "arts", "arts > books", "arts > design", "arts > fashion_and_beauty", "arts > food", "arts > performing_arts", "arts > visual_arts", "business", "business > careers", "business > entrepreneurship", "business > investing", "business > management", "business > marketing", "business > non_profit", "comedy", "comedy > comedy_interviews", "comedy > improv", "comedy > stand_up", "education", "education > courses", "education > how_to", "education > language_learning", "education > self_improvement", "fiction", "fiction > comedy_fiction", "fiction > drama", "fiction > science_fiction", "government", "health_and_fitness", "health_and_fitness > alternative_health", "health_and_fitness > fitness", "health_and_fitness > medicine", "health_and_fitness > mental_health", "health_and_fitness > nutrition", "health_and_fitness > sexuality", "history", "kids_and_family", "kids_and_family > education_for_kids", "kids_and_family > parenting", "kids_and_family > pets_and_animals", "kids_and_family > stories_for_kids", "leisure", "leisure > animation_and_manga", "leisure > automotive", "leisure > aviation", "leisure > crafts", "leisure > games", "leisure > hobbies", "leisure > home_and_garden", "leisure > video_games", "music", "music > music_commentary", "music > music_history", "music > music_interviews", "news", "news > business_news", "news > daily_news", "news > entertainment_news", "news > news_commentary", "news > politics", "news > sports_news", "news > tech_news", "religion_and_spirituality", "religion_and_spirituality > buddhism", "religion_and_spirituality > christianity", "religion_and_spirituality > hinduism", "religion_and_spirituality > islam", "religion_and_spirituality > judaism", "religion_and_spirituality > religion", "religion_and_spirituality > spirituality", "science", "science > astronomy", "science > chemistry", "science > earth_sciences", "science > life_sciences", "science > mathematics", "science > natural_sciences", "science > nature", "science > physics", "science > social_sciences", "society_and_culture", "society_and_culture > documentary", "society_and_culture > personal_journals", "society_and_culture > philosophy", "society_and_culture > places_and_travel", "society_and_culture > relationships", "sports", "sports > baseball", "sports > basketball", "sports > cricket", "sports > fantasy_sports", "sports > football", "sports > golf", "sports > hockey", "sports > rugby", "sports > running", "sports > soccer", "sports > swimming", "sports > tennis", "sports > volleyball", "sports > wilderness", "sports > wrestling", "technology", "true_crime", "tv_and_film", "tv_and_film > after_shows", "tv_and_film > film_history", "tv_and_film > film_interviews", "tv_and_film > film_reviews", "tv_and_film > tv_reviews":
 			return true
 		}
 	}
 	return false
 }
 
-// GetChannelsChannelHashedIDCategory3 - The third category for the channel.
 type GetChannelsChannelHashedIDCategory3 string
 
 const (
+	GetChannelsChannelHashedIDCategory3Arts                                           GetChannelsChannelHashedIDCategory3 = "arts"
 	GetChannelsChannelHashedIDCategory3ArtsGreaterThanBooks                           GetChannelsChannelHashedIDCategory3 = "arts > books"
 	GetChannelsChannelHashedIDCategory3ArtsGreaterThanDesign                          GetChannelsChannelHashedIDCategory3 = "arts > design"
 	GetChannelsChannelHashedIDCategory3ArtsGreaterThanFashionAndBeauty                GetChannelsChannelHashedIDCategory3 = "arts > fashion_and_beauty"
 	GetChannelsChannelHashedIDCategory3ArtsGreaterThanFood                            GetChannelsChannelHashedIDCategory3 = "arts > food"
 	GetChannelsChannelHashedIDCategory3ArtsGreaterThanPerformingArts                  GetChannelsChannelHashedIDCategory3 = "arts > performing_arts"
 	GetChannelsChannelHashedIDCategory3ArtsGreaterThanVisualArts                      GetChannelsChannelHashedIDCategory3 = "arts > visual_arts"
+	GetChannelsChannelHashedIDCategory3Business                                       GetChannelsChannelHashedIDCategory3 = "business"
 	GetChannelsChannelHashedIDCategory3BusinessGreaterThanCareers                     GetChannelsChannelHashedIDCategory3 = "business > careers"
 	GetChannelsChannelHashedIDCategory3BusinessGreaterThanEntrepreneurship            GetChannelsChannelHashedIDCategory3 = "business > entrepreneurship"
 	GetChannelsChannelHashedIDCategory3BusinessGreaterThanInvesting                   GetChannelsChannelHashedIDCategory3 = "business > investing"
 	GetChannelsChannelHashedIDCategory3BusinessGreaterThanManagement                  GetChannelsChannelHashedIDCategory3 = "business > management"
 	GetChannelsChannelHashedIDCategory3BusinessGreaterThanMarketing                   GetChannelsChannelHashedIDCategory3 = "business > marketing"
 	GetChannelsChannelHashedIDCategory3BusinessGreaterThanNonProfit                   GetChannelsChannelHashedIDCategory3 = "business > non_profit"
+	GetChannelsChannelHashedIDCategory3Comedy                                         GetChannelsChannelHashedIDCategory3 = "comedy"
 	GetChannelsChannelHashedIDCategory3ComedyGreaterThanComedyInterviews              GetChannelsChannelHashedIDCategory3 = "comedy > comedy_interviews"
 	GetChannelsChannelHashedIDCategory3ComedyGreaterThanImprov                        GetChannelsChannelHashedIDCategory3 = "comedy > improv"
 	GetChannelsChannelHashedIDCategory3ComedyGreaterThanStandUp                       GetChannelsChannelHashedIDCategory3 = "comedy > stand_up"
+	GetChannelsChannelHashedIDCategory3Education                                      GetChannelsChannelHashedIDCategory3 = "education"
 	GetChannelsChannelHashedIDCategory3EducationGreaterThanCourses                    GetChannelsChannelHashedIDCategory3 = "education > courses"
 	GetChannelsChannelHashedIDCategory3EducationGreaterThanHowTo                      GetChannelsChannelHashedIDCategory3 = "education > how_to"
 	GetChannelsChannelHashedIDCategory3EducationGreaterThanLanguageLearning           GetChannelsChannelHashedIDCategory3 = "education > language_learning"
 	GetChannelsChannelHashedIDCategory3EducationGreaterThanSelfImprovement            GetChannelsChannelHashedIDCategory3 = "education > self_improvement"
+	GetChannelsChannelHashedIDCategory3Fiction                                        GetChannelsChannelHashedIDCategory3 = "fiction"
 	GetChannelsChannelHashedIDCategory3FictionGreaterThanComedyFiction                GetChannelsChannelHashedIDCategory3 = "fiction > comedy_fiction"
 	GetChannelsChannelHashedIDCategory3FictionGreaterThanDrama                        GetChannelsChannelHashedIDCategory3 = "fiction > drama"
 	GetChannelsChannelHashedIDCategory3FictionGreaterThanScienceFiction               GetChannelsChannelHashedIDCategory3 = "fiction > science_fiction"
+	GetChannelsChannelHashedIDCategory3Government                                     GetChannelsChannelHashedIDCategory3 = "government"
+	GetChannelsChannelHashedIDCategory3HealthAndFitness                               GetChannelsChannelHashedIDCategory3 = "health_and_fitness"
 	GetChannelsChannelHashedIDCategory3HealthAndFitnessGreaterThanAlternativeHealth   GetChannelsChannelHashedIDCategory3 = "health_and_fitness > alternative_health"
 	GetChannelsChannelHashedIDCategory3HealthAndFitnessGreaterThanFitness             GetChannelsChannelHashedIDCategory3 = "health_and_fitness > fitness"
 	GetChannelsChannelHashedIDCategory3HealthAndFitnessGreaterThanMedicine            GetChannelsChannelHashedIDCategory3 = "health_and_fitness > medicine"
 	GetChannelsChannelHashedIDCategory3HealthAndFitnessGreaterThanMentalHealth        GetChannelsChannelHashedIDCategory3 = "health_and_fitness > mental_health"
 	GetChannelsChannelHashedIDCategory3HealthAndFitnessGreaterThanNutrition           GetChannelsChannelHashedIDCategory3 = "health_and_fitness > nutrition"
 	GetChannelsChannelHashedIDCategory3HealthAndFitnessGreaterThanSexuality           GetChannelsChannelHashedIDCategory3 = "health_and_fitness > sexuality"
+	GetChannelsChannelHashedIDCategory3History                                        GetChannelsChannelHashedIDCategory3 = "history"
+	GetChannelsChannelHashedIDCategory3KidsAndFamily                                  GetChannelsChannelHashedIDCategory3 = "kids_and_family"
 	GetChannelsChannelHashedIDCategory3KidsAndFamilyGreaterThanEducationForKids       GetChannelsChannelHashedIDCategory3 = "kids_and_family > education_for_kids"
 	GetChannelsChannelHashedIDCategory3KidsAndFamilyGreaterThanParenting              GetChannelsChannelHashedIDCategory3 = "kids_and_family > parenting"
 	GetChannelsChannelHashedIDCategory3KidsAndFamilyGreaterThanPetsAndAnimals         GetChannelsChannelHashedIDCategory3 = "kids_and_family > pets_and_animals"
 	GetChannelsChannelHashedIDCategory3KidsAndFamilyGreaterThanStoriesForKids         GetChannelsChannelHashedIDCategory3 = "kids_and_family > stories_for_kids"
+	GetChannelsChannelHashedIDCategory3Leisure                                        GetChannelsChannelHashedIDCategory3 = "leisure"
 	GetChannelsChannelHashedIDCategory3LeisureGreaterThanAnimationAndManga            GetChannelsChannelHashedIDCategory3 = "leisure > animation_and_manga"
 	GetChannelsChannelHashedIDCategory3LeisureGreaterThanAutomotive                   GetChannelsChannelHashedIDCategory3 = "leisure > automotive"
 	GetChannelsChannelHashedIDCategory3LeisureGreaterThanAviation                     GetChannelsChannelHashedIDCategory3 = "leisure > aviation"
@@ -339,9 +383,11 @@ const (
 	GetChannelsChannelHashedIDCategory3LeisureGreaterThanHobbies                      GetChannelsChannelHashedIDCategory3 = "leisure > hobbies"
 	GetChannelsChannelHashedIDCategory3LeisureGreaterThanHomeAndGarden                GetChannelsChannelHashedIDCategory3 = "leisure > home_and_garden"
 	GetChannelsChannelHashedIDCategory3LeisureGreaterThanVideoGames                   GetChannelsChannelHashedIDCategory3 = "leisure > video_games"
+	GetChannelsChannelHashedIDCategory3Music                                          GetChannelsChannelHashedIDCategory3 = "music"
 	GetChannelsChannelHashedIDCategory3MusicGreaterThanMusicCommentary                GetChannelsChannelHashedIDCategory3 = "music > music_commentary"
 	GetChannelsChannelHashedIDCategory3MusicGreaterThanMusicHistory                   GetChannelsChannelHashedIDCategory3 = "music > music_history"
 	GetChannelsChannelHashedIDCategory3MusicGreaterThanMusicInterviews                GetChannelsChannelHashedIDCategory3 = "music > music_interviews"
+	GetChannelsChannelHashedIDCategory3News                                           GetChannelsChannelHashedIDCategory3 = "news"
 	GetChannelsChannelHashedIDCategory3NewsGreaterThanBusinessNews                    GetChannelsChannelHashedIDCategory3 = "news > business_news"
 	GetChannelsChannelHashedIDCategory3NewsGreaterThanDailyNews                       GetChannelsChannelHashedIDCategory3 = "news > daily_news"
 	GetChannelsChannelHashedIDCategory3NewsGreaterThanEntertainmentNews               GetChannelsChannelHashedIDCategory3 = "news > entertainment_news"
@@ -349,6 +395,7 @@ const (
 	GetChannelsChannelHashedIDCategory3NewsGreaterThanPolitics                        GetChannelsChannelHashedIDCategory3 = "news > politics"
 	GetChannelsChannelHashedIDCategory3NewsGreaterThanSportsNews                      GetChannelsChannelHashedIDCategory3 = "news > sports_news"
 	GetChannelsChannelHashedIDCategory3NewsGreaterThanTechNews                        GetChannelsChannelHashedIDCategory3 = "news > tech_news"
+	GetChannelsChannelHashedIDCategory3ReligionAndSpirituality                        GetChannelsChannelHashedIDCategory3 = "religion_and_spirituality"
 	GetChannelsChannelHashedIDCategory3ReligionAndSpiritualityGreaterThanBuddhism     GetChannelsChannelHashedIDCategory3 = "religion_and_spirituality > buddhism"
 	GetChannelsChannelHashedIDCategory3ReligionAndSpiritualityGreaterThanChristianity GetChannelsChannelHashedIDCategory3 = "religion_and_spirituality > christianity"
 	GetChannelsChannelHashedIDCategory3ReligionAndSpiritualityGreaterThanHinduism     GetChannelsChannelHashedIDCategory3 = "religion_and_spirituality > hinduism"
@@ -356,6 +403,7 @@ const (
 	GetChannelsChannelHashedIDCategory3ReligionAndSpiritualityGreaterThanJudaism      GetChannelsChannelHashedIDCategory3 = "religion_and_spirituality > judaism"
 	GetChannelsChannelHashedIDCategory3ReligionAndSpiritualityGreaterThanReligion     GetChannelsChannelHashedIDCategory3 = "religion_and_spirituality > religion"
 	GetChannelsChannelHashedIDCategory3ReligionAndSpiritualityGreaterThanSpirituality GetChannelsChannelHashedIDCategory3 = "religion_and_spirituality > spirituality"
+	GetChannelsChannelHashedIDCategory3Science                                        GetChannelsChannelHashedIDCategory3 = "science"
 	GetChannelsChannelHashedIDCategory3ScienceGreaterThanAstronomy                    GetChannelsChannelHashedIDCategory3 = "science > astronomy"
 	GetChannelsChannelHashedIDCategory3ScienceGreaterThanChemistry                    GetChannelsChannelHashedIDCategory3 = "science > chemistry"
 	GetChannelsChannelHashedIDCategory3ScienceGreaterThanEarthSciences                GetChannelsChannelHashedIDCategory3 = "science > earth_sciences"
@@ -365,11 +413,13 @@ const (
 	GetChannelsChannelHashedIDCategory3ScienceGreaterThanNature                       GetChannelsChannelHashedIDCategory3 = "science > nature"
 	GetChannelsChannelHashedIDCategory3ScienceGreaterThanPhysics                      GetChannelsChannelHashedIDCategory3 = "science > physics"
 	GetChannelsChannelHashedIDCategory3ScienceGreaterThanSocialSciences               GetChannelsChannelHashedIDCategory3 = "science > social_sciences"
+	GetChannelsChannelHashedIDCategory3SocietyAndCulture                              GetChannelsChannelHashedIDCategory3 = "society_and_culture"
 	GetChannelsChannelHashedIDCategory3SocietyAndCultureGreaterThanDocumentary        GetChannelsChannelHashedIDCategory3 = "society_and_culture > documentary"
 	GetChannelsChannelHashedIDCategory3SocietyAndCultureGreaterThanPersonalJournals   GetChannelsChannelHashedIDCategory3 = "society_and_culture > personal_journals"
 	GetChannelsChannelHashedIDCategory3SocietyAndCultureGreaterThanPhilosophy         GetChannelsChannelHashedIDCategory3 = "society_and_culture > philosophy"
 	GetChannelsChannelHashedIDCategory3SocietyAndCultureGreaterThanPlacesAndTravel    GetChannelsChannelHashedIDCategory3 = "society_and_culture > places_and_travel"
 	GetChannelsChannelHashedIDCategory3SocietyAndCultureGreaterThanRelationships      GetChannelsChannelHashedIDCategory3 = "society_and_culture > relationships"
+	GetChannelsChannelHashedIDCategory3Sports                                         GetChannelsChannelHashedIDCategory3 = "sports"
 	GetChannelsChannelHashedIDCategory3SportsGreaterThanBaseball                      GetChannelsChannelHashedIDCategory3 = "sports > baseball"
 	GetChannelsChannelHashedIDCategory3SportsGreaterThanBasketball                    GetChannelsChannelHashedIDCategory3 = "sports > basketball"
 	GetChannelsChannelHashedIDCategory3SportsGreaterThanCricket                       GetChannelsChannelHashedIDCategory3 = "sports > cricket"
@@ -385,6 +435,9 @@ const (
 	GetChannelsChannelHashedIDCategory3SportsGreaterThanVolleyball                    GetChannelsChannelHashedIDCategory3 = "sports > volleyball"
 	GetChannelsChannelHashedIDCategory3SportsGreaterThanWilderness                    GetChannelsChannelHashedIDCategory3 = "sports > wilderness"
 	GetChannelsChannelHashedIDCategory3SportsGreaterThanWrestling                     GetChannelsChannelHashedIDCategory3 = "sports > wrestling"
+	GetChannelsChannelHashedIDCategory3Technology                                     GetChannelsChannelHashedIDCategory3 = "technology"
+	GetChannelsChannelHashedIDCategory3TrueCrime                                      GetChannelsChannelHashedIDCategory3 = "true_crime"
+	GetChannelsChannelHashedIDCategory3TvAndFilm                                      GetChannelsChannelHashedIDCategory3 = "tv_and_film"
 	GetChannelsChannelHashedIDCategory3TvAndFilmGreaterThanAfterShows                 GetChannelsChannelHashedIDCategory3 = "tv_and_film > after_shows"
 	GetChannelsChannelHashedIDCategory3TvAndFilmGreaterThanFilmHistory                GetChannelsChannelHashedIDCategory3 = "tv_and_film > film_history"
 	GetChannelsChannelHashedIDCategory3TvAndFilmGreaterThanFilmInterviews             GetChannelsChannelHashedIDCategory3 = "tv_and_film > film_interviews"
@@ -400,14 +453,14 @@ func (e GetChannelsChannelHashedIDCategory3) ToPointer() *GetChannelsChannelHash
 func (e *GetChannelsChannelHashedIDCategory3) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "arts > books", "arts > design", "arts > fashion_and_beauty", "arts > food", "arts > performing_arts", "arts > visual_arts", "business > careers", "business > entrepreneurship", "business > investing", "business > management", "business > marketing", "business > non_profit", "comedy > comedy_interviews", "comedy > improv", "comedy > stand_up", "education > courses", "education > how_to", "education > language_learning", "education > self_improvement", "fiction > comedy_fiction", "fiction > drama", "fiction > science_fiction", "health_and_fitness > alternative_health", "health_and_fitness > fitness", "health_and_fitness > medicine", "health_and_fitness > mental_health", "health_and_fitness > nutrition", "health_and_fitness > sexuality", "kids_and_family > education_for_kids", "kids_and_family > parenting", "kids_and_family > pets_and_animals", "kids_and_family > stories_for_kids", "leisure > animation_and_manga", "leisure > automotive", "leisure > aviation", "leisure > crafts", "leisure > games", "leisure > hobbies", "leisure > home_and_garden", "leisure > video_games", "music > music_commentary", "music > music_history", "music > music_interviews", "news > business_news", "news > daily_news", "news > entertainment_news", "news > news_commentary", "news > politics", "news > sports_news", "news > tech_news", "religion_and_spirituality > buddhism", "religion_and_spirituality > christianity", "religion_and_spirituality > hinduism", "religion_and_spirituality > islam", "religion_and_spirituality > judaism", "religion_and_spirituality > religion", "religion_and_spirituality > spirituality", "science > astronomy", "science > chemistry", "science > earth_sciences", "science > life_sciences", "science > mathematics", "science > natural_sciences", "science > nature", "science > physics", "science > social_sciences", "society_and_culture > documentary", "society_and_culture > personal_journals", "society_and_culture > philosophy", "society_and_culture > places_and_travel", "society_and_culture > relationships", "sports > baseball", "sports > basketball", "sports > cricket", "sports > fantasy_sports", "sports > football", "sports > golf", "sports > hockey", "sports > rugby", "sports > running", "sports > soccer", "sports > swimming", "sports > tennis", "sports > volleyball", "sports > wilderness", "sports > wrestling", "tv_and_film > after_shows", "tv_and_film > film_history", "tv_and_film > film_interviews", "tv_and_film > film_reviews", "tv_and_film > tv_reviews":
+		case "arts", "arts > books", "arts > design", "arts > fashion_and_beauty", "arts > food", "arts > performing_arts", "arts > visual_arts", "business", "business > careers", "business > entrepreneurship", "business > investing", "business > management", "business > marketing", "business > non_profit", "comedy", "comedy > comedy_interviews", "comedy > improv", "comedy > stand_up", "education", "education > courses", "education > how_to", "education > language_learning", "education > self_improvement", "fiction", "fiction > comedy_fiction", "fiction > drama", "fiction > science_fiction", "government", "health_and_fitness", "health_and_fitness > alternative_health", "health_and_fitness > fitness", "health_and_fitness > medicine", "health_and_fitness > mental_health", "health_and_fitness > nutrition", "health_and_fitness > sexuality", "history", "kids_and_family", "kids_and_family > education_for_kids", "kids_and_family > parenting", "kids_and_family > pets_and_animals", "kids_and_family > stories_for_kids", "leisure", "leisure > animation_and_manga", "leisure > automotive", "leisure > aviation", "leisure > crafts", "leisure > games", "leisure > hobbies", "leisure > home_and_garden", "leisure > video_games", "music", "music > music_commentary", "music > music_history", "music > music_interviews", "news", "news > business_news", "news > daily_news", "news > entertainment_news", "news > news_commentary", "news > politics", "news > sports_news", "news > tech_news", "religion_and_spirituality", "religion_and_spirituality > buddhism", "religion_and_spirituality > christianity", "religion_and_spirituality > hinduism", "religion_and_spirituality > islam", "religion_and_spirituality > judaism", "religion_and_spirituality > religion", "religion_and_spirituality > spirituality", "science", "science > astronomy", "science > chemistry", "science > earth_sciences", "science > life_sciences", "science > mathematics", "science > natural_sciences", "science > nature", "science > physics", "science > social_sciences", "society_and_culture", "society_and_culture > documentary", "society_and_culture > personal_journals", "society_and_culture > philosophy", "society_and_culture > places_and_travel", "society_and_culture > relationships", "sports", "sports > baseball", "sports > basketball", "sports > cricket", "sports > fantasy_sports", "sports > football", "sports > golf", "sports > hockey", "sports > rugby", "sports > running", "sports > soccer", "sports > swimming", "sports > tennis", "sports > volleyball", "sports > wilderness", "sports > wrestling", "technology", "true_crime", "tv_and_film", "tv_and_film > after_shows", "tv_and_film > film_history", "tv_and_film > film_interviews", "tv_and_film > film_reviews", "tv_and_film > tv_reviews":
 			return true
 		}
 	}
 	return false
 }
 
-// GetChannelsChannelHashedIDLanguage - The ISO 639-1 language code for the channel.
+// GetChannelsChannelHashedIDLanguage - The ISO 639-1 language code for the channel, published in the RSS feed as `<language>`.
 type GetChannelsChannelHashedIDLanguage string
 
 const (
@@ -527,25 +580,25 @@ func (e *GetChannelsChannelHashedIDLanguage) IsExact() bool {
 // GetChannelsChannelHashedIDPodcastSettings - Podcast specific settings for the channel. Only present when podcasting
 // is enabled for the channel.
 type GetChannelsChannelHashedIDPodcastSettings struct {
-	// The channel's copyright information.
+	// The channel's copyright information, published in the RSS feed as `<copyright>`.
 	Copyright optionalnullable.OptionalNullable[string] `json:"copyright,omitzero"`
-	// The format for episodes for the podcast channel.
+	// The format for episodes for the podcast channel, published in the RSS feed as `<itunes:type>`. `episodic_with_seasons` is published as `episodic`.
 	EpisodeFormat optionalnullable.OptionalNullable[GetChannelsChannelHashedIDEpisodeFormat] `json:"episode_format,omitzero"`
-	// The name of the author(s) for the channel.
+	// The name of the author(s) for the channel, published in the RSS feed as `<itunes:author>`.
 	AuthorName optionalnullable.OptionalNullable[string] `json:"author_name,omitzero"`
-	// Whether the channel contains explicit content.
+	// Whether the channel contains explicit content, published in the RSS feed as `<itunes:explicit>`.
 	Explicit optionalnullable.OptionalNullable[bool] `json:"explicit,omitzero"`
-	// The name of the owner for the channel.
+	// The podcast owner's name, published in the channel's public RSS feed as `<itunes:owner>`. Podcast directories use this as the show's administrative contact.
 	OwnerName optionalnullable.OptionalNullable[string] `json:"owner_name,omitzero"`
-	// The email of the owner for the channel.
+	// The podcast owner's email address, published in the channel's public RSS feed as `<itunes:owner>`. Podcast directories such as Apple Podcasts require it for ownership verification.
 	OwnerEmail optionalnullable.OptionalNullable[string] `json:"owner_email,omitzero"`
-	// The primary category for the channel.
+	// The primary category for the channel, published in the RSS feed as `<itunes:category>`.
 	Category1 optionalnullable.OptionalNullable[GetChannelsChannelHashedIDCategory1] `json:"category1,omitzero"`
-	// The secondary category for the channel.
+	// The secondary category for the channel, published in the RSS feed as `<itunes:category>`.
 	Category2 optionalnullable.OptionalNullable[GetChannelsChannelHashedIDCategory2] `json:"category2,omitzero"`
-	// The third category for the channel.
+	// The third category for the channel, published in the RSS feed as `<itunes:category>`.
 	Category3 optionalnullable.OptionalNullable[GetChannelsChannelHashedIDCategory3] `json:"category3,omitzero"`
-	// The ISO 639-1 language code for the channel.
+	// The ISO 639-1 language code for the channel, published in the RSS feed as `<language>`.
 	Language optionalnullable.OptionalNullable[GetChannelsChannelHashedIDLanguage] `json:"language,omitzero"`
 }
 

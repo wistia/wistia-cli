@@ -48,6 +48,19 @@ func (e *PostRemixesRemixHashedIDExportNotFoundError) Error() string {
 	return string(data)
 }
 
+// PostRemixesRemixHashedIDExportForbiddenError - Forbidden, token is valid but account does not have access to feature
+type PostRemixesRemixHashedIDExportForbiddenError struct {
+	Error_   *string                 `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata `json:"-"`
+}
+
+var _ error = &PostRemixesRemixHashedIDExportForbiddenError{}
+
+func (e *PostRemixesRemixHashedIDExportForbiddenError) Error() string {
+	data, _ := json.Marshal(e)
+	return string(data)
+}
+
 // PostRemixesRemixHashedIDExportUnauthorizedError - Unauthorized, invalid or missing token
 type PostRemixesRemixHashedIDExportUnauthorizedError struct {
 	// A machine-readable identifier for the specific authorization failure.

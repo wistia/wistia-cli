@@ -22,16 +22,28 @@ var getEngagementCmdMeta = []flagutil.FlagMeta{
 // initGetEngagementCmd initializes the get-engagement command.
 func initGetEngagementCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
-		Use:     "get-engagement",
+		Use:     "get-engagement [media-id]",
 		Short:   "Show Media Engagement",
-		Long:    "Retrieve engagement data for a video. This endpoint provides engagement data for a specific video identified by its media-id.\n\n<!--- HIDE-MCP -->\n## Requires api token with one of the following permissions\n```\nRead detailed stats\n```\n<!--- /HIDE-MCP -->",
+		Long:    "Retrieve engagement data for a video. This endpoint provides engagement data for a specific video identified by its media-id.\n\n\n## Requires api token with one of the following permissions\n```\nRead detailed stats\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
 		Example: "  wistia stats-media get-engagement --media-id <id>",
+		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runGetEngagementCmd,
 		Aliases: []string{"ge"},
+		Annotations: map[string]string{
+			"speakeasy_operation": "get_/stats/medias/{mediaId}/engagement",
+		},
 	}
 	flagutil.RegisterFlags(cmd, getEngagementCmdMeta)
 	if err := flagutil.ValidateMeta[operations.GetStatsMediasMediaIDEngagementRequest](getEngagementCmdMeta); err != nil {
 		return fmt.Errorf("invalid metadata for get-engagement: %w", err)
+	}
+	if err := flagutil.DeclarePositionalFlag(cmd, "media-id", "The hashed ID or ID of the video for which you want to retrieve engagement data. (or pass it as the [media-id] argument)", true); err != nil {
+		return err
+	}
+	if err := interactive.Declare(cmd, interactive.CommandSpec{Args: []interactive.ArgSpec{
+		{Name: "media-id", Summary: "The hashed ID or ID of the video for which you want to retrieve engagement data.", Required: true, SatisfiedBy: []string{"media-id"}},
+	}}); err != nil {
+		return fmt.Errorf("declare interactive arguments for get-engagement: %w", err)
 	}
 	parent.AddCommand(cmd)
 	return nil
@@ -42,14 +54,12 @@ func runGetEngagementCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, getEngagementCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, getEngagementCmdMeta); err != nil {
-			return err
-		}
+	if err := flagutil.ResolvePositionalFlag(cmd, args); err != nil {
+		return err
 	}
 	req, err := flagutil.BuildRequest[operations.GetStatsMediasMediaIDEngagementRequest](cmd, getEngagementCmdMeta, "", "")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

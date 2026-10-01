@@ -62,6 +62,53 @@ func (p *PostRemixesRemixHashedIDContinueRequest) GetBody() *PostRemixesRemixHas
 	return p.Body
 }
 
+// PostRemixesRemixHashedIDContinueBillingMode - Present when the request is blocked by insufficient Credits.
+type PostRemixesRemixHashedIDContinueBillingMode string
+
+const (
+	PostRemixesRemixHashedIDContinueBillingModeCredits PostRemixesRemixHashedIDContinueBillingMode = "credits"
+)
+
+func (e PostRemixesRemixHashedIDContinueBillingMode) ToPointer() *PostRemixesRemixHashedIDContinueBillingMode {
+	return &e
+}
+func (e *PostRemixesRemixHashedIDContinueBillingMode) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "credits":
+		*e = PostRemixesRemixHashedIDContinueBillingMode(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for PostRemixesRemixHashedIDContinueBillingMode: %v", v)
+	}
+}
+
+// PostRemixesRemixHashedIDContinuePlanType - Account plan type, present for insufficient-Credits errors.
+type PostRemixesRemixHashedIDContinuePlanType string
+
+const (
+	PostRemixesRemixHashedIDContinuePlanTypeFree PostRemixesRemixHashedIDContinuePlanType = "free"
+	PostRemixesRemixHashedIDContinuePlanTypePaid PostRemixesRemixHashedIDContinuePlanType = "paid"
+)
+
+func (e PostRemixesRemixHashedIDContinuePlanType) ToPointer() *PostRemixesRemixHashedIDContinuePlanType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *PostRemixesRemixHashedIDContinuePlanType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "free", "paid":
+			return true
+		}
+	}
+	return false
+}
+
 // PostRemixesRemixHashedIDContinueCode - A machine-readable identifier for the specific authorization failure.
 type PostRemixesRemixHashedIDContinueCode string
 
