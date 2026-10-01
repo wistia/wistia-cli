@@ -23,19 +23,7 @@ func InitSpeakersRoot(parent *cobra.Command) error {
 		},
 	}
 
-	if err := initAssignCmd(SpeakersCmd); err != nil {
-		return err
-	}
-
-	if err := initRemoveCmd(SpeakersCmd); err != nil {
-		return err
-	}
-
 	if err := initListCmd(SpeakersCmd); err != nil {
-		return err
-	}
-
-	if err := initCreateCmd(SpeakersCmd); err != nil {
 		return err
 	}
 

@@ -45,7 +45,7 @@ type Authorization struct {
 	Type PostExpiringTokenType `json:"type"`
 	// The id of the object the permissions are being performed on: the hashed id of a `media` or `folder`, or the numeric `id` of the `account` (as returned by `GET /modern/account`), which must be the token's own account.
 	ID string `json:"id"`
-	// The permissions granted on the object. `media` supports `show`, `update`, `destroy` and `edit-transcripts`; `folder` supports `show`, `update` and `destroy`; `account` supports `create-folders`. Any permission implicitly allows viewing the object; all other permissions must be declared explicitly.
+	// The permissions granted on the object. `media` supports `show`, `update`, `destroy` and `edit-transcripts`; `folder` supports `show`, `update` and `destroy`; `account` supports `create-folders`. Any permission implicitly allows viewing the object; all other permissions must be declared explicitly. A rule naming a `folder` also covers its subfolders: any permission lists and shows them, and `update` creates, renames and deletes them.
 	Permissions []string `json:"permissions"`
 }
 

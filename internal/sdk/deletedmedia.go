@@ -31,7 +31,7 @@ func newDeletedMedia(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks *
 	}
 }
 
-// GetDeletedMedia - List Deleted Media
+// List Deleted Media
 // Lists media that has been soft-deleted and is still inside the account's
 // restore window. Media is listed only while it can still be restored — 30 days
 // on most plans, 14 on free plans. After which it is permanently purged.
@@ -45,7 +45,7 @@ func newDeletedMedia(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks *
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
-func (s *DeletedMedia) GetDeletedMedia(ctx context.Context, request *operations.GetDeletedMediaRequest, opts ...operations.Option) (*operations.GetDeletedMediaResponse, error) {
+func (s *DeletedMedia) List(ctx context.Context, request *operations.GetDeletedMediaRequest, opts ...operations.Option) (*operations.GetDeletedMediaResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,
@@ -303,7 +303,7 @@ func (s *DeletedMedia) GetDeletedMedia(ctx context.Context, request *operations.
 
 }
 
-// PostDeletedMediaRestore - Restore Deleted Media
+// Restore Deleted Media
 // Restores one or more soft-deleted media. By default each media returns to the
 // folder it was deleted from; pass folder_id to restore them into a specific
 // folder instead. Only media still inside the restore window can be recovered.
@@ -319,7 +319,7 @@ func (s *DeletedMedia) GetDeletedMedia(ctx context.Context, request *operations.
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
-func (s *DeletedMedia) PostDeletedMediaRestore(ctx context.Context, request operations.PostDeletedMediaRestoreRequest, opts ...operations.Option) (*operations.PostDeletedMediaRestoreResponse, error) {
+func (s *DeletedMedia) Restore(ctx context.Context, request operations.PostDeletedMediaRestoreRequest, opts ...operations.Option) (*operations.PostDeletedMediaRestoreResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,
