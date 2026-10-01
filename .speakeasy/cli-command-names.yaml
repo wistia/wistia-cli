@@ -1,0 +1,21 @@
+overlay: 1.0.0
+info:
+  title: CLI command names
+  version: 1.0.0
+# These operations were published in the TypeScript SDK without
+# x-speakeasy-group/x-speakeasy-name-override, so the shared spec can't name
+# them without renaming SDK methods. The CLI never shipped them, so it names
+# them here instead of exposing path-derived commands.
+actions:
+  - target: $["paths"]["/deleted_media"]["get"]
+    update:
+      x-speakeasy-group: deletedMedia
+      x-speakeasy-name-override: list
+  - target: $["paths"]["/deleted_media/restore"]["post"]
+    update:
+      x-speakeasy-group: deletedMedia
+      x-speakeasy-name-override: restore
+  - target: $["paths"]["/bulk"]["post"]
+    update:
+      x-speakeasy-group: bulkActions
+      x-speakeasy-name-override: create
