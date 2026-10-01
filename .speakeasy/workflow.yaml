@@ -5,6 +5,8 @@ sources:
         inputs:
             - location: https://wistia.github.io/wistia/api/openapi-upload.yaml
             - location: https://wistia.github.io/wistia/api/openapi-modern.yaml
+        overlays:
+            - location: .speakeasy/cli-command-names.yaml
         output: .speakeasy/out.openapi.yaml
         registry:
             location: registry.speakeasyapi.dev/wistia/wistia/wistia-oas

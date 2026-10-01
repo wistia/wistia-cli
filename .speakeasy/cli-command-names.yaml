@@ -1,0 +1,22 @@
+overlay: 1.0.0
+info:
+  title: CLI command names
+  version: 1.0.0
+# Temporary. These operations have no x-speakeasy-group/x-speakeasy-name-override
+# in the spec yet, so the CLI would get path-derived command names. The fix
+# belongs in the spec, with the TypeScript SDK pinning the path-derived names it
+# already published. Once the spec carries these same names, delete this file;
+# CLI users see no change.
+actions:
+  - target: $["paths"]["/deleted_media"]["get"]
+    update:
+      x-speakeasy-group: deletedMedia
+      x-speakeasy-name-override: list
+  - target: $["paths"]["/deleted_media/restore"]["post"]
+    update:
+      x-speakeasy-group: deletedMedia
+      x-speakeasy-name-override: restore
+  - target: $["paths"]["/bulk"]["post"]
+    update:
+      x-speakeasy-group: bulkActions
+      x-speakeasy-name-override: create

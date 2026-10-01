@@ -15,6 +15,8 @@ func initHooks(h *Hooks) {
 
 	h.registerBeforeRequestHook(clientIdentityHook{})
 
+	h.registerBeforeRequestHook(apiVersionHook{})
+
 	// Remaining hook points, available for future use.
 	_ = h.registerSDKInitHook
 	_ = h.registerAfterSuccessHook
