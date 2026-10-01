@@ -98,6 +98,7 @@ const (
 	GetTagsSortByCreated       GetTagsSortBy = "created"
 	GetTagsSortByUpdated       GetTagsSortBy = "updated"
 	GetTagsSortByTaggingsCount GetTagsSortBy = "taggingsCount"
+	GetTagsSortByID            GetTagsSortBy = "id"
 )
 
 func (e GetTagsSortBy) ToPointer() *GetTagsSortBy {
@@ -116,6 +117,8 @@ func (e *GetTagsSortBy) UnmarshalJSON(data []byte) error {
 	case "updated":
 		fallthrough
 	case "taggingsCount":
+		fallthrough
+	case "id":
 		*e = GetTagsSortBy(v)
 		return nil
 	default:

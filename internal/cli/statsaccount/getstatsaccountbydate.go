@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/wistia/wistia-cli/internal/client"
 	"github.com/wistia/wistia-cli/internal/flagutil"
-	"github.com/wistia/wistia-cli/internal/interactive"
 	"github.com/wistia/wistia-cli/internal/output"
 	"github.com/wistia/wistia-cli/internal/sdk"
 	"github.com/wistia/wistia-cli/internal/sdk/models/operations"
@@ -25,10 +24,14 @@ func initGetStatsAccountByDateCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "get-stats-account-by-date",
 		Short:   "Show Account Stats by Date",
-		Long:    "Retrieve account-wide stats organized by day, between a start and end date parameter (inclusive). If start and end date are not provided, defaults to yesterday and today.\n\n<!--- HIDE-MCP -->\n## Requires api token with one of the following permissions\n```\nRead detailed stats\n```\n<!--- /HIDE-MCP -->",
+		Long:    "Retrieve account-wide stats organized by day, between a start and end date parameter (inclusive). If start and end date are not provided, defaults to yesterday and today.\n\n\n## Requires api token with one of the following permissions\n```\nRead detailed stats\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
 		Example: "  wistia stats-account get-stats-account-by-date",
+		Args:    cobra.NoArgs,
 		RunE:    runGetStatsAccountByDateCmd,
 		Aliases: []string{"gsabd"},
+		Annotations: map[string]string{
+			"speakeasy_operation": "get_/stats/account/by_date",
+		},
 	}
 	flagutil.RegisterFlags(cmd, getStatsAccountByDateCmdMeta)
 	if err := flagutil.ValidateMeta[operations.GetStatsAccountByDateRequest](getStatsAccountByDateCmdMeta); err != nil {
@@ -43,14 +46,9 @@ func runGetStatsAccountByDateCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, getStatsAccountByDateCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, getStatsAccountByDateCmdMeta); err != nil {
-			return err
-		}
-	}
 	req, err := flagutil.BuildRequest[operations.GetStatsAccountByDateRequest](cmd, getStatsAccountByDateCmdMeta, "", "")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

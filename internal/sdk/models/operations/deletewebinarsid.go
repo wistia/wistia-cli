@@ -47,6 +47,34 @@ func (e *DeleteWebinarsIDCode) IsExact() bool {
 	return false
 }
 
+// DeleteWebinarsIDLifecycleStatus - The current lifecycle status of the webinar. This is a read-only, system-managed field that Wistia updates as the event moves through its lifecycle; it cannot be set or changed via the API.
+type DeleteWebinarsIDLifecycleStatus string
+
+const (
+	DeleteWebinarsIDLifecycleStatusPending  DeleteWebinarsIDLifecycleStatus = "pending"
+	DeleteWebinarsIDLifecycleStatusReady    DeleteWebinarsIDLifecycleStatus = "ready"
+	DeleteWebinarsIDLifecycleStatusStarting DeleteWebinarsIDLifecycleStatus = "starting"
+	DeleteWebinarsIDLifecycleStatusStarted  DeleteWebinarsIDLifecycleStatus = "started"
+	DeleteWebinarsIDLifecycleStatusEnded    DeleteWebinarsIDLifecycleStatus = "ended"
+	DeleteWebinarsIDLifecycleStatusVodReady DeleteWebinarsIDLifecycleStatus = "vod_ready"
+	DeleteWebinarsIDLifecycleStatusFailed   DeleteWebinarsIDLifecycleStatus = "failed"
+)
+
+func (e DeleteWebinarsIDLifecycleStatus) ToPointer() *DeleteWebinarsIDLifecycleStatus {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *DeleteWebinarsIDLifecycleStatus) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "pending", "ready", "starting", "started", "ended", "vod_ready", "failed":
+			return true
+		}
+	}
+	return false
+}
+
 type DeleteWebinarsIDFolder struct {
 	// A unique alphanumeric identifier for the record.
 	ID string `json:"id"`
@@ -85,6 +113,8 @@ func (d *DeleteWebinarsIDFolder) GetURL() string {
 type DeleteWebinarsIDResponseBody struct {
 	// The hashed ID of the webinar
 	ID string `json:"id"`
+	// The hashed ID of the webinar. Identical to `id`, named to match every other Wistia resource.
+	HashedID string `json:"hashed_id"`
 	// The title of the webinar
 	Title string `json:"title"`
 	// The description of the webinar
@@ -95,8 +125,8 @@ type DeleteWebinarsIDResponseBody struct {
 	EventDuration optionalnullable.OptionalNullable[int64] `json:"event_duration,omitzero"`
 	// The IANA time zone identifier the webinar is scheduled in
 	TimeZone string `json:"time_zone"`
-	// Current lifecycle status of the event
-	LifecycleStatus string `json:"lifecycle_status"`
+	// The current lifecycle status of the webinar. This is a read-only, system-managed field that Wistia updates as the event moves through its lifecycle; it cannot be set or changed via the API.
+	LifecycleStatus DeleteWebinarsIDLifecycleStatus `json:"lifecycle_status"`
 	// Registration status of the event
 	RegistrationStatus string `json:"registration_status"`
 	// When the event was created (UTC)
@@ -109,6 +139,8 @@ type DeleteWebinarsIDResponseBody struct {
 	HostLink string `json:"host_link"`
 	// Link for panelists to join the event
 	PanelistLink string `json:"panelist_link"`
+	// URL of the webinar's custom thumbnail image, or null if no custom thumbnail has been set
+	ThumbnailURL optionalnullable.OptionalNullable[string] `json:"thumbnail_url,omitzero"`
 	// The folder (project) this webinar belongs to
 	Folder optionalnullable.OptionalNullable[DeleteWebinarsIDFolder] `json:"folder,omitzero"`
 	// A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
@@ -131,6 +163,13 @@ func (d *DeleteWebinarsIDResponseBody) GetID() string {
 		return ""
 	}
 	return d.ID
+}
+
+func (d *DeleteWebinarsIDResponseBody) GetHashedID() string {
+	if d == nil {
+		return ""
+	}
+	return d.HashedID
 }
 
 func (d *DeleteWebinarsIDResponseBody) GetTitle() string {
@@ -168,9 +207,9 @@ func (d *DeleteWebinarsIDResponseBody) GetTimeZone() string {
 	return d.TimeZone
 }
 
-func (d *DeleteWebinarsIDResponseBody) GetLifecycleStatus() string {
+func (d *DeleteWebinarsIDResponseBody) GetLifecycleStatus() DeleteWebinarsIDLifecycleStatus {
 	if d == nil {
-		return ""
+		return DeleteWebinarsIDLifecycleStatus("")
 	}
 	return d.LifecycleStatus
 }
@@ -215,6 +254,13 @@ func (d *DeleteWebinarsIDResponseBody) GetPanelistLink() string {
 		return ""
 	}
 	return d.PanelistLink
+}
+
+func (d *DeleteWebinarsIDResponseBody) GetThumbnailURL() optionalnullable.OptionalNullable[string] {
+	if d == nil {
+		return nil
+	}
+	return d.ThumbnailURL
 }
 
 func (d *DeleteWebinarsIDResponseBody) GetFolder() optionalnullable.OptionalNullable[DeleteWebinarsIDFolder] {

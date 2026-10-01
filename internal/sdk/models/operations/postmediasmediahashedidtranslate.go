@@ -9,9 +9,9 @@ import (
 )
 
 type PostMediasMediaHashedIDTranslateRequestBody struct {
-	// The language to translate the transcript to as a 3-character IETF language code.
+	// The language to translate the transcript to. Use the bibliographic ISO 639-2 form or a supported regional or script IETF tag.
 	TargetLanguage string `json:"target_language"`
-	// The language of the source transcript to be translated as a 3-character IETF language code. If not provided, the media's default transcript language will be used.
+	// The language of the source transcript. Use the bibliographic ISO 639-2 form or a supported regional or script IETF tag. If not provided, the media's default transcript language will be used.
 	SourceLanguage *string `json:"source_language,omitzero"`
 }
 
@@ -144,34 +144,21 @@ func (p *PostMediasMediaHashedIDTranslateBackgroundJobStatus) GetStatus() PostMe
 
 // PostMediasMediaHashedIDTranslateResponseBody - Successfully queued background job for translation of the transcript.
 type PostMediasMediaHashedIDTranslateResponseBody struct {
-	Message *string `json:"message,omitzero"`
-	// A background job keeps track of the progress of an asynchronous task, e.g
-	// bulk archiving media, translating media, etc.
-	//
-	BackgroundJobStatus *PostMediasMediaHashedIDTranslateBackgroundJobStatus `json:"background_job_status,omitzero"`
+	// A confirmation message that the background job has been queued.
+	Message             string                                              `json:"message"`
+	BackgroundJobStatus PostMediasMediaHashedIDTranslateBackgroundJobStatus `json:"background_job_status"`
 }
 
-func (p PostMediasMediaHashedIDTranslateResponseBody) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(p, "", false)
-}
-
-func (p *PostMediasMediaHashedIDTranslateResponseBody) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &p, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (p *PostMediasMediaHashedIDTranslateResponseBody) GetMessage() *string {
+func (p *PostMediasMediaHashedIDTranslateResponseBody) GetMessage() string {
 	if p == nil {
-		return nil
+		return ""
 	}
 	return p.Message
 }
 
-func (p *PostMediasMediaHashedIDTranslateResponseBody) GetBackgroundJobStatus() *PostMediasMediaHashedIDTranslateBackgroundJobStatus {
+func (p *PostMediasMediaHashedIDTranslateResponseBody) GetBackgroundJobStatus() PostMediasMediaHashedIDTranslateBackgroundJobStatus {
 	if p == nil {
-		return nil
+		return PostMediasMediaHashedIDTranslateBackgroundJobStatus{}
 	}
 	return p.BackgroundJobStatus
 }

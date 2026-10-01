@@ -145,6 +145,34 @@ func (e *PutWebinarsIDCode) IsExact() bool {
 	return false
 }
 
+// PutWebinarsIDLifecycleStatus - The current lifecycle status of the webinar. This is a read-only, system-managed field that Wistia updates as the event moves through its lifecycle; it cannot be set or changed via the API.
+type PutWebinarsIDLifecycleStatus string
+
+const (
+	PutWebinarsIDLifecycleStatusPending  PutWebinarsIDLifecycleStatus = "pending"
+	PutWebinarsIDLifecycleStatusReady    PutWebinarsIDLifecycleStatus = "ready"
+	PutWebinarsIDLifecycleStatusStarting PutWebinarsIDLifecycleStatus = "starting"
+	PutWebinarsIDLifecycleStatusStarted  PutWebinarsIDLifecycleStatus = "started"
+	PutWebinarsIDLifecycleStatusEnded    PutWebinarsIDLifecycleStatus = "ended"
+	PutWebinarsIDLifecycleStatusVodReady PutWebinarsIDLifecycleStatus = "vod_ready"
+	PutWebinarsIDLifecycleStatusFailed   PutWebinarsIDLifecycleStatus = "failed"
+)
+
+func (e PutWebinarsIDLifecycleStatus) ToPointer() *PutWebinarsIDLifecycleStatus {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *PutWebinarsIDLifecycleStatus) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "pending", "ready", "starting", "started", "ended", "vod_ready", "failed":
+			return true
+		}
+	}
+	return false
+}
+
 type PutWebinarsIDFolder struct {
 	// A unique alphanumeric identifier for the record.
 	ID string `json:"id"`
@@ -183,6 +211,8 @@ func (p *PutWebinarsIDFolder) GetURL() string {
 type PutWebinarsIDResponseBody struct {
 	// The hashed ID of the webinar
 	ID string `json:"id"`
+	// The hashed ID of the webinar. Identical to `id`, named to match every other Wistia resource.
+	HashedID string `json:"hashed_id"`
 	// The title of the webinar
 	Title string `json:"title"`
 	// The description of the webinar
@@ -193,8 +223,8 @@ type PutWebinarsIDResponseBody struct {
 	EventDuration optionalnullable.OptionalNullable[int64] `json:"event_duration,omitzero"`
 	// The IANA time zone identifier the webinar is scheduled in
 	TimeZone string `json:"time_zone"`
-	// Current lifecycle status of the event
-	LifecycleStatus string `json:"lifecycle_status"`
+	// The current lifecycle status of the webinar. This is a read-only, system-managed field that Wistia updates as the event moves through its lifecycle; it cannot be set or changed via the API.
+	LifecycleStatus PutWebinarsIDLifecycleStatus `json:"lifecycle_status"`
 	// Registration status of the event
 	RegistrationStatus string `json:"registration_status"`
 	// When the event was created (UTC)
@@ -207,6 +237,8 @@ type PutWebinarsIDResponseBody struct {
 	HostLink string `json:"host_link"`
 	// Link for panelists to join the event
 	PanelistLink string `json:"panelist_link"`
+	// URL of the webinar's custom thumbnail image, or null if no custom thumbnail has been set
+	ThumbnailURL optionalnullable.OptionalNullable[string] `json:"thumbnail_url,omitzero"`
 	// The folder (project) this webinar belongs to
 	Folder optionalnullable.OptionalNullable[PutWebinarsIDFolder] `json:"folder,omitzero"`
 	// A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
@@ -229,6 +261,13 @@ func (p *PutWebinarsIDResponseBody) GetID() string {
 		return ""
 	}
 	return p.ID
+}
+
+func (p *PutWebinarsIDResponseBody) GetHashedID() string {
+	if p == nil {
+		return ""
+	}
+	return p.HashedID
 }
 
 func (p *PutWebinarsIDResponseBody) GetTitle() string {
@@ -266,9 +305,9 @@ func (p *PutWebinarsIDResponseBody) GetTimeZone() string {
 	return p.TimeZone
 }
 
-func (p *PutWebinarsIDResponseBody) GetLifecycleStatus() string {
+func (p *PutWebinarsIDResponseBody) GetLifecycleStatus() PutWebinarsIDLifecycleStatus {
 	if p == nil {
-		return ""
+		return PutWebinarsIDLifecycleStatus("")
 	}
 	return p.LifecycleStatus
 }
@@ -313,6 +352,13 @@ func (p *PutWebinarsIDResponseBody) GetPanelistLink() string {
 		return ""
 	}
 	return p.PanelistLink
+}
+
+func (p *PutWebinarsIDResponseBody) GetThumbnailURL() optionalnullable.OptionalNullable[string] {
+	if p == nil {
+		return nil
+	}
+	return p.ThumbnailURL
 }
 
 func (p *PutWebinarsIDResponseBody) GetFolder() optionalnullable.OptionalNullable[PutWebinarsIDFolder] {

@@ -11,6 +11,7 @@ import (
 )
 
 type PostTagsRequest struct {
+	// The tag name. Stored lowercased with whitespace squished, 50 characters max, and must not already exist on the account.
 	Name string `json:"name"`
 }
 

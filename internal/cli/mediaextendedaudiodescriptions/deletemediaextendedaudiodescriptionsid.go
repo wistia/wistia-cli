@@ -22,16 +22,28 @@ var deleteMediaExtendedAudioDescriptionsIDCmdMeta = []flagutil.FlagMeta{
 // initDeleteMediaExtendedAudioDescriptionsIdCmd initializes the delete-media-extended-audio-descriptions-id command.
 func initDeleteMediaExtendedAudioDescriptionsIdCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
-		Use:     "delete-media-extended-audio-descriptions-id",
+		Use:     "delete-media-extended-audio-descriptions-id [id]",
 		Short:   "Delete Media Extended Audio Description",
 		Long:    "Deletes an extended audio description by its hashed id.",
 		Example: "  wistia media-extended-audio-descriptions delete-media-extended-audio-descriptions-id --id <id>",
+		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runDeleteMediaExtendedAudioDescriptionsIdCmd,
 		Aliases: []string{"dmeadi"},
+		Annotations: map[string]string{
+			"speakeasy_operation": "delete_/media_extended_audio_descriptions/{id}",
+		},
 	}
 	flagutil.RegisterFlags(cmd, deleteMediaExtendedAudioDescriptionsIDCmdMeta)
 	if err := flagutil.ValidateMeta[operations.DeleteMediaExtendedAudioDescriptionsIDRequest](deleteMediaExtendedAudioDescriptionsIDCmdMeta); err != nil {
 		return fmt.Errorf("invalid metadata for delete-media-extended-audio-descriptions-id: %w", err)
+	}
+	if err := flagutil.DeclarePositionalFlag(cmd, "id", "The hashed id of the Media Extended Audio Description (or pass it as the [id] argument)", true); err != nil {
+		return err
+	}
+	if err := interactive.Declare(cmd, interactive.CommandSpec{Args: []interactive.ArgSpec{
+		{Name: "id", Summary: "The hashed id of the Media Extended Audio Description", Required: true, SatisfiedBy: []string{"id"}},
+	}}); err != nil {
+		return fmt.Errorf("declare interactive arguments for delete-media-extended-audio-descriptions-id: %w", err)
 	}
 	parent.AddCommand(cmd)
 	return nil
@@ -42,14 +54,12 @@ func runDeleteMediaExtendedAudioDescriptionsIdCmd(cmd *cobra.Command, args []str
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, deleteMediaExtendedAudioDescriptionsIDCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, deleteMediaExtendedAudioDescriptionsIDCmdMeta); err != nil {
-			return err
-		}
+	if err := flagutil.ResolvePositionalFlag(cmd, args); err != nil {
+		return err
 	}
 	req, err := flagutil.BuildRequest[operations.DeleteMediaExtendedAudioDescriptionsIDRequest](cmd, deleteMediaExtendedAudioDescriptionsIDCmdMeta, "", "")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

@@ -22,7 +22,7 @@ func (e *PostMediasMediaHashedIDTranslateInternalServerError) Error() string {
 	return string(data)
 }
 
-// PostMediasMediaHashedIDTranslateUnprocessableEntityError - Unprocessible entity, parameters provided were invalid.
+// PostMediasMediaHashedIDTranslateUnprocessableEntityError - Unprocessable entity. The translation could not be queued, including due to insufficient Credits when Credits billing applies.
 type PostMediasMediaHashedIDTranslateUnprocessableEntityError struct {
 	// Error message detailing why the request failed.
 	Error_   *string                 `json:"error,omitzero"`

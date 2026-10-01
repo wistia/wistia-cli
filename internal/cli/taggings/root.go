@@ -10,9 +10,11 @@ import (
 
 func InitTaggingsRoot(parent *cobra.Command) error {
 	var TaggingsCmd = &cobra.Command{
-		Use:   "taggings",
-		Short: "Operations for taggings",
-		Long:  "Operations for taggings",
+		Use:         "taggings",
+		Short:       "Operations for taggings",
+		Long:        "Operations for taggings",
+		Args:        cobra.NoArgs,
+		Annotations: map[string]string{"speakeasy_cli_group": "true"},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if usage.UsageRequested(cmd) {
 				return usage.EmitSchema(cmd, cmd.OutOrStdout())

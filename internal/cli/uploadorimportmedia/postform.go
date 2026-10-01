@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/wistia/wistia-cli/internal/client"
 	"github.com/wistia/wistia-cli/internal/flagutil"
-	"github.com/wistia/wistia-cli/internal/interactive"
 	"github.com/wistia/wistia-cli/internal/output"
 	"github.com/wistia/wistia-cli/internal/sdk/models/operations"
 	"github.com/wistia/wistia-cli/internal/usage"
@@ -32,14 +31,23 @@ func initPostFormCmd(parent *cobra.Command) error {
 		Short:   "Upload or Import Media",
 		Long:    "Endpoint to upload media files from a local system or import from a web URL.\n\n- Use `multipart/form-data` with a `file` parameter to upload from local system\n- Use `application/x-www-form-urlencoded` with a `url` parameter to import from web URL",
 		Example: "  wistia upload-or-import-media post-form --url http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+		Args:    cobra.NoArgs,
 		RunE:    runPostFormCmd,
 		Aliases: []string{"pf"},
+		Annotations: map[string]string{
+			"speakeasy_operation": "post_/",
+		},
 	}
 	flagutil.RegisterFlags(cmd, postFormCmdMeta)
 	if err := flagutil.ValidateMeta[operations.PostFormRequest](postFormCmdMeta); err != nil {
 		return fmt.Errorf("invalid metadata for post-form: %w", err)
 	}
-	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin.")
+	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
+	if err := flagutil.AnnotateBodyFields(cmd, postFormCmdMeta, "", "body"); err != nil {
+		return fmt.Errorf("annotate body fields for post-form: %w", err)
+	}
 	parent.AddCommand(cmd)
 	return nil
 }
@@ -49,14 +57,9 @@ func runPostFormCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, postFormCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, postFormCmdMeta); err != nil {
-			return err
-		}
-	}
 	request, err := flagutil.BuildRequest[operations.PostFormRequest](cmd, postFormCmdMeta, "", "body")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

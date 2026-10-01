@@ -95,42 +95,42 @@ func (p *PutMediasMediaIDCustomizationsChapterListRequest) GetDeleted() *string 
 	return p.Deleted
 }
 
-type PutMediasMediaIDCustomizationsChaptersRequest struct {
+type CustomizationsPutMediasMediaIDCustomizationsChaptersRequest struct {
 	VisibleOnLoad *bool                                              `json:"visibleOnLoad,omitzero"`
 	ChapterList   []PutMediasMediaIDCustomizationsChapterListRequest `json:"chapterList,omitzero"`
 	On            *bool                                              `json:"on,omitzero"`
 }
 
-func (p PutMediasMediaIDCustomizationsChaptersRequest) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(p, "", false)
+func (c CustomizationsPutMediasMediaIDCustomizationsChaptersRequest) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(c, "", false)
 }
 
-func (p *PutMediasMediaIDCustomizationsChaptersRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &p, "", false, nil); err != nil {
+func (c *CustomizationsPutMediasMediaIDCustomizationsChaptersRequest) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &c, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (p *PutMediasMediaIDCustomizationsChaptersRequest) GetVisibleOnLoad() *bool {
-	if p == nil {
+func (c *CustomizationsPutMediasMediaIDCustomizationsChaptersRequest) GetVisibleOnLoad() *bool {
+	if c == nil {
 		return nil
 	}
-	return p.VisibleOnLoad
+	return c.VisibleOnLoad
 }
 
-func (p *PutMediasMediaIDCustomizationsChaptersRequest) GetChapterList() []PutMediasMediaIDCustomizationsChapterListRequest {
-	if p == nil {
+func (c *CustomizationsPutMediasMediaIDCustomizationsChaptersRequest) GetChapterList() []PutMediasMediaIDCustomizationsChapterListRequest {
+	if c == nil {
 		return nil
 	}
-	return p.ChapterList
+	return c.ChapterList
 }
 
-func (p *PutMediasMediaIDCustomizationsChaptersRequest) GetOn() *bool {
-	if p == nil {
+func (c *CustomizationsPutMediasMediaIDCustomizationsChaptersRequest) GetOn() *bool {
+	if c == nil {
 		return nil
 	}
-	return p.On
+	return c.On
 }
 
 type PutMediasMediaIDCustomizationsTimeType string
@@ -166,7 +166,14 @@ func CreatePutMediasMediaIDCustomizationsTimeNumber(number float64) PutMediasMed
 	}
 }
 
-func (u *PutMediasMediaIDCustomizationsTime) UnmarshalJSON(data []byte) error {
+func (u *PutMediasMediaIDCustomizationsTime) UnmarshalJSON(data []byte) (err error) {
+	previous := *u
+	*u = PutMediasMediaIDCustomizationsTime{}
+	defer func() {
+		if err != nil {
+			*u = previous
+		}
+	}()
 
 	var candidates []utils.UnionCandidate
 
@@ -359,9 +366,9 @@ func (p *PutMediasMediaIDCustomizationsCaptionsV1Request) GetOnByDefault() *bool
 // #endregion class-body-putmediasmediaidcustomizationscaptionsv1request
 
 type PutMediasMediaIDCustomizationsPluginRequest struct {
-	VideoThumbnail *PutMediasMediaIDCustomizationsVideoThumbnailRequest `json:"videoThumbnail,omitzero"`
-	SocialbarV1    *PutMediasMediaIDCustomizationsSocialbarV1Request    `json:"socialbar-v1,omitzero"`
-	Chapters       *PutMediasMediaIDCustomizationsChaptersRequest       `json:"chapters,omitzero"`
+	VideoThumbnail *PutMediasMediaIDCustomizationsVideoThumbnailRequest         `json:"videoThumbnail,omitzero"`
+	SocialbarV1    *PutMediasMediaIDCustomizationsSocialbarV1Request            `json:"socialbar-v1,omitzero"`
+	Chapters       *CustomizationsPutMediasMediaIDCustomizationsChaptersRequest `json:"chapters,omitzero"`
 	// Adds a Call To Action to your Video
 	PostRollV1 *PutMediasMediaIDCustomizationsPostRollV1Request `json:"postRoll-v1,omitzero"`
 	// Enables closed captions for the video
@@ -393,7 +400,7 @@ func (p *PutMediasMediaIDCustomizationsPluginRequest) GetSocialbarV1() *PutMedia
 	return p.SocialbarV1
 }
 
-func (p *PutMediasMediaIDCustomizationsPluginRequest) GetChapters() *PutMediasMediaIDCustomizationsChaptersRequest {
+func (p *PutMediasMediaIDCustomizationsPluginRequest) GetChapters() *CustomizationsPutMediasMediaIDCustomizationsChaptersRequest {
 	if p == nil {
 		return nil
 	}
@@ -514,7 +521,14 @@ func CreatePutMediasMediaIDCustomizationsVideoFoamUnionPutMediasMediaIDCustomiza
 	}
 }
 
-func (u *PutMediasMediaIDCustomizationsVideoFoamUnion) UnmarshalJSON(data []byte) error {
+func (u *PutMediasMediaIDCustomizationsVideoFoamUnion) UnmarshalJSON(data []byte) (err error) {
+	previous := *u
+	*u = PutMediasMediaIDCustomizationsVideoFoamUnion{}
+	defer func() {
+		if err != nil {
+			*u = previous
+		}
+	}()
 
 	var candidates []utils.UnionCandidate
 
@@ -1091,42 +1105,42 @@ func (p *PutMediasMediaIDCustomizationsChapterListResponse) GetDeleted() *string
 	return p.Deleted
 }
 
-type PutMediasMediaIDCustomizationsChaptersResponse struct {
+type CustomizationsPutMediasMediaIDCustomizationsChaptersResponse struct {
 	VisibleOnLoad *string                                             `json:"visibleOnLoad,omitzero"`
 	ChapterList   []PutMediasMediaIDCustomizationsChapterListResponse `json:"chapterList,omitzero"`
 	On            *string                                             `json:"on,omitzero"`
 }
 
-func (p PutMediasMediaIDCustomizationsChaptersResponse) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(p, "", false)
+func (c CustomizationsPutMediasMediaIDCustomizationsChaptersResponse) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(c, "", false)
 }
 
-func (p *PutMediasMediaIDCustomizationsChaptersResponse) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &p, "", false, nil); err != nil {
+func (c *CustomizationsPutMediasMediaIDCustomizationsChaptersResponse) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &c, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (p *PutMediasMediaIDCustomizationsChaptersResponse) GetVisibleOnLoad() *string {
-	if p == nil {
+func (c *CustomizationsPutMediasMediaIDCustomizationsChaptersResponse) GetVisibleOnLoad() *string {
+	if c == nil {
 		return nil
 	}
-	return p.VisibleOnLoad
+	return c.VisibleOnLoad
 }
 
-func (p *PutMediasMediaIDCustomizationsChaptersResponse) GetChapterList() []PutMediasMediaIDCustomizationsChapterListResponse {
-	if p == nil {
+func (c *CustomizationsPutMediasMediaIDCustomizationsChaptersResponse) GetChapterList() []PutMediasMediaIDCustomizationsChapterListResponse {
+	if c == nil {
 		return nil
 	}
-	return p.ChapterList
+	return c.ChapterList
 }
 
-func (p *PutMediasMediaIDCustomizationsChaptersResponse) GetOn() *string {
-	if p == nil {
+func (c *CustomizationsPutMediasMediaIDCustomizationsChaptersResponse) GetOn() *string {
+	if c == nil {
 		return nil
 	}
-	return p.On
+	return c.On
 }
 
 type PutMediasMediaIDCustomizationsStyleResponse struct {
@@ -1268,10 +1282,10 @@ func (p *PutMediasMediaIDCustomizationsCaptionsV1Response) GetOnByDefault() *str
 // not strictly validated; the documented sub-objects represent the most
 // common plugins.
 type PutMediasMediaIDCustomizationsPluginResponse struct {
-	PasswordProtectedVideo *PutMediasMediaIDCustomizationsPasswordProtectedVideo `json:"passwordProtectedVideo,omitzero"`
-	VideoThumbnail         *PutMediasMediaIDCustomizationsVideoThumbnailResponse `json:"videoThumbnail,omitzero"`
-	SocialbarV1            *PutMediasMediaIDCustomizationsSocialbarV1Response    `json:"socialbar-v1,omitzero"`
-	Chapters               *PutMediasMediaIDCustomizationsChaptersResponse       `json:"chapters,omitzero"`
+	PasswordProtectedVideo *PutMediasMediaIDCustomizationsPasswordProtectedVideo         `json:"passwordProtectedVideo,omitzero"`
+	VideoThumbnail         *PutMediasMediaIDCustomizationsVideoThumbnailResponse         `json:"videoThumbnail,omitzero"`
+	SocialbarV1            *PutMediasMediaIDCustomizationsSocialbarV1Response            `json:"socialbar-v1,omitzero"`
+	Chapters               *CustomizationsPutMediasMediaIDCustomizationsChaptersResponse `json:"chapters,omitzero"`
 	// Adds a Call To Action to your Video (response format)
 	PostRollV1 *PutMediasMediaIDCustomizationsPostRollV1Response `json:"postRoll-v1,omitzero"`
 	// Captions plugin configuration (response format)
@@ -1310,7 +1324,7 @@ func (p *PutMediasMediaIDCustomizationsPluginResponse) GetSocialbarV1() *PutMedi
 	return p.SocialbarV1
 }
 
-func (p *PutMediasMediaIDCustomizationsPluginResponse) GetChapters() *PutMediasMediaIDCustomizationsChaptersResponse {
+func (p *PutMediasMediaIDCustomizationsPluginResponse) GetChapters() *CustomizationsPutMediasMediaIDCustomizationsChaptersResponse {
 	if p == nil {
 		return nil
 	}

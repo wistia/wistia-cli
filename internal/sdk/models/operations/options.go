@@ -79,7 +79,7 @@ func WithRetries(config retry.Config) Option {
 // WithOperationTimeout allows setting the request timeout applied for an operation.
 func WithOperationTimeout(timeout time.Duration) Option {
 	return func(opts *Options, supportedOptions ...string) error {
-		if !utils.Contains(supportedOptions, SupportedOptionRetries) {
+		if !utils.Contains(supportedOptions, SupportedOptionTimeout) {
 			return ErrUnsupportedOption
 		}
 
@@ -120,10 +120,11 @@ func WithSetHeaders(hdrs map[string]string) Option {
 	}
 }
 
-// WithSkipDeserialization skips response body deserialization for JSON responses,
-// leaving the raw body unread on the HTTP response. The caller can read the raw
-// response body via the HTTPMeta.Response field. Non-JSON responses and error
-// responses are always deserialized regardless of this option.
+// WithSkipDeserialization skips typed deserialization of successful JSON responses. The
+// body is still consumed while the operation context is alive and replayed on
+// the HTTP response, so the caller can read it via the HTTPMeta.Response field
+// after the method returns. Non-JSON responses and error responses are always
+// deserialized regardless of this option.
 func WithSkipDeserialization() Option {
 	return func(opts *Options, supportedOptions ...string) error {
 		if !utils.Contains(supportedOptions, SupportedOptionSkipDeserialization) {

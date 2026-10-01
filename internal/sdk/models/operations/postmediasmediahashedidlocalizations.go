@@ -4,6 +4,8 @@
 package operations
 
 import (
+	"encoding/json"
+	"errors"
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
 	"github.com/wistia/wistia-cli/internal/sdk/optionalnullable"
 	"github.com/wistia/wistia-cli/internal/sdk/sdkinternal/utils"
@@ -227,6 +229,240 @@ func (p *PostMediasMediaHashedIDLocalizationsTranscript) GetUpdatedAt() time.Tim
 	return p.UpdatedAt
 }
 
+type ExpectedBilledPricePerMinuteType string
+
+const (
+	ExpectedBilledPricePerMinuteTypeNumber  ExpectedBilledPricePerMinuteType = "number"
+	ExpectedBilledPricePerMinuteTypeStr     ExpectedBilledPricePerMinuteType = "str"
+	ExpectedBilledPricePerMinuteTypeUnknown ExpectedBilledPricePerMinuteType = "Unknown"
+)
+
+// ExpectedBilledPricePerMinute - The expected price per minute that will be billed for the dubbing. Decimal prices are returned as strings.
+type ExpectedBilledPricePerMinute struct {
+	Number     *float64        `queryParam:"inline" union:"member"`
+	Str        *string         `queryParam:"inline" union:"member"`
+	UnknownRaw json.RawMessage `json:"-" union:"unknown"`
+
+	Type ExpectedBilledPricePerMinuteType
+}
+
+func CreateExpectedBilledPricePerMinuteNumber(number float64) ExpectedBilledPricePerMinute {
+	typ := ExpectedBilledPricePerMinuteTypeNumber
+
+	return ExpectedBilledPricePerMinute{
+		Number: &number,
+		Type:   typ,
+	}
+}
+
+func CreateExpectedBilledPricePerMinuteStr(str string) ExpectedBilledPricePerMinute {
+	typ := ExpectedBilledPricePerMinuteTypeStr
+
+	return ExpectedBilledPricePerMinute{
+		Str:  &str,
+		Type: typ,
+	}
+}
+
+func CreateExpectedBilledPricePerMinuteUnknown(raw json.RawMessage) ExpectedBilledPricePerMinute {
+	return ExpectedBilledPricePerMinute{
+		UnknownRaw: raw,
+		Type:       ExpectedBilledPricePerMinuteTypeUnknown,
+	}
+}
+
+func (u ExpectedBilledPricePerMinute) GetUnknownRaw() json.RawMessage {
+	return u.UnknownRaw
+}
+
+func (u ExpectedBilledPricePerMinute) IsUnknown() bool {
+	return u.Type == ExpectedBilledPricePerMinuteTypeUnknown
+}
+
+func (u *ExpectedBilledPricePerMinute) UnmarshalJSON(data []byte) error {
+	*u = ExpectedBilledPricePerMinute{}
+
+	var candidates []utils.UnionCandidate
+
+	// Collect all valid candidates
+	var number float64 = float64(0)
+	if err := utils.UnmarshalJSON(data, &number, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  ExpectedBilledPricePerMinuteTypeNumber,
+			Value: &number,
+		})
+	}
+
+	var str string = ""
+	if err := utils.UnmarshalJSON(data, &str, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  ExpectedBilledPricePerMinuteTypeStr,
+			Value: &str,
+		})
+	}
+
+	if len(candidates) == 0 {
+		u.UnknownRaw = json.RawMessage(data)
+		u.Type = ExpectedBilledPricePerMinuteTypeUnknown
+		return nil
+	}
+
+	// Pick the best candidate using multi-stage filtering
+	best := utils.PickBestUnionCandidate(candidates, data)
+	if best == nil {
+		u.UnknownRaw = json.RawMessage(data)
+		u.Type = ExpectedBilledPricePerMinuteTypeUnknown
+		return nil
+	}
+
+	// Set the union type and value based on the best candidate
+	u.Type = best.Type.(ExpectedBilledPricePerMinuteType)
+	switch best.Type {
+	case ExpectedBilledPricePerMinuteTypeNumber:
+		u.Number = best.Value.(*float64)
+		return nil
+	case ExpectedBilledPricePerMinuteTypeStr:
+		u.Str = best.Value.(*string)
+		return nil
+	}
+
+	u.UnknownRaw = json.RawMessage(data)
+	u.Type = ExpectedBilledPricePerMinuteTypeUnknown
+	return nil
+}
+
+func (u ExpectedBilledPricePerMinute) MarshalJSON() ([]byte, error) {
+	if u.Number != nil {
+		return utils.MarshalJSON(u.Number, "", true)
+	}
+
+	if u.Str != nil {
+		return utils.MarshalJSON(u.Str, "", true)
+	}
+
+	if u.UnknownRaw != nil {
+		return json.RawMessage(u.UnknownRaw), nil
+	}
+	return nil, errors.New("could not marshal union type ExpectedBilledPricePerMinute: all fields are null")
+}
+
+type ExpectedBilledPriceType string
+
+const (
+	ExpectedBilledPriceTypeNumber  ExpectedBilledPriceType = "number"
+	ExpectedBilledPriceTypeStr     ExpectedBilledPriceType = "str"
+	ExpectedBilledPriceTypeUnknown ExpectedBilledPriceType = "Unknown"
+)
+
+// ExpectedBilledPrice - The expected total price that will be billed for the dubbing. Decimal prices are returned as strings.
+type ExpectedBilledPrice struct {
+	Number     *float64        `queryParam:"inline" union:"member"`
+	Str        *string         `queryParam:"inline" union:"member"`
+	UnknownRaw json.RawMessage `json:"-" union:"unknown"`
+
+	Type ExpectedBilledPriceType
+}
+
+func CreateExpectedBilledPriceNumber(number float64) ExpectedBilledPrice {
+	typ := ExpectedBilledPriceTypeNumber
+
+	return ExpectedBilledPrice{
+		Number: &number,
+		Type:   typ,
+	}
+}
+
+func CreateExpectedBilledPriceStr(str string) ExpectedBilledPrice {
+	typ := ExpectedBilledPriceTypeStr
+
+	return ExpectedBilledPrice{
+		Str:  &str,
+		Type: typ,
+	}
+}
+
+func CreateExpectedBilledPriceUnknown(raw json.RawMessage) ExpectedBilledPrice {
+	return ExpectedBilledPrice{
+		UnknownRaw: raw,
+		Type:       ExpectedBilledPriceTypeUnknown,
+	}
+}
+
+func (u ExpectedBilledPrice) GetUnknownRaw() json.RawMessage {
+	return u.UnknownRaw
+}
+
+func (u ExpectedBilledPrice) IsUnknown() bool {
+	return u.Type == ExpectedBilledPriceTypeUnknown
+}
+
+func (u *ExpectedBilledPrice) UnmarshalJSON(data []byte) error {
+	*u = ExpectedBilledPrice{}
+
+	var candidates []utils.UnionCandidate
+
+	// Collect all valid candidates
+	var number float64 = float64(0)
+	if err := utils.UnmarshalJSON(data, &number, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  ExpectedBilledPriceTypeNumber,
+			Value: &number,
+		})
+	}
+
+	var str string = ""
+	if err := utils.UnmarshalJSON(data, &str, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  ExpectedBilledPriceTypeStr,
+			Value: &str,
+		})
+	}
+
+	if len(candidates) == 0 {
+		u.UnknownRaw = json.RawMessage(data)
+		u.Type = ExpectedBilledPriceTypeUnknown
+		return nil
+	}
+
+	// Pick the best candidate using multi-stage filtering
+	best := utils.PickBestUnionCandidate(candidates, data)
+	if best == nil {
+		u.UnknownRaw = json.RawMessage(data)
+		u.Type = ExpectedBilledPriceTypeUnknown
+		return nil
+	}
+
+	// Set the union type and value based on the best candidate
+	u.Type = best.Type.(ExpectedBilledPriceType)
+	switch best.Type {
+	case ExpectedBilledPriceTypeNumber:
+		u.Number = best.Value.(*float64)
+		return nil
+	case ExpectedBilledPriceTypeStr:
+		u.Str = best.Value.(*string)
+		return nil
+	}
+
+	u.UnknownRaw = json.RawMessage(data)
+	u.Type = ExpectedBilledPriceTypeUnknown
+	return nil
+}
+
+func (u ExpectedBilledPrice) MarshalJSON() ([]byte, error) {
+	if u.Number != nil {
+		return utils.MarshalJSON(u.Number, "", true)
+	}
+
+	if u.Str != nil {
+		return utils.MarshalJSON(u.Str, "", true)
+	}
+
+	if u.UnknownRaw != nil {
+		return json.RawMessage(u.UnknownRaw), nil
+	}
+	return nil, errors.New("could not marshal union type ExpectedBilledPrice: all fields are null")
+}
+
 // PostMediasMediaHashedIDLocalizationsResponseBody - A localization is a translation of a media into another language.
 type PostMediasMediaHashedIDLocalizationsResponseBody struct {
 	// A unique alphanumeric identifier for this localization.
@@ -257,10 +493,12 @@ type PostMediasMediaHashedIDLocalizationsResponseBody struct {
 	AutoEnableDubbing bool `json:"auto_enable_dubbing"`
 	// The expected number of minutes that will be billed for the dubbing.
 	ExpectedBilledMinutes *float64 `json:"expected_billed_minutes"`
-	// The expected price per minute that will be billed for the dubbing.
-	ExpectedBilledPricePerMinute *float64 `json:"expected_billed_price_per_minute"`
-	// The expected total price that will be billed for the dubbing.
-	ExpectedBilledPrice *float64 `json:"expected_billed_price"`
+	// The expected price per minute that will be billed for the dubbing. Decimal prices are returned as strings.
+	ExpectedBilledPricePerMinute *ExpectedBilledPricePerMinute `json:"expected_billed_price_per_minute"`
+	// The expected total price that will be billed for the dubbing. Decimal prices are returned as strings.
+	ExpectedBilledPrice *ExpectedBilledPrice `json:"expected_billed_price"`
+	// The credits held for the dubbing, deducted when it completes. Null when the dubbing is not paid for with credits. Decimal amounts are returned as strings.
+	ExpectedBilledCredits *string `json:"expected_billed_credits"`
 	// The date when the dubbing was billed.
 	BilledAt *time.Time `json:"billed_at"`
 }
@@ -374,18 +612,25 @@ func (p *PostMediasMediaHashedIDLocalizationsResponseBody) GetExpectedBilledMinu
 	return p.ExpectedBilledMinutes
 }
 
-func (p *PostMediasMediaHashedIDLocalizationsResponseBody) GetExpectedBilledPricePerMinute() *float64 {
+func (p *PostMediasMediaHashedIDLocalizationsResponseBody) GetExpectedBilledPricePerMinute() *ExpectedBilledPricePerMinute {
 	if p == nil {
 		return nil
 	}
 	return p.ExpectedBilledPricePerMinute
 }
 
-func (p *PostMediasMediaHashedIDLocalizationsResponseBody) GetExpectedBilledPrice() *float64 {
+func (p *PostMediasMediaHashedIDLocalizationsResponseBody) GetExpectedBilledPrice() *ExpectedBilledPrice {
 	if p == nil {
 		return nil
 	}
 	return p.ExpectedBilledPrice
+}
+
+func (p *PostMediasMediaHashedIDLocalizationsResponseBody) GetExpectedBilledCredits() *string {
+	if p == nil {
+		return nil
+	}
+	return p.ExpectedBilledCredits
 }
 
 func (p *PostMediasMediaHashedIDLocalizationsResponseBody) GetBilledAt() *time.Time {

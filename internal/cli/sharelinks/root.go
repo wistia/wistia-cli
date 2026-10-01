@@ -10,9 +10,11 @@ import (
 
 func InitShareLinksRoot(parent *cobra.Command) error {
 	var ShareLinksCmd = &cobra.Command{
-		Use:   "share-links",
-		Short: "Operations for share-links",
-		Long:  "Operations for share-links",
+		Use:         "share-links",
+		Short:       "Operations for share-links",
+		Long:        "Operations for share-links",
+		Args:        cobra.NoArgs,
+		Annotations: map[string]string{"speakeasy_cli_group": "true"},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if usage.UsageRequested(cmd) {
 				return usage.EmitSchema(cmd, cmd.OutOrStdout())
@@ -20,6 +22,10 @@ func InitShareLinksRoot(parent *cobra.Command) error {
 			return cmd.Help()
 		},
 		Aliases: []string{"sl"},
+	}
+
+	if err := initResolveCmd(ShareLinksCmd); err != nil {
+		return err
 	}
 
 	if err := initGetCmd(ShareLinksCmd); err != nil {

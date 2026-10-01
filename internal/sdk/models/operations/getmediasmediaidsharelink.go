@@ -89,6 +89,10 @@ type GetMediasMediaIDShareLinkResponseBody struct {
 	MediaID string `json:"media_id"`
 	// The full URL viewers can use to view the media via this share link.
 	URL string `json:"url"`
+	// The share link's custom slug, if one is set. When present, the slug
+	// replaces the hashed ID in the link's URL.
+	//
+	Slug *string `json:"slug"`
 	// Controls who can view the media via this share link.
 	//
 	// - `unlocked`: anyone with the link can view the media.
@@ -136,6 +140,13 @@ func (g *GetMediasMediaIDShareLinkResponseBody) GetURL() string {
 		return ""
 	}
 	return g.URL
+}
+
+func (g *GetMediasMediaIDShareLinkResponseBody) GetSlug() *string {
+	if g == nil {
+		return nil
+	}
+	return g.Slug
 }
 
 func (g *GetMediasMediaIDShareLinkResponseBody) GetVisibility() GetMediasMediaIDShareLinkVisibility {

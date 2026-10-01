@@ -4,22 +4,54 @@
 package operations
 
 import (
+	"encoding/json"
+	"fmt"
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
 	"github.com/wistia/wistia-cli/internal/sdk/sdkinternal/utils"
 )
 
+// PostExpiringTokenType - The type of object the permission is being performed on. Supports `media`, `folder` and `account`.
+type PostExpiringTokenType string
+
+const (
+	PostExpiringTokenTypeMedia   PostExpiringTokenType = "media"
+	PostExpiringTokenTypeFolder  PostExpiringTokenType = "folder"
+	PostExpiringTokenTypeAccount PostExpiringTokenType = "account"
+)
+
+func (e PostExpiringTokenType) ToPointer() *PostExpiringTokenType {
+	return &e
+}
+func (e *PostExpiringTokenType) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "media":
+		fallthrough
+	case "folder":
+		fallthrough
+	case "account":
+		*e = PostExpiringTokenType(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for PostExpiringTokenType: %v", v)
+	}
+}
+
 type Authorization struct {
-	// The type of object the permission is being performed on, only media is currently supported
-	Type string `json:"type"`
-	// The hashed if of the object the permissions are being performed on.
+	// The type of object the permission is being performed on. Supports `media`, `folder` and `account`.
+	Type PostExpiringTokenType `json:"type"`
+	// The id of the object the permissions are being performed on: the hashed id of a `media` or `folder`, or the numeric `id` of the `account` (as returned by `GET /modern/account`), which must be the token's own account.
 	ID string `json:"id"`
-	// The types of permissions, currently only supports edit-transcripts
+	// The permissions granted on the object. `media` supports `show`, `update`, `destroy` and `edit-transcripts`; `folder` supports `show`, `update` and `destroy`; `account` supports `create-folders`. Any permission implicitly allows viewing the object; all other permissions must be declared explicitly.
 	Permissions []string `json:"permissions"`
 }
 
-func (a *Authorization) GetType() string {
+func (a *Authorization) GetType() PostExpiringTokenType {
 	if a == nil {
-		return ""
+		return PostExpiringTokenType("")
 	}
 	return a.Type
 }
@@ -41,6 +73,8 @@ func (a *Authorization) GetPermissions() []string {
 type ExpiringAccessToken struct {
 	// an ISO8601 string of when the token will expire, defaults to two days from creation
 	ExpiresAt *string `json:"expires_at,omitzero"`
+	// The scopes the token will be granted. `graphql:all` allows GraphQL requests (e.g. the embedded transcript editor) and `all:delegate_to_contact_permissions` allows REST API requests authorized by the token's authorizations. Defaults to `["graphql:all"]` when omitted.
+	Scopes []string `json:"scopes,omitzero"`
 	// a list of authorizations the token will have
 	Authorizations []Authorization `json:"authorizations,omitzero"`
 }
@@ -61,6 +95,13 @@ func (e *ExpiringAccessToken) GetExpiresAt() *string {
 		return nil
 	}
 	return e.ExpiresAt
+}
+
+func (e *ExpiringAccessToken) GetScopes() []string {
+	if e == nil {
+		return nil
+	}
+	return e.Scopes
 }
 
 func (e *ExpiringAccessToken) GetAuthorizations() []Authorization {
@@ -119,7 +160,7 @@ func (e *PostExpiringTokenCode) IsExact() bool {
 
 // PostExpiringTokenResponseBody - Successful response
 type PostExpiringTokenResponseBody struct {
-	// A token which can be used to authorize requests to Wistia. Currently only for doing transcript embeds.
+	// A token which can be used to authorize requests to Wistia. With the `graphql:all` scope it authorizes GraphQL requests such as transcript embeds; with the `all:delegate_to_contact_permissions` scope it can also be used as a bearer token for REST API requests authorized by the token's authorizations.
 	Token string `json:"token"`
 }
 

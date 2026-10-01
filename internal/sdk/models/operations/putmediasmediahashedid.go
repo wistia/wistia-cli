@@ -18,8 +18,14 @@ type PutMediasMediaHashedIDRequestBody struct {
 	NewStillMediaID *string `json:"new_still_media_id,omitzero"`
 	// A new description for this media. Accepts plain text or markdown.
 	Description *string `json:"description,omitzero"`
-	// An array of tag names to apply to the media. Note that this will replace any existing tags!
+	// An array of tag names to apply to the media. This replaces any existing tags. To add tags without replacing existing tags, use bulk-tag-media.
 	Tags []string `json:"tags,omitzero"`
+	// Custom metadata field values to set, keyed by field key. Values take the
+	// same shapes as the Set Custom Metadata Field Value endpoint; a null value
+	// clears that field and omitted fields are untouched. Requires the custom
+	// metadata feature on the account.
+	//
+	CustomMetadata map[string]any `json:"custom_metadata,omitzero"`
 }
 
 func (p PutMediasMediaHashedIDRequestBody) MarshalJSON() ([]byte, error) {
@@ -59,6 +65,13 @@ func (p *PutMediasMediaHashedIDRequestBody) GetTags() []string {
 		return nil
 	}
 	return p.Tags
+}
+
+func (p *PutMediasMediaHashedIDRequestBody) GetCustomMetadata() map[string]any {
+	if p == nil {
+		return nil
+	}
+	return p.CustomMetadata
 }
 
 type PutMediasMediaHashedIDRequest struct {

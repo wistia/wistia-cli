@@ -10,9 +10,11 @@ import (
 
 func InitCustomizationsRoot(parent *cobra.Command) error {
 	var CustomizationsCmd = &cobra.Command{
-		Use:   "customizations",
-		Short: "Operations for customizations",
-		Long:  "Operations for customizations",
+		Use:         "customizations",
+		Short:       "Operations for customizations",
+		Long:        "Operations for customizations",
+		Args:        cobra.NoArgs,
+		Annotations: map[string]string{"speakeasy_cli_group": "true"},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if usage.UsageRequested(cmd) {
 				return usage.EmitSchema(cmd, cmd.OutOrStdout())
@@ -34,6 +36,86 @@ func InitCustomizationsRoot(parent *cobra.Command) error {
 	}
 
 	if err := initDeleteCmd(CustomizationsCmd); err != nil {
+		return err
+	}
+
+	if err := initGetAppearanceCmd(CustomizationsCmd); err != nil {
+		return err
+	}
+
+	if err := initUpdateAppearanceCmd(CustomizationsCmd); err != nil {
+		return err
+	}
+
+	if err := initGetPlaybackCmd(CustomizationsCmd); err != nil {
+		return err
+	}
+
+	if err := initUpdatePlaybackCmd(CustomizationsCmd); err != nil {
+		return err
+	}
+
+	if err := initGetThumbnailCmd(CustomizationsCmd); err != nil {
+		return err
+	}
+
+	if err := initUpdateThumbnailCmd(CustomizationsCmd); err != nil {
+		return err
+	}
+
+	if err := initGetAccessibilityCmd(CustomizationsCmd); err != nil {
+		return err
+	}
+
+	if err := initUpdateAccessibilityCmd(CustomizationsCmd); err != nil {
+		return err
+	}
+
+	if err := initGetChaptersCmd(CustomizationsCmd); err != nil {
+		return err
+	}
+
+	if err := initUpdateChaptersCmd(CustomizationsCmd); err != nil {
+		return err
+	}
+
+	if err := initGetEngagementCmd(CustomizationsCmd); err != nil {
+		return err
+	}
+
+	if err := initUpdateEngagementCmd(CustomizationsCmd); err != nil {
+		return err
+	}
+
+	if err := initGetRelatedMediaCmd(CustomizationsCmd); err != nil {
+		return err
+	}
+
+	if err := initUpdateRelatedMediaCmd(CustomizationsCmd); err != nil {
+		return err
+	}
+
+	if err := initGetSharingCmd(CustomizationsCmd); err != nil {
+		return err
+	}
+
+	if err := initUpdateSharingCmd(CustomizationsCmd); err != nil {
+		return err
+	}
+
+	if err := initGetLeadCaptureCmd(CustomizationsCmd); err != nil {
+		return err
+	}
+
+	if err := initUpdateLeadCaptureCmd(CustomizationsCmd); err != nil {
+		return err
+	}
+
+	if err := initGetAccessCmd(CustomizationsCmd); err != nil {
+		return err
+	}
+
+	if err := initUpdateAccessCmd(CustomizationsCmd); err != nil {
 		return err
 	}
 

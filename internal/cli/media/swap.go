@@ -23,17 +23,34 @@ var swapCmdMeta = []flagutil.FlagMeta{
 // initSwapCmd initializes the swap command.
 func initSwapCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
-		Use:     "swap",
+		Use:     "swap [media-hashed-id]",
 		Short:   "Swap Media",
-		Long:    "Swap one media with another media. This operation queues a background job to replace the original media with the replacement media while preserving the original media's hashed ID and URLs.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
+		Long:    "Swap one media with another media. This operation queues a background job to replace the original media with the replacement media while preserving the original media's hashed ID and URLs.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope can also be\nused when its authorizations grant the `update` permission on both the\nmedia being replaced and the replacement media. A replacement media the\ntoken does not name is treated as not found.",
 		Example: "  wistia media swap --media-hashed-id <id> --replacement-media-id <value>",
+		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runSwapCmd,
+		Annotations: map[string]string{
+			"speakeasy_operation": "put_/medias/{mediaHashedId}/swap",
+		},
 	}
 	flagutil.RegisterFlags(cmd, swapCmdMeta)
 	if err := flagutil.ValidateMeta[operations.PutMediasMediaHashedIDSwapRequest](swapCmdMeta); err != nil {
 		return fmt.Errorf("invalid metadata for swap: %w", err)
 	}
-	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin.")
+	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
+	if err := flagutil.AnnotateBodyFields(cmd, swapCmdMeta, "Body", "body"); err != nil {
+		return fmt.Errorf("annotate body fields for swap: %w", err)
+	}
+	if err := flagutil.DeclarePositionalFlag(cmd, "media-hashed-id", "The hashed ID of the media to be replaced. (or pass it as the [media-hashed-id] argument)", true); err != nil {
+		return err
+	}
+	if err := interactive.Declare(cmd, interactive.CommandSpec{Args: []interactive.ArgSpec{
+		{Name: "media-hashed-id", Summary: "The hashed ID of the media to be replaced.", Required: true, SatisfiedBy: []string{"media-hashed-id"}},
+	}}); err != nil {
+		return fmt.Errorf("declare interactive arguments for swap: %w", err)
+	}
 	parent.AddCommand(cmd)
 	return nil
 }
@@ -43,14 +60,12 @@ func runSwapCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, swapCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, swapCmdMeta); err != nil {
-			return err
-		}
+	if err := flagutil.ResolvePositionalFlag(cmd, args); err != nil {
+		return err
 	}
 	req, err := flagutil.BuildRequest[operations.PutMediasMediaHashedIDSwapRequest](cmd, swapCmdMeta, "Body", "body")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

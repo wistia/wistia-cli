@@ -13,16 +13,17 @@ import (
 )
 
 // GetChannelEpisodesSortBy - Ordering. Default is ID ASC. When using cursor pagination (see cursor param),
-// only `id` and `created` are supported. All other sort_by options (`position`, `title`, `updated`)
+// only `id` and `created` are supported. All other sort_by options (`position`, `title`, `updated`, `published_at`)
 // require offset pagination.
 type GetChannelEpisodesSortBy string
 
 const (
-	GetChannelEpisodesSortByPosition GetChannelEpisodesSortBy = "position"
-	GetChannelEpisodesSortByTitle    GetChannelEpisodesSortBy = "title"
-	GetChannelEpisodesSortByCreated  GetChannelEpisodesSortBy = "created"
-	GetChannelEpisodesSortByUpdated  GetChannelEpisodesSortBy = "updated"
-	GetChannelEpisodesSortByID       GetChannelEpisodesSortBy = "id"
+	GetChannelEpisodesSortByPosition    GetChannelEpisodesSortBy = "position"
+	GetChannelEpisodesSortByTitle       GetChannelEpisodesSortBy = "title"
+	GetChannelEpisodesSortByCreated     GetChannelEpisodesSortBy = "created"
+	GetChannelEpisodesSortByUpdated     GetChannelEpisodesSortBy = "updated"
+	GetChannelEpisodesSortByPublishedAt GetChannelEpisodesSortBy = "published_at"
+	GetChannelEpisodesSortByID          GetChannelEpisodesSortBy = "id"
 )
 
 func (e GetChannelEpisodesSortBy) ToPointer() *GetChannelEpisodesSortBy {
@@ -41,6 +42,8 @@ func (e *GetChannelEpisodesSortBy) UnmarshalJSON(data []byte) error {
 	case "created":
 		fallthrough
 	case "updated":
+		fallthrough
+	case "published_at":
 		fallthrough
 	case "id":
 		*e = GetChannelEpisodesSortBy(v)
@@ -157,7 +160,7 @@ type GetChannelEpisodesRequest struct {
 	// The hashed ID of the channel to grab channel episodes from.
 	ChannelID *string `queryParam:"style=form,explode=true,name=channel_id"`
 	// Ordering. Default is ID ASC. When using cursor pagination (see cursor param),
-	// only `id` and `created` are supported. All other sort_by options (`position`, `title`, `updated`)
+	// only `id` and `created` are supported. All other sort_by options (`position`, `title`, `updated`, `published_at`)
 	// require offset pagination.
 	//
 	SortBy *GetChannelEpisodesSortBy `queryParam:"style=form,explode=true,name=sort_by"`
@@ -297,7 +300,6 @@ func (e *GetChannelEpisodesCode) IsExact() bool {
 	return false
 }
 
-// GetChannelEpisodesEpisodeType - The type of episode.
 type GetChannelEpisodesEpisodeType string
 
 const (
@@ -325,32 +327,32 @@ func (e *GetChannelEpisodesEpisodeType) IsExact() bool {
 // is enabled for the channel.
 type GetChannelEpisodesPodcastSettings struct {
 	// The type of episode.
-	EpisodeType *GetChannelEpisodesEpisodeType `json:"episode_type,omitzero"`
+	EpisodeType optionalnullable.OptionalNullable[GetChannelEpisodesEpisodeType] `json:"episode_type,omitzero"`
 	// The number of the episode.
-	EpisodeNumber *int64 `json:"episode_number,omitzero"`
+	EpisodeNumber optionalnullable.OptionalNullable[int64] `json:"episode_number,omitzero"`
 	// The season number of the episode.
-	SeasonNumber *int64 `json:"season_number,omitzero"`
+	SeasonNumber optionalnullable.OptionalNullable[int64] `json:"season_number,omitzero"`
 	// Whether the episode contains explicit content.
 	ExplicitContent *bool `json:"explicit_content,omitzero"`
 	// Whether to hide the episode from the podcast feed.
 	HideFromFeed *bool `json:"hide_from_feed,omitzero"`
 }
 
-func (g *GetChannelEpisodesPodcastSettings) GetEpisodeType() *GetChannelEpisodesEpisodeType {
+func (g *GetChannelEpisodesPodcastSettings) GetEpisodeType() optionalnullable.OptionalNullable[GetChannelEpisodesEpisodeType] {
 	if g == nil {
 		return nil
 	}
 	return g.EpisodeType
 }
 
-func (g *GetChannelEpisodesPodcastSettings) GetEpisodeNumber() *int64 {
+func (g *GetChannelEpisodesPodcastSettings) GetEpisodeNumber() optionalnullable.OptionalNullable[int64] {
 	if g == nil {
 		return nil
 	}
 	return g.EpisodeNumber
 }
 
-func (g *GetChannelEpisodesPodcastSettings) GetSeasonNumber() *int64 {
+func (g *GetChannelEpisodesPodcastSettings) GetSeasonNumber() optionalnullable.OptionalNullable[int64] {
 	if g == nil {
 		return nil
 	}

@@ -144,9 +144,6 @@ func (p *PostMediasMediaHashedIDTrimsBackgroundJobStatus) GetStatus() PostMedias
 
 // PostMediasMediaHashedIDTrimsResponseBody - Successful queueing of trims worker.
 type PostMediasMediaHashedIDTrimsResponseBody struct {
-	// A background job keeps track of the progress of an asynchronous task, e.g
-	// bulk archiving media, translating media, etc.
-	//
 	BackgroundJobStatus *PostMediasMediaHashedIDTrimsBackgroundJobStatus `json:"background_job_status,omitzero"`
 }
 

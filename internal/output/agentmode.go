@@ -7,10 +7,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 	"sync/atomic"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 
 	"github.com/wistia/wistia-cli/internal/flagutil"
 )
@@ -21,7 +23,10 @@ var (
 )
 
 // agentEnvVars lists environment variables set by known AI coding agents.
+// Claude Code sets CLAUDECODE=1 (CLAUDE_CODE is kept as a defensive
+// alias only; no release has set it).
 var agentEnvVars = []string{
+	"CLAUDECODE",
 	"CLAUDE_CODE",
 	"CURSOR_AGENT",
 	"CODEX",
@@ -35,23 +40,14 @@ var agentEnvVars = []string{
 	"FORCE_AGENT_MODE",
 }
 
-// InitAgentMode detects and caches agent mode state for the lifetime of the
-// process. In production, each CLI invocation is a separate process, so this
-// is evaluated exactly once. For in-process test scenarios with multiple
-// command executions, call ResetAgentMode() between runs to re-evaluate.
-//
-// Checks --agent-mode flag first (explicit override), then auto-detects
-// from well-known AI agent environment variables.
+// InitAgentMode applies the explicit --agent-mode setting.
 func InitAgentMode(cmd *cobra.Command) {
-	// CompareAndSwap ensures only the first caller runs detection; subsequent
-	// calls return immediately without touching agentMode.
-	if !agentDetected.CompareAndSwap(false, true) {
-		return
-	}
-
-	// Explicit flag takes priority: --agent-mode=false overrides env vars.
 	if flagVal, changed := flagutil.GetBoolFlag(cmd, "agent-mode"); changed {
 		agentMode.Store(flagVal)
+		agentDetected.Store(true)
+		return
+	}
+	if !agentDetected.CompareAndSwap(false, true) {
 		return
 	}
 
@@ -70,16 +66,12 @@ func IsAgentMode() bool {
 }
 
 // ResetAgentMode resets agent mode state for testing.
-// This allows tests to re-evaluate agent mode detection on the next
-// InitAgentMode call.
 func ResetAgentMode() {
 	agentMode.Store(false)
 	agentDetected.Store(false)
 }
 
 // isTruthyEnvVar checks if an environment variable is set to a truthy value.
-// Returns true for "1", "true", "yes" (case-insensitive).
-// Returns false for "", "0", "false", "no", or absent.
 func isTruthyEnvVar(name string) bool {
 	val := os.Getenv(name)
 	switch strings.ToLower(val) {
@@ -90,93 +82,124 @@ func isTruthyEnvVar(name string) bool {
 	}
 }
 
-// classifyErrorType maps HTTP status codes to machine-readable error types.
-func classifyErrorType(statusCode int) string {
-	switch {
-	case statusCode == 401:
-		return "authentication_error"
-	case statusCode == 403:
-		return "authorization_error"
-	case statusCode == 404:
-		return "not_found"
-	case statusCode == 400 || statusCode == 422:
-		return "validation_error"
-	case statusCode == 429:
-		return "rate_limit_error"
-	case statusCode >= 500:
-		return "server_error"
-	case statusCode == 0:
-		return "connection_error"
-	default:
-		return "api_error"
+func shouldRenderStructuredError(format, jqExpr string) bool {
+	if IsAgentMode() || format == "json" || jqExpr != "" {
+		return true
+	}
+	return false
+}
+
+func shouldClassifyError(_, _ string) bool {
+	if IsAgentMode() {
+		return true
+	}
+	return false
+}
+
+func AgentModeError(cmd *cobra.Command, message string, hints []string) error {
+	err := withErrorOrigin(
+		withCLIHints(WithCLIReason(fmt.Errorf("%s", message), ReasonCLIValidation), hints),
+		ErrorOriginCLI,
+	)
+	classification := Classify(cmd, err)
+	return renderClassifiedError(cmd, err, classification, true)
+}
+
+// Cobra aborts flag parsing at the first unknown command or flag, before these flags are seen.
+var preparsedRendering struct {
+	outputFormat string
+	jq           string
+	args         []string
+}
+
+// ResetPreparsedRendering clears the rendering flags captured by
+// PreparseRenderingFlags. Every parse starts from a reset so a later
+// ExecuteRoot in the same process never inherits an earlier invocation's
+// --output-format or --jq; the explore hand-off forwards the outer
+// invocation's rendering flags in argv (see ExplorerHandoffArgs), so they
+// are captured again there. Test harnesses that drive output helpers on
+// hand-built commands without re-parsing call this directly.
+func ResetPreparsedRendering() {
+	preparsedRendering.outputFormat = ""
+	preparsedRendering.jq = ""
+	preparsedRendering.args = nil
+}
+
+func PreparseRenderingFlags(target *cobra.Command, args []string) {
+	ResetPreparsedRendering()
+	preparsedRendering.args = append([]string(nil), args...)
+	fs := pflag.NewFlagSet("rendering", pflag.ContinueOnError)
+	fs.ParseErrorsWhitelist.UnknownFlags = true
+	fs.SetOutput(nopWriter{})
+	fs.Usage = func() {}
+	mirror := func(name, shorthand, noOptDefVal string) {
+		if fs.Lookup(name) != nil {
+			return
+		}
+		if shorthand != "" && fs.ShorthandLookup(shorthand) != nil {
+			shorthand = ""
+		}
+		fs.StringP(name, shorthand, "", "")
+		fs.Lookup(name).NoOptDefVal = noOptDefVal
+	}
+	mirror("agent-mode", "", "true")
+	mirror("output-format", "o", "")
+	mirror("jq", "q", "")
+	if target != nil {
+		target.InheritedFlags()
+		target.Flags().VisitAll(func(f *pflag.Flag) {
+			mirror(f.Name, f.Shorthand, f.NoOptDefVal)
+		})
+	}
+	_ = fs.Parse(args)
+	if fs.Changed("agent-mode") {
+		if enabled, err := strconv.ParseBool(fs.Lookup("agent-mode").Value.String()); err == nil {
+			agentMode.Store(enabled)
+			agentDetected.Store(true)
+		}
+	}
+	if fs.Changed("output-format") {
+		preparsedRendering.outputFormat = fs.Lookup("output-format").Value.String()
+	}
+	if fs.Changed("jq") {
+		preparsedRendering.jq = fs.Lookup("jq").Value.String()
 	}
 }
 
-// enrichAgentError adds structured error fields for agent mode consumers.
-// Non-destructive: only sets each key if not already present in m,
-// preserving any values already provided by the API response.
-func enrichAgentError(m map[string]interface{}, err error, statusCode int) {
-	if _, has := m["error_type"]; !has {
-		m["error_type"] = classifyErrorType(statusCode)
-	}
-	if _, has := m["message"]; !has {
-		m["message"] = err.Error()
-	}
+type nopWriter struct{}
 
-	if _, has := m["hints"]; !has {
-		var hints []string
-		switch {
-		case statusCode == 401 || statusCode == 403:
-			hints = append(hints,
-				"Set credentials via environment variables or CLI flags",
-				fmt.Sprintf("Run '%s whoami' to check current authentication status", cliName),
-			)
-		case statusCode == 404:
-			hints = append(hints, "Verify the resource identifier is correct")
-		case statusCode == 422 || statusCode == 400:
-			hints = append(hints, "Use --dry-run to preview the request and check parameters")
-		case statusCode == 429:
-			hints = append(hints, "Rate limited — retry after a delay")
-		case statusCode >= 500:
-			hints = append(hints, "Server error — this may be transient, retry the command")
-		case statusCode == 0:
-			hints = append(hints,
-				"Check network connectivity",
-				"Verify the server URL with --server-url",
-			)
-		}
-		if len(hints) > 0 {
-			m["hints"] = hints
-		}
-	}
-}
+func (nopWriter) Write(p []byte) (int, error) { return len(p), nil }
 
-// AgentModeError outputs a structured agent-mode error and returns a non-nil
-// error for exit code 1. Used for CLI-level errors (not API errors) such as
-// blocking the interactive configure command.
-//
-// Single-print contract: outputs structured JSON exactly once to stderr,
-// then returns the error. Callers must NOT print the error again.
-func AgentModeError(cmd *cobra.Command, errorType, message string, hints []string) error {
-	out := cmd.ErrOrStderr()
+func CLIError(cmd *cobra.Command, err error) error {
+	if err == nil || IsRendered(err) {
+		return err
+	}
+	jqExpr, changed := flagutil.GetStringFlag(cmd, "jq")
+	if !changed || jqExpr == "" {
+		jqExpr = preparsedRendering.jq
+	}
+	format := resolveOutputFormat(cmd)
+	classification := Classify(cmd, withErrorOrigin(err, ErrorOriginCLI))
+	if shouldClassifyError(format, jqExpr) {
+		return renderClassifiedError(cmd, err, classification, shouldRenderStructuredError(format, jqExpr))
+	}
+	if !shouldRenderStructuredError(format, jqExpr) {
+		return retainClassification(err, classification)
+	}
 
 	envelope := map[string]interface{}{
-		"error":      message,
-		"error_type": errorType,
-		"message":    message,
+		"error":     err.Error(),
+		"exit_code": ExitCodeFor(classification),
 	}
-	if len(hints) > 0 {
+	mergeMachineErrorFields(envelope, err)
+	if hints := append(leadingHints(cmd, err, classification.Reason), errorCLIHints(err)...); len(hints) > 0 {
 		envelope["hints"] = hints
 	}
-
-	jsonData, err := json.MarshalIndent(envelope, "", "  ")
-	if err != nil {
-		fmt.Fprintln(out, message)
-		return fmt.Errorf("%s", message)
+	jsonData, marshalErr := json.MarshalIndent(envelope, "", "  ")
+	if marshalErr != nil {
+		return retainClassification(err, classification)
 	}
-
-	// No colorization in agent mode.
-	fmt.Fprintln(out, string(jsonData))
-
-	return fmt.Errorf("%s", message)
+	colorFlag, _ := flagutil.GetStringFlag(cmd, "color")
+	printJSON(cmd.ErrOrStderr(), jsonData, ShouldColorize(colorFlag))
+	return markRendered(err, classification)
 }

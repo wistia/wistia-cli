@@ -4,21 +4,67 @@
 package operations
 
 import (
+	"encoding/json"
+	"fmt"
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
 	"github.com/wistia/wistia-cli/internal/sdk/optionalnullable"
 	"github.com/wistia/wistia-cli/internal/sdk/sdkinternal/utils"
 	"time"
 )
 
+// IetfLanguageTag - IETF language tag for the audio description. Defaults to `eng` (English).
+// Non-English orders must set `ai_enabled: false` — AI-generated audio
+// descriptions are only available in English.
+//
+// Spanish (`es-419`) orders are only accepted when the source media is
+// tagged as a Spanish-language variant or has no detected language
+// (e.g. silent videos). Spanish orders against a media in another
+// language return `400`.
+type IetfLanguageTag string
+
+const (
+	IetfLanguageTagEng   IetfLanguageTag = "eng"
+	IetfLanguageTagEs419 IetfLanguageTag = "es-419"
+)
+
+func (e IetfLanguageTag) ToPointer() *IetfLanguageTag {
+	return &e
+}
+func (e *IetfLanguageTag) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "eng":
+		fallthrough
+	case "es-419":
+		*e = IetfLanguageTag(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for IetfLanguageTag: %v", v)
+	}
+}
+
 type PostMediaExtendedAudioDescriptionsOrderRequest struct {
 	// The hashed id of the media to order the extended audio description for.
 	MediaID string `json:"media_id"`
 	// Whether the extended audio description should be automatically enabled once the order is complete.
 	Enabled *bool `default:"true" json:"enabled"`
-	// Whether to use AI-generated audio descriptions (cheaper) or human-generated (higher quality).
+	// Whether to use AI-generated audio descriptions (cheaper) or human-generated (higher quality). AI is only available for English orders.
 	AiEnabled *bool `default:"true" json:"ai_enabled"`
 	// Optional instructions for the audio description provider.
 	OrderInstructions *string `json:"order_instructions,omitzero"`
+	// IETF language tag for the audio description. Defaults to `eng` (English).
+	// Non-English orders must set `ai_enabled: false` — AI-generated audio
+	// descriptions are only available in English.
+	//
+	// Spanish (`es-419`) orders are only accepted when the source media is
+	// tagged as a Spanish-language variant or has no detected language
+	// (e.g. silent videos). Spanish orders against a media in another
+	// language return `400`.
+	//
+	IetfLanguageTag *IetfLanguageTag `default:"eng" json:"ietf_language_tag"`
 }
 
 func (p PostMediaExtendedAudioDescriptionsOrderRequest) MarshalJSON() ([]byte, error) {
@@ -58,6 +104,13 @@ func (p *PostMediaExtendedAudioDescriptionsOrderRequest) GetOrderInstructions() 
 		return nil
 	}
 	return p.OrderInstructions
+}
+
+func (p *PostMediaExtendedAudioDescriptionsOrderRequest) GetIetfLanguageTag() *IetfLanguageTag {
+	if p == nil {
+		return nil
+	}
+	return p.IetfLanguageTag
 }
 
 // PostMediaExtendedAudioDescriptionsOrderCode - A machine-readable identifier for the specific authorization failure.
@@ -181,7 +234,9 @@ type PostMediaExtendedAudioDescriptionsOrderOrder struct {
 	OrderStatus PostMediaExtendedAudioDescriptionsOrderOrderStatus `json:"order_status"`
 	CreatedAt   time.Time                                          `json:"created_at"`
 	UpdatedAt   time.Time                                          `json:"updated_at"`
-	Media       PostMediaExtendedAudioDescriptionsOrderMedia       `json:"media"`
+	// IETF language tag the audio description was ordered in (e.g. `eng`, `es-419`).
+	IetfLanguageTag string                                       `json:"ietf_language_tag"`
+	Media           PostMediaExtendedAudioDescriptionsOrderMedia `json:"media"`
 	// Link to the resulting media extended audio description. Null while the order is in progress.
 	MediaExtendedAudioDescription optionalnullable.OptionalNullable[PostMediaExtendedAudioDescriptionsOrderMediaExtendedAudioDescription] `json:"media_extended_audio_description,omitzero"`
 }
@@ -225,6 +280,13 @@ func (p *PostMediaExtendedAudioDescriptionsOrderOrder) GetUpdatedAt() time.Time 
 	return p.UpdatedAt
 }
 
+func (p *PostMediaExtendedAudioDescriptionsOrderOrder) GetIetfLanguageTag() string {
+	if p == nil {
+		return ""
+	}
+	return p.IetfLanguageTag
+}
+
 func (p *PostMediaExtendedAudioDescriptionsOrderOrder) GetMedia() PostMediaExtendedAudioDescriptionsOrderMedia {
 	if p == nil {
 		return PostMediaExtendedAudioDescriptionsOrderMedia{}
@@ -244,6 +306,8 @@ type PostMediaExtendedAudioDescriptionsOrderResponseBody struct {
 	// Success message indicating the order has been placed.
 	Message string                                       `json:"message"`
 	Order   PostMediaExtendedAudioDescriptionsOrderOrder `json:"order"`
+	// The credits held for the audio description, deducted when it completes. Null when the audio description is not paid for with credits. Decimal amounts are returned as strings.
+	ExpectedBilledCredits *string `json:"expected_billed_credits"`
 }
 
 func (p *PostMediaExtendedAudioDescriptionsOrderResponseBody) GetMessage() string {
@@ -258,6 +322,13 @@ func (p *PostMediaExtendedAudioDescriptionsOrderResponseBody) GetOrder() PostMed
 		return PostMediaExtendedAudioDescriptionsOrderOrder{}
 	}
 	return p.Order
+}
+
+func (p *PostMediaExtendedAudioDescriptionsOrderResponseBody) GetExpectedBilledCredits() *string {
+	if p == nil {
+		return nil
+	}
+	return p.ExpectedBilledCredits
 }
 
 type PostMediaExtendedAudioDescriptionsOrderResponse struct {

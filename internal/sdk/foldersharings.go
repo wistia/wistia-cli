@@ -37,6 +37,11 @@ func newFolderSharings(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks
 // ```
 // Read all data
 // ```
+//
+// Tokens with the "Act with a team member's permissions" permission
+// (`all:delegate_to_contact_permissions` scope) can also be used. Requests
+// made with such a token are authorized using the permissions of the
+// contact assigned to the token.
 func (s *FolderSharings) List(ctx context.Context, request operations.GetFoldersFolderIDSharingsRequest, opts ...operations.Option) (*operations.GetFoldersFolderIDSharingsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -76,10 +81,17 @@ func (s *FolderSharings) List(ctx context.Context, request operations.GetFolders
 		timeout = s.sdkConfiguration.Timeout
 	}
 
+	var streamCancel context.CancelFunc
+
 	if timeout != nil {
 		var cancel context.CancelFunc
 		ctx, cancel = context.WithTimeout(ctx, *timeout)
-		defer cancel()
+		streamCancel = cancel
+		defer func() {
+			if streamCancel != nil {
+				streamCancel()
+			}
+		}()
 	}
 
 	req, err := http.NewRequestWithContext(ctx, "GET", opURL, nil)
@@ -141,7 +153,10 @@ func (s *FolderSharings) List(ctx context.Context, request operations.GetFolders
 	case httpRes.StatusCode == 200:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			if o.SkipDeserialization == nil || !*o.SkipDeserialization {
+			if o.SkipDeserialization != nil && *o.SkipDeserialization {
+				httpRes.Body = utils.BodyWithCancel(httpRes.Body, streamCancel)
+				streamCancel = nil
+			} else {
 				rawBody, err := utils.ConsumeRawBody(httpRes)
 				if err != nil {
 					return nil, err
@@ -171,7 +186,7 @@ func (s *FolderSharings) List(ctx context.Context, request operations.GetFolders
 
 			var out sdkerrors.GetFoldersFolderIDSharingsBadRequestError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -196,7 +211,7 @@ func (s *FolderSharings) List(ctx context.Context, request operations.GetFolders
 
 			var out sdkerrors.GetFoldersFolderIDSharingsUnauthorizedError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -221,7 +236,7 @@ func (s *FolderSharings) List(ctx context.Context, request operations.GetFolders
 
 			var out sdkerrors.GetFoldersFolderIDSharingsInternalServerError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -267,6 +282,11 @@ func (s *FolderSharings) List(ctx context.Context, request operations.GetFolders
 // ```
 // Read, update & delete anything
 // ```
+//
+// Tokens with the "Act with a team member's permissions" permission
+// (`all:delegate_to_contact_permissions` scope) can also be used. Requests
+// made with such a token are authorized using the permissions of the
+// contact assigned to the token.
 func (s *FolderSharings) Create(ctx context.Context, request operations.PostFoldersFolderIDSharingsRequest, opts ...operations.Option) (*operations.PostFoldersFolderIDSharingsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -310,10 +330,17 @@ func (s *FolderSharings) Create(ctx context.Context, request operations.PostFold
 		timeout = s.sdkConfiguration.Timeout
 	}
 
+	var streamCancel context.CancelFunc
+
 	if timeout != nil {
 		var cancel context.CancelFunc
 		ctx, cancel = context.WithTimeout(ctx, *timeout)
-		defer cancel()
+		streamCancel = cancel
+		defer func() {
+			if streamCancel != nil {
+				streamCancel()
+			}
+		}()
 	}
 
 	req, err := http.NewRequestWithContext(ctx, "POST", opURL, bodyReader)
@@ -376,7 +403,10 @@ func (s *FolderSharings) Create(ctx context.Context, request operations.PostFold
 
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			if o.SkipDeserialization == nil || !*o.SkipDeserialization {
+			if o.SkipDeserialization != nil && *o.SkipDeserialization {
+				httpRes.Body = utils.BodyWithCancel(httpRes.Body, streamCancel)
+				streamCancel = nil
+			} else {
 				rawBody, err := utils.ConsumeRawBody(httpRes)
 				if err != nil {
 					return nil, err
@@ -406,7 +436,7 @@ func (s *FolderSharings) Create(ctx context.Context, request operations.PostFold
 
 			var out sdkerrors.PostFoldersFolderIDSharingsUnauthorizedError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -431,7 +461,7 @@ func (s *FolderSharings) Create(ctx context.Context, request operations.PostFold
 
 			var out sdkerrors.PostFoldersFolderIDSharingsForbiddenError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -456,7 +486,7 @@ func (s *FolderSharings) Create(ctx context.Context, request operations.PostFold
 
 			var out sdkerrors.PostFoldersFolderIDSharingsInternalServerError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -504,6 +534,11 @@ func (s *FolderSharings) Create(ctx context.Context, request operations.PostFold
 // ```
 // Read all data
 // ```
+//
+// Tokens with the "Act with a team member's permissions" permission
+// (`all:delegate_to_contact_permissions` scope) can also be used. Requests
+// made with such a token are authorized using the permissions of the
+// contact assigned to the token.
 func (s *FolderSharings) Get(ctx context.Context, request operations.GetFoldersFolderIDSharingsSharingIDRequest, opts ...operations.Option) (*operations.GetFoldersFolderIDSharingsSharingIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -543,10 +578,17 @@ func (s *FolderSharings) Get(ctx context.Context, request operations.GetFoldersF
 		timeout = s.sdkConfiguration.Timeout
 	}
 
+	var streamCancel context.CancelFunc
+
 	if timeout != nil {
 		var cancel context.CancelFunc
 		ctx, cancel = context.WithTimeout(ctx, *timeout)
-		defer cancel()
+		streamCancel = cancel
+		defer func() {
+			if streamCancel != nil {
+				streamCancel()
+			}
+		}()
 	}
 
 	req, err := http.NewRequestWithContext(ctx, "GET", opURL, nil)
@@ -604,7 +646,10 @@ func (s *FolderSharings) Get(ctx context.Context, request operations.GetFoldersF
 	case httpRes.StatusCode == 200:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			if o.SkipDeserialization == nil || !*o.SkipDeserialization {
+			if o.SkipDeserialization != nil && *o.SkipDeserialization {
+				httpRes.Body = utils.BodyWithCancel(httpRes.Body, streamCancel)
+				streamCancel = nil
+			} else {
 				rawBody, err := utils.ConsumeRawBody(httpRes)
 				if err != nil {
 					return nil, err
@@ -634,7 +679,7 @@ func (s *FolderSharings) Get(ctx context.Context, request operations.GetFoldersF
 
 			var out sdkerrors.GetFoldersFolderIDSharingsSharingIDUnauthorizedError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -659,7 +704,7 @@ func (s *FolderSharings) Get(ctx context.Context, request operations.GetFoldersF
 
 			var out sdkerrors.GetFoldersFolderIDSharingsSharingIDNotFoundError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -684,7 +729,7 @@ func (s *FolderSharings) Get(ctx context.Context, request operations.GetFoldersF
 
 			var out sdkerrors.GetFoldersFolderIDSharingsSharingIDInternalServerError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -730,6 +775,11 @@ func (s *FolderSharings) Get(ctx context.Context, request operations.GetFoldersF
 // ```
 // Read, update & delete anything
 // ```
+//
+// Tokens with the "Act with a team member's permissions" permission
+// (`all:delegate_to_contact_permissions` scope) can also be used. Requests
+// made with such a token are authorized using the permissions of the
+// contact assigned to the token.
 func (s *FolderSharings) Update(ctx context.Context, request operations.PutFoldersFolderIDSharingsSharingIDRequest, opts ...operations.Option) (*operations.PutFoldersFolderIDSharingsSharingIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -773,10 +823,17 @@ func (s *FolderSharings) Update(ctx context.Context, request operations.PutFolde
 		timeout = s.sdkConfiguration.Timeout
 	}
 
+	var streamCancel context.CancelFunc
+
 	if timeout != nil {
 		var cancel context.CancelFunc
 		ctx, cancel = context.WithTimeout(ctx, *timeout)
-		defer cancel()
+		streamCancel = cancel
+		defer func() {
+			if streamCancel != nil {
+				streamCancel()
+			}
+		}()
 	}
 
 	req, err := http.NewRequestWithContext(ctx, "PUT", opURL, bodyReader)
@@ -837,7 +894,10 @@ func (s *FolderSharings) Update(ctx context.Context, request operations.PutFolde
 	case httpRes.StatusCode == 200:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			if o.SkipDeserialization == nil || !*o.SkipDeserialization {
+			if o.SkipDeserialization != nil && *o.SkipDeserialization {
+				httpRes.Body = utils.BodyWithCancel(httpRes.Body, streamCancel)
+				streamCancel = nil
+			} else {
 				rawBody, err := utils.ConsumeRawBody(httpRes)
 				if err != nil {
 					return nil, err
@@ -867,7 +927,7 @@ func (s *FolderSharings) Update(ctx context.Context, request operations.PutFolde
 
 			var out sdkerrors.PutFoldersFolderIDSharingsSharingIDUnauthorizedError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -892,7 +952,7 @@ func (s *FolderSharings) Update(ctx context.Context, request operations.PutFolde
 
 			var out sdkerrors.PutFoldersFolderIDSharingsSharingIDNotFoundError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -917,7 +977,7 @@ func (s *FolderSharings) Update(ctx context.Context, request operations.PutFolde
 
 			var out sdkerrors.PutFoldersFolderIDSharingsSharingIDInternalServerError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -963,6 +1023,11 @@ func (s *FolderSharings) Update(ctx context.Context, request operations.PutFolde
 // ```
 // Read, update & delete anything
 // ```
+//
+// Tokens with the "Act with a team member's permissions" permission
+// (`all:delegate_to_contact_permissions` scope) can also be used. Requests
+// made with such a token are authorized using the permissions of the
+// contact assigned to the token.
 func (s *FolderSharings) Delete(ctx context.Context, request operations.DeleteFoldersFolderIDSharingsSharingIDRequest, opts ...operations.Option) (*operations.DeleteFoldersFolderIDSharingsSharingIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1002,10 +1067,17 @@ func (s *FolderSharings) Delete(ctx context.Context, request operations.DeleteFo
 		timeout = s.sdkConfiguration.Timeout
 	}
 
+	var streamCancel context.CancelFunc
+
 	if timeout != nil {
 		var cancel context.CancelFunc
 		ctx, cancel = context.WithTimeout(ctx, *timeout)
-		defer cancel()
+		streamCancel = cancel
+		defer func() {
+			if streamCancel != nil {
+				streamCancel()
+			}
+		}()
 	}
 
 	req, err := http.NewRequestWithContext(ctx, "DELETE", opURL, nil)
@@ -1063,7 +1135,10 @@ func (s *FolderSharings) Delete(ctx context.Context, request operations.DeleteFo
 	case httpRes.StatusCode == 200:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			if o.SkipDeserialization == nil || !*o.SkipDeserialization {
+			if o.SkipDeserialization != nil && *o.SkipDeserialization {
+				httpRes.Body = utils.BodyWithCancel(httpRes.Body, streamCancel)
+				streamCancel = nil
+			} else {
 				rawBody, err := utils.ConsumeRawBody(httpRes)
 				if err != nil {
 					return nil, err
@@ -1093,7 +1168,7 @@ func (s *FolderSharings) Delete(ctx context.Context, request operations.DeleteFo
 
 			var out sdkerrors.DeleteFoldersFolderIDSharingsSharingIDUnauthorizedError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -1118,7 +1193,7 @@ func (s *FolderSharings) Delete(ctx context.Context, request operations.DeleteFo
 
 			var out sdkerrors.DeleteFoldersFolderIDSharingsSharingIDNotFoundError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{
@@ -1143,7 +1218,7 @@ func (s *FolderSharings) Delete(ctx context.Context, request operations.DeleteFo
 
 			var out sdkerrors.DeleteFoldersFolderIDSharingsSharingIDInternalServerError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
 
 			out.HTTPMeta = components.HTTPMetadata{

@@ -10,9 +10,11 @@ import (
 
 func InitUploadOrImportMediaRoot(parent *cobra.Command) error {
 	var UploadOrImportMediaCmd = &cobra.Command{
-		Use:   "upload-or-import-media",
-		Short: "Operations for upload-or-import-media",
-		Long:  "Operations for upload-or-import-media",
+		Use:         "upload-or-import-media",
+		Short:       "Operations for upload-or-import-media",
+		Long:        "Operations for upload-or-import-media",
+		Args:        cobra.NoArgs,
+		Annotations: map[string]string{"speakeasy_cli_group": "true"},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if usage.UsageRequested(cmd) {
 				return usage.EmitSchema(cmd, cmd.OutOrStdout())

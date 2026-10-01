@@ -10,9 +10,11 @@ import (
 
 func InitMediaRoot(parent *cobra.Command) error {
 	var MediaCmd = &cobra.Command{
-		Use:   "media",
-		Short: "Operations for media",
-		Long:  "Operations for media",
+		Use:         "media",
+		Short:       "Operations for media",
+		Long:        "Operations for media",
+		Args:        cobra.NoArgs,
+		Annotations: map[string]string{"speakeasy_cli_group": "true"},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if usage.UsageRequested(cmd) {
 				return usage.EmitSchema(cmd, cmd.OutOrStdout())

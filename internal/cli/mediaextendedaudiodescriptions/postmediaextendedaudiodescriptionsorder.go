@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/wistia/wistia-cli/internal/client"
 	"github.com/wistia/wistia-cli/internal/flagutil"
-	"github.com/wistia/wistia-cli/internal/interactive"
 	"github.com/wistia/wistia-cli/internal/output"
 	"github.com/wistia/wistia-cli/internal/sdk"
 	"github.com/wistia/wistia-cli/internal/sdk/models/operations"
@@ -18,8 +17,9 @@ import (
 var postMediaExtendedAudioDescriptionsOrderCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "media-id", Shorthand: "m", FieldPath: "MediaID", Kind: flagutil.FlagKindString, Required: true, Description: "The hashed id of the media to order the extended audio description for. [required]"},
 	{FlagName: "enabled", Shorthand: "e", FieldPath: "Enabled", Kind: flagutil.FlagKindBool, Optional: true, HasDefault: true, DefaultBool: true, Description: "Whether the extended audio description should be automatically enabled once the order is complete."},
-	{FlagName: "ai-enabled", Shorthand: "a", FieldPath: "AiEnabled", Kind: flagutil.FlagKindBool, Optional: true, HasDefault: true, DefaultBool: true, Description: "Whether to use AI-generated audio descriptions (cheaper) or human-generated (higher quality)."},
+	{FlagName: "ai-enabled", Shorthand: "a", FieldPath: "AiEnabled", Kind: flagutil.FlagKindBool, Optional: true, HasDefault: true, DefaultBool: true, Description: "Whether to use AI-generated audio descriptions (cheaper) or human-generated (higher quality). AI is only available for English orders."},
 	{FlagName: "order-instructions", FieldPath: "OrderInstructions", Kind: flagutil.FlagKindString, Optional: true, Description: "Optional instructions for the audio description provider."},
+	{FlagName: "ietf-language-tag", Shorthand: "i", FieldPath: "IetfLanguageTag", Kind: flagutil.FlagKindEnum, Optional: true, HasDefault: true, DefaultStr: "eng", EnumValues: []string{"eng", "es-419"}, Description: "IETF language tag for the audio description. Defaults to 'eng' (English).\nNon-English orders must set 'ai_enabled: false' — AI-generated audio\ndescriptions are only available in English.\n\nSpanish ('es-419') orders are only accepted when the source media is\ntagged as a Spanish-language variant or has no detected language\n(e.g. silent videos). Spanish orders against a media in another\nlanguage return '400'.\n(options: eng, es-419)"},
 }
 
 // initPostMediaExtendedAudioDescriptionsOrderCmd initializes the post-media-extended-audio-descriptions-order command.
@@ -29,14 +29,23 @@ func initPostMediaExtendedAudioDescriptionsOrderCmd(parent *cobra.Command) error
 		Short:   "Order Extended Audio Description",
 		Long:    "Orders an extended audio description for a media. The request will charge the credit card on the account when the order is ready.\nOnly accounts on paid plans with the `order_audio_descriptions` feature can use this endpoint.",
 		Example: "  wistia media-extended-audio-descriptions post-media-extended-audio-descriptions-order --media-id <id>",
+		Args:    cobra.NoArgs,
 		RunE:    runPostMediaExtendedAudioDescriptionsOrderCmd,
 		Aliases: []string{"pmeado"},
+		Annotations: map[string]string{
+			"speakeasy_operation": "post_/media_extended_audio_descriptions/order",
+		},
 	}
 	flagutil.RegisterFlags(cmd, postMediaExtendedAudioDescriptionsOrderCmdMeta)
 	if err := flagutil.ValidateMeta[operations.PostMediaExtendedAudioDescriptionsOrderRequest](postMediaExtendedAudioDescriptionsOrderCmdMeta); err != nil {
 		return fmt.Errorf("invalid metadata for post-media-extended-audio-descriptions-order: %w", err)
 	}
-	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin.")
+	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
+	if err := flagutil.AnnotateBodyFields(cmd, postMediaExtendedAudioDescriptionsOrderCmdMeta, "", "body"); err != nil {
+		return fmt.Errorf("annotate body fields for post-media-extended-audio-descriptions-order: %w", err)
+	}
 	parent.AddCommand(cmd)
 	return nil
 }
@@ -46,14 +55,9 @@ func runPostMediaExtendedAudioDescriptionsOrderCmd(cmd *cobra.Command, args []st
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, postMediaExtendedAudioDescriptionsOrderCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, postMediaExtendedAudioDescriptionsOrderCmdMeta); err != nil {
-			return err
-		}
-	}
 	request, err := flagutil.BuildRequest[operations.PostMediaExtendedAudioDescriptionsOrderRequest](cmd, postMediaExtendedAudioDescriptionsOrderCmdMeta, "", "body")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

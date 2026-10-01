@@ -24,18 +24,35 @@ var postRemixesRemixHashedIDExportCmdMeta = []flagutil.FlagMeta{
 // initPostRemixesRemixHashedIdExportCmd initializes the post-remixes-remix-hashed-id-export command.
 func initPostRemixesRemixHashedIdExportCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
-		Use:     "post-remixes-remix-hashed-id-export",
+		Use:     "post-remixes-remix-hashed-id-export [remix-hashed-id]",
 		Short:   "Export Remix",
-		Long:    "Export a completed remix to a folder in your account. Triggers the full\nrender pipeline. The remix must have reached \"edit_tree_generated\" status.\n\nIf no folder_id is provided, the remix is exported to the source media's folder.\n\n<!--- HIDE-MCP -->\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n<!--- /HIDE-MCP -->",
+		Long:    "Export a remix to a folder in your account, triggering the full render pipeline.\n\nRemixes created through this API export automatically, so a remix is usually\nalready exported by the time you can call this. Exporting one again does not\nre-render it — it moves and renames the media the first export produced, so you\ncan use this to place a finished remix in a different folder or under a\ndifferent name.\n\nIf no folder_id is provided, the remix is exported to the source media's folder.\n\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
 		Example: "  wistia remix post-remixes-remix-hashed-id-export --remix-hashed-id <id>",
+		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runPostRemixesRemixHashedIdExportCmd,
 		Aliases: []string{"prrhie"},
+		Annotations: map[string]string{
+			"speakeasy_operation": "post_/remixes/{remixHashedId}/export",
+		},
 	}
 	flagutil.RegisterFlags(cmd, postRemixesRemixHashedIDExportCmdMeta)
 	if err := flagutil.ValidateMeta[operations.PostRemixesRemixHashedIDExportRequest](postRemixesRemixHashedIDExportCmdMeta); err != nil {
 		return fmt.Errorf("invalid metadata for post-remixes-remix-hashed-id-export: %w", err)
 	}
-	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin.")
+	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
+	if err := flagutil.AnnotateBodyFields(cmd, postRemixesRemixHashedIDExportCmdMeta, "Body", "body"); err != nil {
+		return fmt.Errorf("annotate body fields for post-remixes-remix-hashed-id-export: %w", err)
+	}
+	if err := flagutil.DeclarePositionalFlag(cmd, "remix-hashed-id", "The hashed ID of the remix to export. (or pass it as the [remix-hashed-id] argument)", true); err != nil {
+		return err
+	}
+	if err := interactive.Declare(cmd, interactive.CommandSpec{Args: []interactive.ArgSpec{
+		{Name: "remix-hashed-id", Summary: "The hashed ID of the remix to export.", Required: true, SatisfiedBy: []string{"remix-hashed-id"}},
+	}}); err != nil {
+		return fmt.Errorf("declare interactive arguments for post-remixes-remix-hashed-id-export: %w", err)
+	}
 	parent.AddCommand(cmd)
 	return nil
 }
@@ -45,14 +62,12 @@ func runPostRemixesRemixHashedIdExportCmd(cmd *cobra.Command, args []string) err
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, postRemixesRemixHashedIDExportCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, postRemixesRemixHashedIDExportCmdMeta); err != nil {
-			return err
-		}
+	if err := flagutil.ResolvePositionalFlag(cmd, args); err != nil {
+		return err
 	}
 	req, err := flagutil.BuildRequest[operations.PostRemixesRemixHashedIDExportRequest](cmd, postRemixesRemixHashedIDExportCmdMeta, "Body", "body")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

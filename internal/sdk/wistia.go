@@ -3,7 +3,7 @@
 
 package sdk
 
-// Generated from OpenAPI doc version edge-version and generator version 2.911.0
+// Generated from OpenAPI doc version edge-version and generator version 2.943.0
 
 import (
 	"context"
@@ -52,24 +52,39 @@ func Pointer[T any](v T) *T { return &v }
 type Wistia struct {
 	SDKVersion                     string
 	UploadOrImportMedia            *UploadOrImportMedia
+	PushDevices                    *PushDevices
+	ReviewBundles                  *ReviewBundles
+	CustomMetadataFieldDefinitions *CustomMetadataFieldDefinitions
+	DeletedMedia                   *DeletedMedia
 	Media                          *Media
 	Customizations                 *Customizations
 	ShareLinks                     *ShareLinks
 	Captions                       *Captions
+	Speakers                       *Speakers
 	Localizations                  *Localizations
+	CustomMetadataFieldValues      *CustomMetadataFieldValues
 	Trims                          *Trims
 	MediaExtendedAudioDescriptions *MediaExtendedAudioDescriptions
+	Brands                         *Brands
 	Tags                           *Tags
+	BulkActions                    *BulkActions
+	Bulk                           *Bulk
 	Taggings                       *Taggings
 	Folders                        *Folders
 	FolderSharings                 *FolderSharings
 	Subfolders                     *Subfolders
 	Channels                       *Channels
 	ChannelEpisodes                *ChannelEpisodes
+	ChannelCollaborators           *ChannelCollaborators
 	Webinars                       *Webinars
 	WebinarRegistrations           *WebinarRegistrations
+	WebinarCollaborators           *WebinarCollaborators
 	Account                        *Account
+	Contacts                       *Contacts
+	Contact                        *Contact
+	AccountTrials                  *AccountTrials
 	Search                         *Search
+	ResourceUrls                   *ResourceUrls
 	ExpiringAccessTokens           *ExpiringAccessTokens
 	BackgroundJobStatus            *BackgroundJobStatus
 	AllowedDomains                 *AllowedDomains
@@ -79,6 +94,7 @@ type Wistia struct {
 	StatsMedia                     *StatsMedia
 	StatsVisitors                  *StatsVisitors
 	StatsEvents                    *StatsEvents
+	AnalyticsAccount               *AnalyticsAccount
 	AnalyticsMedia                 *AnalyticsMedia
 	AnalyticsWebinar               *AnalyticsWebinar
 
@@ -156,10 +172,13 @@ func WithTimeout(timeout time.Duration) SDKOption {
 // New creates a new instance of the SDK with the provided options
 func New(opts ...SDKOption) *Wistia {
 	sdk := &Wistia{
-		SDKVersion: "0.0.1",
+		SDKVersion: "0.2.0",
 		sdkConfiguration: config.SDKConfiguration{
-			UserAgent:  "speakeasy-sdk/go 0.0.1 2.911.0 edge-version github.com/wistia/wistia-cli/internal/sdk",
-			ServerList: ServerList,
+			UserAgent:         "speakeasy-sdk/go 0.2.0 2.943.0 edge-version github.com/wistia/wistia-cli/internal/sdk",
+			SDKVersion:        "0.2.0",
+			GenVersion:        "2.943.0",
+			OpenAPIDocVersion: "edge-version",
+			ServerList:        ServerList,
 		},
 		hooks: hooks.New(),
 	}
@@ -175,24 +194,39 @@ func New(opts ...SDKOption) *Wistia {
 	sdk.sdkConfiguration = sdk.hooks.SDKInit(sdk.sdkConfiguration)
 
 	sdk.UploadOrImportMedia = newUploadOrImportMedia(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.PushDevices = newPushDevices(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.ReviewBundles = newReviewBundles(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.CustomMetadataFieldDefinitions = newCustomMetadataFieldDefinitions(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.DeletedMedia = newDeletedMedia(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Media = newMedia(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Customizations = newCustomizations(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.ShareLinks = newShareLinks(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Captions = newCaptions(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.Speakers = newSpeakers(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Localizations = newLocalizations(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.CustomMetadataFieldValues = newCustomMetadataFieldValues(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Trims = newTrims(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.MediaExtendedAudioDescriptions = newMediaExtendedAudioDescriptions(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.Brands = newBrands(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Tags = newTags(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.BulkActions = newBulkActions(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.Bulk = newBulk(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Taggings = newTaggings(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Folders = newFolders(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.FolderSharings = newFolderSharings(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Subfolders = newSubfolders(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Channels = newChannels(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.ChannelEpisodes = newChannelEpisodes(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.ChannelCollaborators = newChannelCollaborators(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Webinars = newWebinars(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.WebinarRegistrations = newWebinarRegistrations(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.WebinarCollaborators = newWebinarCollaborators(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Account = newAccount(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.Contacts = newContacts(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.Contact = newContact(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.AccountTrials = newAccountTrials(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Search = newSearch(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.ResourceUrls = newResourceUrls(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.ExpiringAccessTokens = newExpiringAccessTokens(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.BackgroundJobStatus = newBackgroundJobStatus(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.AllowedDomains = newAllowedDomains(sdk, sdk.sdkConfiguration, sdk.hooks)
@@ -202,6 +236,7 @@ func New(opts ...SDKOption) *Wistia {
 	sdk.StatsMedia = newStatsMedia(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.StatsVisitors = newStatsVisitors(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.StatsEvents = newStatsEvents(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.AnalyticsAccount = newAnalyticsAccount(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.AnalyticsMedia = newAnalyticsMedia(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.AnalyticsWebinar = newAnalyticsWebinar(sdk, sdk.sdkConfiguration, sdk.hooks)
 

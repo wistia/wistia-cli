@@ -93,8 +93,9 @@ func (g *GetAllowedDomainsCursor) GetAfter() *string {
 type GetAllowedDomainsSortBy string
 
 const (
-	GetAllowedDomainsSortByID     GetAllowedDomainsSortBy = "id"
-	GetAllowedDomainsSortByDomain GetAllowedDomainsSortBy = "domain"
+	GetAllowedDomainsSortByID      GetAllowedDomainsSortBy = "id"
+	GetAllowedDomainsSortByDomain  GetAllowedDomainsSortBy = "domain"
+	GetAllowedDomainsSortByCreated GetAllowedDomainsSortBy = "created"
 )
 
 func (e GetAllowedDomainsSortBy) ToPointer() *GetAllowedDomainsSortBy {
@@ -109,6 +110,8 @@ func (e *GetAllowedDomainsSortBy) UnmarshalJSON(data []byte) error {
 	case "id":
 		fallthrough
 	case "domain":
+		fallthrough
+	case "created":
 		*e = GetAllowedDomainsSortBy(v)
 		return nil
 	default:

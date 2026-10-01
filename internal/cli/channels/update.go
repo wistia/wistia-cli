@@ -16,29 +16,46 @@ import (
 )
 
 var updateCmdMeta = []flagutil.FlagMeta{
-	{FlagName: "channel-hashed-id", FieldPath: "ChannelHashedID", Kind: flagutil.FlagKindString, Required: true, Description: "The hashed id of the Channel [required]"},
+	{FlagName: "channel-hashed-id", Shorthand: "c", FieldPath: "ChannelHashedID", Kind: flagutil.FlagKindString, Required: true, Description: "The hashed id of the Channel [required]"},
 	{FlagName: "name", Shorthand: "n", FieldPath: "Body.Name", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"name,omitempty"`, Description: "The display name for the channel"},
 	{FlagName: "description", FieldPath: "Body.Description", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"description,omitempty"`, Description: "The channel's description."},
 	{FlagName: "auto-publish-enabled", Shorthand: "a", FieldPath: "Body.AutoPublishEnabled", Kind: flagutil.FlagKindBool, Optional: true, Description: "Whether the episodes are automatically published when added to the channel. Cannot be enabled if podcasting is on."},
 	{FlagName: "podcast-enabled", FieldPath: "Body.PodcastEnabled", Kind: flagutil.FlagKindBool, Optional: true, Description: "Whether podcasting is enabled for this channel."},
 	{FlagName: "custom-url", FieldPath: "Body.CustomURL", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"custom_url,omitempty"`, Description: "Use if embedding the channel on your own site. The custom URL ensures links always direct to your page and not Wistia's."},
-	{FlagName: "podcast-settings", FieldPath: "Body.PodcastSettings", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"podcast_settings,omitempty"`, Description: "Podcast specific settings for a channel. These settings only take effect if\npodcasting is enabled for the channel.\n"},
+	{FlagName: "podcast-settings", FieldPath: "Body.PodcastSettings", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"podcast_settings,omitempty"`, Description: "Podcast specific settings for a channel. These settings only take effect if\npodcasting is enabled for the channel. These values appear in the channel's\npublicly accessible podcast RSS feed."},
 }
 
 // initUpdateCmd initializes the update command.
 func initUpdateCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
-		Use:     "update",
+		Use:     "update [channel-hashed-id]",
 		Short:   "Update Channel",
 		Long:    "Updates a channel.",
 		Example: "  wistia channels update --channel-hashed-id <id>",
+		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runUpdateCmd,
+		Annotations: map[string]string{
+			"speakeasy_operation": "put_/channels/{channelHashedId}",
+		},
 	}
 	flagutil.RegisterFlags(cmd, updateCmdMeta)
 	if err := flagutil.ValidateMeta[operations.PutChannelsChannelHashedIDRequest](updateCmdMeta); err != nil {
 		return fmt.Errorf("invalid metadata for update: %w", err)
 	}
-	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin.")
+	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
+	if err := flagutil.AnnotateBodyFields(cmd, updateCmdMeta, "Body", "body"); err != nil {
+		return fmt.Errorf("annotate body fields for update: %w", err)
+	}
+	if err := flagutil.DeclarePositionalFlag(cmd, "channel-hashed-id", "The hashed id of the Channel (or pass it as the [channel-hashed-id] argument)", true); err != nil {
+		return err
+	}
+	if err := interactive.Declare(cmd, interactive.CommandSpec{Args: []interactive.ArgSpec{
+		{Name: "channel-hashed-id", Summary: "The hashed id of the Channel", Required: true, SatisfiedBy: []string{"channel-hashed-id"}},
+	}}); err != nil {
+		return fmt.Errorf("declare interactive arguments for update: %w", err)
+	}
 	parent.AddCommand(cmd)
 	return nil
 }
@@ -48,14 +65,12 @@ func runUpdateCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, updateCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, updateCmdMeta); err != nil {
-			return err
-		}
+	if err := flagutil.ResolvePositionalFlag(cmd, args); err != nil {
+		return err
 	}
 	req, err := flagutil.BuildRequest[operations.PutChannelsChannelHashedIDRequest](cmd, updateCmdMeta, "Body", "body")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

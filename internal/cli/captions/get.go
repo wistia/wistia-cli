@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/wistia/wistia-cli/internal/client"
 	"github.com/wistia/wistia-cli/internal/flagutil"
-	"github.com/wistia/wistia-cli/internal/interactive"
 	"github.com/wistia/wistia-cli/internal/output"
 	"github.com/wistia/wistia-cli/internal/sdk"
 	"github.com/wistia/wistia-cli/internal/sdk/models/operations"
@@ -17,7 +16,9 @@ import (
 
 var getCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "media-hashed-id", Shorthand: "m", FieldPath: "MediaHashedID", Kind: flagutil.FlagKindString, Required: true, Description: "The hashed ID of the media from which captions are to be retrieved. [required]"},
-	{FlagName: "language-code", Shorthand: "l", FieldPath: "LanguageCode", Kind: flagutil.FlagKindString, Required: true, Description: "The 3-character ISO 639-2 language code of the captions to be retrieved (e.g., `eng`, `fra`, `spa`). Some languages use extended IETF subtags (e.g., `zh-Hant`). [required]"},
+	{FlagName: "language-code", Shorthand: "l", FieldPath: "LanguageCode", Kind: flagutil.FlagKindString, Required: true, Description: "The 3-character ISO 639-2 language code of the captions to be retrieved (e.g., 'eng', 'fra', 'spa'). Some languages use extended IETF subtags (e.g., 'zh-Hant'). [required]"},
+	{FlagName: "include", FieldPath: "Include", Kind: flagutil.FlagKindEnum, Optional: true, EnumValues: []string{"segments", "diarized_segments"}, Description: "Set to 'segments' for time-coded caption cues or 'diarized_segments' for speaker-turn segments in JSON responses. (options: segments, diarized_segments)"},
+	{FlagName: "include-speakers", FieldPath: "IncludeSpeakers", Kind: flagutil.FlagKindBool, Optional: true, HasDefault: true, Description: "For TXT responses, set to true to group the transcript by speaker turns and include speaker labels. Ignored for other response formats."},
 }
 
 // initGetCmd initializes the get command.
@@ -25,9 +26,13 @@ func initGetCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "get",
 		Short:   "Show Captions",
-		Long:    "Returns a video's captions in the specified language.\nSupports multiple formats: JSON (default), SRT, VTT, and TXT.\nUse file extensions (.srt, .vtt, .txt) or Accept headers to specify format.\n\n## Requires api token with one of the following permissions\n```\nRead all folder and media data\n```",
+		Long:    "Returns a media's captions in the specified language.\nSupports multiple formats: JSON (default), SRT, VTT, and TXT.\nUse file extensions (.srt, .vtt, .txt) or Accept headers to specify format.\n\n## Requires api token with one of the following permissions\n```\nRead all folder and media data\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
 		Example: "  wistia captions get --media-hashed-id <id> --language-code <value>",
+		Args:    cobra.NoArgs,
 		RunE:    runGetCmd,
+		Annotations: map[string]string{
+			"speakeasy_operation": "get_/medias/{mediaHashedId}/captions/{languageCode}",
+		},
 	}
 	flagutil.RegisterFlags(cmd, getCmdMeta)
 	if err := flagutil.ValidateMeta[operations.GetMediasMediaHashedIDCaptionsLanguageCodeRequest](getCmdMeta); err != nil {
@@ -42,14 +47,9 @@ func runGetCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, getCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, getCmdMeta); err != nil {
-			return err
-		}
-	}
 	req, err := flagutil.BuildRequest[operations.GetMediasMediaHashedIDCaptionsLanguageCodeRequest](cmd, getCmdMeta, "", "")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

@@ -22,16 +22,28 @@ var getStatsCmdMeta = []flagutil.FlagMeta{
 // initGetStatsCmd initializes the get-stats command.
 func initGetStatsCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
-		Use:     "get-stats",
+		Use:     "get-stats [media-hashed-id]",
 		Short:   "Show Media Aggregated Stats",
-		Long:    "Aggregated tracking statistics for a video embedded on your site.\n\n## Requires api token with one of the following permissions\n```\nRead all folder and media data\n```",
+		Long:    "Aggregated tracking statistics for a video embedded on your site.\n\n## Requires api token with one of the following permissions\n```\nRead all folder and media data\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
 		Example: "  wistia media get-stats --media-hashed-id <id>",
+		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runGetStatsCmd,
 		Aliases: []string{"gs"},
+		Annotations: map[string]string{
+			"speakeasy_operation": "get_/medias/{mediaHashedId}/stats",
+		},
 	}
 	flagutil.RegisterFlags(cmd, getStatsCmdMeta)
 	if err := flagutil.ValidateMeta[operations.GetMediasMediaHashedIDStatsRequest](getStatsCmdMeta); err != nil {
 		return fmt.Errorf("invalid metadata for get-stats: %w", err)
+	}
+	if err := flagutil.DeclarePositionalFlag(cmd, "media-hashed-id", "The hashed ID of the video. (or pass it as the [media-hashed-id] argument)", true); err != nil {
+		return err
+	}
+	if err := interactive.Declare(cmd, interactive.CommandSpec{Args: []interactive.ArgSpec{
+		{Name: "media-hashed-id", Summary: "The hashed ID of the video.", Required: true, SatisfiedBy: []string{"media-hashed-id"}},
+	}}); err != nil {
+		return fmt.Errorf("declare interactive arguments for get-stats: %w", err)
 	}
 	parent.AddCommand(cmd)
 	return nil
@@ -42,14 +54,12 @@ func runGetStatsCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, getStatsCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, getStatsCmdMeta); err != nil {
-			return err
-		}
+	if err := flagutil.ResolvePositionalFlag(cmd, args); err != nil {
+		return err
 	}
 	req, err := flagutil.BuildRequest[operations.GetMediasMediaHashedIDStatsRequest](cmd, getStatsCmdMeta, "", "")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

@@ -23,17 +23,38 @@ func (e *PostRemixesInternalServerError) Error() string {
 	return string(data)
 }
 
-// PostRemixesUnprocessableEntityError - Unprocessable entity (e.g., credit limit reached, media not found).
-type PostRemixesUnprocessableEntityError struct {
+// PostRemixesCreditsError - Unprocessable entity (e.g., credit limit reached, media not found).
+type PostRemixesCreditsError struct {
 	Error_ *string `json:"error,omitzero"`
-	// When remix credits renew (ISO 8601), if the error is a credit limit.
-	CreditsRenewAt *time.Time              `json:"credits_renew_at,omitzero"`
-	HTTPMeta       components.HTTPMetadata `json:"-"`
+	// Present when the request is blocked by insufficient Credits.
+	BillingMode *operations.PostRemixesBillingMode `json:"billing_mode,omitzero"`
+	// Available Credit balance when the request was rejected.
+	CreditBalance *float64 `json:"credit_balance,omitzero"`
+	// Account-specific Credit cost of the requested Remix.
+	CreditsRequired *float64 `json:"credits_required,omitzero"`
+	// Next scheduled plan Credit grant (ISO 8601), when available.
+	CreditsRenewAt *time.Time `json:"credits_renew_at,omitzero"`
+	// Account plan type, present for insufficient-Credits errors.
+	PlanType *operations.PostRemixesPlanType `json:"plan_type,omitzero"`
+	HTTPMeta components.HTTPMetadata         `json:"-"`
 }
 
-var _ error = &PostRemixesUnprocessableEntityError{}
+var _ error = &PostRemixesCreditsError{}
 
-func (e *PostRemixesUnprocessableEntityError) Error() string {
+func (e *PostRemixesCreditsError) Error() string {
+	data, _ := json.Marshal(e)
+	return string(data)
+}
+
+// PostRemixesForbiddenError - Forbidden, token is valid but account does not have access to feature
+type PostRemixesForbiddenError struct {
+	Error_   *string                 `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata `json:"-"`
+}
+
+var _ error = &PostRemixesForbiddenError{}
+
+func (e *PostRemixesForbiddenError) Error() string {
 	data, _ := json.Marshal(e)
 	return string(data)
 }

@@ -54,36 +54,6 @@ func (e *PutMediasCopyCode) IsExact() bool {
 	return false
 }
 
-type Destination struct {
-	// The type of the destination container.
-	Type *string `json:"type,omitzero"`
-	// The name of the destination folder.
-	Name *string `json:"name,omitzero"`
-	// The hashed ID of the destination folder.
-	HashedID *string `json:"hashedId,omitzero"`
-}
-
-func (d *Destination) GetType() *string {
-	if d == nil {
-		return nil
-	}
-	return d.Type
-}
-
-func (d *Destination) GetName() *string {
-	if d == nil {
-		return nil
-	}
-	return d.Name
-}
-
-func (d *Destination) GetHashedID() *string {
-	if d == nil {
-		return nil
-	}
-	return d.HashedID
-}
-
 // PutMediasCopyStatus - The status of the background job that's been queued for the request.
 type PutMediasCopyStatus string
 
@@ -141,15 +111,42 @@ func (p *PutMediasCopyBackgroundJobStatus) GetStatus() PutMediasCopyStatus {
 	return p.Status
 }
 
+type Destination struct {
+	// The type of the destination container.
+	Type *string `json:"type,omitzero"`
+	// The name of the destination folder.
+	Name *string `json:"name,omitzero"`
+	// The hashed ID of the destination folder.
+	HashedID *string `json:"hashedId,omitzero"`
+}
+
+func (d *Destination) GetType() *string {
+	if d == nil {
+		return nil
+	}
+	return d.Type
+}
+
+func (d *Destination) GetName() *string {
+	if d == nil {
+		return nil
+	}
+	return d.Name
+}
+
+func (d *Destination) GetHashedID() *string {
+	if d == nil {
+		return nil
+	}
+	return d.HashedID
+}
+
 // PutMediasCopyResponseBody - Successful copy request of media.
 type PutMediasCopyResponseBody struct {
 	// A confirmation message that the background job has been queued.
-	Message     *string      `json:"message,omitzero"`
-	Destination *Destination `json:"destination,omitzero"`
-	// A background job keeps track of the progress of an asynchronous task, e.g
-	// bulk archiving media, translating media, etc.
-	//
-	BackgroundJobStatus *PutMediasCopyBackgroundJobStatus `json:"background_job_status,omitzero"`
+	Message             string                           `json:"message"`
+	BackgroundJobStatus PutMediasCopyBackgroundJobStatus `json:"background_job_status"`
+	Destination         *Destination                     `json:"destination,omitzero"`
 }
 
 func (p PutMediasCopyResponseBody) MarshalJSON() ([]byte, error) {
@@ -163,11 +160,18 @@ func (p *PutMediasCopyResponseBody) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (p *PutMediasCopyResponseBody) GetMessage() *string {
+func (p *PutMediasCopyResponseBody) GetMessage() string {
 	if p == nil {
-		return nil
+		return ""
 	}
 	return p.Message
+}
+
+func (p *PutMediasCopyResponseBody) GetBackgroundJobStatus() PutMediasCopyBackgroundJobStatus {
+	if p == nil {
+		return PutMediasCopyBackgroundJobStatus{}
+	}
+	return p.BackgroundJobStatus
 }
 
 func (p *PutMediasCopyResponseBody) GetDestination() *Destination {
@@ -175,13 +179,6 @@ func (p *PutMediasCopyResponseBody) GetDestination() *Destination {
 		return nil
 	}
 	return p.Destination
-}
-
-func (p *PutMediasCopyResponseBody) GetBackgroundJobStatus() *PutMediasCopyBackgroundJobStatus {
-	if p == nil {
-		return nil
-	}
-	return p.BackgroundJobStatus
 }
 
 type PutMediasCopyResponse struct {

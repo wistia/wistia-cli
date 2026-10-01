@@ -23,17 +23,34 @@ var copyCmdMeta = []flagutil.FlagMeta{
 // initCopyCmd initializes the copy command.
 func initCopyCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
-		Use:     "copy",
+		Use:     "copy [id]",
 		Short:   "Copy Folder",
-		Long:    "This copies a folder (previously called project) and all its media and subfolders asynchronously in a background job.\n\nThis method does not copy the folder’s sharing information (i.e. users that could see the old folder will not automatically be able to see the new one).\n\nFor the request you can specify the owner of a new folder by passing an optional parameter. The person you specify must be a Manager in the account.\n\nThe body of the response will contain an object representing the background job that was created.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
+		Long:    "This copies a folder (previously called project) and all its media and subfolders asynchronously in a background job.\n\nThis method does not copy the folder’s sharing information (i.e. users that could see the old folder will not automatically be able to see the new one).\n\nFor the request you can specify the owner of a new folder by passing an optional parameter. The person you specify must be a Manager in the account.\n\nThe body of the response will contain an object representing the background job that was created.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
 		Example: "  wistia folders copy --id <id>",
+		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runCopyCmd,
+		Annotations: map[string]string{
+			"speakeasy_operation": "post_/folders/{id}/copy",
+		},
 	}
 	flagutil.RegisterFlags(cmd, copyCmdMeta)
 	if err := flagutil.ValidateMeta[operations.PostFoldersIDCopyRequest](copyCmdMeta); err != nil {
 		return fmt.Errorf("invalid metadata for copy: %w", err)
 	}
-	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin.")
+	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
+	if err := flagutil.AnnotateBodyFields(cmd, copyCmdMeta, "Body", "body"); err != nil {
+		return fmt.Errorf("annotate body fields for copy: %w", err)
+	}
+	if err := flagutil.DeclarePositionalFlag(cmd, "id", "Folder Hashed ID (or pass it as the [id] argument)", true); err != nil {
+		return err
+	}
+	if err := interactive.Declare(cmd, interactive.CommandSpec{Args: []interactive.ArgSpec{
+		{Name: "id", Summary: "Folder Hashed ID", Required: true, SatisfiedBy: []string{"id"}},
+	}}); err != nil {
+		return fmt.Errorf("declare interactive arguments for copy: %w", err)
+	}
 	parent.AddCommand(cmd)
 	return nil
 }
@@ -43,14 +60,12 @@ func runCopyCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if interactive.ShouldPrompt(cmd, copyCmdMeta) {
-		if err := interactive.PromptAndSetFlags(cmd, copyCmdMeta); err != nil {
-			return err
-		}
+	if err := flagutil.ResolvePositionalFlag(cmd, args); err != nil {
+		return err
 	}
 	req, err := flagutil.BuildRequest[operations.PostFoldersIDCopyRequest](cmd, copyCmdMeta, "Body", "body")
 	if err != nil {
-		return err
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {

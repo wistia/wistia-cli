@@ -22,6 +22,19 @@ func (e *GetSearchInternalServerError) Error() string {
 	return string(data)
 }
 
+// GetSearchForbiddenError - Forbidden, token is valid but account does not have access to feature
+type GetSearchForbiddenError struct {
+	Error_   *string                 `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata `json:"-"`
+}
+
+var _ error = &GetSearchForbiddenError{}
+
+func (e *GetSearchForbiddenError) Error() string {
+	data, _ := json.Marshal(e)
+	return string(data)
+}
+
 // GetSearchUnauthorizedError - Unauthorized, invalid or missing token
 type GetSearchUnauthorizedError struct {
 	// A machine-readable identifier for the specific authorization failure.

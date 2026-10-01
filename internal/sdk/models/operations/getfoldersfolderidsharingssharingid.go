@@ -56,10 +56,10 @@ func (e *GetFoldersFolderIDSharingsSharingIDCode) IsExact() bool {
 }
 
 type GetFoldersFolderIDSharingsSharingIDShare struct {
-	ID    int64  `json:"id"`
-	Name  string `json:"name"`
-	Type  string `json:"type"`
-	Email string `json:"email"`
+	ID    int64   `json:"id"`
+	Name  string  `json:"name"`
+	Type  string  `json:"type"`
+	Email *string `json:"email,omitzero"`
 }
 
 func (g *GetFoldersFolderIDSharingsSharingIDShare) GetID() int64 {
@@ -83,9 +83,9 @@ func (g *GetFoldersFolderIDSharingsSharingIDShare) GetType() string {
 	return g.Type
 }
 
-func (g *GetFoldersFolderIDSharingsSharingIDShare) GetEmail() string {
+func (g *GetFoldersFolderIDSharingsSharingIDShare) GetEmail() *string {
 	if g == nil {
-		return ""
+		return nil
 	}
 	return g.Email
 }

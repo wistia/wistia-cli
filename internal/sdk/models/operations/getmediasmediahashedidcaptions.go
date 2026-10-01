@@ -46,6 +46,147 @@ func (e *GetMediasMediaHashedIDCaptionsCode) IsExact() bool {
 	return false
 }
 
+type GetMediasMediaHashedIDCaptionsSegment struct {
+	// The segment's start offset from the beginning of the media, in milliseconds.
+	StartMs int64 `json:"start_ms"`
+	// The segment's end offset from the beginning of the media, in milliseconds.
+	EndMs int64 `json:"end_ms"`
+	// The segment's transcript text.
+	Text string `json:"text"`
+}
+
+func (g *GetMediasMediaHashedIDCaptionsSegment) GetStartMs() int64 {
+	if g == nil {
+		return 0
+	}
+	return g.StartMs
+}
+
+func (g *GetMediasMediaHashedIDCaptionsSegment) GetEndMs() int64 {
+	if g == nil {
+		return 0
+	}
+	return g.EndMs
+}
+
+func (g *GetMediasMediaHashedIDCaptionsSegment) GetText() string {
+	if g == nil {
+		return ""
+	}
+	return g.Text
+}
+
+type GetMediasMediaHashedIDCaptionsSpeaker struct {
+	// The media-specific speaker assignment identifier, or null for an unidentified turn.
+	MediaSpeakerID *string `json:"media_speaker_id"`
+	// The reusable account speaker-profile identifier, or null for an unidentified turn.
+	SpeakerProfileID *string `json:"speaker_profile_id"`
+	// The anonymous detected-speaker identifier that can be assigned, or null once resolved or when unknown.
+	DetectedSpeakerID *string `json:"detected_speaker_id"`
+	// The resolved name, a display-only generic label, or `Unknown speaker`. Speakers are numbered by when they first appear in the transcript. Assigning a name does not renumber the other speakers, so generic labels may start at `Speaker 2` or skip numbers. Use `detected_speaker_id` as the identifier.
+	DisplayLabel string `json:"display_label"`
+	// The assigned speaker profile's name, or null for an unidentified turn.
+	Name *string `json:"name"`
+}
+
+func (g *GetMediasMediaHashedIDCaptionsSpeaker) GetMediaSpeakerID() *string {
+	if g == nil {
+		return nil
+	}
+	return g.MediaSpeakerID
+}
+
+func (g *GetMediasMediaHashedIDCaptionsSpeaker) GetSpeakerProfileID() *string {
+	if g == nil {
+		return nil
+	}
+	return g.SpeakerProfileID
+}
+
+func (g *GetMediasMediaHashedIDCaptionsSpeaker) GetDetectedSpeakerID() *string {
+	if g == nil {
+		return nil
+	}
+	return g.DetectedSpeakerID
+}
+
+func (g *GetMediasMediaHashedIDCaptionsSpeaker) GetDisplayLabel() string {
+	if g == nil {
+		return ""
+	}
+	return g.DisplayLabel
+}
+
+func (g *GetMediasMediaHashedIDCaptionsSpeaker) GetName() *string {
+	if g == nil {
+		return nil
+	}
+	return g.Name
+}
+
+type GetMediasMediaHashedIDCaptionsDiarizedSegment struct {
+	// The speaker-turn segment's start offset from the beginning of the media, in milliseconds.
+	StartMs int64 `json:"start_ms"`
+	// The speaker-turn segment's end offset from the beginning of the media, in milliseconds.
+	EndMs int64 `json:"end_ms"`
+	// Transcript text attributed to this speaker turn.
+	Text    string                                `json:"text"`
+	Speaker GetMediasMediaHashedIDCaptionsSpeaker `json:"speaker"`
+}
+
+func (g *GetMediasMediaHashedIDCaptionsDiarizedSegment) GetStartMs() int64 {
+	if g == nil {
+		return 0
+	}
+	return g.StartMs
+}
+
+func (g *GetMediasMediaHashedIDCaptionsDiarizedSegment) GetEndMs() int64 {
+	if g == nil {
+		return 0
+	}
+	return g.EndMs
+}
+
+func (g *GetMediasMediaHashedIDCaptionsDiarizedSegment) GetText() string {
+	if g == nil {
+		return ""
+	}
+	return g.Text
+}
+
+func (g *GetMediasMediaHashedIDCaptionsDiarizedSegment) GetSpeaker() GetMediasMediaHashedIDCaptionsSpeaker {
+	if g == nil {
+		return GetMediasMediaHashedIDCaptionsSpeaker{}
+	}
+	return g.Speaker
+}
+
+// GetMediasMediaHashedIDCaptionsDiarizationStatus - Speaker-data availability when `include=diarized_segments`.
+type GetMediasMediaHashedIDCaptionsDiarizationStatus string
+
+const (
+	GetMediasMediaHashedIDCaptionsDiarizationStatusReady       GetMediasMediaHashedIDCaptionsDiarizationStatus = "ready"
+	GetMediasMediaHashedIDCaptionsDiarizationStatusProcessing  GetMediasMediaHashedIDCaptionsDiarizationStatus = "processing"
+	GetMediasMediaHashedIDCaptionsDiarizationStatusUnavailable GetMediasMediaHashedIDCaptionsDiarizationStatus = "unavailable"
+	GetMediasMediaHashedIDCaptionsDiarizationStatusDisabled    GetMediasMediaHashedIDCaptionsDiarizationStatus = "disabled"
+)
+
+func (e GetMediasMediaHashedIDCaptionsDiarizationStatus) ToPointer() *GetMediasMediaHashedIDCaptionsDiarizationStatus {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetMediasMediaHashedIDCaptionsDiarizationStatus) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "ready", "processing", "unavailable", "disabled":
+			return true
+		}
+	}
+	return false
+}
+
 type GetMediasMediaHashedIDCaptionsResponseBody struct {
 	// English name of the language.
 	EnglishName *string `json:"english_name,omitzero"`
@@ -58,8 +199,33 @@ type GetMediasMediaHashedIDCaptionsResponseBody struct {
 	IsDraft bool                                      `json:"is_draft"`
 	// The unique hashed identifier of the time-coded transcript.
 	ID string `json:"id"`
+	// The hashed ID of the media the captions belong to.
+	MediaID string `json:"media_id"`
+	// The active caption payload version, or null when no payload is active.
+	Version *int64 `json:"version"`
+	// Time-coded caption cues when `include=segments`; null otherwise.
+	Segments []GetMediasMediaHashedIDCaptionsSegment `json:"segments"`
+	// Transcript text split at speaker-turn boundaries when `include=diarized_segments`. The media-level speaker timeline is shared across language tracks.
+	DiarizedSegments []GetMediasMediaHashedIDCaptionsDiarizedSegment `json:"diarized_segments,omitzero"`
+	// Speaker-data availability when `include=diarized_segments`.
+	DiarizationStatus *GetMediasMediaHashedIDCaptionsDiarizationStatus `json:"diarization_status,omitzero"`
+	// Whether speaker data can be derived from the active default transcript when `include=diarized_segments`.
+	DiarizationDerivable *bool `json:"diarization_derivable,omitzero"`
+	// The concurrency version for speaker assignments when `include=diarized_segments`, or null when speaker data is unavailable.
+	SpeakerDataVersion optionalnullable.OptionalNullable[int64] `json:"speaker_data_version,omitzero"`
 	// A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
 	Cursor optionalnullable.OptionalNullable[string] `json:"cursor,omitzero"`
+}
+
+func (g GetMediasMediaHashedIDCaptionsResponseBody) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(g, "", false)
+}
+
+func (g *GetMediasMediaHashedIDCaptionsResponseBody) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &g, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (g *GetMediasMediaHashedIDCaptionsResponseBody) GetEnglishName() *string {
@@ -102,6 +268,55 @@ func (g *GetMediasMediaHashedIDCaptionsResponseBody) GetID() string {
 		return ""
 	}
 	return g.ID
+}
+
+func (g *GetMediasMediaHashedIDCaptionsResponseBody) GetMediaID() string {
+	if g == nil {
+		return ""
+	}
+	return g.MediaID
+}
+
+func (g *GetMediasMediaHashedIDCaptionsResponseBody) GetVersion() *int64 {
+	if g == nil {
+		return nil
+	}
+	return g.Version
+}
+
+func (g *GetMediasMediaHashedIDCaptionsResponseBody) GetSegments() []GetMediasMediaHashedIDCaptionsSegment {
+	if g == nil {
+		return nil
+	}
+	return g.Segments
+}
+
+func (g *GetMediasMediaHashedIDCaptionsResponseBody) GetDiarizedSegments() []GetMediasMediaHashedIDCaptionsDiarizedSegment {
+	if g == nil {
+		return nil
+	}
+	return g.DiarizedSegments
+}
+
+func (g *GetMediasMediaHashedIDCaptionsResponseBody) GetDiarizationStatus() *GetMediasMediaHashedIDCaptionsDiarizationStatus {
+	if g == nil {
+		return nil
+	}
+	return g.DiarizationStatus
+}
+
+func (g *GetMediasMediaHashedIDCaptionsResponseBody) GetDiarizationDerivable() *bool {
+	if g == nil {
+		return nil
+	}
+	return g.DiarizationDerivable
+}
+
+func (g *GetMediasMediaHashedIDCaptionsResponseBody) GetSpeakerDataVersion() optionalnullable.OptionalNullable[int64] {
+	if g == nil {
+		return nil
+	}
+	return g.SpeakerDataVersion
 }
 
 func (g *GetMediasMediaHashedIDCaptionsResponseBody) GetCursor() optionalnullable.OptionalNullable[string] {

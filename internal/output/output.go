@@ -5,7 +5,9 @@
 package output
 
 import (
+	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -19,6 +21,7 @@ import (
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 
+	"github.com/wistia/wistia-cli/internal/clierrors"
 	"github.com/wistia/wistia-cli/internal/config"
 	"github.com/wistia/wistia-cli/internal/flagutil"
 	"github.com/wistia/wistia-cli/internal/sdk/models/operations"
@@ -28,7 +31,65 @@ import (
 // cliName is the CLI binary name, injected at generation time.
 const cliName = "wistia"
 
-// formatErrorBody pretty-prints a JSON body string, or returns it as-is if not valid JSON.
+type renderedError struct {
+	error
+	classification Classification
+}
+
+type classifiedError struct {
+	error
+	classification Classification
+}
+
+func (renderedError) Rendered() bool { return true }
+
+func (r renderedError) Unwrap() error { return r.error }
+
+func (r renderedError) Classification() Classification { return r.classification }
+
+func (r classifiedError) Unwrap() error { return r.error }
+
+func (r classifiedError) Classification() Classification { return r.classification }
+
+func retainClassification(err error, classification Classification) error {
+	if err == nil {
+		return nil
+	}
+	if _, ok := ClassificationFrom(err); ok {
+		return err
+	}
+	return classifiedError{error: withClassificationExitCode(err, classification), classification: classification}
+}
+
+func markRendered(err error, classification Classification) error {
+	if err == nil || IsRendered(err) {
+		return err
+	}
+	return renderedError{error: withClassificationExitCode(err, classification), classification: classification}
+}
+
+func ExitCodeFor(classification Classification) int {
+	return clierrors.ErrorTypeExitCode(string(classification.Type))
+}
+
+func withClassificationExitCode(err error, classification Classification) error {
+	if err == nil {
+		return nil
+	}
+	if classification.Type == "" {
+		return err
+	}
+	return clierrors.WithExitCode(err, ExitCodeFor(classification))
+}
+
+func IsRendered(err error) bool {
+	var rendered interface{ Rendered() bool }
+	return errors.As(err, &rendered) && rendered.Rendered()
+}
+
+// Formats lists the accepted --output-format values, in help order.
+var Formats = []string{"pretty", "json", "yaml", "table", "toon"}
+
 func formatErrorBody(body string) string {
 	var parsed interface{}
 	if err := json.Unmarshal([]byte(body), &parsed); err != nil {
@@ -47,17 +108,25 @@ func formatErrorBody(body string) string {
 // 2. Agent mode default (TOON)
 // 3. Default "pretty"
 func resolveOutputFormat(cmd *cobra.Command) string {
-	if cmd.Flags().Changed("output-format") {
-		format, _ := flagutil.GetStringFlag(cmd, "output-format")
-		return format
+	if format := preparsedRendering.outputFormat; format != "" {
+		return flagutil.ResolveOutputFormat(cmd, format, IsAgentMode())
 	}
-	if val := config.GetString("output-format"); val != "" {
-		return val
+	return flagutil.ResolveOutputFormat(cmd, config.GetString("output-format"), IsAgentMode())
+}
+
+func outputFormatExplicit(cmd *cobra.Command) bool {
+	if preparsedRendering.outputFormat != "" {
+		return true
 	}
-	if IsAgentMode() {
-		return "toon"
+	if flagutil.FlagChanged(cmd, "output-format") {
+		return true
 	}
-	return "pretty"
+	return config.GetString("output-format") != ""
+}
+
+func jqRawOutput(cmd *cobra.Command) bool {
+	raw, _ := flagutil.GetBoolFlag(cmd, "raw-output")
+	return raw
 }
 
 // marshalJSON marshals content to indented JSON bytes.
@@ -71,6 +140,97 @@ func marshalJSON(content interface{}) ([]byte, error) {
 		}
 	}
 	return data, nil
+}
+
+func normalizeForOutput(content interface{}) (interface{}, error) {
+	data, err := marshalJSON(content)
+	if err != nil {
+		return nil, err
+	}
+	dec := json.NewDecoder(bytes.NewReader(data))
+	dec.UseNumber()
+	var parsed interface{}
+	if err := dec.Decode(&parsed); err != nil {
+		return nil, fmt.Errorf("failed to decode marshalled response: %w", err)
+	}
+	return parsed, nil
+}
+
+func convertNumbers(v interface{}, conv func(json.Number) interface{}) interface{} {
+	switch val := v.(type) {
+	case json.Number:
+		return conv(val)
+	case map[string]interface{}:
+		for k, child := range val {
+			val[k] = convertNumbers(child, conv)
+		}
+		return val
+	case []interface{}:
+		for i, child := range val {
+			val[i] = convertNumbers(child, conv)
+		}
+		return val
+	}
+	return v
+}
+
+func nativeNumber(n json.Number) (interface{}, bool) {
+	if i, err := n.Int64(); err == nil {
+		return i, true
+	}
+	if f, err := n.Float64(); err == nil {
+		if b, err := json.Marshal(f); err == nil && string(b) == n.String() {
+			return f, true
+		}
+	}
+	return nil, false
+}
+
+func isIntegerLexeme(lexeme string) bool {
+	return !strings.ContainsAny(lexeme, ".eE")
+}
+
+func yamlNumber(n json.Number) interface{} {
+	if v, ok := nativeNumber(n); ok {
+		return v
+	}
+	tag := "!!float"
+	if isIntegerLexeme(n.String()) {
+		tag = "!!int"
+	}
+	return &yaml.Node{Kind: yaml.ScalarNode, Tag: tag, Value: n.String()}
+}
+
+// gotoon encodes every number through float64.
+func toonNumber(n json.Number) interface{} {
+	if v, ok := nativeNumber(n); ok {
+		return v
+	}
+	return n.String()
+}
+
+func marshalYAML(content interface{}) ([]byte, error) {
+	normalized, err := normalizeForOutput(content)
+	if err != nil {
+		return nil, err
+	}
+	data, err := yaml.Marshal(convertNumbers(normalized, yamlNumber))
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal response as YAML: %w", err)
+	}
+	return data, nil
+}
+
+func encodeTOON(content interface{}) (string, error) {
+	normalized, err := normalizeForOutput(content)
+	if err != nil {
+		return "", err
+	}
+	toonStr, err := gotoon.Encode(convertNumbers(normalized, toonNumber))
+	if err != nil {
+		return "", fmt.Errorf("failed to encode response as TOON: %w", err)
+	}
+	return toonStr, nil
 }
 
 // printJSON colorizes (if requested) and prints JSON data followed by a newline.
@@ -92,6 +252,51 @@ func WantsRawJSON(cmd *cobra.Command) bool {
 	return resolveOutputFormat(cmd) == "json"
 }
 
+func IsMachineMode(cmd *cobra.Command) bool {
+	if IsAgentMode() {
+		return true
+	}
+	if jqExpr, _ := flagutil.GetStringFlag(cmd, "jq"); jqExpr != "" {
+		return true
+	}
+	format := resolveOutputFormat(cmd)
+	return format != "pretty" && format != "table"
+}
+
+func renderPathEnvelope(cmd *cobra.Command, absPath string, envelope map[string]interface{}) error {
+	out := cmd.OutOrStdout()
+	colorFlag, _ := flagutil.GetStringFlag(cmd, "color")
+	colorize := ShouldColorize(colorFlag)
+	if jqExpr, _ := flagutil.GetStringFlag(cmd, "jq"); jqExpr != "" {
+		return applyJqToTyped(out, envelope, jqExpr, colorize, jqRawOutput(cmd))
+	}
+	switch resolveOutputFormat(cmd) {
+	case "json":
+		data, err := json.MarshalIndent(envelope, "", "  ")
+		if err != nil {
+			return err
+		}
+		printJSON(out, data, colorize)
+	case "yaml":
+		data, err := yaml.Marshal(envelope)
+		if err != nil {
+			return fmt.Errorf("failed to marshal file envelope as YAML: %w", err)
+		}
+		fmt.Fprint(out, string(data))
+	case "toon":
+		toonStr, err := encodeTOON(envelope)
+		if err != nil {
+			return fmt.Errorf("failed to encode file envelope as TOON: %w", err)
+		}
+		fmt.Fprint(out, toonStr)
+	case "table":
+		return printTable(out, envelope)
+	default: // pretty
+		fmt.Fprintln(out, absPath)
+	}
+	return nil
+}
+
 // PrepareCallOpts builds common SDK call options from CLI flags.
 // Parses --header flags into operations.WithSetHeaders options.
 // Server resolution and skip-deserialization are handled per-operation.
@@ -102,7 +307,7 @@ func PrepareCallOpts(cmd *cobra.Command) ([]operations.Option, error) {
 		for _, h := range hdrs {
 			k, v, ok := strings.Cut(h, ":")
 			if !ok {
-				return nil, fmt.Errorf("invalid header format %q: expected \"Key: Value\"", h)
+				return nil, flagutil.WithCLIValidation(fmt.Errorf("invalid header format %q: expected \"Key: Value\"", h))
 			}
 			headerMap[strings.TrimSpace(k)] = strings.TrimSpace(v)
 		}
@@ -122,10 +327,10 @@ func ValidateGlobalServerIndex(cmd *cobra.Command, count int) error {
 	}
 	idx, err := strconv.Atoi(serverFlag)
 	if err != nil {
-		return fmt.Errorf("invalid server index %q: must be an integer (0-%d)", serverFlag, count-1)
+		return flagutil.WithCLIValidation(fmt.Errorf("invalid server index %q: must be an integer (0-%d)", serverFlag, count-1))
 	}
 	if idx < 0 || idx >= count {
-		return fmt.Errorf("server index %d out of range (0-%d)", idx, count-1)
+		return flagutil.WithCLIValidation(fmt.Errorf("server index %d out of range (0-%d)", idx, count-1))
 	}
 	return nil
 }
@@ -138,17 +343,29 @@ func ValidateGlobalServerName(cmd *cobra.Command, validNames map[string]string) 
 		return nil
 	}
 	if _, ok := validNames[serverFlag]; !ok {
-		return fmt.Errorf("unknown server %q", serverFlag)
+		return flagutil.WithCLIValidation(fmt.Errorf("unknown server %q", serverFlag))
 	}
 	return nil
 }
 
 // Result formats and outputs the response based on the --output-format flag.
 func Result(cmd *cobra.Command, res interface{}) error {
+	if flagutil.DidDryRunRequest(cmd) {
+		return nil
+	}
+	return result(cmd, res, true)
+}
+
+func LocalResult(cmd *cobra.Command, res interface{}) error {
+	return result(cmd, res, true)
+}
+
+func result(cmd *cobra.Command, res interface{}, allowArtifact bool) error {
 	out := cmd.OutOrStdout()
 	colorFlag, _ := flagutil.GetStringFlag(cmd, "color")
 	colorize := ShouldColorize(colorFlag)
 	jqExpr, _ := flagutil.GetStringFlag(cmd, "jq")
+	jqRaw := jqRawOutput(cmd)
 	format := resolveOutputFormat(cmd)
 	includeHeaders := wantsHeaders(cmd)
 
@@ -168,18 +385,22 @@ func Result(cmd *cobra.Command, res interface{}) error {
 	}
 
 	// === RAW PASSTHROUGH ===
-	// When skip-deserialization was used, the HTTP response body is unread.
-	// Read it directly for lossless JSON output, avoiding the
+	// When skip-deserialization was used, the SDK buffered the HTTP response
+	// body. Read it directly for lossless JSON output, avoiding the
 	// deserialize-then-reserialize round-trip.
 	if format == "json" || jqExpr != "" {
-		if rawBody := tryReadRawBody(res); len(rawBody) > 0 {
+		rawBody, rawErr := tryReadRawBody(res)
+		if rawErr != nil {
+			return rawErr
+		}
+		if len(rawBody) > 0 {
 			if includeHeaders {
 				headers := extractResponseHeaders(res)
 				var parsed interface{}
 				if err := json.Unmarshal(rawBody, &parsed); err == nil {
 					merged := injectHeaders(parsed, headers)
 					if jqExpr != "" {
-						return applyJqToTyped(out, merged, jqExpr, colorize)
+						return applyJqToTyped(out, merged, jqExpr, colorize, jqRaw)
 					}
 					data, err := json.MarshalIndent(merged, "", "  ")
 					if err != nil {
@@ -194,7 +415,7 @@ func Result(cmd *cobra.Command, res interface{}) error {
 					"_response_headers": flattenHeaders(headers),
 				}
 				if jqExpr != "" {
-					return applyJqToTyped(out, merged, jqExpr, colorize)
+					return applyJqToTyped(out, merged, jqExpr, colorize, jqRaw)
 				}
 				data, err := json.MarshalIndent(merged, "", "  ")
 				if err != nil {
@@ -204,7 +425,7 @@ func Result(cmd *cobra.Command, res interface{}) error {
 				return nil
 			}
 			if jqExpr != "" {
-				return applyJqToRawJSON(out, rawBody, jqExpr, colorize)
+				return applyJqToRawJSON(out, rawBody, jqExpr, colorize, jqRaw)
 			}
 			printJSON(out, rawBody, colorize)
 			return nil
@@ -223,7 +444,7 @@ func Result(cmd *cobra.Command, res interface{}) error {
 	if includeHeaders {
 		headers := extractResponseHeaders(res)
 		if format == "json" || format == "yaml" || format == "toon" || jqExpr != "" {
-			return outputWithHeaders(out, content, headers, format, jqExpr, colorize)
+			return outputWithHeaders(out, content, headers, format, jqExpr, colorize, jqRaw)
 		}
 		// Pretty mode: print body content, then headers section
 		if content != nil {
@@ -237,7 +458,7 @@ func Result(cmd *cobra.Command, res interface{}) error {
 
 	// If --jq is set, filter through jq and output as JSON (overrides --output-format)
 	if jqExpr != "" {
-		return applyJqToTyped(out, content, jqExpr, colorize)
+		return applyJqToTyped(out, content, jqExpr, colorize, jqRaw)
 	}
 
 	switch format {
@@ -248,9 +469,9 @@ func Result(cmd *cobra.Command, res interface{}) error {
 		}
 		printJSON(out, data, colorize)
 	case "yaml":
-		data, err := yaml.Marshal(content)
+		data, err := marshalYAML(content)
 		if err != nil {
-			return fmt.Errorf("failed to marshal response as YAML: %w", err)
+			return err
 		}
 		fmt.Fprint(out, string(data))
 	case "table":
@@ -258,9 +479,9 @@ func Result(cmd *cobra.Command, res interface{}) error {
 			return err
 		}
 	case "toon":
-		toonStr, err := gotoon.Encode(content)
+		toonStr, err := encodeTOON(content)
 		if err != nil {
-			return fmt.Errorf("failed to encode response as TOON: %w", err)
+			return err
 		}
 		fmt.Fprint(out, toonStr)
 	default: // "pretty" or unset
@@ -271,152 +492,399 @@ func Result(cmd *cobra.Command, res interface{}) error {
 	return nil
 }
 
-// Error handles SDK errors, outputting structured JSON when --output-format=json,
-// --jq, or agent mode is active. Always returns the error for non-zero exit
-// code. For non-JSON output modes outside agent mode, returns the error as-is
-// (with optional header output when --include-headers is set).
 func Error(cmd *cobra.Command, err error) error {
 	if err == nil {
 		return nil
 	}
-
 	format := resolveOutputFormat(cmd)
 	jqExpr, _ := flagutil.GetStringFlag(cmd, "jq")
-	includeHeaders := wantsHeaders(cmd)
-
-	// Extract status code and body upfront — used by both pretty and JSON paths.
-	statusCode := extractErrorStatusCode(err)
-	body := extractErrorBody(err)
-
-	if format != "json" && !IsAgentMode() && jqExpr == "" {
-		// Pretty mode: optionally print response headers from the error
-		if includeHeaders {
-			headers := extractErrorResponseHeaders(err)
-			if len(headers) > 0 {
-				out := cmd.ErrOrStderr()
-				colorFlag, _ := flagutil.GetStringFlag(cmd, "color")
-				colorize := ShouldColorize(colorFlag)
-				printResponseHeadersPretty(out, headers, colorize)
-			}
-		}
-
-		// Surface the error so the user can see what went wrong.
-		if body != "" && statusCode != 0 {
-			fmt.Fprintf(cmd.ErrOrStderr(), "\nAPI Error (HTTP %d):\n%s\n", statusCode, formatErrorBody(body))
-		} else if body != "" {
-			fmt.Fprintf(cmd.ErrOrStderr(), "\nAPI Error:\n%s\n", formatErrorBody(body))
-		} else {
-			// Connection errors, auth failures, and other non-API errors
-			// have no body or status code — print the error message directly.
-			fmt.Fprintf(cmd.ErrOrStderr(), "\nError: %s\n", err.Error())
-		}
-
-		// Auth hint for 401/403
-		if statusCode == 401 || statusCode == 403 {
-			fmt.Fprintf(cmd.ErrOrStderr(), "\nHint: run '%s configure' to set up or update your credentials.\n", cliName)
-		}
-
-		return err
+	classification := Classify(cmd, withErrorOrigin(err, ErrorOriginAPI))
+	structured := shouldRenderStructuredError(format, jqExpr)
+	if shouldClassifyError(format, jqExpr) {
+		return renderClassifiedError(cmd, err, classification, structured)
 	}
-
-	out := cmd.ErrOrStderr()
-	colorFlag, _ := flagutil.GetStringFlag(cmd, "color")
-	colorize := ShouldColorize(colorFlag)
-
-	// Try to extract the raw body from error types via reflection.
-	// Works with APIError and typed SDK errors that have a Body field.
-	var jsonData []byte
-
-	if body != "" && isValidJSON(body) {
-		// Error body is valid JSON — parse it to inject metadata.
-		jsonData = []byte(body)
-		var parsed interface{}
-		if parseErr := json.Unmarshal(jsonData, &parsed); parseErr == nil {
-			if m, ok := parsed.(map[string]interface{}); ok {
-				if statusCode != 0 {
-					if _, hasStatus := m["status_code"]; !hasStatus {
-						m["status_code"] = statusCode
-					}
-				}
-				if IsAgentMode() {
-					enrichAgentError(m, err, statusCode)
-				} else if statusCode == 401 || statusCode == 403 {
-					m["_hint"] = fmt.Sprintf("run '%s configure' to set up or update your credentials", cliName)
-				}
-				if enriched, mergeErr := json.MarshalIndent(m, "", "  "); mergeErr == nil {
-					jsonData = enriched
-				}
-			} else {
-				// Non-object JSON body (array, primitive) — wrap in envelope to inject metadata
-				envelope := map[string]interface{}{
-					"error": err.Error(),
-					"body":  parsed,
-				}
-				if statusCode != 0 {
-					envelope["status_code"] = statusCode
-				}
-				if IsAgentMode() {
-					enrichAgentError(envelope, err, statusCode)
-				} else if statusCode == 401 || statusCode == 403 {
-					envelope["_hint"] = fmt.Sprintf("run '%s configure' to set up or update your credentials", cliName)
-				}
-				if enriched, mergeErr := json.MarshalIndent(envelope, "", "  "); mergeErr == nil {
-					jsonData = enriched
-				}
-			}
-		}
-	} else {
-		// Fallback: wrap error info in a consistent JSON envelope
-		envelope := map[string]interface{}{
-			"error": err.Error(),
-		}
-		if statusCode != 0 {
-			envelope["status_code"] = statusCode
-		}
-		if body != "" {
-			envelope["body"] = body
-		}
-		if IsAgentMode() {
-			enrichAgentError(envelope, err, statusCode)
-		} else if statusCode == 401 || statusCode == 403 {
-			envelope["_hint"] = fmt.Sprintf("run '%s configure' to set up or update your credentials", cliName)
-		}
-		var marshalErr error
-		jsonData, marshalErr = json.MarshalIndent(envelope, "", "  ")
-		if marshalErr != nil {
-			return err
-		}
-	}
-
-	// Inject response headers if --include-headers is set
-	if includeHeaders {
-		headers := extractErrorResponseHeaders(err)
-		if len(headers) > 0 {
-			var parsed interface{}
-			if parseErr := json.Unmarshal(jsonData, &parsed); parseErr == nil {
-				merged := injectHeaders(parsed, headers)
-				if mergedData, mergeErr := json.MarshalIndent(merged, "", "  "); mergeErr == nil {
-					jsonData = mergedData
-				}
-			}
-		}
-	}
-
-	printJSON(out, jsonData, colorize)
-
-	return err
+	return renderUnclassifiedAPIError(cmd, err, classification, structured)
 }
 
-// tryReadRawBody attempts to read the raw HTTP response body from the response
-// envelope. Returns the body bytes if the body was unread (skip-deserialization
-// was active), or nil if the body was already consumed (normal deserialization).
-func tryReadRawBody(res interface{}) []byte {
+func renderClassifiedError(cmd *cobra.Command, err error, classification Classification, structured bool) error {
+	if IsRendered(err) {
+		return err
+	}
+	if structured {
+		renderStructuredError(cmd, err, classification)
+	} else {
+		renderPrettyError(cmd, err, classification)
+	}
+	return markRendered(err, classification)
+}
+
+// renderUnclassifiedAPIError is the compatibility rendering path used when
+// classified rendering is not requested: the raw API error text or envelope is
+// preserved without the error_type/error_reason taxonomy.
+func renderUnclassifiedAPIError(cmd *cobra.Command, err error, classification Classification, structured bool) error {
+	if IsRendered(err) {
+		return err
+	}
+	if structured {
+		renderUnclassifiedStructuredAPIError(cmd, err, classification)
+	} else {
+		renderUnclassifiedPrettyAPIError(cmd, err, classification)
+	}
+	return markRendered(err, classification)
+}
+
+func renderUnclassifiedPrettyAPIError(cmd *cobra.Command, err error, classification Classification) {
+	out := cmd.ErrOrStderr()
+	if wantsHeaders(cmd) {
+		headers := extractErrorResponseHeaders(err)
+		if len(headers) > 0 {
+			colorFlag, _ := flagutil.GetStringFlag(cmd, "color")
+			printResponseHeadersPretty(out, headers, ShouldColorize(colorFlag))
+		}
+	}
+	if classification.RawBody != "" && classification.StatusCode != 0 {
+		fmt.Fprintf(out, "\nAPI Error (HTTP %d):\n%s\n", classification.StatusCode, formatErrorBody(classification.RawBody))
+	} else if classification.RawBody != "" {
+		fmt.Fprintf(out, "\nAPI Error:\n%s\n", formatErrorBody(classification.RawBody))
+	} else {
+		fmt.Fprintf(out, "\nError: %s\n", err.Error())
+	}
+	if classification.StatusCode == 401 || classification.StatusCode == 403 {
+		fmt.Fprintf(out, "\nHint: run '%s configure' to set up or update your credentials.\n", cliName)
+	}
+}
+
+func renderUnclassifiedStructuredAPIError(cmd *cobra.Command, err error, classification Classification) {
+	statusCode := classification.StatusCode
+	body := classification.RawBody
+	var envelope interface{}
+	if body != "" && isValidJSON(body) {
+		var parsed interface{}
+		if json.Unmarshal([]byte(body), &parsed) == nil {
+			if object, ok := parsed.(map[string]interface{}); ok {
+				if statusCode != 0 {
+					if _, exists := object["status_code"]; !exists {
+						object["status_code"] = statusCode
+					}
+				}
+				if statusCode == 401 || statusCode == 403 {
+					object["_hint"] = fmt.Sprintf("run '%s configure' to set up or update your credentials", cliName)
+				}
+				envelope = object
+			} else {
+				wrapped := map[string]interface{}{"error": err.Error(), "body": parsed}
+				if statusCode != 0 {
+					wrapped["status_code"] = statusCode
+				}
+				if statusCode == 401 || statusCode == 403 {
+					wrapped["_hint"] = fmt.Sprintf("run '%s configure' to set up or update your credentials", cliName)
+				}
+				envelope = wrapped
+			}
+		}
+	}
+	if envelope == nil {
+		wrapped := map[string]interface{}{"error": err.Error()}
+		if statusCode != 0 {
+			wrapped["status_code"] = statusCode
+		}
+		if body != "" {
+			wrapped["body"] = body
+		}
+		if statusCode == 401 || statusCode == 403 {
+			wrapped["_hint"] = fmt.Sprintf("run '%s configure' to set up or update your credentials", cliName)
+		}
+		envelope = wrapped
+	}
+	if object, ok := envelope.(map[string]interface{}); ok {
+		object["exit_code"] = ExitCodeFor(classification)
+	}
+	if wantsHeaders(cmd) {
+		envelope = injectHeaders(envelope, extractErrorResponseHeaders(err))
+	}
+	jsonData, marshalErr := json.MarshalIndent(envelope, "", "  ")
+	if marshalErr != nil {
+		jsonData, _ = json.MarshalIndent(map[string]interface{}{"error": err.Error(), "exit_code": ExitCodeFor(classification)}, "", "  ")
+	}
+	colorFlag, _ := flagutil.GetStringFlag(cmd, "color")
+	printJSON(cmd.ErrOrStderr(), jsonData, ShouldColorize(colorFlag))
+}
+
+func renderPrettyError(cmd *cobra.Command, err error, classification Classification) {
+	out := cmd.ErrOrStderr()
+	if wantsHeaders(cmd) {
+		headers := extractErrorResponseHeaders(err)
+		if len(headers) > 0 {
+			colorFlag, _ := flagutil.GetStringFlag(cmd, "color")
+			printResponseHeadersPretty(out, headers, ShouldColorize(colorFlag))
+		}
+	}
+	fmt.Fprintf(out, "Error (%s): %s\n", classification.Type, classification.Message)
+	switch {
+	case classification.Reason != "" && classification.StatusCode != 0:
+		fmt.Fprintf(out, "Reason: %s (HTTP %d)\n", classification.Reason, classification.StatusCode)
+	case classification.Reason != "":
+		fmt.Fprintf(out, "Reason: %s\n", classification.Reason)
+	case classification.StatusCode != 0:
+		fmt.Fprintf(out, "HTTP status: %d\n", classification.StatusCode)
+	}
+	if len(classification.Hints) > 0 {
+		fmt.Fprintln(out, "Fix:")
+		for _, hint := range classification.Hints {
+			fmt.Fprintf(out, "  - %s\n", strings.ReplaceAll(hint, "\n", "\n    "))
+		}
+	}
+	if details := classifiedPrettyDetails(classification); details != "" {
+		fmt.Fprintln(out, "Details:")
+		for _, line := range strings.Split(details, "\n") {
+			fmt.Fprintf(out, "  %s\n", line)
+		}
+	}
+}
+
+func renderStructuredError(cmd *cobra.Command, err error, classification Classification) {
+	envelope := classifiedErrorEnvelope(err, classification)
+	if wantsHeaders(cmd) {
+		envelope = injectHeaders(envelope, extractErrorResponseHeaders(err)).(map[string]interface{})
+	}
+	jsonData, marshalErr := json.MarshalIndent(envelope, "", "  ")
+	if marshalErr != nil {
+		jsonData, _ = json.MarshalIndent(map[string]interface{}{
+			"error":      err.Error(),
+			"error_type": string(classification.Type),
+			"exit_code":  ExitCodeFor(classification),
+			"message":    classification.Message,
+			"hints":      classification.Hints,
+		}, "", "  ")
+	}
+	colorFlag, _ := flagutil.GetStringFlag(cmd, "color")
+	printJSON(cmd.ErrOrStderr(), jsonData, ShouldColorize(colorFlag))
+}
+
+func classifiedErrorEnvelope(err error, classification Classification) map[string]interface{} {
+	var envelope map[string]interface{}
+	if bodyMap, ok := classification.Body.(map[string]interface{}); ok {
+		envelope = make(map[string]interface{}, len(bodyMap)+5)
+		for key, value := range bodyMap {
+			envelope[key] = value
+		}
+	} else {
+		envelope = map[string]interface{}{"error": err.Error()}
+		if classification.Body != nil {
+			envelope["body"] = classification.Body
+		} else if classification.RawBody != "" {
+			if strings.TrimSpace(classification.RawBody) == "null" {
+				envelope["body"] = nil
+			} else {
+				envelope["body"] = classification.RawBody
+			}
+		}
+	}
+	delete(envelope, "_hint")
+	envelope["error_type"] = string(classification.Type)
+	envelope["exit_code"] = ExitCodeFor(classification)
+	envelope["message"] = classification.Message
+	envelope["hints"] = classification.Hints
+	if classification.Reason != "" {
+		envelope["error_reason"] = classification.Reason
+	} else {
+		delete(envelope, "error_reason")
+	}
+	if classification.StatusCode != 0 {
+		envelope["status_code"] = classification.StatusCode
+	} else {
+		delete(envelope, "status_code")
+	}
+	mergeMachineErrorFields(envelope, err)
+	return envelope
+}
+
+func mergeMachineErrorFields(envelope map[string]interface{}, err error) {
+	var source interface{ MachineErrorFields() map[string]interface{} }
+	if !errors.As(err, &source) {
+		return
+	}
+	for key, value := range source.MachineErrorFields() {
+		switch key {
+		case "error_type", "error_reason", "exit_code", "message", "hints", "status_code":
+			continue
+		}
+		envelope[key] = value
+	}
+}
+
+func classifiedPrettyDetails(classification Classification) string {
+	if classification.Body == nil {
+		if classification.RawBody != "" && classification.RawBody != classification.Message {
+			return classification.RawBody
+		}
+		return ""
+	}
+	data, err := json.Marshal(classification.Body)
+	if err != nil {
+		return ""
+	}
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	decoder.UseNumber()
+	var cloned interface{}
+	if err := decoder.Decode(&cloned); err != nil {
+		return ""
+	}
+	stripRenderedErrorFields(cloned, classification.Reason, classification.reasonCarrier, classification.reasonCarrierPath)
+	cloned = pruneEmptyErrorDetails(cloned)
+	if cloned == nil {
+		return ""
+	}
+	if bodyMap, ok := cloned.(map[string]interface{}); ok && len(bodyMap) == 1 {
+		if errorObject, ok := bodyMap["error"].(map[string]interface{}); ok {
+			cloned = errorObject
+		}
+	}
+	details, err := json.MarshalIndent(cloned, "", "  ")
+	if err != nil || string(details) == "{}" || string(details) == "[]" {
+		return ""
+	}
+	return string(details)
+}
+
+// stripRenderedErrorFields removes only the members already rendered on the
+// error header lines: the envelope fields, the error object's message and
+// hints, and the reason-carrier member whose value was surfaced on the
+// Reason: line. Every other member of the error body is preserved as detail.
+func stripRenderedErrorFields(value interface{}, renderedReason string, reasonCarrier []reasonCarrierSegment, reasonCarrierPath []int) {
+	bodyMap, ok := value.(map[string]interface{})
+	if !ok {
+		return
+	}
+	for _, key := range []string{"error_type", "error_reason", "message", "hints", "status_code", "exit_code", "_hint"} {
+		delete(bodyMap, key)
+	}
+	if _, isMessage := bodyMap["error"].(string); isMessage {
+		delete(bodyMap, "error")
+	}
+	errorObject := bodyMap
+	if nested, ok := bodyMap["error"].(map[string]interface{}); ok {
+		errorObject = nested
+	} else if inline, ok := bodyMap["error"].([]interface{}); ok && len(inline) == 1 {
+		if nested, ok := inline[0].(map[string]interface{}); ok {
+			errorObject = nested
+		}
+	}
+	for _, key := range []string{"message", "hints"} {
+		delete(errorObject, key)
+	}
+	stripRenderedReasonCarrier(errorObject, renderedReason, reasonCarrier, reasonCarrierPath)
+}
+
+// stripRenderedReasonCarrier deletes, from the carrier that selected the
+// rendered reason, the one member whose value was surfaced on the Reason:
+// line. wildPath pins that occurrence — the array index the classification
+// recorded at each [*] hop — so a sibling array entry sharing the selected
+// code, like another declared carrier holding the same string, stays visible
+// under Details. A walk that no longer resolves (index out of range, shape
+// mismatch, value changed) strips nothing rather than guessing.
+func stripRenderedReasonCarrier(errorObject map[string]interface{}, renderedReason string, segments []reasonCarrierSegment, wildPath []int) {
+	if renderedReason == "" || len(segments) == 0 {
+		return
+	}
+	var parent interface{} = errorObject
+	for _, segment := range segments[:len(segments)-1] {
+		if segment.isWild {
+			items, _ := parent.([]interface{})
+			if len(wildPath) == 0 || wildPath[0] < 0 || wildPath[0] >= len(items) {
+				return
+			}
+			parent = items[wildPath[0]]
+			wildPath = wildPath[1:]
+			continue
+		}
+		object, _ := parent.(map[string]interface{})
+		child, ok := object[segment.field]
+		if !ok {
+			return
+		}
+		parent = child
+	}
+	// The carrier grammar guarantees the final segment is a named member.
+	last := segments[len(segments)-1]
+	object, _ := parent.(map[string]interface{})
+	if reason, ok := object[last.field].(string); ok && reason == renderedReason {
+		delete(object, last.field)
+	}
+}
+
+func pruneEmptyErrorDetails(value interface{}) interface{} {
+	switch typed := value.(type) {
+	case map[string]interface{}:
+		for key, child := range typed {
+			pruned := pruneEmptyErrorDetails(child)
+			if pruned == nil {
+				delete(typed, key)
+			} else {
+				typed[key] = pruned
+			}
+		}
+		if len(typed) == 0 {
+			return nil
+		}
+		return typed
+	case []interface{}:
+		pruned := make([]interface{}, 0, len(typed))
+		for _, child := range typed {
+			if child = pruneEmptyErrorDetails(child); child != nil {
+				pruned = append(pruned, child)
+			}
+		}
+		if len(pruned) == 0 {
+			return nil
+		}
+		return pruned
+	default:
+		return value
+	}
+}
+
+// StreamEventError is an in-band error event; Body holds that event's JSON.
+type StreamEventError struct {
+	Body string
+}
+
+func (e *StreamEventError) Error() string {
+	var parsed map[string]interface{}
+	if json.Unmarshal([]byte(e.Body), &parsed) == nil {
+		if errObj, ok := parsed["error"].(map[string]interface{}); ok {
+			if msg, ok := errObj["message"].(string); ok && msg != "" {
+				return "stream error event: " + msg
+			}
+		}
+	}
+	return "stream error event: " + e.Body
+}
+
+func tryReadRawBody(res interface{}) ([]byte, error) {
+	httpRes := extractHTTPResponse(res)
+	if httpRes == nil || httpRes.Body == nil {
+		return nil, nil
+	}
+	rawBody, err := io.ReadAll(httpRes.Body)
+	httpRes.Body.Close()
+	if err != nil {
+		return nil, fmt.Errorf("reading response body: %w", err)
+	}
+	if len(rawBody) == 0 {
+		return nil, nil
+	}
+	return rawBody, nil
+}
+
+func peekRawBody(res interface{}) []byte {
 	httpRes := extractHTTPResponse(res)
 	if httpRes == nil || httpRes.Body == nil {
 		return nil
 	}
 	rawBody, err := io.ReadAll(httpRes.Body)
-	httpRes.Body.Close()
+	_ = httpRes.Body.Close()
+	httpRes.Body = io.NopCloser(bytes.NewReader(rawBody))
 	if err != nil || len(rawBody) == 0 {
 		return nil
 	}
@@ -452,20 +920,36 @@ func extractHTTPResponse(res interface{}) *http.Response {
 	httpMeta := v.FieldByName("HTTPMeta")
 	if httpMeta.IsValid() && httpMeta.Kind() == reflect.Struct {
 		resp := httpMeta.FieldByName("Response")
-		if resp.IsValid() && !resp.IsNil() {
-			if r, ok := resp.Interface().(*http.Response); ok {
+		if resp.IsValid() && resp.CanInterface() {
+			if r, ok := resp.Interface().(*http.Response); ok && r != nil {
 				return r
 			}
 		}
 	}
 	// flat format fallback: RawResponse
 	rawResp := v.FieldByName("RawResponse")
-	if rawResp.IsValid() && !rawResp.IsNil() {
-		if r, ok := rawResp.Interface().(*http.Response); ok {
+	if rawResp.IsValid() && rawResp.CanInterface() {
+		if r, ok := rawResp.Interface().(*http.Response); ok && r != nil {
 			return r
 		}
 	}
 	return nil
+}
+
+func isStreamResultValue(v reflect.Value) bool {
+	if !v.IsValid() {
+		return false
+	}
+	for v.Kind() == reflect.Interface {
+		if v.IsNil() {
+			return false
+		}
+		v = v.Elem()
+	}
+	if v.Kind() == reflect.Ptr && v.IsNil() {
+		return false
+	}
+	return v.MethodByName("Next").IsValid() && v.MethodByName("Value").IsValid()
 }
 
 // extractResultContent extracts the meaningful result field from a response envelope.
@@ -476,7 +960,11 @@ func extractResultContent(res interface{}) interface{} {
 	if res == nil {
 		return nil
 	}
-	v, ok := derefToStruct(reflect.ValueOf(res))
+	root := reflect.ValueOf(res)
+	if isStreamResultValue(root) {
+		return nil
+	}
+	v, ok := derefToStruct(root)
 	if !ok {
 		return res
 	}
@@ -496,6 +984,9 @@ func extractResultContent(res interface{}) interface{} {
 		}
 		// Skip nil pointer/interface fields
 		if (fieldVal.Kind() == reflect.Ptr || fieldVal.Kind() == reflect.Interface) && fieldVal.IsNil() {
+			continue
+		}
+		if isStreamResultValue(fieldVal) {
 			continue
 		}
 		return fieldVal.Interface()
@@ -519,28 +1010,50 @@ func isEnvelopeField(field reflect.StructField) bool {
 	return false
 }
 
-// extractErrorBody extracts the Body string field from an error via reflection.
+// extractErrorBody extracts the raw response body carried by an error: the
+// Body string field fallback SDK errors expose, then the retained HTTP
+// response body on typed error models.
 func extractErrorBody(err error) string {
-	v, ok := derefToStruct(reflect.ValueOf(err))
-	if !ok {
-		return ""
+	for current := err; current != nil; current = errors.Unwrap(current) {
+		v, ok := derefToStruct(reflect.ValueOf(current))
+		if !ok {
+			continue
+		}
+		bodyField := v.FieldByName("Body")
+		if bodyField.IsValid() && bodyField.Kind() == reflect.String {
+			return bodyField.String()
+		}
 	}
-	bodyField := v.FieldByName("Body")
-	if bodyField.IsValid() && bodyField.Kind() == reflect.String {
-		return bodyField.String()
+	// Typed error models have no Body field but keep the raw server body on
+	// their retained HTTP response. Prefer it over re-marshaling the typed
+	// struct (the Error() fallback below), which would drop any fields the
+	// declared error schema did not capture.
+	for current := err; current != nil; current = errors.Unwrap(current) {
+		if body := peekRawBody(current); len(body) > 0 {
+			return string(body)
+		}
+	}
+	// Streaming-operation SDK errors carry the response body only in their message.
+	if body := err.Error(); isValidJSON(body) {
+		return body
 	}
 	return ""
 }
 
 // extractErrorStatusCode extracts the StatusCode int field from an error via reflection.
 func extractErrorStatusCode(err error) int {
-	v, ok := derefToStruct(reflect.ValueOf(err))
-	if !ok {
-		return 0
-	}
-	field := v.FieldByName("StatusCode")
-	if field.IsValid() && field.CanInt() {
-		return int(field.Int())
+	for current := err; current != nil; current = errors.Unwrap(current) {
+		v, ok := derefToStruct(reflect.ValueOf(current))
+		if ok {
+			field := v.FieldByName("StatusCode")
+			if field.IsValid() && field.CanInt() {
+				return int(field.Int())
+			}
+		}
+		// Streaming-operation SDK errors expose the status only on the embedded response.
+		if res := extractHTTPResponse(current); res != nil {
+			return res.StatusCode
+		}
 	}
 	return 0
 }
@@ -569,17 +1082,16 @@ func extractResponseHeaders(res interface{}) http.Header {
 // extractErrorResponseHeaders extracts HTTP response headers from an SDK error.
 // Error types store *http.Response in a RawResponse field.
 func extractErrorResponseHeaders(err error) http.Header {
-	if err == nil {
-		return nil
-	}
-	v, ok := derefToStruct(reflect.ValueOf(err))
-	if !ok {
-		return nil
-	}
-	rawResp := v.FieldByName("RawResponse")
-	if rawResp.IsValid() && !rawResp.IsNil() {
-		if r, ok := rawResp.Interface().(*http.Response); ok && r != nil {
-			return r.Header
+	for current := err; current != nil; current = errors.Unwrap(current) {
+		v, ok := derefToStruct(reflect.ValueOf(current))
+		if !ok {
+			continue
+		}
+		rawResp := v.FieldByName("RawResponse")
+		if rawResp.IsValid() && rawResp.CanInterface() {
+			if r, ok := rawResp.Interface().(*http.Response); ok && r != nil {
+				return r.Header
+			}
 		}
 	}
 	return nil
@@ -631,7 +1143,7 @@ func injectHeaders(data interface{}, headers http.Header) interface{} {
 // outputWithHeaders marshals content to JSON, parses it, injects headers,
 // and outputs in the specified format. This is the common path for --include-headers
 // in json, yaml, toon, and jq output modes.
-func outputWithHeaders(out io.Writer, content interface{}, headers http.Header, format, jqExpr string, colorize bool) error {
+func outputWithHeaders(out io.Writer, content interface{}, headers http.Header, format, jqExpr string, colorize, jqRaw bool) error {
 	// Marshal content to JSON for a uniform representation
 	var parsed interface{}
 	if content != nil {
@@ -647,7 +1159,7 @@ func outputWithHeaders(out io.Writer, content interface{}, headers http.Header, 
 	merged := injectHeaders(parsed, headers)
 
 	if jqExpr != "" {
-		return applyJqToTyped(out, merged, jqExpr, colorize)
+		return applyJqToTyped(out, merged, jqExpr, colorize, jqRaw)
 	}
 
 	switch format {
@@ -658,7 +1170,7 @@ func outputWithHeaders(out io.Writer, content interface{}, headers http.Header, 
 		}
 		fmt.Fprint(out, string(yamlData))
 	case "toon":
-		toonStr, err := gotoon.Encode(merged)
+		toonStr, err := encodeTOON(merged)
 		if err != nil {
 			return fmt.Errorf("failed to encode response as TOON: %w", err)
 		}
@@ -716,9 +1228,14 @@ func printResponseHeadersPretty(w io.Writer, headers http.Header, colorize bool)
 	}
 }
 
-// outputJqResults marshals and prints each jq filter result as indented JSON.
-func outputJqResults(out io.Writer, results []interface{}, colorize bool) error {
+func outputJqResults(out io.Writer, results []interface{}, colorize, raw bool) error {
 	for _, result := range results {
+		if s, ok := result.(string); ok && raw {
+			if _, err := fmt.Fprintln(out, s); err != nil {
+				return err
+			}
+			continue
+		}
 		data, err := json.MarshalIndent(result, "", "  ")
 		if err != nil {
 			return fmt.Errorf("failed to marshal jq result: %w", err)
@@ -729,7 +1246,7 @@ func outputJqResults(out io.Writer, results []interface{}, colorize bool) error 
 }
 
 // applyJqToRawJSON applies a jq expression to raw JSON bytes.
-func applyJqToRawJSON(out io.Writer, rawBody []byte, jqExpr string, colorize bool) error {
+func applyJqToRawJSON(out io.Writer, rawBody []byte, jqExpr string, colorize, raw bool) error {
 	var data interface{}
 	if err := json.Unmarshal(rawBody, &data); err != nil {
 		return fmt.Errorf("failed to parse response JSON for jq: %w", err)
@@ -738,16 +1255,16 @@ func applyJqToRawJSON(out io.Writer, rawBody []byte, jqExpr string, colorize boo
 	if err != nil {
 		return err
 	}
-	return outputJqResults(out, results, colorize)
+	return outputJqResults(out, results, colorize, raw)
 }
 
 // applyJqToTyped applies a jq expression to typed content (non-raw path).
-func applyJqToTyped(out io.Writer, content interface{}, jqExpr string, colorize bool) error {
+func applyJqToTyped(out io.Writer, content interface{}, jqExpr string, colorize, raw bool) error {
 	results, err := ApplyJqFilter(content, jqExpr)
 	if err != nil {
 		return err
 	}
-	return outputJqResults(out, results, colorize)
+	return outputJqResults(out, results, colorize, raw)
 }
 
 // printTable renders content as an aligned table.

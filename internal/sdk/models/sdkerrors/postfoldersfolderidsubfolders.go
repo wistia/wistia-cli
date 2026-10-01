@@ -62,3 +62,19 @@ func (e *PostFoldersFolderIDSubfoldersUnauthorizedError) Error() string {
 	data, _ := json.Marshal(e)
 	return string(data)
 }
+
+// PostFoldersFolderIDSubfoldersBadRequestError - Bad request
+type PostFoldersFolderIDSubfoldersBadRequestError struct {
+	// Error message detailing the reason for the bad request.
+	Error_ *string `json:"error,omitzero"`
+	// Array of error messages detailing the reasons for the bad request.
+	Errors   []string                `json:"errors,omitzero"`
+	HTTPMeta components.HTTPMetadata `json:"-"`
+}
+
+var _ error = &PostFoldersFolderIDSubfoldersBadRequestError{}
+
+func (e *PostFoldersFolderIDSubfoldersBadRequestError) Error() string {
+	data, _ := json.Marshal(e)
+	return string(data)
+}
