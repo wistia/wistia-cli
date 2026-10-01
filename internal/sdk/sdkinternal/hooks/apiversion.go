@@ -23,11 +23,14 @@ var docVersionPattern = regexp.MustCompile(`^(\d{4})\.(\d{2})\.\d+$`)
 
 // apiVersion maps the doc version in the generated User-Agent
 // ("speakeasy-sdk/go <sdk> <generator> <docVersion> <package>") to the
-// header's YYYY-MM form. Edge builds return "" so they send no header.
+// header's form: YYYY-MM for a dated release, edge-version for edge builds.
 func apiVersion(generatedUserAgent string) string {
 	fields := strings.Fields(generatedUserAgent)
 	if len(fields) < 4 {
 		return ""
+	}
+	if fields[3] == "edge-version" {
+		return "edge-version"
 	}
 	match := docVersionPattern.FindStringSubmatch(fields[3])
 	if match == nil {

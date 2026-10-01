@@ -13,7 +13,7 @@ func TestAPIVersion(t *testing.T) {
 	}{
 		{"dated release", "speakeasy-sdk/go 0.2.0 2.943.0 2026.09.0 github.com/wistia/wistia-cli/internal/sdk", "2026-09"},
 		{"patched spec", "speakeasy-sdk/go 0.2.0 2.943.0 2026.09.3 github.com/wistia/wistia-cli/internal/sdk", "2026-09"},
-		{"edge", "speakeasy-sdk/go 0.2.0 2.943.0 edge-version github.com/wistia/wistia-cli/internal/sdk", ""},
+		{"edge", "speakeasy-sdk/go 0.2.0 2.943.0 edge-version github.com/wistia/wistia-cli/internal/sdk", "edge-version"},
 		{"unpadded month", "speakeasy-sdk/go 0.2.0 2.943.0 2026.9.0 github.com/wistia/wistia-cli/internal/sdk", ""},
 		{"too few fields", "speakeasy-sdk/go 0.2.0", ""},
 		{"empty", "", ""},
@@ -32,7 +32,8 @@ func TestAPIVersionHook(t *testing.T) {
 		name, ua, want string
 	}{
 		{"dated release sets the header", "speakeasy-sdk/go 0.2.0 2.943.0 2026.09.0 github.com/wistia/wistia-cli/internal/sdk", "2026-09"},
-		{"edge sends no header", "speakeasy-sdk/go 0.2.0 2.943.0 edge-version github.com/wistia/wistia-cli/internal/sdk", ""},
+		{"edge sets edge-version", "speakeasy-sdk/go 0.2.0 2.943.0 edge-version github.com/wistia/wistia-cli/internal/sdk", "edge-version"},
+		{"unrecognized doc version sends no header", "speakeasy-sdk/go 0.2.0 2.943.0 2026.9.0 github.com/wistia/wistia-cli/internal/sdk", ""},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

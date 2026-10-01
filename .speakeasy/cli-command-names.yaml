@@ -2,10 +2,11 @@ overlay: 1.0.0
 info:
   title: CLI command names
   version: 1.0.0
-# These operations were published in the TypeScript SDK without
-# x-speakeasy-group/x-speakeasy-name-override, so the shared spec can't name
-# them without renaming SDK methods. The CLI never shipped them, so it names
-# them here instead of exposing path-derived commands.
+# Temporary. These operations have no x-speakeasy-group/x-speakeasy-name-override
+# in the spec yet, so the CLI would get path-derived command names. The fix
+# belongs in the spec, with the TypeScript SDK pinning the path-derived names it
+# already published. Once the spec carries these same names, delete this file;
+# CLI users see no change.
 actions:
   - target: $["paths"]["/deleted_media"]["get"]
     update:
