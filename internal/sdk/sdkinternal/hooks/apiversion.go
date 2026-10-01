@@ -13,6 +13,10 @@ type apiVersionHook struct{}
 var _ beforeRequestHook = (*apiVersionHook)(nil)
 
 func (apiVersionHook) BeforeRequest(hookCtx BeforeRequestContext, req *http.Request) (*http.Request, error) {
+	// Hooks run after --header values are applied; a version the user chose wins.
+	if req.Header.Get("X-Wistia-API-Version") != "" {
+		return req, nil
+	}
 	if version := apiVersion(hookCtx.SDKConfiguration.UserAgent); version != "" {
 		req.Header.Set("X-Wistia-API-Version", version)
 	}

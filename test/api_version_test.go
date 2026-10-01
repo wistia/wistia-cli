@@ -36,3 +36,12 @@ func TestAPIVersion_Header(t *testing.T) {
 		t.Errorf("X-Wistia-API-Version = %q, want %q (docVersion %s)", got, want, docVersion)
 	}
 }
+
+func TestAPIVersion_HeaderFlagOverrides(t *testing.T) {
+	srv, got := newMockAPI(t, 200, `{}`)
+	runMock(t, srv, "media", "get", "--media-hashed-id", "abc123", "-H", "X-Wistia-API-Version: 2026-05")
+
+	if version := got.headers.Get("X-Wistia-API-Version"); version != "2026-05" {
+		t.Errorf("X-Wistia-API-Version = %q, want the --header value %q", version, "2026-05")
+	}
+}

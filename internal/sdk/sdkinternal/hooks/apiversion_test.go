@@ -27,6 +27,25 @@ func TestAPIVersion(t *testing.T) {
 	}
 }
 
+func TestAPIVersionHookKeepsUserVersion(t *testing.T) {
+	req, err := http.NewRequest(http.MethodGet, "https://api.wistia.com/modern/medias", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	req.Header.Set("X-Wistia-API-Version", "2026-05")
+	hookCtx := BeforeRequestContext{HookContext{SDKConfiguration: config.SDKConfiguration{
+		UserAgent: "speakeasy-sdk/go 0.2.0 2.943.0 2026.09.0 github.com/wistia/wistia-cli/internal/sdk",
+	}}}
+
+	got, err := apiVersionHook{}.BeforeRequest(hookCtx, req)
+	if err != nil {
+		t.Fatalf("BeforeRequest returned error: %v", err)
+	}
+	if version := got.Header.Get("X-Wistia-API-Version"); version != "2026-05" {
+		t.Errorf("X-Wistia-API-Version = %q, want the user's %q", version, "2026-05")
+	}
+}
+
 func TestAPIVersionHook(t *testing.T) {
 	tests := []struct {
 		name, ua, want string
