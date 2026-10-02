@@ -30,33 +30,32 @@ wistia media list [flags]
 ### Options
 
 ```
-  -a, --archived                          Filter by archived status. True will return only archived medias, while false will return only active medias.
-  -c, --cursor string                     If 'cursor[enabled]' is set to 1 then cursor pagination is enabled and the
-                                          first set of records are fetched up to the 'per_page'. Cursor
-                                          pagination will also be turned on if 'cursor[before]' or 'cursor[after]'
-                                          are set. Records returned will have a 'cursor' property set which can be used to fetch more records in the same 'sort_by' ordering.
-                                          The cursor value of the last record can be used to fetch records after the current result set and
-                                          the cursor of the first record can be used to fetch records before the result set.
-                                          
-                                          NOTE: a cursor value is only valid if the 'sort_by' value hasn't changed from the
-                                          last fetch. For example, you cannot fetch using 'sort_by' id and then pass that
-                                          cursor value to a 'sort_by' name.
-  -f, --folder-id string                  A hashed ID specifying the folder from which you would like to get results.
-      --hashed-ids stringArray            Find all of the medias by these hashed_ids.
-  -h, --help                              help for list
-  -i, --include string                    Set to 'speakers' to include active transcript speaker assignments used for diarization. Webinar hosts and panelists are not included. (options: speakers)
-  -n, --name string                       Find a media or medias whose name exactly matches this parameter.
-      --page int                          The page number to retrieve. This cannot be combined with 'cursor',
-                                          pagination.
-      --per-page int                      The number of medias per page. Use this for both offset pagination and cursor pagination.
-      --sort-by string                    Ordering. When using cursor pagination (see cursor param),
-                                          only 'id' and 'created' are supported. All other sort_by options ('name', 'updated', 'position')
-                                          require offset pagination.
-                                          (options: name, created, updated, position)
-      --sort-direction string             Ordering Sort Direction (0 = desc, 1 = asc; default is 1) (options: 0, 1)
-      --speaker-profile-ids stringArray   Filter media assigned to any of these reusable speaker profiles.
-      --tags stringArray                  Find all of the medias that match all of these tag names.
-      --type string                       A string specifying which type of media you would like to get. (options: Video, Audio, Image, PdfDocument, MicrosoftOfficeDocument, Swf, UnknownType)
+  -a, --archived                 Filter by archived status. True will return only archived medias, while false will return only active medias.
+  -c, --cursor string            If 'cursor[enabled]' is set to 1 then cursor pagination is enabled and the
+                                 first set of records are fetched up to the 'per_page'. Cursor
+                                 pagination will also be turned on if 'cursor[before]' or 'cursor[after]'
+                                 are set. Records returned will have a 'cursor' property set which can be used to fetch more records in the same 'sort_by' ordering.
+                                 The cursor value of the last record can be used to fetch records after the current result set and
+                                 the cursor of the first record can be used to fetch records before the result set.
+                                 
+                                 NOTE: a cursor value is only valid if the 'sort_by' value hasn't changed from the
+                                 last fetch. For example, you cannot fetch using 'sort_by' id and then pass that
+                                 cursor value to a 'sort_by' name.
+  -f, --folder-id string         A hashed ID specifying the folder from which you would like to get results.
+      --hashed-ids stringArray   Find all of the medias by these hashed_ids.
+  -h, --help                     help for list
+  -i, --include string           Set to 'speakers' to include active transcript speaker assignments used for diarization. Webinar hosts and panelists are not included. (options: speakers)
+  -n, --name string              Find a media or medias whose name exactly matches this parameter.
+      --page int                 The page number to retrieve. This cannot be combined with 'cursor',
+                                 pagination.
+      --per-page int             The number of medias per page. Use this for both offset pagination and cursor pagination.
+      --sort-by string           Ordering. When using cursor pagination (see cursor param),
+                                 only 'id' and 'created' are supported. All other sort_by options ('name', 'updated', 'position')
+                                 require offset pagination.
+                                 (options: name, created, updated, position)
+      --sort-direction string    Ordering Sort Direction (0 = desc, 1 = asc; default is 1) (options: 0, 1)
+      --tags stringArray         Find all of the medias that match all of these tag names.
+      --type string              A string specifying which type of media you would like to get. (options: Video, Audio, Image, PdfDocument, MicrosoftOfficeDocument, Swf, UnknownType)
 ```
 
 ### Options inherited from parent commands

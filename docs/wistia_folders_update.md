@@ -19,9 +19,9 @@ contact assigned to the token.
 An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
 created with the `all:delegate_to_contact_permissions` scope and an
 authorization granting the `update` permission on this folder can also be
-used. The `update` permission also allows bulk-deleting the folder's
-subfolders and using the folder as the destination when moving or
-bulk-copying media the token may update.
+used. The `update` permission also allows creating, renaming and deleting
+the folder's subfolders and using the folder as the destination when
+moving or bulk-copying media the token may update.
 
 ```
 wistia folders update [id] [flags]

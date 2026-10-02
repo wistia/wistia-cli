@@ -40,9 +40,6 @@ wistia speakers [flags]
 ### SEE ALSO
 
 * [wistia](wistia.md)	 - Data API: Wistia Data API
-* [wistia speakers assign](wistia_speakers_assign.md)	 - Assign Speaker to Media
-* [wistia speakers create](wistia_speakers_create.md)	 - Create Speaker
 * [wistia speakers list](wistia_speakers_list.md)	 - List Speakers
-* [wistia speakers remove](wistia_speakers_remove.md)	 - Remove Speaker from Media
 
 Exit codes: 0 ok · 1 runtime · 2 usage · 3 authentication/authorization

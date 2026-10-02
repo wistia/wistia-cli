@@ -1,17 +1,19 @@
-## wistia custom-metadata-field-definitions put-custom-metadata-field-definitions-key
+## wistia deleted-media restore
 
-Update Custom Metadata Field Definition
+Restore Deleted Media
 
 ### Synopsis
 
-Updates the editable attributes of a custom metadata field definition addressed by its immutable key: `label`, `default_value`, `position`, and single_select or multi_select options via `config.options` (add, edit, or remove). The `key` and `field_type` are immutable — attempting to change them returns a 422.
-
-Requires the custom metadata feature to be available on your account.
+Restores one or more soft-deleted media. By default each media returns to the
+folder it was deleted from; pass folder_id to restore them into a specific
+folder instead. Only media still inside the restore window can be recovered.
+The restore runs asynchronously and the response includes a background job
+status.
 
 
 ## Requires api token with one of the following permissions
 ```
-Read, update & delete anything
+Upload and view media
 ```
 
 Tokens with the "Act with a team member's permissions" permission
@@ -20,25 +22,22 @@ made with such a token are authorized using the permissions of the
 contact assigned to the token.
 
 ```
-wistia custom-metadata-field-definitions put-custom-metadata-field-definitions-key [key] [flags]
+wistia deleted-media restore [flags]
 ```
 
 ### Examples
 
 ```
-  wistia custom-metadata-field-definitions put-custom-metadata-field-definitions-key --key client
+  wistia deleted-media restore --media-hashed-ids abc123
 ```
 
 ### Options
 
 ```
-      --body string            Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.
-  -c, --config-param string    JSON value (one of: { "options": object[] } | { "allows_group_refs": boolean })
-      --default-value string   A default value for the field, matching the field_type's format.
-  -h, --help                   help for put-custom-metadata-field-definitions-key
-  -k, --key string             The field's immutable key (or pass it as the [key] argument)
-  -l, --label string           The field's display name. Must be unique per account among active fields (case-insensitive).
-  -p, --position string        The field's display order within the account, ascending from 0.
+      --body string                    Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.
+  -f, --folder-id string               Optional hashed id of the folder to restore the media into. If omitted, each media returns to the folder it was deleted from.
+  -h, --help                           help for restore
+  -m, --media-hashed-ids stringArray   The hashed ids of the soft-deleted media to restore. Up to 1000 at a time. [required]
 ```
 
 ### Options inherited from parent commands
@@ -64,12 +63,12 @@ wistia custom-metadata-field-definitions put-custom-metadata-field-definitions-k
 
 ### SEE ALSO
 
-* [wistia custom-metadata-field-definitions](wistia_custom-metadata-field-definitions.md)	 - Operations for custom-metadata-field-definitions
+* [wistia deleted-media](wistia_deleted-media.md)	 - Operations for deleted-media
 
 ### Machine interface
 
-* `wistia custom-metadata-field-definitions put-custom-metadata-field-definitions-key --usage` — this command's flags, defaults and env vars as machine-readable KDL
-* `wistia custom-metadata-field-definitions put-custom-metadata-field-definitions-key --dry-run` — preview the request without OS-keychain access or a network call (human preview on stderr)
+* `wistia deleted-media restore --usage` — this command's flags, defaults and env vars as machine-readable KDL
+* `wistia deleted-media restore --dry-run` — preview the request without OS-keychain access or a network call (human preview on stderr)
 * `--dry-run --output-format json` (or a caller-explicit `--jq`) writes one preview object per request as NDJSON on stdout; jq is not applied to previews
 * `--output-format json` or `--jq <expr>` for machine-readable live output; in agent mode errors are a JSON envelope on stderr
 

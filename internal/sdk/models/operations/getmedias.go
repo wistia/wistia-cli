@@ -258,8 +258,6 @@ type GetMediasRequest struct {
 	HashedIds []string `queryParam:"style=form,explode=true,name=hashed_ids[]"`
 	// Find all of the medias that match all of these tag names.
 	Tags []string `queryParam:"style=form,explode=true,name=tags[]"`
-	// Filter media assigned to any of these reusable speaker profiles.
-	SpeakerProfileIds []string `queryParam:"style=form,explode=true,name=speaker_profile_ids[]"`
 	// Filter by archived status. True will return only archived medias, while false will return only active medias.
 	Archived *bool `queryParam:"style=form,explode=true,name=archived"`
 }
@@ -354,13 +352,6 @@ func (g *GetMediasRequest) GetTags() []string {
 		return nil
 	}
 	return g.Tags
-}
-
-func (g *GetMediasRequest) GetSpeakerProfileIds() []string {
-	if g == nil {
-		return nil
-	}
-	return g.SpeakerProfileIds
 }
 
 func (g *GetMediasRequest) GetArchived() *bool {

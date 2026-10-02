@@ -265,23 +265,13 @@ Configuration is stored in `~/.config/wistia/config.yaml`.
 * [`upload-or-import-media`](docs/wistia_upload-or-import-media.md) - Operations for upload-or-import-media
   * [`post-form`](docs/wistia_upload-or-import-media_post-form.md) - Upload or Import Media
   * [`post-multipart`](docs/wistia_upload-or-import-media_post-multipart.md) - Upload or Import Media
-* [`push-devices`](docs/wistia_push-devices.md) - Operations for push-devices
-  * [`create`](docs/wistia_push-devices_create.md) - Register Push Device
-  * [`delete`](docs/wistia_push-devices_delete.md) - Unregister Push Device
 * [`review-bundles`](docs/wistia_review-bundles.md) - Operations for review-bundles
   * [`list`](docs/wistia_review-bundles_list.md) - List Review Bundles
   * [`create`](docs/wistia_review-bundles_create.md) - Create Review Bundle
   * [`delete`](docs/wistia_review-bundles_delete.md) - Delete Review Bundle
-* [`custom-metadata-field-definitions`](docs/wistia_custom-metadata-field-definitions.md) - Operations for custom-metadata-field-definitions
-  * [`get`](docs/wistia_custom-metadata-field-definitions_get.md) - List Custom Metadata Field Definitions
-  * [`post`](docs/wistia_custom-metadata-field-definitions_post.md) - Create Custom Metadata Field Definition
-  * [`get-custom-metadata-field-definitions-key`](docs/wistia_custom-metadata-field-definitions_get-custom-metadata-field-definitions-key.md) - Show Custom Metadata Field Definition
-  * [`put-custom-metadata-field-definitions-key`](docs/wistia_custom-metadata-field-definitions_put-custom-metadata-field-definitions-key.md) - Update Custom Metadata Field Definition
-  * [`delete-custom-metadata-field-definitions-key`](docs/wistia_custom-metadata-field-definitions_delete-custom-metadata-field-definitions-key.md) - Archive Custom Metadata Field Definition
-  * [`post-custom-metadata-field-definitions-key-restore`](docs/wistia_custom-metadata-field-definitions_post-custom-metadata-field-definitions-key-restore.md) - Restore Custom Metadata Field Definition
 * [`deleted-media`](docs/wistia_deleted-media.md) - Operations for deleted-media
-  * [`get`](docs/wistia_deleted-media_get.md) - List Deleted Media
-  * [`post-deleted-media-restore`](docs/wistia_deleted-media_post-deleted-media-restore.md) - Restore Deleted Media
+  * [`list`](docs/wistia_deleted-media_list.md) - List Deleted Media
+  * [`restore`](docs/wistia_deleted-media_restore.md) - Restore Deleted Media
 * [`media`](docs/wistia_media.md) - Operations for media
   * [`list`](docs/wistia_media_list.md) - List Media
   * [`get`](docs/wistia_media_get.md) - Show Media
@@ -338,21 +328,11 @@ Configuration is stored in `~/.config/wistia/config.yaml`.
   * [`update-multipart`](docs/wistia_captions_update-multipart.md) - Update Captions
   * [`delete`](docs/wistia_captions_delete.md) - Delete Captions
   * [`edit`](docs/wistia_captions_edit.md) - Edit Captions Text
-* [`speakers`](docs/wistia_speakers.md) - Operations for speakers
-  * [`assign`](docs/wistia_speakers_assign.md) - Assign Speaker to Media
-  * [`remove`](docs/wistia_speakers_remove.md) - Remove Speaker from Media
-  * [`list`](docs/wistia_speakers_list.md) - List Speakers
-  * [`create`](docs/wistia_speakers_create.md) - Create Speaker
 * [`localizations`](docs/wistia_localizations.md) - Operations for localizations
   * [`list`](docs/wistia_localizations_list.md) - List Localizations
   * [`create`](docs/wistia_localizations_create.md) - Create Localization
   * [`get`](docs/wistia_localizations_get.md) - Show Localization
   * [`delete`](docs/wistia_localizations_delete.md) - Delete Localization
-* [`custom-metadata-field-values`](docs/wistia_custom-metadata-field-values.md) - Operations for custom-metadata-field-values
-  * [`get-medias-media-hashed-id`](docs/wistia_custom-metadata-field-values_get-medias-media-hashed-id.md) - List Custom Metadata Field Values
-  * [`put-medias-media-hashed-id-custom-metadata-field-values-key`](docs/wistia_custom-metadata-field-values_put-medias-media-hashed-id-custom-metadata-field-values-key.md) - Set Custom Metadata Field Value
-  * [`delete-medias-media-hashed-id-custom-metadata-field-values-key`](docs/wistia_custom-metadata-field-values_delete-medias-media-hashed-id-custom-metadata-field-values-key.md) - Clear Custom Metadata Field Value
-  * [`get-medias-media-hashed-id-custom-metadata-field-values-key`](docs/wistia_custom-metadata-field-values_get-medias-media-hashed-id-custom-metadata-field-values-key.md) - Show Custom Metadata Field Value
 * [`trims`](docs/wistia_trims.md) - Operations for trims
   * [`create`](docs/wistia_trims_create.md) - Create Media from Trims
 * [`media-extended-audio-descriptions`](docs/wistia_media-extended-audio-descriptions.md) - Operations for media-extended-audio-descriptions
@@ -368,12 +348,14 @@ Configuration is stored in `~/.config/wistia/config.yaml`.
   * [`update`](docs/wistia_brands_update.md) - Update Brand
   * [`delete`](docs/wistia_brands_delete.md) - Delete Brand
   * [`apply`](docs/wistia_brands_apply.md) - Apply Brand
+* [`speakers`](docs/wistia_speakers.md) - Operations for speakers
+  * [`list`](docs/wistia_speakers_list.md) - List Speakers
 * [`tags`](docs/wistia_tags.md) - Operations for tags
   * [`list`](docs/wistia_tags_list.md) - List Tags
   * [`create`](docs/wistia_tags_create.md) - Create Tags
   * [`delete`](docs/wistia_tags_delete.md) - Delete Tag
 * [`bulk-actions`](docs/wistia_bulk-actions.md) - Operations for bulk-actions
-  * [`post-bulk`](docs/wistia_bulk-actions_post-bulk.md) - Create Bulk Actions
+  * [`create`](docs/wistia_bulk-actions_create.md) - Create Bulk Actions
 * [`bulk`](docs/wistia_bulk.md) - Operations for bulk
   * [`purchase`](docs/wistia_bulk_purchase.md) - Create Bulk Purchase
 * [`taggings`](docs/wistia_taggings.md) - Operations for taggings
@@ -458,12 +440,6 @@ Configuration is stored in `~/.config/wistia/config.yaml`.
   * [`create`](docs/wistia_allowed-domains_create.md) - Create Allowed Domain
   * [`get`](docs/wistia_allowed-domains_get.md) - Show Allowed Domain
   * [`delete`](docs/wistia_allowed-domains_delete.md) - Delete Allowed Domain
-* [`remix`](docs/wistia_remix.md) - Operations for remix
-  * [`post-remixes`](docs/wistia_remix_post-remixes.md) - Create Remix
-  * [`get-remixes-remix-hashed-id`](docs/wistia_remix_get-remixes-remix-hashed-id.md) - Get Remix
-  * [`post-remixes-remix-hashed-id-continue`](docs/wistia_remix_post-remixes-remix-hashed-id-continue.md) - Continue Remix
-  * [`post-remixes-remix-hashed-id-export`](docs/wistia_remix_post-remixes-remix-hashed-id-export.md) - Export Remix
-  * [`get-remix-account-status`](docs/wistia_remix_get-remix-account-status.md) - Get Remix Account Status
 * [`stats-account`](docs/wistia_stats-account.md) - Operations for stats-account
   * [`get`](docs/wistia_stats-account_get.md) - Show Current Account Stats
   * [`get-stats-account-by-date`](docs/wistia_stats-account_get-stats-account-by-date.md) - Show Account Stats by Date

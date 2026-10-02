@@ -31,7 +31,7 @@ func newBulkActions(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks *h
 	}
 }
 
-// PostBulk - Create Bulk Actions
+// Create Bulk Actions
 // Submits a batch of up to 1000 create, update, delete, and move actions to be
 // processed asynchronously. Returns a background job status whose Show
 // endpoint reports aggregate progress and per-action results, including the
@@ -86,7 +86,7 @@ func newBulkActions(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks *h
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
-func (s *BulkActions) PostBulk(ctx context.Context, request operations.PostBulkRequest, opts ...operations.Option) (*operations.PostBulkResponse, error) {
+func (s *BulkActions) Create(ctx context.Context, request operations.PostBulkRequest, opts ...operations.Option) (*operations.PostBulkResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,
