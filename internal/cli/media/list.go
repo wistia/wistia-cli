@@ -26,7 +26,7 @@ var listCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "type", FieldPath: "Type", Kind: flagutil.FlagKindEnum, Optional: true, EnumValues: []string{"Video", "Audio", "Image", "PdfDocument", "MicrosoftOfficeDocument", "Swf", "UnknownType"}, Description: "A string specifying which type of media you would like to get. (options: Video, Audio, Image, PdfDocument, MicrosoftOfficeDocument, Swf, UnknownType)"},
 	{FlagName: "hashed-ids", FieldPath: "HashedIds", Kind: flagutil.FlagKindStringArray, Optional: true, Description: "Find all of the medias by these hashed_ids."},
 	{FlagName: "tags", FieldPath: "Tags", Kind: flagutil.FlagKindStringArray, Optional: true, Description: "Find all of the medias that match all of these tag names."},
-	{FlagName: "speaker-profile-ids", FieldPath: "SpeakerProfileIds", Kind: flagutil.FlagKindStringArray, Optional: true, Description: "Filter media assigned to any of these reusable speaker profiles."},
+	{FlagName: "speaker-profile-ids", FieldPath: "SpeakerProfileIds", Kind: flagutil.FlagKindStringArray, Optional: true, Description: "Filter media assigned to any of these reusable speaker profiles. Blank IDs are ignored; a list with no ID returns 400."},
 	{FlagName: "archived", Shorthand: "a", FieldPath: "Archived", Kind: flagutil.FlagKindBool, Optional: true, Description: "Filter by archived status. True will return only archived medias, while false will return only active medias."},
 }
 
