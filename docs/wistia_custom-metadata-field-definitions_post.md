@@ -33,9 +33,9 @@ wistia custom-metadata-field-definitions post [flags]
 
 ```
       --body string            Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.
-  -c, --config-param string    JSON value (one of: { "options": object[] } | { "allows_group_refs": boolean })
+  -c, --config-param string    Type-specific configuration. Only valid for field types that have any; currently the select options for a single_select or multi_select field.
       --default-value string   An optional default value for the field, matching the field_type's format.
-  -f, --field-type string      The field's data type. Immutable after creation. 'url', 'email', 'money', 'contact_ref', and 'contact_multi_ref' are early-access types: creating one on an account without access returns 422 naming the types the account can use. Existing fields of these types keep working. (options: text, number, date, boolean, single_select, short_text, url, email, money, time, datetime, multi_select, contact_ref, contact_multi_ref) [required]
+  -f, --field-type string      The field's data type. Immutable after creation. (options: text, number, date, boolean, single_select, short_text, time, datetime, multi_select) [required]
   -h, --help                   help for post
   -k, --key string             The field's immutable identifier, unique within the account. Lowercase letters, numbers, underscores, and hyphens only; cannot start with an underscore or be a reserved name. [required]
   -l, --label string           The field's display name. Must be unique per account among active fields (case-insensitive). [required]

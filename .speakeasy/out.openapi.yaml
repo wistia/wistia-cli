@@ -30,7 +30,7 @@ paths:
                       description: "Inform the encoding service that this upload can be considered lower priority than others. This is especially useful for platform customers doing bulk uploads or migrations. Setting this to \"false\" has no effect."
                       type: "boolean"
                       examples:
-                        - !!bool "true"
+                        - true
           multipart/form-data:
             schema:
               allOf:
@@ -78,8 +78,8 @@ paths:
                   progress:
                     description: "A floating point value between 0 and 1 that indicates the progress of the processing for this file."
                     type: "number"
-                    maximum: !!int "1"
-                    minimum: !!int "0"
+                    maximum: 1
+                    minimum: 0
                   thumbnail:
                     $ref: "#/components/schemas/Thumbnail"
         "400":
@@ -249,7 +249,7 @@ paths:
                     type: "string"
                     examples:
                       - "Internal server error"
-      x-readme-hidden: !!bool "true"
+      x-readme-hidden: true
       x-speakeasy-group: "pushDevices"
       x-speakeasy-name-override: "create"
   /devices/{deviceToken}:
@@ -367,7 +367,7 @@ paths:
                     type: "string"
                     examples:
                       - "Internal server error"
-      x-readme-hidden: !!bool "true"
+      x-readme-hidden: true
       x-speakeasy-group: "pushDevices"
       x-speakeasy-name-override: "delete"
   /review_bundles:
@@ -423,8 +423,8 @@ paths:
           schema:
             type: "integer"
             enum:
-              - !!int "0"
-              - !!int "1"
+              - 0
+              - 1
         - name: "page"
           in: "query"
           description: "The page number to retrieve. This cannot be combined with `cursor`,\npagination.\n"
@@ -449,8 +449,8 @@ paths:
               enabled:
                 type: "integer"
                 enum:
-                  - !!int "0"
-                  - !!int "1"
+                  - 0
+                  - 1
                 description: "If `cursor[enabled]` is set to 1, the first result set will be fetched with cursor pagination enabled. This\nvalues is ignored if `cursor[before]` or `cursor[after]` are set.\n"
               before:
                 type: "string"
@@ -858,14 +858,14 @@ paths:
                         - "integer"
                         - "null"
                       examples:
-                        - !!int "0"
+                        - 0
                       description: "The field's display order within the account, ascending from 0. May be null."
                     archived_at:
                       type:
                         - "string"
                         - "null"
                       examples:
-                        - !!null "null"
+                        - null
                       format: "date-time"
                       description: "When the field was archived, or null if it is active."
                     config:
@@ -894,7 +894,7 @@ paths:
                                       - "integer"
                                       - "null"
                                     examples:
-                                      - !!int "0"
+                                      - 0
                                     description: "The option's display order within the field, ascending from 0. May be null."
                               description: "The field's active options, in display order."
                           required:
@@ -918,7 +918,7 @@ paths:
                             allows_group_refs:
                               type: "boolean"
                               examples:
-                                - !!bool "false"
+                                - false
                               description: "Whether values may reference contact groups in addition to contacts."
                           required:
                             - "allows_group_refs"
@@ -1031,7 +1031,6 @@ paths:
                     type: "string"
                     examples:
                       - "Internal server error"
-      x-readme-hidden: !!bool "true"
     post:
       summary: "Create Custom Metadata Field Definition"
       description: "Creates a new custom metadata field definition. The key is immutable, must match `/\\A[a-z0-9_-]+\\z/`, cannot start with an underscore, and cannot be a reserved name. The label must be unique per account among active fields (case-insensitive). The field_type is immutable after creation.\n\nRequires the custom metadata feature to be available on your account.\n\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\n"
@@ -1067,15 +1066,10 @@ paths:
                     - "boolean"
                     - "single_select"
                     - "short_text"
-                    - "url"
-                    - "email"
-                    - "money"
                     - "time"
                     - "datetime"
                     - "multi_select"
-                    - "contact_ref"
-                    - "contact_multi_ref"
-                  description: "The field's data type. Immutable after creation. `url`, `email`, `money`, `contact_ref`, and `contact_multi_ref` are early-access types: creating one on an account without access returns 422 naming the types the account can use. Existing fields of these types keep working."
+                  description: "The field's data type. Immutable after creation."
                 default_value:
                   type:
                     - "string"
@@ -1088,53 +1082,41 @@ paths:
                     - "integer"
                     - "null"
                   examples:
-                    - !!int "0"
+                    - 0
                   description: "The field's display order within the account, ascending from 0."
                 config:
-                  oneOf:
-                    - type: "object"
-                      unevaluatedProperties: false
-                      properties:
-                        options:
-                          type: "array"
-                          items:
-                            type: "object"
-                            unevaluatedProperties: false
-                            properties:
-                              key:
-                                type: "string"
-                                examples:
-                                  - "high"
-                                description: "The option's immutable identifier, unique within the field. Defaults to a parameterized label."
-                              label:
-                                type: "string"
-                                examples:
-                                  - "High"
-                                description: "The option's display name."
-                              position:
-                                type:
-                                  - "integer"
-                                  - "null"
-                                examples:
-                                  - !!int "0"
-                                description: "The option's display order within the field, ascending from 0."
-                            required:
-                              - "label"
-                          description: "The options to create on a single_select or multi_select field."
-                      required:
-                        - "options"
-                    - type: "object"
-                      unevaluatedProperties: false
-                      properties:
-                        allows_group_refs:
-                          type: "boolean"
-                          examples:
-                            - !!bool "false"
-                          description: "For contact_ref and contact_multi_ref fields, whether values may reference contact groups in addition to contacts. Defaults to false (contacts only)."
-                      required:
-                        - "allows_group_refs"
+                  type: "object"
                   unevaluatedProperties: false
-                  description: "Type-specific configuration. Only valid for field types that have any: the select options for a single_select or multi_select field, or `allows_group_refs` for a contact_ref or contact_multi_ref field.\n"
+                  properties:
+                    options:
+                      type: "array"
+                      items:
+                        type: "object"
+                        unevaluatedProperties: false
+                        properties:
+                          key:
+                            type: "string"
+                            examples:
+                              - "high"
+                            description: "The option's immutable identifier, unique within the field. Defaults to a parameterized label."
+                          label:
+                            type: "string"
+                            examples:
+                              - "High"
+                            description: "The option's display name."
+                          position:
+                            type:
+                              - "integer"
+                              - "null"
+                            examples:
+                              - 0
+                            description: "The option's display order within the field, ascending from 0."
+                        required:
+                          - "label"
+                      description: "The options to create on a single_select or multi_select field."
+                  required:
+                    - "options"
+                  description: "Type-specific configuration. Only valid for field types that have any; currently the select options for a single_select or multi_select field."
               required:
                 - "key"
                 - "label"
@@ -1184,14 +1166,14 @@ paths:
                       - "integer"
                       - "null"
                     examples:
-                      - !!int "0"
+                      - 0
                     description: "The field's display order within the account, ascending from 0. May be null."
                   archived_at:
                     type:
                       - "string"
                       - "null"
                     examples:
-                      - !!null "null"
+                      - null
                     format: "date-time"
                     description: "When the field was archived, or null if it is active."
                   config:
@@ -1220,7 +1202,7 @@ paths:
                                     - "integer"
                                     - "null"
                                   examples:
-                                    - !!int "0"
+                                    - 0
                                   description: "The option's display order within the field, ascending from 0. May be null."
                             description: "The field's active options, in display order."
                         required:
@@ -1244,7 +1226,7 @@ paths:
                           allows_group_refs:
                             type: "boolean"
                             examples:
-                              - !!bool "false"
+                              - false
                             description: "Whether values may reference contact groups in addition to contacts."
                         required:
                           - "allows_group_refs"
@@ -1394,7 +1376,6 @@ paths:
                     type: "string"
                     examples:
                       - "Internal server error"
-      x-readme-hidden: !!bool "true"
   /custom_metadata_field_definitions/{key}:
     get:
       summary: "Show Custom Metadata Field Definition"
@@ -1456,14 +1437,14 @@ paths:
                       - "integer"
                       - "null"
                     examples:
-                      - !!int "0"
+                      - 0
                     description: "The field's display order within the account, ascending from 0. May be null."
                   archived_at:
                     type:
                       - "string"
                       - "null"
                     examples:
-                      - !!null "null"
+                      - null
                     format: "date-time"
                     description: "When the field was archived, or null if it is active."
                   config:
@@ -1492,7 +1473,7 @@ paths:
                                     - "integer"
                                     - "null"
                                   examples:
-                                    - !!int "0"
+                                    - 0
                                   description: "The option's display order within the field, ascending from 0. May be null."
                             description: "The field's active options, in display order."
                         required:
@@ -1516,7 +1497,7 @@ paths:
                           allows_group_refs:
                             type: "boolean"
                             examples:
-                              - !!bool "false"
+                              - false
                             description: "Whether values may reference contact groups in addition to contacts."
                         required:
                           - "allows_group_refs"
@@ -1631,7 +1612,6 @@ paths:
                     type: "string"
                     examples:
                       - "Internal server error"
-      x-readme-hidden: !!bool "true"
     put:
       summary: "Update Custom Metadata Field Definition"
       description: "Updates the editable attributes of a custom metadata field definition addressed by its immutable key: `label`, `default_value`, `position`, and single_select or multi_select options via `config.options` (add, edit, or remove). The `key` and `field_type` are immutable — attempting to change them returns a 422.\n\nRequires the custom metadata feature to be available on your account.\n\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\n"
@@ -1672,61 +1652,49 @@ paths:
                     - "integer"
                     - "null"
                   examples:
-                    - !!int "0"
+                    - 0
                   description: "The field's display order within the account, ascending from 0."
                 config:
-                  oneOf:
-                    - type: "object"
-                      unevaluatedProperties: false
-                      properties:
-                        options:
-                          type: "array"
-                          items:
-                            type: "object"
-                            unevaluatedProperties: false
-                            properties:
-                              key:
-                                type: "string"
-                                examples:
-                                  - "high"
-                                description: "The option's immutable identifier. Required to edit or remove an existing option; defaults to a parameterized label when adding."
-                              label:
-                                type: "string"
-                                examples:
-                                  - "High"
-                                description: "The option's display name. Required when adding a new option."
-                              position:
-                                type:
-                                  - "integer"
-                                  - "null"
-                                examples:
-                                  - !!int "0"
-                                description: "The option's display order within the field, ascending from 0."
-                              destroy:
-                                type: "boolean"
-                                examples:
-                                  - !!bool "false"
-                                description: "When true, removes the option identified by key instead of adding or editing it."
-                              force:
-                                type: "boolean"
-                                examples:
-                                  - !!bool "false"
-                                description: "When true, allows removing an option that is still in use by media values."
-                          description: "Option add, edit, or remove operations, matched by their immutable key."
-                      required:
-                        - "options"
-                    - type: "object"
-                      unevaluatedProperties: false
-                      properties:
-                        allows_group_refs:
-                          type: "boolean"
-                          examples:
-                            - !!bool "false"
-                          description: "For contact_ref and contact_multi_ref fields, whether values may reference contact groups in addition to contacts. Defaults to false (contacts only)."
-                      required:
-                        - "allows_group_refs"
+                  type: "object"
                   unevaluatedProperties: false
-                  description: "Type-specific configuration changes. Only valid for field types that have any: option add, edit, or remove operations for a single_select or multi_select field, or `allows_group_refs` for a contact_ref or contact_multi_ref field.\n"
+                  properties:
+                    options:
+                      type: "array"
+                      items:
+                        type: "object"
+                        unevaluatedProperties: false
+                        properties:
+                          key:
+                            type: "string"
+                            examples:
+                              - "high"
+                            description: "The option's immutable identifier. Required to edit or remove an existing option; defaults to a parameterized label when adding."
+                          label:
+                            type: "string"
+                            examples:
+                              - "High"
+                            description: "The option's display name. Required when adding a new option."
+                          position:
+                            type:
+                              - "integer"
+                              - "null"
+                            examples:
+                              - 0
+                            description: "The option's display order within the field, ascending from 0."
+                          destroy:
+                            type: "boolean"
+                            examples:
+                              - false
+                            description: "When true, removes the option identified by key instead of adding or editing it."
+                          force:
+                            type: "boolean"
+                            examples:
+                              - false
+                            description: "When true, allows removing an option that is still in use by media values."
+                      description: "Option add, edit, or remove operations, matched by their immutable key."
+                  required:
+                    - "options"
+                  description: "Type-specific configuration changes. Only valid for field types that have any; currently option add, edit, or remove operations for a single_select or multi_select field."
         required: true
       responses:
         "200":
@@ -1772,14 +1740,14 @@ paths:
                       - "integer"
                       - "null"
                     examples:
-                      - !!int "0"
+                      - 0
                     description: "The field's display order within the account, ascending from 0. May be null."
                   archived_at:
                     type:
                       - "string"
                       - "null"
                     examples:
-                      - !!null "null"
+                      - null
                     format: "date-time"
                     description: "When the field was archived, or null if it is active."
                   config:
@@ -1808,7 +1776,7 @@ paths:
                                     - "integer"
                                     - "null"
                                   examples:
-                                    - !!int "0"
+                                    - 0
                                   description: "The option's display order within the field, ascending from 0. May be null."
                             description: "The field's active options, in display order."
                         required:
@@ -1832,7 +1800,7 @@ paths:
                           allows_group_refs:
                             type: "boolean"
                             examples:
-                              - !!bool "false"
+                              - false
                             description: "Whether values may reference contact groups in addition to contacts."
                         required:
                           - "allows_group_refs"
@@ -1966,7 +1934,6 @@ paths:
                     type: "string"
                     examples:
                       - "Internal server error"
-      x-readme-hidden: !!bool "true"
     delete:
       summary: "Archive Custom Metadata Field Definition"
       description: "Archives (soft-deletes) a custom metadata field definition by its immutable key. Archiving is reversible via the restore endpoint. Once archived, the field's label may be reused by a new active field.\n\nRequires the custom metadata feature to be available on your account.\n\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\n"
@@ -2032,7 +1999,6 @@ paths:
                     type: "string"
                     examples:
                       - "Internal server error"
-      x-readme-hidden: !!bool "true"
   /custom_metadata_field_definitions/{key}/restore:
     post:
       summary: "Restore Custom Metadata Field Definition"
@@ -2094,14 +2060,14 @@ paths:
                       - "integer"
                       - "null"
                     examples:
-                      - !!int "0"
+                      - 0
                     description: "The field's display order within the account, ascending from 0. May be null."
                   archived_at:
                     type:
                       - "string"
                       - "null"
                     examples:
-                      - !!null "null"
+                      - null
                     format: "date-time"
                     description: "When the field was archived, or null if it is active."
                   config:
@@ -2130,7 +2096,7 @@ paths:
                                     - "integer"
                                     - "null"
                                   examples:
-                                    - !!int "0"
+                                    - 0
                                   description: "The option's display order within the field, ascending from 0. May be null."
                             description: "The field's active options, in display order."
                         required:
@@ -2154,7 +2120,7 @@ paths:
                           allows_group_refs:
                             type: "boolean"
                             examples:
-                              - !!bool "false"
+                              - false
                             description: "Whether values may reference contact groups in addition to contacts."
                         required:
                           - "allows_group_refs"
@@ -2269,7 +2235,6 @@ paths:
                     type: "string"
                     examples:
                       - "Internal server error"
-      x-readme-hidden: !!bool "true"
   /deleted_media:
     get:
       summary: "List Deleted Media"
@@ -2306,8 +2271,8 @@ paths:
           schema:
             type: "integer"
             enum:
-              - !!int "0"
-              - !!int "1"
+              - 0
+              - 1
         - name: "page"
           in: "query"
           description: "The page number to retrieve. This cannot be combined with `cursor`,\npagination.\n"
@@ -2332,8 +2297,8 @@ paths:
               enabled:
                 type: "integer"
                 enum:
-                  - !!int "0"
-                  - !!int "1"
+                  - 0
+                  - 1
                 description: "If `cursor[enabled]` is set to 1, the first result set will be fetched with cursor pagination enabled. This\nvalues is ignored if `cursor[before]` or `cursor[after]` are set.\n"
               before:
                 type: "string"
@@ -2462,6 +2427,8 @@ paths:
                     type: "string"
                     examples:
                       - "Internal server error"
+      x-speakeasy-group: deletedMedia
+      x-speakeasy-name-override: list
   /deleted_media/restore:
     post:
       summary: "Restore Deleted Media"
@@ -2580,6 +2547,8 @@ paths:
                     type: "string"
                     examples:
                       - "Internal server error"
+      x-speakeasy-group: deletedMedia
+      x-speakeasy-name-override: restore
   /medias:
     get:
       summary: "List Media"
@@ -2613,8 +2582,8 @@ paths:
               enabled:
                 type: "integer"
                 enum:
-                  - !!int "0"
-                  - !!int "1"
+                  - 0
+                  - 1
                 description: "If `cursor[enabled]` is set to 1, the first result set will be fetched with cursor pagination enabled. This\nvalues is ignored if `cursor[before]` or `cursor[after]` are set.\n"
               before:
                 type: "string"
@@ -2640,8 +2609,8 @@ paths:
           schema:
             type: "integer"
             enum:
-              - !!int "0"
-              - !!int "1"
+              - 0
+              - 1
         - name: "folder_id"
           in: "query"
           description: "A hashed ID specifying the folder from which you would like to get results."
@@ -2706,7 +2675,7 @@ paths:
               type: "string"
         - name: "speaker_profile_ids[]"
           in: "query"
-          description: "Filter media assigned to any of these reusable speaker profiles."
+          description: "Filter media assigned to any of these reusable speaker profiles. Blank IDs are ignored; a list with no ID returns 400."
           required: false
           style: "form"
           explode: true
@@ -2714,6 +2683,8 @@ paths:
             type: "array"
             items:
               type: "string"
+              minLength: 1
+            minItems: 1
         - name: "archived"
           in: "query"
           description: "Filter by archived status. True will return only archived medias, while false will return only active medias."
@@ -2820,7 +2791,7 @@ paths:
                                 id:
                                   type: "integer"
                                   examples:
-                                    - !!int "22570"
+                                    - 22570
                                   description: "A unique numeric identifier for the folder within the system."
                                 name:
                                   type: "string"
@@ -2907,7 +2878,7 @@ paths:
                                     - "integer"
                                     - "null"
                                   examples:
-                                    - !!int "1"
+                                    - 1
                                   description: "The position of this subfolder within its folder, used for ordering."
                                 created:
                                   type:
@@ -3163,7 +3134,7 @@ paths:
                               id:
                                 type: "integer"
                                 examples:
-                                  - !!int "22570"
+                                  - 22570
                                 description: "A unique numeric identifier for the folder within the system."
                               name:
                                 type: "string"
@@ -3250,7 +3221,7 @@ paths:
                                   - "integer"
                                   - "null"
                                 examples:
-                                  - !!int "1"
+                                  - 1
                                 description: "The position of this subfolder within its folder, used for ordering."
                               created:
                                 type:
@@ -3877,7 +3848,7 @@ paths:
                               id:
                                 type: "integer"
                                 examples:
-                                  - !!int "22570"
+                                  - 22570
                                 description: "A unique numeric identifier for the folder within the system."
                               name:
                                 type: "string"
@@ -5727,7 +5698,7 @@ paths:
                   anyOf:
                     - type: "boolean"
                       examples:
-                        - !!bool "true"
+                        - true
                     - type: "object"
                       unevaluatedProperties: false
                       properties:
@@ -6237,7 +6208,7 @@ paths:
                   anyOf:
                     - type: "boolean"
                       examples:
-                        - !!bool "true"
+                        - true
                     - type: "object"
                       unevaluatedProperties: false
                       properties:
@@ -7152,7 +7123,7 @@ paths:
                   anyOf:
                     - type: "boolean"
                       examples:
-                        - !!bool "true"
+                        - true
                     - type: "object"
                       unevaluatedProperties: false
                       properties:
@@ -10411,10 +10382,10 @@ paths:
                         - "processing"
                         - "unavailable"
                         - "disabled"
-                      description: "Speaker-data availability when `include=diarized_segments`."
+                      description: "Speaker-data availability when `include=diarized_segments`. Reading a derivable media\nwith no speaker data starts generating it and reports `processing`; read again shortly\nfor `ready`. `disabled` means the account has speaker identification turned off; an\naccount owner or manager can turn it on in Account Settings.\n"
                     diarization_derivable:
                       type: "boolean"
-                      description: "Whether speaker data can be derived from the active default transcript when `include=diarized_segments`."
+                      description: "Whether speaker data can be generated from the active default transcript when `include=diarized_segments`. When false, the media stays `unavailable`."
                     speaker_data_version:
                       type:
                         - "integer"
@@ -10628,8 +10599,8 @@ paths:
               enabled:
                 type: "integer"
                 enum:
-                  - !!int "0"
-                  - !!int "1"
+                  - 0
+                  - 1
                 description: "If `cursor[enabled]` is set to 1, the first result set will be fetched with cursor pagination enabled. This\nvalues is ignored if `cursor[before]` or `cursor[after]` are set.\n"
               before:
                 type: "string"
@@ -10656,9 +10627,9 @@ paths:
           schema:
             type: "integer"
             enum:
-              - !!int "0"
-              - !!int "1"
-            default: !!int "1"
+              - 0
+              - 1
+            default: 1
       responses:
         "200":
           description: "Captions retrieval successful"
@@ -10780,10 +10751,10 @@ paths:
                         - "processing"
                         - "unavailable"
                         - "disabled"
-                      description: "Speaker-data availability when `include=diarized_segments`."
+                      description: "Speaker-data availability when `include=diarized_segments`. Reading a derivable media\nwith no speaker data starts generating it and reports `processing`; read again shortly\nfor `ready`. `disabled` means the account has speaker identification turned off; an\naccount owner or manager can turn it on in Account Settings.\n"
                     diarization_derivable:
                       type: "boolean"
-                      description: "Whether speaker data can be derived from the active default transcript when `include=diarized_segments`."
+                      description: "Whether speaker data can be generated from the active default transcript when `include=diarized_segments`. When false, the media stays `unavailable`."
                     speaker_data_version:
                       type:
                         - "integer"
@@ -11149,15 +11120,15 @@ paths:
                 automated:
                   type: "boolean"
                   description: "Order computer-generated captions or human-reviewed ones. What each costs depends on the account's plan and billing settings; computer-generated captions are included at no cost on some plans and billed per minute on others."
-                  default: !!bool "false"
+                  default: false
                 rush:
                   type: "boolean"
                   description: "Enable rush order for one business day turnaround instead of the standard four, for human-reviewed captions only. Rush bills at the account's higher per-minute rate."
-                  default: !!bool "true"
+                  default: true
                 automatically_enable:
                   type: "boolean"
                   description: "Automatically enable captions for the media once the order is ready or hold the captions for review before manually enabling."
-                  default: !!bool "true"
+                  default: true
         required: true
       responses:
         "200":
@@ -11267,7 +11238,7 @@ paths:
           required: false
           schema:
             type: "boolean"
-            default: !!bool "false"
+            default: false
       responses:
         "200":
           description: "Successful response containing captions in the requested format"
@@ -11387,10 +11358,10 @@ paths:
                       - "processing"
                       - "unavailable"
                       - "disabled"
-                    description: "Speaker-data availability when `include=diarized_segments`."
+                    description: "Speaker-data availability when `include=diarized_segments`. Reading a derivable media\nwith no speaker data starts generating it and reports `processing`; read again shortly\nfor `ready`. `disabled` means the account has speaker identification turned off; an\naccount owner or manager can turn it on in Account Settings.\n"
                   diarization_derivable:
                     type: "boolean"
-                    description: "Whether speaker data can be derived from the active default transcript when `include=diarized_segments`."
+                    description: "Whether speaker data can be generated from the active default transcript when `include=diarized_segments`. When false, the media stays `unavailable`."
                   speaker_data_version:
                     type:
                       - "integer"
@@ -11948,7 +11919,7 @@ paths:
                 expected_version:
                   type: "integer"
                   examples:
-                    - !!int "7"
+                    - 7
                   description: "The media's current `speaker_data_version` from its diarized transcript segments. Required with `detected_speaker_id`; a stale value returns 409."
               required:
                 - "speaker_profile_id"
@@ -12327,7 +12298,7 @@ paths:
           required: false
           schema:
             type: "boolean"
-            default: !!bool "false"
+            default: false
       responses:
         "200":
           description: "Successful response"
@@ -12526,7 +12497,7 @@ paths:
                 auto_enable:
                   type: "boolean"
                   description: "Whether to automatically enable the localization."
-                  default: !!bool "true"
+                  default: true
               required:
                 - "output_language"
       responses:
@@ -12806,7 +12777,7 @@ paths:
           required: false
           schema:
             type: "boolean"
-            default: !!bool "false"
+            default: false
       responses:
         "200":
           description: "Successful response"
@@ -13365,11 +13336,10 @@ paths:
                     type: "string"
                     examples:
                       - "Internal server error"
-      x-readme-hidden: !!bool "true"
   /medias/{mediaHashedId}/custom_metadata_field_values/{key}:
     put:
       summary: "Set Custom Metadata Field Value"
-      description: "Sets (or replaces) the value of a custom metadata field on a media, addressed by the field definition's immutable key. The lookup is case-insensitive.\n\nThe request body carries a single polymorphic `value` field whose JSON type must match the definition's `field_type`:\n\n- text-like types (`text`, `short_text`, `url`, `email`, `money`, `time`, `datetime`) — a string; format-validated per type (e.g. money is `\"USD 12.34\"`, time is 24-hour `\"14:30\"`, datetime is UTC ISO 8601 `\"2026-07-10T14:30:00Z\"`)\n- `number` — a JSON number (a numeric string is coerced)\n- `date` — an ISO 8601 date string like `\"2026-07-10\"`\n- `boolean` — a JSON boolean; `false` persists as false (it does not clear the field)\n- `single_select` — the chosen option's key (a string); unknown option keys return a 422\n- `multi_select` — an array of the chosen options' keys (strings); unknown option keys or a non-array value return a 422\n- `contact_ref` — a contact reference object `{\"type\": \"contact\" | \"contact_group\", \"id\": \"<hashed_id>\"}`; unknown ids, ids from another account, and group references on fields that do not allow groups return a 422\n- `contact_multi_ref` — an array of contact reference objects; the same 422 rules apply per reference, and a non-array value returns a 422\n\nA null or absent `value` clears the field (equivalent to the DELETE endpoint), as does an empty array for `multi_select` and `contact_multi_ref`. Type mismatches and format violations return a 422 with a field-level message.\n\nOnly values for active field definitions can be written. Requires the custom metadata feature to be available on your account.\n\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\nUpload, read & update all media\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\n"
+      description: "Sets (or replaces) the value of a custom metadata field on a media, addressed by the field definition's immutable key. The lookup is case-insensitive.\n\nThe request body carries a single polymorphic `value` field whose JSON type must match the definition's `field_type`:\n\n- text-like types (`text`, `short_text`, `time`, `datetime`) — a string; format-validated per type (e.g. time is 24-hour `\"14:30\"`, datetime is UTC ISO 8601 `\"2026-07-10T14:30:00Z\"`)\n- `number` — a JSON number (a numeric string is coerced)\n- `date` — an ISO 8601 date string like `\"2026-07-10\"`\n- `boolean` — a JSON boolean; `false` persists as false (it does not clear the field)\n- `single_select` — the chosen option's key (a string); unknown option keys return a 422\n- `multi_select` — an array of the chosen options' keys (strings); unknown option keys or a non-array value return a 422\n\nA null or absent `value` clears the field (equivalent to the DELETE endpoint), as does an empty array for `multi_select`. Type mismatches and format violations return a 422 with a field-level message.\n\nOnly values for active field definitions can be written. Requires the custom metadata feature to be available on your account.\n\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\nUpload, read & update all media\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\n"
       tags:
         - "Custom Metadata Field Values"
       security:
@@ -13402,34 +13372,12 @@ paths:
                     - "number"
                     - "boolean"
                     - "array"
-                    - "object"
                     - "null"
                   examples:
                     - "high"
-                  unevaluatedProperties: false
                   items:
-                    oneOf:
-                      - type: "string"
-                      - type: "object"
-                        unevaluatedProperties: false
-                        properties:
-                          type:
-                            type: "string"
-                            enum:
-                              - "contact"
-                              - "contact_group"
-                          id:
-                            type: "string"
-                    unevaluatedProperties: false
-                  properties:
-                    type:
-                      type: "string"
-                      enum:
-                        - "contact"
-                        - "contact_group"
-                    id:
-                      type: "string"
-                  description: "The new value for this field, typed to match the definition's `field_type`:\na string for text-like types (text, short_text, url, email, money, time, datetime),\na number for `number`, an ISO 8601 date string like \"2026-07-10\" for `date`,\na boolean for `boolean`, the chosen option's key (a string) for `single_select`,\nan array of the chosen options' keys for `multi_select`, a contact reference\nobject `{\"type\": \"contact\" | \"contact_group\", \"id\": \"<hashed_id>\"}` for\n`contact_ref`, and an array of contact reference objects for `contact_multi_ref`.\nContact group references require the field to allow groups.\nNull (or omitting the property) clears the field; for `multi_select` and\n`contact_multi_ref`, an empty array also clears it.\n"
+                    type: "string"
+                  description: "The new value for this field, typed to match the definition's `field_type`:\na string for text-like types (text, short_text, time, datetime),\na number for `number`, an ISO 8601 date string like \"2026-07-10\" for `date`,\na boolean for `boolean`, the chosen option's key (a string) for `single_select`,\nand an array of the chosen options' keys for `multi_select`.\nNull (or omitting the property) clears the field; for `multi_select`,\nan empty array also clears it.\n"
         required: true
       responses:
         "200":
@@ -13623,7 +13571,6 @@ paths:
                     type: "string"
                     examples:
                       - "Internal server error"
-      x-readme-hidden: !!bool "true"
     delete:
       summary: "Clear Custom Metadata Field Value"
       description: "Clears the value of a custom metadata field on a media, addressed by the field definition's immutable key. The lookup is case-insensitive. Clearing a field that has no stored value succeeds (the operation is idempotent).\n\nOnly values for active field definitions can be cleared. Requires the custom metadata feature to be available on your account.\n\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\nUpload, read & update all media\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\n"
@@ -13695,7 +13642,6 @@ paths:
                     type: "string"
                     examples:
                       - "Internal server error"
-      x-readme-hidden: !!bool "true"
     get:
       summary: "Show Custom Metadata Field Value"
       description: "Get the value of a single custom metadata field on a media, addressed by the field definition's key. The lookup is case-insensitive.\n\nOnly values for active field definitions are returned. Requires the custom metadata feature to be available on your account.\n\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\nRead all data\nRead all folder and media data\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\n"
@@ -13889,7 +13835,6 @@ paths:
                     type: "string"
                     examples:
                       - "Internal server error"
-      x-readme-hidden: !!bool "true"
   /medias/{mediaHashedId}/trims:
     post:
       summary: "Create Media from Trims"
@@ -13920,7 +13865,7 @@ paths:
                 keep_trims:
                   type: "boolean"
                   description: "When set to true, the trims parameter is treated as ranges to keep rather than ranges to remove. Defaults to false."
-                  default: !!bool "false"
+                  default: false
               required:
                 - "trims"
         required: true
@@ -14057,8 +14002,8 @@ paths:
               enabled:
                 type: "integer"
                 enum:
-                  - !!int "0"
-                  - !!int "1"
+                  - 0
+                  - 1
                 description: "If `cursor[enabled]` is set to 1, the first result set will be fetched with cursor pagination enabled. This\nvalues is ignored if `cursor[before]` or `cursor[after]` are set.\n"
               before:
                 type: "string"
@@ -14094,8 +14039,8 @@ paths:
           schema:
             type: "integer"
             enum:
-              - !!int "0"
-              - !!int "1"
+              - 0
+              - 1
       responses:
         "200":
           description: "Media Extended Audio Descriptions retrieval successful"
@@ -14555,11 +14500,11 @@ paths:
                 enabled:
                   type: "boolean"
                   description: "Whether the extended audio description should be automatically enabled once the order is complete."
-                  default: !!bool "true"
+                  default: true
                 ai_enabled:
                   type: "boolean"
                   description: "Whether to use AI-generated audio descriptions (cheaper) or human-generated (higher quality). AI is only available for English orders."
-                  default: !!bool "true"
+                  default: true
                 order_instructions:
                   type: "string"
                   description: "Optional instructions for the audio description provider."
@@ -14926,8 +14871,8 @@ paths:
               enabled:
                 type: "integer"
                 enum:
-                  - !!int "0"
-                  - !!int "1"
+                  - 0
+                  - 1
                 description: "If `cursor[enabled]` is set to 1, the first result set will be fetched with cursor pagination enabled. This\nvalues is ignored if `cursor[before]` or `cursor[after]` are set.\n"
               before:
                 type: "string"
@@ -14953,8 +14898,8 @@ paths:
           schema:
             type: "integer"
             enum:
-              - !!int "0"
-              - !!int "1"
+              - 0
+              - 1
       responses:
         "200":
           description: "A list of brands"
@@ -14979,7 +14924,7 @@ paths:
                     is_default:
                       type: "boolean"
                       examples:
-                        - !!bool "true"
+                        - true
                       description: "Whether this brand is the account-level default, applied to content that has no more specific brand."
                     created:
                       type: "string"
@@ -15043,7 +14988,7 @@ paths:
                         - "integer"
                         - "null"
                       examples:
-                        - !!int "10"
+                        - 10
                       description: "The border radius in pixels for rounded corners. Null when unset."
                     contrast_icons:
                       type:
@@ -15053,7 +14998,7 @@ paths:
                         - "enabled"
                         - "disabled"
                         - "unset"
-                        - !!null "null"
+                        - null
                       description: "Controls whether the player icon color is always white or uses an accessible contrast color when necessary."
                     opaque_controls:
                       type:
@@ -15063,7 +15008,7 @@ paths:
                         - "enabled"
                         - "disabled"
                         - "unset"
-                        - !!null "null"
+                        - null
                       description: "Controls the opacity of the video player control bar and big play button."
                     page_logo:
                       type:
@@ -15242,7 +15187,7 @@ paths:
                     - "integer"
                     - "null"
                   examples:
-                    - !!int "10"
+                    - 10
                   description: "The border radius in pixels for rounded corners."
                 contrast_icons:
                   type:
@@ -15252,7 +15197,7 @@ paths:
                     - "enabled"
                     - "disabled"
                     - "unset"
-                    - !!null "null"
+                    - null
                   description: "Controls whether the player icon color is always white or uses an accessible contrast color when necessary."
                 opaque_controls:
                   type:
@@ -15262,7 +15207,7 @@ paths:
                     - "enabled"
                     - "disabled"
                     - "unset"
-                    - !!null "null"
+                    - null
                   description: "Controls the opacity of the video player control bar and big play button."
                 page_logo:
                   type:
@@ -15337,7 +15282,7 @@ paths:
                   is_default:
                     type: "boolean"
                     examples:
-                      - !!bool "true"
+                      - true
                     description: "Whether this brand is the account-level default, applied to content that has no more specific brand."
                   created:
                     type: "string"
@@ -15401,7 +15346,7 @@ paths:
                       - "integer"
                       - "null"
                     examples:
-                      - !!int "10"
+                      - 10
                     description: "The border radius in pixels for rounded corners. Null when unset."
                   contrast_icons:
                     type:
@@ -15411,7 +15356,7 @@ paths:
                       - "enabled"
                       - "disabled"
                       - "unset"
-                      - !!null "null"
+                      - null
                     description: "Controls whether the player icon color is always white or uses an accessible contrast color when necessary."
                   opaque_controls:
                     type:
@@ -15421,7 +15366,7 @@ paths:
                       - "enabled"
                       - "disabled"
                       - "unset"
-                      - !!null "null"
+                      - null
                     description: "Controls the opacity of the video player control bar and big play button."
                   page_logo:
                     type:
@@ -15581,7 +15526,7 @@ paths:
                   is_default:
                     type: "boolean"
                     examples:
-                      - !!bool "true"
+                      - true
                     description: "Whether this brand is the account-level default, applied to content that has no more specific brand."
                   created:
                     type: "string"
@@ -15645,7 +15590,7 @@ paths:
                       - "integer"
                       - "null"
                     examples:
-                      - !!int "10"
+                      - 10
                     description: "The border radius in pixels for rounded corners. Null when unset."
                   contrast_icons:
                     type:
@@ -15655,7 +15600,7 @@ paths:
                       - "enabled"
                       - "disabled"
                       - "unset"
-                      - !!null "null"
+                      - null
                     description: "Controls whether the player icon color is always white or uses an accessible contrast color when necessary."
                   opaque_controls:
                     type:
@@ -15665,7 +15610,7 @@ paths:
                       - "enabled"
                       - "disabled"
                       - "unset"
-                      - !!null "null"
+                      - null
                     description: "Controls the opacity of the video player control bar and big play button."
                   page_logo:
                     type:
@@ -15845,7 +15790,7 @@ paths:
                     - "integer"
                     - "null"
                   examples:
-                    - !!int "10"
+                    - 10
                   description: "The border radius in pixels for rounded corners."
                 contrast_icons:
                   type:
@@ -15855,7 +15800,7 @@ paths:
                     - "enabled"
                     - "disabled"
                     - "unset"
-                    - !!null "null"
+                    - null
                   description: "Controls whether the player icon color is always white or uses an accessible contrast color when necessary."
                 opaque_controls:
                   type:
@@ -15865,7 +15810,7 @@ paths:
                     - "enabled"
                     - "disabled"
                     - "unset"
-                    - !!null "null"
+                    - null
                   description: "Controls the opacity of the video player control bar and big play button."
                 page_logo:
                   type:
@@ -15940,7 +15885,7 @@ paths:
                   is_default:
                     type: "boolean"
                     examples:
-                      - !!bool "true"
+                      - true
                     description: "Whether this brand is the account-level default, applied to content that has no more specific brand."
                   created:
                     type: "string"
@@ -16004,7 +15949,7 @@ paths:
                       - "integer"
                       - "null"
                     examples:
-                      - !!int "10"
+                      - 10
                     description: "The border radius in pixels for rounded corners. Null when unset."
                   contrast_icons:
                     type:
@@ -16014,7 +15959,7 @@ paths:
                       - "enabled"
                       - "disabled"
                       - "unset"
-                      - !!null "null"
+                      - null
                     description: "Controls whether the player icon color is always white or uses an accessible contrast color when necessary."
                   opaque_controls:
                     type:
@@ -16024,7 +15969,7 @@ paths:
                       - "enabled"
                       - "disabled"
                       - "unset"
-                      - !!null "null"
+                      - null
                     description: "Controls the opacity of the video player control bar and big play button."
                   page_logo:
                     type:
@@ -16200,7 +16145,7 @@ paths:
                   is_default:
                     type: "boolean"
                     examples:
-                      - !!bool "true"
+                      - true
                     description: "Whether this brand is the account-level default, applied to content that has no more specific brand."
                   created:
                     type: "string"
@@ -16264,7 +16209,7 @@ paths:
                       - "integer"
                       - "null"
                     examples:
-                      - !!int "10"
+                      - 10
                     description: "The border radius in pixels for rounded corners. Null when unset."
                   contrast_icons:
                     type:
@@ -16274,7 +16219,7 @@ paths:
                       - "enabled"
                       - "disabled"
                       - "unset"
-                      - !!null "null"
+                      - null
                     description: "Controls whether the player icon color is always white or uses an accessible contrast color when necessary."
                   opaque_controls:
                     type:
@@ -16284,7 +16229,7 @@ paths:
                       - "enabled"
                       - "disabled"
                       - "unset"
-                      - !!null "null"
+                      - null
                     description: "Controls the opacity of the video player control bar and big play button."
                   page_logo:
                     type:
@@ -16455,7 +16400,7 @@ paths:
                 clear_overrides:
                   type: "boolean"
                   description: "When true (the default), appearance settings the resource had set directly are cleared for the fields the brand controls, so the brand is what shows. Set to false to leave them in place, in which case they continue to win over the brand."
-                  default: !!bool "true"
+                  default: true
               required:
                 - "resource_type"
                 - "resource_id"
@@ -16482,7 +16427,7 @@ paths:
                   is_default:
                     type: "boolean"
                     examples:
-                      - !!bool "true"
+                      - true
                     description: "Whether this brand is the account-level default, applied to content that has no more specific brand."
                   created:
                     type: "string"
@@ -16546,7 +16491,7 @@ paths:
                       - "integer"
                       - "null"
                     examples:
-                      - !!int "10"
+                      - 10
                     description: "The border radius in pixels for rounded corners. Null when unset."
                   contrast_icons:
                     type:
@@ -16556,7 +16501,7 @@ paths:
                       - "enabled"
                       - "disabled"
                       - "unset"
-                      - !!null "null"
+                      - null
                     description: "Controls whether the player icon color is always white or uses an accessible contrast color when necessary."
                   opaque_controls:
                     type:
@@ -16566,7 +16511,7 @@ paths:
                       - "enabled"
                       - "disabled"
                       - "unset"
-                      - !!null "null"
+                      - null
                     description: "Controls the opacity of the video player control bar and big play button."
                   page_logo:
                     type:
@@ -16733,8 +16678,8 @@ paths:
           schema:
             type: "integer"
             enum:
-              - !!int "0"
-              - !!int "1"
+              - 0
+              - 1
         - name: "page"
           in: "query"
           description: "The page number to retrieve. This cannot be combined with `cursor`,\npagination.\n"
@@ -16759,8 +16704,8 @@ paths:
               enabled:
                 type: "integer"
                 enum:
-                  - !!int "0"
-                  - !!int "1"
+                  - 0
+                  - 1
                 description: "If `cursor[enabled]` is set to 1, the first result set will be fetched with cursor pagination enabled. This\nvalues is ignored if `cursor[before]` or `cursor[after]` are set.\n"
               before:
                 type: "string"
@@ -17050,8 +16995,8 @@ paths:
               enabled:
                 type: "integer"
                 enum:
-                  - !!int "0"
-                  - !!int "1"
+                  - 0
+                  - 1
                 description: "If `cursor[enabled]` is set to 1, the first result set will be fetched with cursor pagination enabled. This\nvalues is ignored if `cursor[before]` or `cursor[after]` are set.\n"
               before:
                 type: "string"
@@ -17078,8 +17023,8 @@ paths:
           schema:
             type: "integer"
             enum:
-              - !!int "0"
-              - !!int "1"
+              - 0
+              - 1
       responses:
         "200":
           description: "A list of tags"
@@ -17099,7 +17044,7 @@ paths:
                     taggings_count:
                       type: "integer"
                       examples:
-                        - !!int "2"
+                        - 2
                       description: "The number of different medias that have been associated with this tag."
                     created_at:
                       type: "string"
@@ -17208,7 +17153,7 @@ paths:
                   taggings_count:
                     type: "integer"
                     examples:
-                      - !!int "2"
+                      - 2
                     description: "The number of different medias that have been associated with this tag."
                   created_at:
                     type: "string"
@@ -17592,6 +17537,8 @@ paths:
                     type: "string"
                     examples:
                       - "Internal server error"
+      x-speakeasy-group: bulkActions
+      x-speakeasy-name-override: create
   /bulk/purchase:
     post:
       summary: "Create Bulk Purchase"
@@ -17951,8 +17898,8 @@ paths:
               enabled:
                 type: "integer"
                 enum:
-                  - !!int "0"
-                  - !!int "1"
+                  - 0
+                  - 1
                 description: "If `cursor[enabled]` is set to 1, the first result set will be fetched with cursor pagination enabled. This\nvalues is ignored if `cursor[before]` or `cursor[after]` are set.\n"
               before:
                 type: "string"
@@ -17979,8 +17926,8 @@ paths:
           schema:
             type: "integer"
             enum:
-              - !!int "0"
-              - !!int "1"
+              - 0
+              - 1
         - name: "hashed_ids[]"
           in: "query"
           description: "A collection of hashed ids belonging to folders to fetch"
@@ -18003,7 +17950,7 @@ paths:
                     id:
                       type: "integer"
                       examples:
-                        - !!int "22570"
+                        - 22570
                       description: "A unique numeric identifier for the folder within the system."
                     name:
                       type: "string"
@@ -18020,7 +17967,7 @@ paths:
                     media_count:
                       type: "integer"
                       examples:
-                        - !!int "2"
+                        - 2
                       description: "The number of different medias that have been uploaded to the folder."
                     medias:
                       type: "object"
@@ -18050,7 +17997,7 @@ paths:
                     public:
                       type: "boolean"
                       examples:
-                        - !!bool "false"
+                        - false
                       description: "A boolean indicating whether the folder is available for public (anonymous) viewing."
                     public_id:
                       type:
@@ -18062,11 +18009,11 @@ paths:
                     anonymous_can_upload:
                       type: "boolean"
                       examples:
-                        - !!bool "false"
+                        - false
                     anonymous_can_download:
                       type: "boolean"
                       examples:
-                        - !!bool "false"
+                        - false
                     kind:
                       type: "string"
                       examples:
@@ -18079,7 +18026,7 @@ paths:
                     personal_library:
                       type: "boolean"
                       examples:
-                        - !!bool "false"
+                        - false
                       description: "Whether this folder is someone's personal library (\"My Library\"). Unlike `kind`, this is a property of the folder itself and does not depend on who is requesting — it is `true` for a personal library even when that library has been shared with you (where `kind` would read `shared`). Use this, not `kind`, to tell whether a folder is a personal library.\n"
                     cursor:
                       type:
@@ -18189,12 +18136,12 @@ paths:
                 public:
                   type: "boolean"
                   examples:
-                    - !!bool "false"
+                    - false
                   description: "A flag indicating whether or not the folder is enabled for public access."
                 personalLibrary:
                   type: "boolean"
                   examples:
-                    - !!bool "false"
+                    - false
                   description: "When true, creates the folder inside the requesting user's personal \"My Library\" (owned by them) instead of a shared account folder."
       responses:
         "201":
@@ -18208,7 +18155,7 @@ paths:
                   id:
                     type: "integer"
                     examples:
-                      - !!int "22570"
+                      - 22570
                     description: "A unique numeric identifier for the folder within the system."
                   name:
                     type: "string"
@@ -18225,7 +18172,7 @@ paths:
                   media_count:
                     type: "integer"
                     examples:
-                      - !!int "2"
+                      - 2
                     description: "The number of different medias that have been uploaded to the folder."
                   medias:
                     type: "object"
@@ -18255,7 +18202,7 @@ paths:
                   public:
                     type: "boolean"
                     examples:
-                      - !!bool "false"
+                      - false
                     description: "A boolean indicating whether the folder is available for public (anonymous) viewing."
                   public_id:
                     type:
@@ -18267,11 +18214,11 @@ paths:
                   anonymous_can_upload:
                     type: "boolean"
                     examples:
-                      - !!bool "false"
+                      - false
                   anonymous_can_download:
                     type: "boolean"
                     examples:
-                      - !!bool "false"
+                      - false
                   kind:
                     type: "string"
                     examples:
@@ -18284,7 +18231,7 @@ paths:
                   personal_library:
                     type: "boolean"
                     examples:
-                      - !!bool "false"
+                      - false
                     description: "Whether this folder is someone's personal library (\"My Library\"). Unlike `kind`, this is a property of the folder itself and does not depend on who is requesting — it is `true` for a personal library even when that library has been shared with you (where `kind` would read `shared`). Use this, not `kind`, to tell whether a folder is a personal library.\n"
                   cursor:
                     type:
@@ -18378,7 +18325,7 @@ paths:
                   id:
                     type: "integer"
                     examples:
-                      - !!int "22570"
+                      - 22570
                     description: "A unique numeric identifier for the folder within the system."
                   name:
                     type: "string"
@@ -18395,7 +18342,7 @@ paths:
                   media_count:
                     type: "integer"
                     examples:
-                      - !!int "2"
+                      - 2
                     description: "The number of different medias that have been uploaded to the folder."
                   medias:
                     type: "object"
@@ -18425,7 +18372,7 @@ paths:
                   public:
                     type: "boolean"
                     examples:
-                      - !!bool "false"
+                      - false
                     description: "A boolean indicating whether the folder is available for public (anonymous) viewing."
                   public_id:
                     type:
@@ -18437,11 +18384,11 @@ paths:
                   anonymous_can_upload:
                     type: "boolean"
                     examples:
-                      - !!bool "false"
+                      - false
                   anonymous_can_download:
                     type: "boolean"
                     examples:
-                      - !!bool "false"
+                      - false
                   kind:
                     type: "string"
                     examples:
@@ -18454,7 +18401,7 @@ paths:
                   personal_library:
                     type: "boolean"
                     examples:
-                      - !!bool "false"
+                      - false
                     description: "Whether this folder is someone's personal library (\"My Library\"). Unlike `kind`, this is a property of the folder itself and does not depend on who is requesting — it is `true` for a personal library even when that library has been shared with you (where `kind` would read `shared`). Use this, not `kind`, to tell whether a folder is a personal library.\n"
                   cursor:
                     type:
@@ -18522,7 +18469,7 @@ paths:
       x-speakeasy-name-override: "get"
     put:
       summary: "Update Folder"
-      description: "Updates a folder (previously called project)\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\nauthorization granting the `update` permission on this folder can also be\nused. The `update` permission also allows bulk-deleting the folder's\nsubfolders and using the folder as the destination when moving or\nbulk-copying media the token may update.\n"
+      description: "Updates a folder (previously called project)\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\nauthorization granting the `update` permission on this folder can also be\nused. The `update` permission also allows creating, renaming and deleting\nthe folder's subfolders and using the folder as the destination when\nmoving or bulk-copying media the token may update.\n"
       tags:
         - "Folders"
       security:
@@ -18561,7 +18508,7 @@ paths:
                 public:
                   type: "boolean"
                   examples:
-                    - !!bool "false"
+                    - false
                   description: "A flag indicating whether or not the folder is enabled for public access."
       responses:
         "200":
@@ -18575,7 +18522,7 @@ paths:
                   id:
                     type: "integer"
                     examples:
-                      - !!int "22570"
+                      - 22570
                     description: "A unique numeric identifier for the folder within the system."
                   name:
                     type: "string"
@@ -18592,7 +18539,7 @@ paths:
                   media_count:
                     type: "integer"
                     examples:
-                      - !!int "2"
+                      - 2
                     description: "The number of different medias that have been uploaded to the folder."
                   medias:
                     type: "object"
@@ -18622,7 +18569,7 @@ paths:
                   public:
                     type: "boolean"
                     examples:
-                      - !!bool "false"
+                      - false
                     description: "A boolean indicating whether the folder is available for public (anonymous) viewing."
                   public_id:
                     type:
@@ -18634,11 +18581,11 @@ paths:
                   anonymous_can_upload:
                     type: "boolean"
                     examples:
-                      - !!bool "false"
+                      - false
                   anonymous_can_download:
                     type: "boolean"
                     examples:
-                      - !!bool "false"
+                      - false
                   kind:
                     type: "string"
                     examples:
@@ -18651,7 +18598,7 @@ paths:
                   personal_library:
                     type: "boolean"
                     examples:
-                      - !!bool "false"
+                      - false
                     description: "Whether this folder is someone's personal library (\"My Library\"). Unlike `kind`, this is a property of the folder itself and does not depend on who is requesting — it is `true` for a personal library even when that library has been shared with you (where `kind` would read `shared`). Use this, not `kind`, to tell whether a folder is a personal library.\n"
                   cursor:
                     type:
@@ -18756,7 +18703,7 @@ paths:
                   id:
                     type: "integer"
                     examples:
-                      - !!int "22570"
+                      - 22570
                     description: "A unique numeric identifier for the folder within the system."
                   name:
                     type: "string"
@@ -18773,7 +18720,7 @@ paths:
                   media_count:
                     type: "integer"
                     examples:
-                      - !!int "2"
+                      - 2
                     description: "The number of different medias that have been uploaded to the folder."
                   medias:
                     type: "object"
@@ -18803,7 +18750,7 @@ paths:
                   public:
                     type: "boolean"
                     examples:
-                      - !!bool "false"
+                      - false
                     description: "A boolean indicating whether the folder is available for public (anonymous) viewing."
                   public_id:
                     type:
@@ -18815,11 +18762,11 @@ paths:
                   anonymous_can_upload:
                     type: "boolean"
                     examples:
-                      - !!bool "false"
+                      - false
                   anonymous_can_download:
                     type: "boolean"
                     examples:
-                      - !!bool "false"
+                      - false
                   kind:
                     type: "string"
                     examples:
@@ -18832,7 +18779,7 @@ paths:
                   personal_library:
                     type: "boolean"
                     examples:
-                      - !!bool "false"
+                      - false
                     description: "Whether this folder is someone's personal library (\"My Library\"). Unlike `kind`, this is a property of the folder itself and does not depend on who is requesting — it is `true` for a personal library even when that library has been shared with you (where `kind` would read `shared`). Use this, not `kind`, to tell whether a folder is a personal library.\n"
                   cursor:
                     type:
@@ -19053,8 +19000,8 @@ paths:
               enabled:
                 type: "integer"
                 enum:
-                  - !!int "0"
-                  - !!int "1"
+                  - 0
+                  - 1
                 description: "If `cursor[enabled]` is set to 1, the first result set will be fetched with cursor pagination enabled. This\nvalues is ignored if `cursor[before]` or `cursor[after]` are set.\n"
               before:
                 type: "string"
@@ -19080,9 +19027,9 @@ paths:
           schema:
             type: "integer"
             enum:
-              - !!int "0"
-              - !!int "1"
-            default: !!int "1"
+              - 0
+              - 1
+            default: 1
         - name: "hashed_ids[]"
           in: "query"
           description: "Filter sharings by their hashed IDs"
@@ -19107,23 +19054,23 @@ paths:
                     id:
                       type: "integer"
                       examples:
-                        - !!int "14"
+                        - 14
                     is_admin:
                       type: "boolean"
                       examples:
-                        - !!bool "true"
+                        - true
                     can_share:
                       type: "boolean"
                       examples:
-                        - !!bool "true"
+                        - true
                     can_download:
                       type: "boolean"
                       examples:
-                        - !!bool "true"
+                        - true
                     can_upload:
                       type: "boolean"
                       examples:
-                        - !!bool "true"
+                        - true
                     share:
                       type: "object"
                       unevaluatedProperties: false
@@ -19131,7 +19078,7 @@ paths:
                         id:
                           type: "integer"
                           examples:
-                            - !!int "3"
+                            - 3
                         name:
                           type: "string"
                           examples:
@@ -19156,7 +19103,7 @@ paths:
                         id:
                           type: "integer"
                           examples:
-                            - !!int "13"
+                            - 13
                         name:
                           type: "string"
                           examples:
@@ -19263,22 +19210,22 @@ paths:
                     requirePassword:
                       type: "boolean"
                       examples:
-                        - !!bool "false"
+                        - false
                       description: "A flag indicating whether or not a password is required. Defaults to true."
                     canShare:
                       type: "boolean"
                       examples:
-                        - !!bool "false"
+                        - false
                       description: "Whether the user is allowed to share the folder with others. Defaults to false."
                     canDownload:
                       type: "boolean"
                       examples:
-                        - !!bool "false"
+                        - false
                       description: "Whether the user is allowed to download files from the folder. Defaults to false."
                     canUpload:
                       type: "boolean"
                       examples:
-                        - !!bool "false"
+                        - false
                       description: "Whether the user is allowed to upload files to the folder. Defaults to false."
                     sendEmailNotification:
                       type: "string"
@@ -19319,23 +19266,23 @@ paths:
                       id:
                         type: "integer"
                         examples:
-                          - !!int "14"
+                          - 14
                       is_admin:
                         type: "boolean"
                         examples:
-                          - !!bool "true"
+                          - true
                       can_share:
                         type: "boolean"
                         examples:
-                          - !!bool "true"
+                          - true
                       can_download:
                         type: "boolean"
                         examples:
-                          - !!bool "true"
+                          - true
                       can_upload:
                         type: "boolean"
                         examples:
-                          - !!bool "true"
+                          - true
                       share:
                         type: "object"
                         unevaluatedProperties: false
@@ -19343,7 +19290,7 @@ paths:
                           id:
                             type: "integer"
                             examples:
-                              - !!int "3"
+                              - 3
                           name:
                             type: "string"
                             examples:
@@ -19368,7 +19315,7 @@ paths:
                           id:
                             type: "integer"
                             examples:
-                              - !!int "13"
+                              - 13
                           name:
                             type: "string"
                             examples:
@@ -19482,23 +19429,23 @@ paths:
                   id:
                     type: "integer"
                     examples:
-                      - !!int "14"
+                      - 14
                   is_admin:
                     type: "boolean"
                     examples:
-                      - !!bool "true"
+                      - true
                   can_share:
                     type: "boolean"
                     examples:
-                      - !!bool "true"
+                      - true
                   can_download:
                     type: "boolean"
                     examples:
-                      - !!bool "true"
+                      - true
                   can_upload:
                     type: "boolean"
                     examples:
-                      - !!bool "true"
+                      - true
                   share:
                     type: "object"
                     unevaluatedProperties: false
@@ -19506,7 +19453,7 @@ paths:
                       id:
                         type: "integer"
                         examples:
-                          - !!int "3"
+                          - 3
                       name:
                         type: "string"
                         examples:
@@ -19531,7 +19478,7 @@ paths:
                       id:
                         type: "integer"
                         examples:
-                          - !!int "13"
+                          - 13
                       name:
                         type: "string"
                         examples:
@@ -19655,23 +19602,23 @@ paths:
                   id:
                     type: "integer"
                     examples:
-                      - !!int "14"
+                      - 14
                   is_admin:
                     type: "boolean"
                     examples:
-                      - !!bool "true"
+                      - true
                   can_share:
                     type: "boolean"
                     examples:
-                      - !!bool "true"
+                      - true
                   can_download:
                     type: "boolean"
                     examples:
-                      - !!bool "true"
+                      - true
                   can_upload:
                     type: "boolean"
                     examples:
-                      - !!bool "true"
+                      - true
                   share:
                     type: "object"
                     unevaluatedProperties: false
@@ -19679,7 +19626,7 @@ paths:
                       id:
                         type: "integer"
                         examples:
-                          - !!int "3"
+                          - 3
                       name:
                         type: "string"
                         examples:
@@ -19704,7 +19651,7 @@ paths:
                       id:
                         type: "integer"
                         examples:
-                          - !!int "13"
+                          - 13
                       name:
                         type: "string"
                         examples:
@@ -19805,23 +19752,23 @@ paths:
                   id:
                     type: "integer"
                     examples:
-                      - !!int "14"
+                      - 14
                   is_admin:
                     type: "boolean"
                     examples:
-                      - !!bool "true"
+                      - true
                   can_share:
                     type: "boolean"
                     examples:
-                      - !!bool "true"
+                      - true
                   can_download:
                     type: "boolean"
                     examples:
-                      - !!bool "true"
+                      - true
                   can_upload:
                     type: "boolean"
                     examples:
-                      - !!bool "true"
+                      - true
                   share:
                     type: "object"
                     unevaluatedProperties: false
@@ -19829,7 +19776,7 @@ paths:
                       id:
                         type: "integer"
                         examples:
-                          - !!int "3"
+                          - 3
                       name:
                         type: "string"
                         examples:
@@ -19854,7 +19801,7 @@ paths:
                       id:
                         type: "integer"
                         examples:
-                          - !!int "13"
+                          - 13
                       name:
                         type: "string"
                         examples:
@@ -19925,7 +19872,7 @@ paths:
   /folders/{folderId}/subfolders:
     get:
       summary: "List Subfolders"
-      description: "Lists subfolders in a specific folder.\n\n## Requires api token with one of the following permissions\n```\nRead all folder and media data\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n"
+      description: "Lists subfolders in a specific folder.\n\n## Requires api token with one of the following permissions\n```\nRead all folder and media data\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\nauthorization naming this folder (any permission) can also be used; it\nlists the folder's subfolders.\n"
       tags:
         - "Subfolders"
       security:
@@ -19963,8 +19910,8 @@ paths:
               enabled:
                 type: "integer"
                 enum:
-                  - !!int "0"
-                  - !!int "1"
+                  - 0
+                  - 1
                 description: "If `cursor[enabled]` is set to 1, the first result set will be fetched with cursor pagination enabled. This\nvalues is ignored if `cursor[before]` or `cursor[after]` are set.\n"
               before:
                 type: "string"
@@ -19992,9 +19939,9 @@ paths:
           schema:
             type: "integer"
             enum:
-              - !!int "0"
-              - !!int "1"
-            default: !!int "1"
+              - 0
+              - 1
+            default: 1
         - name: "hashed_ids[]"
           in: "query"
           description: "Filter subfolders by their hashed IDs"
@@ -20042,7 +19989,7 @@ paths:
                             - "integer"
                             - "null"
                           examples:
-                            - !!int "1"
+                            - 1
                           description: "The position of this subfolder within its folder, used for ordering."
                         created:
                           type:
@@ -20138,7 +20085,7 @@ paths:
       x-speakeasy-name-override: "list"
     post:
       summary: "Create Subfolder"
-      description: "Creates a new subfolder within a folder. The subfolder will be created with the next available position.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n"
+      description: "Creates a new subfolder within a folder. The subfolder will be created with the next available position.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\nauthorization granting the `update` permission on this folder can also\nbe used.\n"
       tags:
         - "Subfolders"
       security:
@@ -20216,7 +20163,7 @@ paths:
                           - "integer"
                           - "null"
                         examples:
-                          - !!int "1"
+                          - 1
                         description: "The position of this subfolder within its folder, used for ordering."
                       created:
                         type:
@@ -20325,7 +20272,7 @@ paths:
   /folders/{folderId}/subfolders/{subfolderId}:
     get:
       summary: "Show Subfolder"
-      description: "Retrieves detailed information about a specific subfolder, including all media contained within it.\n\n## Requires api token with one of the following permissions\n```\nRead all folder and media data\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n"
+      description: "Retrieves detailed information about a specific subfolder, including all media contained within it.\n\n## Requires api token with one of the following permissions\n```\nRead all folder and media data\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\nauthorization naming this folder (any permission) can also be used. The\nembedded media are limited to those the token's authorizations name.\n"
       tags:
         - "Subfolders"
       security:
@@ -20391,7 +20338,7 @@ paths:
                           - "integer"
                           - "null"
                         examples:
-                          - !!int "1"
+                          - 1
                         description: "The position of this subfolder within its folder, used for ordering."
                       created:
                         type:
@@ -20559,7 +20506,7 @@ paths:
       x-speakeasy-name-override: "get"
     put:
       summary: "Update Subfolder"
-      description: "Updates a subfolder's name and/or description.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n"
+      description: "Updates a subfolder's name and/or description.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\nauthorization granting the `update` permission on this folder can also\nbe used.\n"
       tags:
         - "Subfolders"
       security:
@@ -20642,7 +20589,7 @@ paths:
                           - "integer"
                           - "null"
                         examples:
-                          - !!int "1"
+                          - 1
                         description: "The position of this subfolder within its folder, used for ordering."
                       created:
                         type:
@@ -20692,6 +20639,18 @@ paths:
                     type: "string"
                     examples:
                       - "Invalid credentials."
+        "403":
+          description: "Forbidden, token is valid but account does not have access to feature"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                unevaluatedProperties: false
+                properties:
+                  error:
+                    type: "string"
+                    examples:
+                      - "Webinars are not available on your current plan"
         "404":
           description: "Folder or subfolder not found"
           content:
@@ -20720,7 +20679,7 @@ paths:
       x-speakeasy-name-override: "update"
     delete:
       summary: "Delete Subfolder"
-      description: "Deletes one subfolder and moves its media to the folder's root level. The subfolder is soft-deleted and is no longer accessible via the API. To delete multiple subfolders and their media, use the Bulk Delete Subfolders endpoint.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n"
+      description: "Deletes one subfolder and moves its media to the folder's root level. The subfolder is soft-deleted and is no longer accessible via the API. To delete multiple subfolders and their media, use the Bulk Delete Subfolders endpoint.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\nauthorization granting the `update` permission on this folder can also\nbe used.\n"
       tags:
         - "Subfolders"
       security:
@@ -20777,7 +20736,7 @@ paths:
                           - "integer"
                           - "null"
                         examples:
-                          - !!int "1"
+                          - 1
                         description: "The position of this subfolder within its folder, used for ordering."
                       created:
                         type:
@@ -20808,11 +20767,11 @@ paths:
                     description: "A subfolder within a folder that contains media."
                 unevaluatedProperties: false
               example:
-                id: !!int "123"
+                id: 123
                 hashed_id: "xyz789ghi0"
                 name: "Marketing Videos"
                 description: "Collection of all marketing and promotional videos"
-                position: !!int "1"
+                position: 1
                 created: "2024-01-15T10:30:00+00:00"
                 updated: "2024-01-20T14:45:00+00:00"
         "401":
@@ -20835,6 +20794,18 @@ paths:
                     type: "string"
                     examples:
                       - "Invalid credentials."
+        "403":
+          description: "Forbidden, token is valid but account does not have access to feature"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                unevaluatedProperties: false
+                properties:
+                  error:
+                    type: "string"
+                    examples:
+                      - "Webinars are not available on your current plan"
         "404":
           description: "Folder or subfolder not found"
           content:
@@ -20864,7 +20835,7 @@ paths:
   /folders/{folderId}/subfolders/bulk_delete:
     delete:
       summary: "Bulk Delete Subfolders"
-      description: "Deletes multiple subfolders asynchronously. Their media is also soft-deleted and can be restored from the trash by an account owner or manager until it is purged. To keep the media, use the Delete Subfolder endpoint, which moves it to the folder's root level.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\nauthorization granting the `update` permission on the folder can also be\nused.\n"
+      description: "Deletes multiple subfolders asynchronously. Their media is also soft-deleted and can be restored from the trash by an account owner or manager until it is purged. To keep the media, use the Delete Subfolder endpoint, which moves it to the folder's root level.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\nauthorization granting the `update` permission on this folder can also\nbe used.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\nauthorization granting the `update` permission on the folder can also be\nused.\n"
       tags:
         - "Subfolders"
       security:
@@ -21022,8 +20993,8 @@ paths:
               enabled:
                 type: "integer"
                 enum:
-                  - !!int "0"
-                  - !!int "1"
+                  - 0
+                  - 1
                 description: "If `cursor[enabled]` is set to 1, the first result set will be fetched with cursor pagination enabled. This\nvalues is ignored if `cursor[before]` or `cursor[after]` are set.\n"
               before:
                 type: "string"
@@ -21061,8 +21032,8 @@ paths:
           schema:
             type: "integer"
             enum:
-              - !!int "0"
-              - !!int "1"
+              - 0
+              - 1
         - name: "hashed_ids[]"
           in: "query"
           description: "Find all of the channels limited to these hashed_ids."
@@ -25384,8 +25355,8 @@ paths:
           schema:
             type: "integer"
             enum:
-              - !!int "0"
-              - !!int "1"
+              - 0
+              - 1
         - name: "page"
           in: "query"
           description: "The page number to retrieve. This cannot be combined with `cursor`,\npagination.\n"
@@ -25410,8 +25381,8 @@ paths:
               enabled:
                 type: "integer"
                 enum:
-                  - !!int "0"
-                  - !!int "1"
+                  - 0
+                  - 1
                 description: "If `cursor[enabled]` is set to 1, the first result set will be fetched with cursor pagination enabled. This\nvalues is ignored if `cursor[before]` or `cursor[after]` are set.\n"
               before:
                 type: "string"
@@ -25890,8 +25861,8 @@ paths:
           schema:
             type: "integer"
             enum:
-              - !!int "0"
-              - !!int "1"
+              - 0
+              - 1
         - name: "page"
           in: "query"
           description: "The page number to retrieve. This cannot be combined with `cursor`,\npagination.\n"
@@ -25916,8 +25887,8 @@ paths:
               enabled:
                 type: "integer"
                 enum:
-                  - !!int "0"
-                  - !!int "1"
+                  - 0
+                  - 1
                 description: "If `cursor[enabled]` is set to 1, the first result set will be fetched with cursor pagination enabled. This\nvalues is ignored if `cursor[before]` or `cursor[after]` are set.\n"
               before:
                 type: "string"
@@ -26889,8 +26860,8 @@ paths:
               enabled:
                 type: "integer"
                 enum:
-                  - !!int "0"
-                  - !!int "1"
+                  - 0
+                  - 1
                 description: "If `cursor[enabled]` is set to 1, the first result set will be fetched with cursor pagination enabled. This\nvalues is ignored if `cursor[before]` or `cursor[after]` are set.\n"
               before:
                 type: "string"
@@ -26916,9 +26887,9 @@ paths:
           schema:
             type: "integer"
             enum:
-              - !!int "0"
-              - !!int "1"
-            default: !!int "1"
+              - 0
+              - 1
+            default: 1
       responses:
         "200":
           description: "Successfully retrieved list of channel collaborators"
@@ -26933,7 +26904,7 @@ paths:
                     id:
                       type: "integer"
                       examples:
-                        - !!int "14"
+                        - 14
                       description: "The unique identifier of the channel role."
                     role:
                       type: "string"
@@ -26956,7 +26927,7 @@ paths:
                         id:
                           type: "integer"
                           examples:
-                            - !!int "3"
+                            - 3
                         name:
                           type: "string"
                           examples:
@@ -27105,7 +27076,7 @@ paths:
                   id:
                     type: "integer"
                     examples:
-                      - !!int "14"
+                      - 14
                     description: "The unique identifier of the channel role."
                   role:
                     type: "string"
@@ -27128,7 +27099,7 @@ paths:
                       id:
                         type: "integer"
                         examples:
-                          - !!int "3"
+                          - 3
                       name:
                         type: "string"
                         examples:
@@ -27256,7 +27227,7 @@ paths:
                   id:
                     type: "integer"
                     examples:
-                      - !!int "14"
+                      - 14
                     description: "The unique identifier of the channel role."
                   role:
                     type: "string"
@@ -27279,7 +27250,7 @@ paths:
                       id:
                         type: "integer"
                         examples:
-                          - !!int "3"
+                          - 3
                       name:
                         type: "string"
                         examples:
@@ -27390,8 +27361,8 @@ paths:
               enabled:
                 type: "integer"
                 enum:
-                  - !!int "0"
-                  - !!int "1"
+                  - 0
+                  - 1
                 description: "If `cursor[enabled]` is set to 1, the first result set will be fetched with cursor pagination enabled. This\nvalues is ignored if `cursor[before]` or `cursor[after]` are set.\n"
               before:
                 type: "string"
@@ -27418,8 +27389,8 @@ paths:
           schema:
             type: "integer"
             enum:
-              - !!int "0"
-              - !!int "1"
+              - 0
+              - 1
         - name: "hashed_ids[]"
           in: "query"
           description: "Filter by specific webinars IDs"
@@ -27483,7 +27454,7 @@ paths:
                         - "integer"
                         - "null"
                       examples:
-                        - !!int "60"
+                        - 60
                       description: "Duration of the webinar in minutes"
                     time_zone:
                       type: "string"
@@ -27679,7 +27650,7 @@ paths:
                 event_duration:
                   type: "integer"
                   examples:
-                    - !!int "60"
+                    - 60
                   minimum: 15
                   description: "Duration of the event in minutes (minimum 15)"
                 time_zone:
@@ -27742,7 +27713,7 @@ paths:
                       - "integer"
                       - "null"
                     examples:
-                      - !!int "60"
+                      - 60
                     description: "Duration of the webinar in minutes"
                   time_zone:
                     type: "string"
@@ -27974,7 +27945,7 @@ paths:
                       - "integer"
                       - "null"
                     examples:
-                      - !!int "60"
+                      - 60
                     description: "Duration of the webinar in minutes"
                   time_zone:
                     type: "string"
@@ -28165,7 +28136,7 @@ paths:
                     event_duration:
                       type: "integer"
                       examples:
-                        - !!int "90"
+                        - 90
                       minimum: 15
                       description: "Duration of the webinar in minutes (minimum 15)"
                     time_zone:
@@ -28223,7 +28194,7 @@ paths:
                       - "integer"
                       - "null"
                     examples:
-                      - !!int "60"
+                      - 60
                     description: "Duration of the webinar in minutes"
                   time_zone:
                     type: "string"
@@ -28443,7 +28414,7 @@ paths:
                       - "integer"
                       - "null"
                     examples:
-                      - !!int "60"
+                      - 60
                     description: "Duration of the webinar in minutes"
                   time_zone:
                     type: "string"
@@ -28614,7 +28585,7 @@ paths:
             type: "integer"
             maximum: 100
             minimum: 1
-            default: !!int "100"
+            default: 100
         - name: "cursor"
           in: "query"
           description: "Cursor for pagination. Use the value from the previous response's `page_info.end_cursor` or `page_info.start_cursor`."
@@ -28628,9 +28599,9 @@ paths:
           schema:
             type: "integer"
             enum:
-              - !!int "0"
-              - !!int "1"
-            default: !!int "1"
+              - 0
+              - 1
+            default: 1
         - name: "attendance"
           in: "query"
           description: "Filter registrations by attendance status."
@@ -28742,7 +28713,7 @@ paths:
                           enum:
                             - "restricted"
                             - "allowed"
-                            - !!null "null"
+                            - null
                           description: "Whether the registrant is restricted or allowed."
                         origin_method:
                           type:
@@ -28814,7 +28785,7 @@ paths:
                             - "null"
                           format: "float"
                           description: "Engagement rate between 0.0 and 1.0."
-                          example: !!float "0.85"
+                          example: 0.85
                         focused_rate:
                           type:
                             - "number"
@@ -29173,8 +29144,8 @@ paths:
               enabled:
                 type: "integer"
                 enum:
-                  - !!int "0"
-                  - !!int "1"
+                  - 0
+                  - 1
                 description: "If `cursor[enabled]` is set to 1, the first result set will be fetched with cursor pagination enabled. This\nvalues is ignored if `cursor[before]` or `cursor[after]` are set.\n"
               before:
                 type: "string"
@@ -29200,9 +29171,9 @@ paths:
           schema:
             type: "integer"
             enum:
-              - !!int "0"
-              - !!int "1"
-            default: !!int "1"
+              - 0
+              - 1
+            default: 1
       responses:
         "200":
           description: "Successfully retrieved list of webinar collaborators"
@@ -29217,7 +29188,7 @@ paths:
                     id:
                       type: "integer"
                       examples:
-                        - !!int "14"
+                        - 14
                       description: "The unique identifier of the webinar role."
                     role:
                       type: "string"
@@ -29239,7 +29210,7 @@ paths:
                         id:
                           type: "integer"
                           examples:
-                            - !!int "3"
+                            - 3
                         name:
                           type: "string"
                           examples:
@@ -29379,7 +29350,7 @@ paths:
                   id:
                     type: "integer"
                     examples:
-                      - !!int "14"
+                      - 14
                     description: "The unique identifier of the webinar role."
                   role:
                     type: "string"
@@ -29401,7 +29372,7 @@ paths:
                       id:
                         type: "integer"
                         examples:
-                          - !!int "3"
+                          - 3
                       name:
                         type: "string"
                         examples:
@@ -29529,7 +29500,7 @@ paths:
                   id:
                     type: "integer"
                     examples:
-                      - !!int "14"
+                      - 14
                     description: "The unique identifier of the webinar role."
                   role:
                     type: "string"
@@ -29551,7 +29522,7 @@ paths:
                       id:
                         type: "integer"
                         examples:
-                          - !!int "3"
+                          - 3
                       name:
                         type: "string"
                         examples:
@@ -30908,7 +30879,7 @@ paths:
                 - "webinar"
         - name: "custom_metadata"
           in: "query"
-          description: "Filter media by custom metadata field value, keyed by field key:\n`custom_metadata[<field_key>]=<value>`. Only available on accounts with access to\ncustom metadata (other accounts receive a 403 when this parameter is passed).\nCustom metadata only exists on media, so results contain media only and\n`resource_type` must include `media`. Use an empty `q` to match all media.\n\nThe value shape depends on the field's type:\n- Select, text, url, and email fields take a value\n  (`custom_metadata[region]=emea`) or an array of values matched as OR\n  (`custom_metadata[region][]=emea&custom_metadata[region][]=amer`). Select fields\n  match on option keys.\n- Boolean fields take `true` or `false`.\n- Number, money, and time fields take an exact number (`custom_metadata[year]=2026`)\n  or a range object (`custom_metadata[budget][min]=100&custom_metadata[budget][max]=500`;\n  either bound may be omitted).\n- Date and datetime fields take a `YYYY-MM-DD` date matching that UTC day, or a\n  range object with ISO8601 bounds (`custom_metadata[shoot_date][after]=2026-01-01`,\n  `custom_metadata[shoot_date][before]=2026-02-01T00:00:00Z`). A bare-date bound\n  covers its whole UTC day: `after` starts at the day's beginning and `before`\n  runs through the day's end.\n- Contact fields (`contact_ref`, `contact_multi_ref`) only support the presence\n  filter below; a value filter on them is rejected.\n- Any field type accepts a presence filter: `custom_metadata[region][exists]=false`\n  returns media missing the field entirely (useful for metadata coverage audits),\n  and `exists=true` returns media that have any value for it.\n\nUnknown or archived field keys return a 400, as do select option keys that don't\nexist on the field. The primary match set holds at most 100 media with no\npagination; a non-blank `q` can add up to 100 more transcript-only matches, and\nan empty-`q` audit returns at most 100. Narrow large audits (e.g. with\n`created_after`/`created_before`) to complete full coverage.\n"
+          description: "Filter media by custom metadata field value, keyed by field key:\n`custom_metadata[<field_key>]=<value>`. Only available on accounts with access to\ncustom metadata (other accounts receive a 403 when this parameter is passed).\nCustom metadata only exists on media, so results contain media only and\n`resource_type` must include `media`. Use an empty `q` to match all media.\n\nThe value shape depends on the field's type:\n- Select and text fields take a value\n  (`custom_metadata[region]=emea`) or an array of values matched as OR\n  (`custom_metadata[region][]=emea&custom_metadata[region][]=amer`). Select fields\n  match on option keys.\n- Boolean fields take `true` or `false`.\n- Number and time fields take an exact number (`custom_metadata[year]=2026`)\n  or a range object (`custom_metadata[budget][min]=100&custom_metadata[budget][max]=500`;\n  either bound may be omitted).\n- Date and datetime fields take a `YYYY-MM-DD` date matching that UTC day, or a\n  range object with ISO8601 bounds (`custom_metadata[shoot_date][after]=2026-01-01`,\n  `custom_metadata[shoot_date][before]=2026-02-01T00:00:00Z`). A bare-date bound\n  covers its whole UTC day: `after` starts at the day's beginning and `before`\n  runs through the day's end.\n- Any field type accepts a presence filter: `custom_metadata[region][exists]=false`\n  returns media missing the field entirely (useful for metadata coverage audits),\n  and `exists=true` returns media that have any value for it.\n\nUnknown or archived field keys return a 400, as do select option keys that don't\nexist on the field. The primary match set holds at most 100 media with no\npagination; a non-blank `q` can add up to 100 more transcript-only matches, and\nan empty-`q` audit returns at most 100. Narrow large audits (e.g. with\n`created_after`/`created_before`) to complete full coverage.\n"
           required: false
           style: "deepObject"
           explode: true
@@ -30982,7 +30953,7 @@ paths:
                             id:
                               type: "integer"
                               examples:
-                                - !!int "22570"
+                                - 22570
                               description: "A unique numeric identifier for the folder within the system."
                             name:
                               type: "string"
@@ -30999,7 +30970,7 @@ paths:
                             media_count:
                               type: "integer"
                               examples:
-                                - !!int "2"
+                                - 2
                               description: "The number of different medias that have been uploaded to the folder."
                             medias:
                               type: "object"
@@ -31029,7 +31000,7 @@ paths:
                             public:
                               type: "boolean"
                               examples:
-                                - !!bool "false"
+                                - false
                               description: "A boolean indicating whether the folder is available for public (anonymous) viewing."
                             public_id:
                               type:
@@ -31041,11 +31012,11 @@ paths:
                             anonymous_can_upload:
                               type: "boolean"
                               examples:
-                                - !!bool "false"
+                                - false
                             anonymous_can_download:
                               type: "boolean"
                               examples:
-                                - !!bool "false"
+                                - false
                             kind:
                               type: "string"
                               examples:
@@ -31058,7 +31029,7 @@ paths:
                             personal_library:
                               type: "boolean"
                               examples:
-                                - !!bool "false"
+                                - false
                               description: "Whether this folder is someone's personal library (\"My Library\"). Unlike `kind`, this is a property of the folder itself and does not depend on who is requesting — it is `true` for a personal library even when that library has been shared with you (where `kind` would read `shared`). Use this, not `kind`, to tell whether a folder is a personal library.\n"
                             cursor:
                               type:
@@ -31110,7 +31081,7 @@ paths:
                                     - "integer"
                                     - "null"
                                   examples:
-                                    - !!int "1"
+                                    - 1
                                   description: "The position of this subfolder within its folder, used for ordering."
                                 created:
                                   type:
@@ -31247,7 +31218,7 @@ paths:
                                       start_time_seconds:
                                         type: "number"
                                         description: "Start time of the match in seconds"
-                                        example: !!int "3"
+                                        example: 3
                                       start_time_formatted:
                                         type: "string"
                                         description: "Human-readable start time (e.g., \"0:03\" or \"1:23:45\")"
@@ -32076,7 +32047,7 @@ paths:
                                 - "integer"
                                 - "null"
                               examples:
-                                - !!int "60"
+                                - 60
                               description: "Duration of the webinar in minutes"
                             time_zone:
                               type: "string"
@@ -32429,7 +32400,7 @@ paths:
                                 - "destroy"
                                 - "edit-transcripts"
                                 - "create-folders"
-                            description: "The permissions granted on the object. `media` supports `show`, `update`, `destroy` and `edit-transcripts`; `folder` supports `show`, `update` and `destroy`; `account` supports `create-folders`. Any permission implicitly allows viewing the object; all other permissions must be declared explicitly."
+                            description: "The permissions granted on the object. `media` supports `show`, `update`, `destroy` and `edit-transcripts`; `folder` supports `show`, `update` and `destroy`; `account` supports `show` and `create-folders`. Any permission implicitly allows viewing the object (and, for a `media`, downloading it); all other permissions must be declared explicitly. The token's creator must hold every permission a rule grants, including the implied ones, or the request fails with a 422. A rule naming a `media` also covers the localized media (translations and dubs) created from it; when a rule names a localized media directly, the two rules combine. A rule naming a `folder` also covers its subfolders: any permission lists and shows them, and `update` creates, renames and deletes them."
                         required:
                           - "type"
                           - "id"
@@ -32710,8 +32681,8 @@ paths:
               enabled:
                 type: "integer"
                 enum:
-                  - !!int "0"
-                  - !!int "1"
+                  - 0
+                  - 1
                 description: "If `cursor[enabled]` is set to 1, the first result set will be fetched with cursor pagination enabled. This\nvalues is ignored if `cursor[before]` or `cursor[after]` are set.\n"
               before:
                 type: "string"
@@ -32737,9 +32708,9 @@ paths:
           schema:
             type: "integer"
             enum:
-              - !!int "0"
-              - !!int "1"
-            default: !!int "1"
+              - 0
+              - 1
+            default: 1
       responses:
         "200":
           description: "List of allowed domains"
@@ -33268,7 +33239,7 @@ paths:
                     type: "string"
                     examples:
                       - "Internal server error"
-      x-readme-hidden: !!bool "true"
+      x-readme-hidden: true
   /remixes/{remixHashedId}:
     get:
       summary: "Get Remix"
@@ -33380,7 +33351,7 @@ paths:
                     type: "string"
                     examples:
                       - "Internal server error"
-      x-readme-hidden: !!bool "true"
+      x-readme-hidden: true
   /remixes/{remixHashedId}/continue:
     post:
       summary: "Continue Remix"
@@ -33523,7 +33494,7 @@ paths:
                     type: "string"
                     examples:
                       - "Internal server error"
-      x-readme-hidden: !!bool "true"
+      x-readme-hidden: true
   /remixes/{remixHashedId}/export:
     post:
       summary: "Export Remix"
@@ -33645,7 +33616,7 @@ paths:
                     type: "string"
                     examples:
                       - "Internal server error"
-      x-readme-hidden: !!bool "true"
+      x-readme-hidden: true
   /remix_account_status:
     get:
       summary: "Get Remix Account Status"
@@ -33723,7 +33694,7 @@ paths:
                     type: "string"
                     examples:
                       - "Internal server error"
-      x-readme-hidden: !!bool "true"
+      x-readme-hidden: true
   /motion_kits:
     get:
       summary: "List Motion Kits"
@@ -33789,12 +33760,12 @@ paths:
                     roles_done:
                       type: "integer"
                       examples:
-                        - !!int "6"
+                        - 6
                       description: "The number of roles that have been authored."
                     roles_total:
                       type: "integer"
                       examples:
-                        - !!int "8"
+                        - 8
                       description: "The number of roles every motion kit has."
                     pending_roles:
                       type: "array"
@@ -33993,8 +33964,8 @@ paths:
                     type: "string"
                     examples:
                       - "Internal server error"
-      x-readme-hidden: !!bool "true"
-      x-speakeasy-ignore: !!bool "true"
+      x-readme-hidden: true
+      x-speakeasy-ignore: true
     post:
       summary: "Create Motion Kit"
       description: "Creates a motion kit and prepares and authors it in the background. The kit is returned immediately with status `draft`; poll the show endpoint until it is `ready`.\n\nPreparation runs first: it installs the supplied logo, looks the brand up, and, unless `research` is false, reads the brand's website (`website`, else `brand_domain`) and takes a screenshot of it to ground the design. Until it finishes, typically within a minute or two, the kit stays a `draft` with no roles started. A logo that can't be used doesn't fail the request; the kit is authored without one and the show endpoint's `logo` reports why.\n\nRequires motion kits to be available on your account.\n\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\nUpload videos\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\n"
@@ -34038,6 +34009,12 @@ paths:
                 logo_id:
                   type: "string"
                   description: "The ID of a logo from an earlier logo search to use."
+                logo_shape:
+                  type: "string"
+                  enum:
+                    - "mark"
+                    - "wordmark"
+                  description: "Which of the brand's logos to embed when no logo is supplied: `mark` (a square-ish symbol, the default)\nor `wordmark` (the wide lockup with the name).\n"
                 suppress_logo:
                   type: "boolean"
                   description: "Set to true to author the kit without a logo."
@@ -34049,7 +34026,7 @@ paths:
                 research:
                   type: "boolean"
                   description: "Set to false to skip reading the brand's website."
-                  default: !!bool "true"
+                  default: true
               required:
                 - "name"
                 - "brief"
@@ -34086,12 +34063,12 @@ paths:
                   roles_done:
                     type: "integer"
                     examples:
-                      - !!int "6"
+                      - 6
                     description: "The number of roles that have been authored."
                   roles_total:
                     type: "integer"
                     examples:
-                      - !!int "8"
+                      - 8
                     description: "The number of roles every motion kit has."
                   pending_roles:
                     type: "array"
@@ -34290,8 +34267,8 @@ paths:
                     type: "string"
                     examples:
                       - "Internal server error"
-      x-readme-hidden: !!bool "true"
-      x-speakeasy-ignore: !!bool "true"
+      x-readme-hidden: true
+      x-speakeasy-ignore: true
   /motion_kits/{motionKitHashedId}:
     get:
       summary: "Get Motion Kit"
@@ -34342,12 +34319,12 @@ paths:
                   roles_done:
                     type: "integer"
                     examples:
-                      - !!int "6"
+                      - 6
                     description: "The number of roles that have been authored."
                   roles_total:
                     type: "integer"
                     examples:
-                      - !!int "8"
+                      - 8
                     description: "The number of roles every motion kit has."
                   pending_roles:
                     type: "array"
@@ -34540,8 +34517,8 @@ paths:
                     type: "string"
                     examples:
                       - "Internal server error"
-      x-readme-hidden: !!bool "true"
-      x-speakeasy-ignore: !!bool "true"
+      x-readme-hidden: true
+      x-speakeasy-ignore: true
     delete:
       summary: "Delete Motion Kit"
       description: "Deletes a motion kit. A kit that has a mochine.ai directory listing cannot be deleted through the API.\n\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\nUpload videos\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\n"
@@ -34591,12 +34568,12 @@ paths:
                   roles_done:
                     type: "integer"
                     examples:
-                      - !!int "6"
+                      - 6
                     description: "The number of roles that have been authored."
                   roles_total:
                     type: "integer"
                     examples:
-                      - !!int "8"
+                      - 8
                     description: "The number of roles every motion kit has."
                   pending_roles:
                     type: "array"
@@ -34807,8 +34784,8 @@ paths:
                     type: "string"
                     examples:
                       - "Internal server error"
-      x-readme-hidden: !!bool "true"
-      x-speakeasy-ignore: !!bool "true"
+      x-readme-hidden: true
+      x-speakeasy-ignore: true
   /motion_kits/{motionKitHashedId}/roles/{role}/reauthor:
     post:
       summary: "Re-author Motion Kit Role"
@@ -34867,12 +34844,12 @@ paths:
                   roles_done:
                     type: "integer"
                     examples:
-                      - !!int "6"
+                      - 6
                     description: "The number of roles that have been authored."
                   roles_total:
                     type: "integer"
                     examples:
-                      - !!int "8"
+                      - 8
                     description: "The number of roles every motion kit has."
                   pending_roles:
                     type: "array"
@@ -35083,8 +35060,8 @@ paths:
                     type: "string"
                     examples:
                       - "Internal server error"
-      x-readme-hidden: !!bool "true"
-      x-speakeasy-ignore: !!bool "true"
+      x-readme-hidden: true
+      x-speakeasy-ignore: true
   /stats/account:
     get:
       summary: "Show Current Account Stats"
@@ -37090,7 +37067,7 @@ paths:
             type: "integer"
             maximum: 100
             minimum: 1
-            default: !!int "10"
+            default: 10
       responses:
         "200":
           description: "Success response with embed location analytics for the account."
@@ -37268,7 +37245,7 @@ paths:
             type: "integer"
             maximum: 1000
             minimum: 1
-            default: !!int "100"
+            default: 100
       responses:
         "200":
           description: "Success response with the hashed IDs of media embedded at the location."
@@ -37811,7 +37788,7 @@ paths:
             type: "integer"
             maximum: 100
             minimum: 1
-            default: !!int "10"
+            default: 10
       responses:
         "200":
           description: "Success response with embed location analytics."
@@ -38040,7 +38017,7 @@ paths:
             type: "integer"
             maximum: 100
             minimum: 1
-            default: !!int "5"
+            default: 5
       responses:
         "200":
           description: "Success response with embed location timeseries data."
@@ -38282,7 +38259,7 @@ paths:
             type: "integer"
             maximum: 100
             minimum: 1
-            default: !!int "100"
+            default: 100
       responses:
         "200":
           description: "Success response with traffic breakdown data."
@@ -38453,7 +38430,7 @@ paths:
             type: "integer"
             maximum: 100
             minimum: 1
-            default: !!int "25"
+            default: 25
         - name: "cursor"
           in: "query"
           description: "Cursor for pagination. Use the value from the previous response's page_info.end_cursor."
@@ -38644,7 +38621,7 @@ paths:
             type: "integer"
             maximum: 100
             minimum: 1
-            default: !!int "100"
+            default: 100
       responses:
         "200":
           description: "Success response with language analytics."
@@ -38770,7 +38747,7 @@ paths:
           required: false
           schema:
             type: "boolean"
-            default: !!bool "false"
+            default: false
         - name: "post_event_start_date"
           in: "query"
           description: "Start date for the post-event analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date. Only used when include_post_event is true."
@@ -39047,7 +39024,7 @@ paths:
           required: false
           schema:
             type: "boolean"
-            default: !!bool "false"
+            default: false
         - name: "post_event_start_date"
           in: "query"
           description: "Start date for the post-event analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date. Only used when include_post_event is true."
@@ -39389,7 +39366,7 @@ paths:
             type: "integer"
             maximum: 100
             minimum: 1
-            default: !!int "25"
+            default: 25
         - name: "cursor"
           in: "query"
           description: "Cursor for pagination. Use the value from the previous response's page_info.end_cursor."
@@ -39781,7 +39758,7 @@ components:
         name:
           description: "A display name to use for the media in Wistia."
           type: "string"
-          maxLength: !!int "255"
+          maxLength: 255
         description:
           description: "A description to use for the media in Wistia."
           type: "string"
@@ -39791,7 +39768,7 @@ components:
         access_token:
           description: "A 64 character hex string. This parameter can be found on your API access page OR can be the token you received from authenticating via Oauth2. Note this approach is legacy and discouraged. We recommend using Bearer Token authentication."
           type: "string"
-          deprecated: !!bool "true"
+          deprecated: true
     Thumbnail:
       type: "object"
       properties:
@@ -39935,7 +39912,7 @@ components:
             - "integer"
             - "null"
           examples:
-            - !!int "0"
+            - 0
           description: "The option's display order within the field, ascending from 0. May be null."
     SelectFieldConfig:
       type: "object"
@@ -39962,7 +39939,7 @@ components:
                   - "integer"
                   - "null"
                 examples:
-                  - !!int "0"
+                  - 0
                 description: "The option's display order within the field, ascending from 0. May be null."
           description: "The field's active options, in display order."
       required:
@@ -39988,7 +39965,7 @@ components:
         allows_group_refs:
           type: "boolean"
           examples:
-            - !!bool "false"
+            - false
           description: "Whether values may reference contact groups in addition to contacts."
       required:
         - "allows_group_refs"
@@ -40031,14 +40008,14 @@ components:
             - "integer"
             - "null"
           examples:
-            - !!int "0"
+            - 0
           description: "The field's display order within the account, ascending from 0. May be null."
         archived_at:
           type:
             - "string"
             - "null"
           examples:
-            - !!null "null"
+            - null
           format: "date-time"
           description: "When the field was archived, or null if it is active."
         config:
@@ -40067,7 +40044,7 @@ components:
                           - "integer"
                           - "null"
                         examples:
-                          - !!int "0"
+                          - 0
                         description: "The option's display order within the field, ascending from 0. May be null."
                   description: "The field's active options, in display order."
               required:
@@ -40091,7 +40068,7 @@ components:
                 allows_group_refs:
                   type: "boolean"
                   examples:
-                    - !!bool "false"
+                    - false
                   description: "Whether values may reference contact groups in addition to contacts."
               required:
                 - "allows_group_refs"
@@ -40179,7 +40156,7 @@ components:
             - "integer"
             - "null"
           examples:
-            - !!int "0"
+            - 0
           description: "The option's display order within the field, ascending from 0."
       required:
         - "label"
@@ -40208,24 +40185,13 @@ components:
                   - "integer"
                   - "null"
                 examples:
-                  - !!int "0"
+                  - 0
                 description: "The option's display order within the field, ascending from 0."
             required:
               - "label"
           description: "The options to create on a single_select or multi_select field."
       required:
         - "options"
-    ContactFieldConfigWrite:
-      type: "object"
-      unevaluatedProperties: false
-      properties:
-        allows_group_refs:
-          type: "boolean"
-          examples:
-            - !!bool "false"
-          description: "For contact_ref and contact_multi_ref fields, whether values may reference contact groups in addition to contacts. Defaults to false (contacts only)."
-      required:
-        - "allows_group_refs"
     CustomMetadataFieldDefinitionCreate:
       type: "object"
       unevaluatedProperties: false
@@ -40251,15 +40217,10 @@ components:
             - "boolean"
             - "single_select"
             - "short_text"
-            - "url"
-            - "email"
-            - "money"
             - "time"
             - "datetime"
             - "multi_select"
-            - "contact_ref"
-            - "contact_multi_ref"
-          description: "The field's data type. Immutable after creation. `url`, `email`, `money`, `contact_ref`, and `contact_multi_ref` are early-access types: creating one on an account without access returns 422 naming the types the account can use. Existing fields of these types keep working."
+          description: "The field's data type. Immutable after creation."
         default_value:
           type:
             - "string"
@@ -40272,53 +40233,41 @@ components:
             - "integer"
             - "null"
           examples:
-            - !!int "0"
+            - 0
           description: "The field's display order within the account, ascending from 0."
         config:
-          oneOf:
-            - type: "object"
-              unevaluatedProperties: false
-              properties:
-                options:
-                  type: "array"
-                  items:
-                    type: "object"
-                    unevaluatedProperties: false
-                    properties:
-                      key:
-                        type: "string"
-                        examples:
-                          - "high"
-                        description: "The option's immutable identifier, unique within the field. Defaults to a parameterized label."
-                      label:
-                        type: "string"
-                        examples:
-                          - "High"
-                        description: "The option's display name."
-                      position:
-                        type:
-                          - "integer"
-                          - "null"
-                        examples:
-                          - !!int "0"
-                        description: "The option's display order within the field, ascending from 0."
-                    required:
-                      - "label"
-                  description: "The options to create on a single_select or multi_select field."
-              required:
-                - "options"
-            - type: "object"
-              unevaluatedProperties: false
-              properties:
-                allows_group_refs:
-                  type: "boolean"
-                  examples:
-                    - !!bool "false"
-                  description: "For contact_ref and contact_multi_ref fields, whether values may reference contact groups in addition to contacts. Defaults to false (contacts only)."
-              required:
-                - "allows_group_refs"
+          type: "object"
           unevaluatedProperties: false
-          description: "Type-specific configuration. Only valid for field types that have any: the select options for a single_select or multi_select field, or `allows_group_refs` for a contact_ref or contact_multi_ref field.\n"
+          properties:
+            options:
+              type: "array"
+              items:
+                type: "object"
+                unevaluatedProperties: false
+                properties:
+                  key:
+                    type: "string"
+                    examples:
+                      - "high"
+                    description: "The option's immutable identifier, unique within the field. Defaults to a parameterized label."
+                  label:
+                    type: "string"
+                    examples:
+                      - "High"
+                    description: "The option's display name."
+                  position:
+                    type:
+                      - "integer"
+                      - "null"
+                    examples:
+                      - 0
+                    description: "The option's display order within the field, ascending from 0."
+                required:
+                  - "label"
+              description: "The options to create on a single_select or multi_select field."
+          required:
+            - "options"
+          description: "Type-specific configuration. Only valid for field types that have any; currently the select options for a single_select or multi_select field."
       required:
         - "key"
         - "label"
@@ -40342,17 +40291,17 @@ components:
             - "integer"
             - "null"
           examples:
-            - !!int "0"
+            - 0
           description: "The option's display order within the field, ascending from 0."
         destroy:
           type: "boolean"
           examples:
-            - !!bool "false"
+            - false
           description: "When true, removes the option identified by key instead of adding or editing it."
         force:
           type: "boolean"
           examples:
-            - !!bool "false"
+            - false
           description: "When true, allows removing an option that is still in use by media values."
     SelectFieldConfigUpdate:
       type: "object"
@@ -40379,17 +40328,17 @@ components:
                   - "integer"
                   - "null"
                 examples:
-                  - !!int "0"
+                  - 0
                 description: "The option's display order within the field, ascending from 0."
               destroy:
                 type: "boolean"
                 examples:
-                  - !!bool "false"
+                  - false
                 description: "When true, removes the option identified by key instead of adding or editing it."
               force:
                 type: "boolean"
                 examples:
-                  - !!bool "false"
+                  - false
                 description: "When true, allows removing an option that is still in use by media values."
           description: "Option add, edit, or remove operations, matched by their immutable key."
       required:
@@ -40415,61 +40364,49 @@ components:
             - "integer"
             - "null"
           examples:
-            - !!int "0"
+            - 0
           description: "The field's display order within the account, ascending from 0."
         config:
-          oneOf:
-            - type: "object"
-              unevaluatedProperties: false
-              properties:
-                options:
-                  type: "array"
-                  items:
-                    type: "object"
-                    unevaluatedProperties: false
-                    properties:
-                      key:
-                        type: "string"
-                        examples:
-                          - "high"
-                        description: "The option's immutable identifier. Required to edit or remove an existing option; defaults to a parameterized label when adding."
-                      label:
-                        type: "string"
-                        examples:
-                          - "High"
-                        description: "The option's display name. Required when adding a new option."
-                      position:
-                        type:
-                          - "integer"
-                          - "null"
-                        examples:
-                          - !!int "0"
-                        description: "The option's display order within the field, ascending from 0."
-                      destroy:
-                        type: "boolean"
-                        examples:
-                          - !!bool "false"
-                        description: "When true, removes the option identified by key instead of adding or editing it."
-                      force:
-                        type: "boolean"
-                        examples:
-                          - !!bool "false"
-                        description: "When true, allows removing an option that is still in use by media values."
-                  description: "Option add, edit, or remove operations, matched by their immutable key."
-              required:
-                - "options"
-            - type: "object"
-              unevaluatedProperties: false
-              properties:
-                allows_group_refs:
-                  type: "boolean"
-                  examples:
-                    - !!bool "false"
-                  description: "For contact_ref and contact_multi_ref fields, whether values may reference contact groups in addition to contacts. Defaults to false (contacts only)."
-              required:
-                - "allows_group_refs"
+          type: "object"
           unevaluatedProperties: false
-          description: "Type-specific configuration changes. Only valid for field types that have any: option add, edit, or remove operations for a single_select or multi_select field, or `allows_group_refs` for a contact_ref or contact_multi_ref field.\n"
+          properties:
+            options:
+              type: "array"
+              items:
+                type: "object"
+                unevaluatedProperties: false
+                properties:
+                  key:
+                    type: "string"
+                    examples:
+                      - "high"
+                    description: "The option's immutable identifier. Required to edit or remove an existing option; defaults to a parameterized label when adding."
+                  label:
+                    type: "string"
+                    examples:
+                      - "High"
+                    description: "The option's display name. Required when adding a new option."
+                  position:
+                    type:
+                      - "integer"
+                      - "null"
+                    examples:
+                      - 0
+                    description: "The option's display order within the field, ascending from 0."
+                  destroy:
+                    type: "boolean"
+                    examples:
+                      - false
+                    description: "When true, removes the option identified by key instead of adding or editing it."
+                  force:
+                    type: "boolean"
+                    examples:
+                      - false
+                    description: "When true, allows removing an option that is still in use by media values."
+              description: "Option add, edit, or remove operations, matched by their immutable key."
+          required:
+            - "options"
+          description: "Type-specific configuration changes. Only valid for field types that have any; currently option add, edit, or remove operations for a single_select or multi_select field."
     DeletedMedia:
       type: "object"
       unevaluatedProperties: false
@@ -40650,7 +40587,7 @@ components:
         id:
           type: "integer"
           examples:
-            - !!int "22570"
+            - 22570
           description: "A unique numeric identifier for the folder within the system."
         name:
           type: "string"
@@ -40673,7 +40610,7 @@ components:
                 id:
                   type: "integer"
                   examples:
-                    - !!int "22570"
+                    - 22570
                   description: "A unique numeric identifier for the folder within the system."
                 name:
                   type: "string"
@@ -40792,7 +40729,7 @@ components:
             - "integer"
             - "null"
           examples:
-            - !!int "1"
+            - 1
           description: "The position of this subfolder within its folder, used for ordering."
         created:
           type:
@@ -40854,7 +40791,7 @@ components:
                     - "integer"
                     - "null"
                   examples:
-                    - !!int "1"
+                    - 1
                   description: "The position of this subfolder within its folder, used for ordering."
                 created:
                   type:
@@ -41039,7 +40976,7 @@ components:
                     id:
                       type: "integer"
                       examples:
-                        - !!int "22570"
+                        - 22570
                       description: "A unique numeric identifier for the folder within the system."
                     name:
                       type: "string"
@@ -41126,7 +41063,7 @@ components:
                         - "integer"
                         - "null"
                       examples:
-                        - !!int "1"
+                        - 1
                       description: "The position of this subfolder within its folder, used for ordering."
                     created:
                       type:
@@ -41292,7 +41229,7 @@ components:
                     id:
                       type: "integer"
                       examples:
-                        - !!int "22570"
+                        - 22570
                       description: "A unique numeric identifier for the folder within the system."
                     name:
                       type: "string"
@@ -41379,7 +41316,7 @@ components:
                         - "integer"
                         - "null"
                       examples:
-                        - !!int "1"
+                        - 1
                       description: "The position of this subfolder within its folder, used for ordering."
                     created:
                       type:
@@ -41718,7 +41655,7 @@ components:
                     id:
                       type: "integer"
                       examples:
-                        - !!int "22570"
+                        - 22570
                       description: "A unique numeric identifier for the folder within the system."
                     name:
                       type: "string"
@@ -42345,7 +42282,7 @@ components:
           anyOf:
             - type: "boolean"
               examples:
-                - !!bool "true"
+                - true
             - type: "object"
               unevaluatedProperties: false
               properties:
@@ -42655,7 +42592,7 @@ components:
           anyOf:
             - type: "boolean"
               examples:
-                - !!bool "true"
+                - true
             - type: "object"
               unevaluatedProperties: false
               properties:
@@ -43748,10 +43685,10 @@ components:
             - "processing"
             - "unavailable"
             - "disabled"
-          description: "Speaker-data availability when `include=diarized_segments`."
+          description: "Speaker-data availability when `include=diarized_segments`. Reading a derivable media\nwith no speaker data starts generating it and reports `processing`; read again shortly\nfor `ready`. `disabled` means the account has speaker identification turned off; an\naccount owner or manager can turn it on in Account Settings.\n"
         diarization_derivable:
           type: "boolean"
-          description: "Whether speaker data can be derived from the active default transcript when `include=diarized_segments`."
+          description: "Whether speaker data can be generated from the active default transcript when `include=diarized_segments`. When false, the media stays `unavailable`."
         speaker_data_version:
           type:
             - "integer"
@@ -44504,7 +44441,7 @@ components:
         expected_version:
           type: "integer"
           examples:
-            - !!int "7"
+            - 7
           description: "The media's current `speaker_data_version` from its diarized transcript segments. Required with `detected_speaker_id`; a stale value returns 409."
       required:
         - "speaker_profile_id"
@@ -45214,34 +45151,12 @@ components:
             - "number"
             - "boolean"
             - "array"
-            - "object"
             - "null"
           examples:
             - "high"
-          unevaluatedProperties: false
           items:
-            oneOf:
-              - type: "string"
-              - type: "object"
-                unevaluatedProperties: false
-                properties:
-                  type:
-                    type: "string"
-                    enum:
-                      - "contact"
-                      - "contact_group"
-                  id:
-                    type: "string"
-            unevaluatedProperties: false
-          properties:
-            type:
-              type: "string"
-              enum:
-                - "contact"
-                - "contact_group"
-            id:
-              type: "string"
-          description: "The new value for this field, typed to match the definition's `field_type`:\na string for text-like types (text, short_text, url, email, money, time, datetime),\na number for `number`, an ISO 8601 date string like \"2026-07-10\" for `date`,\na boolean for `boolean`, the chosen option's key (a string) for `single_select`,\nan array of the chosen options' keys for `multi_select`, a contact reference\nobject `{\"type\": \"contact\" | \"contact_group\", \"id\": \"<hashed_id>\"}` for\n`contact_ref`, and an array of contact reference objects for `contact_multi_ref`.\nContact group references require the field to allow groups.\nNull (or omitting the property) clears the field; for `multi_select` and\n`contact_multi_ref`, an empty array also clears it.\n"
+            type: "string"
+          description: "The new value for this field, typed to match the definition's `field_type`:\na string for text-like types (text, short_text, time, datetime),\na number for `number`, an ISO 8601 date string like \"2026-07-10\" for `date`,\na boolean for `boolean`, the chosen option's key (a string) for `single_select`,\nand an array of the chosen options' keys for `multi_select`.\nNull (or omitting the property) clears the field; for `multi_select`,\nan empty array also clears it.\n"
     One:
       type: "object"
       unevaluatedProperties: false
@@ -45644,7 +45559,7 @@ components:
         is_default:
           type: "boolean"
           examples:
-            - !!bool "true"
+            - true
           description: "Whether this brand is the account-level default, applied to content that has no more specific brand."
         created:
           type: "string"
@@ -45708,7 +45623,7 @@ components:
             - "integer"
             - "null"
           examples:
-            - !!int "10"
+            - 10
           description: "The border radius in pixels for rounded corners. Null when unset."
         contrast_icons:
           type:
@@ -45718,7 +45633,7 @@ components:
             - "enabled"
             - "disabled"
             - "unset"
-            - !!null "null"
+            - null
           description: "Controls whether the player icon color is always white or uses an accessible contrast color when necessary."
         opaque_controls:
           type:
@@ -45728,7 +45643,7 @@ components:
             - "enabled"
             - "disabled"
             - "unset"
-            - !!null "null"
+            - null
           description: "Controls the opacity of the video player control bar and big play button."
         page_logo:
           type:
@@ -45845,7 +45760,7 @@ components:
             - "integer"
             - "null"
           examples:
-            - !!int "10"
+            - 10
           description: "The border radius in pixels for rounded corners."
         contrast_icons:
           type:
@@ -45855,7 +45770,7 @@ components:
             - "enabled"
             - "disabled"
             - "unset"
-            - !!null "null"
+            - null
           description: "Controls whether the player icon color is always white or uses an accessible contrast color when necessary."
         opaque_controls:
           type:
@@ -45865,7 +45780,7 @@ components:
             - "enabled"
             - "disabled"
             - "unset"
-            - !!null "null"
+            - null
           description: "Controls the opacity of the video player control bar and big play button."
         page_logo:
           type:
@@ -45937,7 +45852,7 @@ components:
         clear_overrides:
           type: "boolean"
           description: "When true (the default), appearance settings the resource had set directly are cleared for the fields the brand controls, so the brand is what shows. Set to false to leave them in place, in which case they continue to win over the brand."
-          default: !!bool "true"
+          default: true
       required:
         - "resource_type"
         - "resource_id"
@@ -46014,7 +45929,7 @@ components:
         taggings_count:
           type: "integer"
           examples:
-            - !!int "2"
+            - 2
           description: "The number of different medias that have been associated with this tag."
         created_at:
           type: "string"
@@ -46519,7 +46434,7 @@ components:
         id:
           type: "integer"
           examples:
-            - !!int "22570"
+            - 22570
           description: "A unique numeric identifier for the folder within the system."
         name:
           type: "string"
@@ -46536,7 +46451,7 @@ components:
         media_count:
           type: "integer"
           examples:
-            - !!int "2"
+            - 2
           description: "The number of different medias that have been uploaded to the folder."
         medias:
           type: "object"
@@ -46566,7 +46481,7 @@ components:
         public:
           type: "boolean"
           examples:
-            - !!bool "false"
+            - false
           description: "A boolean indicating whether the folder is available for public (anonymous) viewing."
         public_id:
           type:
@@ -46578,11 +46493,11 @@ components:
         anonymous_can_upload:
           type: "boolean"
           examples:
-            - !!bool "false"
+            - false
         anonymous_can_download:
           type: "boolean"
           examples:
-            - !!bool "false"
+            - false
         kind:
           type: "string"
           examples:
@@ -46595,7 +46510,7 @@ components:
         personal_library:
           type: "boolean"
           examples:
-            - !!bool "false"
+            - false
           description: "Whether this folder is someone's personal library (\"My Library\"). Unlike `kind`, this is a property of the folder itself and does not depend on who is requesting — it is `true` for a personal library even when that library has been shared with you (where `kind` would read `shared`). Use this, not `kind`, to tell whether a folder is a personal library.\n"
         cursor:
           type:
@@ -46643,12 +46558,12 @@ components:
         public:
           type: "boolean"
           examples:
-            - !!bool "false"
+            - false
           description: "A flag indicating whether or not the folder is enabled for public access."
         personalLibrary:
           type: "boolean"
           examples:
-            - !!bool "false"
+            - false
           description: "When true, creates the folder inside the requesting user's personal \"My Library\" (owned by them) instead of a shared account folder."
     UpdateFolder:
       type: "object"
@@ -46673,7 +46588,7 @@ components:
         public:
           type: "boolean"
           examples:
-            - !!bool "false"
+            - false
           description: "A flag indicating whether or not the folder is enabled for public access."
     FolderSharingSchema:
       type: "object"
@@ -46682,23 +46597,23 @@ components:
         id:
           type: "integer"
           examples:
-            - !!int "14"
+            - 14
         is_admin:
           type: "boolean"
           examples:
-            - !!bool "true"
+            - true
         can_share:
           type: "boolean"
           examples:
-            - !!bool "true"
+            - true
         can_download:
           type: "boolean"
           examples:
-            - !!bool "true"
+            - true
         can_upload:
           type: "boolean"
           examples:
-            - !!bool "true"
+            - true
         share:
           type: "object"
           unevaluatedProperties: false
@@ -46706,7 +46621,7 @@ components:
             id:
               type: "integer"
               examples:
-                - !!int "3"
+                - 3
             name:
               type: "string"
               examples:
@@ -46731,7 +46646,7 @@ components:
             id:
               type: "integer"
               examples:
-                - !!int "13"
+                - 13
             name:
               type: "string"
               examples:
@@ -46768,22 +46683,22 @@ components:
             requirePassword:
               type: "boolean"
               examples:
-                - !!bool "false"
+                - false
               description: "A flag indicating whether or not a password is required. Defaults to true."
             canShare:
               type: "boolean"
               examples:
-                - !!bool "false"
+                - false
               description: "Whether the user is allowed to share the folder with others. Defaults to false."
             canDownload:
               type: "boolean"
               examples:
-                - !!bool "false"
+                - false
               description: "Whether the user is allowed to download files from the folder. Defaults to false."
             canUpload:
               type: "boolean"
               examples:
-                - !!bool "false"
+                - false
               description: "Whether the user is allowed to upload files to the folder. Defaults to false."
             sendEmailNotification:
               type: "string"
@@ -46813,23 +46728,23 @@ components:
             id:
               type: "integer"
               examples:
-                - !!int "14"
+                - 14
             is_admin:
               type: "boolean"
               examples:
-                - !!bool "true"
+                - true
             can_share:
               type: "boolean"
               examples:
-                - !!bool "true"
+                - true
             can_download:
               type: "boolean"
               examples:
-                - !!bool "true"
+                - true
             can_upload:
               type: "boolean"
               examples:
-                - !!bool "true"
+                - true
             share:
               type: "object"
               unevaluatedProperties: false
@@ -46837,7 +46752,7 @@ components:
                 id:
                   type: "integer"
                   examples:
-                    - !!int "3"
+                    - 3
                 name:
                   type: "string"
                   examples:
@@ -46862,7 +46777,7 @@ components:
                 id:
                   type: "integer"
                   examples:
-                    - !!int "13"
+                    - 13
                 name:
                   type: "string"
                   examples:
@@ -46935,7 +46850,7 @@ components:
                 - "integer"
                 - "null"
               examples:
-                - !!int "1"
+                - 1
               description: "The position of this subfolder within its folder, used for ordering."
             created:
               type:
@@ -47106,7 +47021,7 @@ components:
                 - "integer"
                 - "null"
               examples:
-                - !!int "1"
+                - 1
               description: "The position of this subfolder within its folder, used for ordering."
             created:
               type:
@@ -49061,7 +48976,7 @@ components:
         id:
           type: "integer"
           examples:
-            - !!int "14"
+            - 14
           description: "The unique identifier of the channel role."
         role:
           type: "string"
@@ -49084,7 +48999,7 @@ components:
             id:
               type: "integer"
               examples:
-                - !!int "3"
+                - 3
             name:
               type: "string"
               examples:
@@ -49177,7 +49092,7 @@ components:
             - "integer"
             - "null"
           examples:
-            - !!int "60"
+            - 60
           description: "Duration of the webinar in minutes"
         time_zone:
           type: "string"
@@ -49299,7 +49214,7 @@ components:
         event_duration:
           type: "integer"
           examples:
-            - !!int "60"
+            - 60
           minimum: 15
           description: "Duration of the event in minutes (minimum 15)"
         time_zone:
@@ -49344,7 +49259,7 @@ components:
             event_duration:
               type: "integer"
               examples:
-                - !!int "90"
+                - 90
               minimum: 15
               description: "Duration of the webinar in minutes (minimum 15)"
             time_zone:
@@ -49426,7 +49341,7 @@ components:
           enum:
             - "restricted"
             - "allowed"
-            - !!null "null"
+            - null
           description: "Whether the registrant is restricted or allowed."
         origin_method:
           type:
@@ -49498,7 +49413,7 @@ components:
             - "null"
           format: "float"
           description: "Engagement rate between 0.0 and 1.0."
-          example: !!float "0.85"
+          example: 0.85
         focused_rate:
           type:
             - "number"
@@ -49644,7 +49559,7 @@ components:
         id:
           type: "integer"
           examples:
-            - !!int "14"
+            - 14
           description: "The unique identifier of the webinar role."
         role:
           type: "string"
@@ -49666,7 +49581,7 @@ components:
             id:
               type: "integer"
               examples:
-                - !!int "3"
+                - 3
             name:
               type: "string"
               examples:
@@ -50251,7 +50166,7 @@ components:
         start_time_seconds:
           type: "number"
           description: "Start time of the match in seconds"
-          example: !!int "3"
+          example: 3
         start_time_formatted:
           type: "string"
           description: "Human-readable start time (e.g., \"0:03\" or \"1:23:45\")"
@@ -50290,7 +50205,7 @@ components:
               start_time_seconds:
                 type: "number"
                 description: "Start time of the match in seconds"
-                example: !!int "3"
+                example: 3
               start_time_formatted:
                 type: "string"
                 description: "Human-readable start time (e.g., \"0:03\" or \"1:23:45\")"
@@ -50538,7 +50453,7 @@ components:
                   start_time_seconds:
                     type: "number"
                     description: "Start time of the match in seconds"
-                    example: !!int "3"
+                    example: 3
                   start_time_formatted:
                     type: "string"
                     description: "Human-readable start time (e.g., \"0:03\" or \"1:23:45\")"
@@ -51366,7 +51281,7 @@ components:
                     - "destroy"
                     - "edit-transcripts"
                     - "create-folders"
-                description: "The permissions granted on the object. `media` supports `show`, `update`, `destroy` and `edit-transcripts`; `folder` supports `show`, `update` and `destroy`; `account` supports `create-folders`. Any permission implicitly allows viewing the object; all other permissions must be declared explicitly."
+                description: "The permissions granted on the object. `media` supports `show`, `update`, `destroy` and `edit-transcripts`; `folder` supports `show`, `update` and `destroy`; `account` supports `show` and `create-folders`. Any permission implicitly allows viewing the object (and, for a `media`, downloading it); all other permissions must be declared explicitly. The token's creator must hold every permission a rule grants, including the implied ones, or the request fails with a 422. A rule naming a `media` also covers the localized media (translations and dubs) created from it; when a rule names a localized media directly, the two rules combine. A rule naming a `folder` also covers its subfolders: any permission lists and shows them, and `update` creates, renames and deletes them."
             required:
               - "type"
               - "id"
@@ -51675,12 +51590,12 @@ components:
         roles_done:
           type: "integer"
           examples:
-            - !!int "6"
+            - 6
           description: "The number of roles that have been authored."
         roles_total:
           type: "integer"
           examples:
-            - !!int "8"
+            - 8
           description: "The number of roles every motion kit has."
         pending_roles:
           type: "array"
@@ -53395,8 +53310,8 @@ components:
           enabled:
             type: "integer"
             enum:
-              - !!int "0"
-              - !!int "1"
+              - 0
+              - 1
             description: "If `cursor[enabled]` is set to 1, the first result set will be fetched with cursor pagination enabled. This\nvalues is ignored if `cursor[before]` or `cursor[after]` are set.\n"
           before:
             type: "string"
@@ -53426,8 +53341,8 @@ components:
       schema:
         type: "integer"
         enum:
-          - !!int "0"
-          - !!int "1"
+          - 0
+          - 1
     media_id:
       name: "media_id[]"
       in: "query"

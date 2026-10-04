@@ -35,6 +35,19 @@ func (e *PutFoldersFolderIDSubfoldersSubfolderIDNotFoundError) Error() string {
 	return string(data)
 }
 
+// PutFoldersFolderIDSubfoldersSubfolderIDForbiddenError - Forbidden, token is valid but account does not have access to feature
+type PutFoldersFolderIDSubfoldersSubfolderIDForbiddenError struct {
+	Error_   *string                 `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata `json:"-"`
+}
+
+var _ error = &PutFoldersFolderIDSubfoldersSubfolderIDForbiddenError{}
+
+func (e *PutFoldersFolderIDSubfoldersSubfolderIDForbiddenError) Error() string {
+	data, _ := json.Marshal(e)
+	return string(data)
+}
+
 // PutFoldersFolderIDSubfoldersSubfolderIDUnauthorizedError - Unauthorized, invalid or missing token
 type PutFoldersFolderIDSubfoldersSubfolderIDUnauthorizedError struct {
 	// A machine-readable identifier for the specific authorization failure.

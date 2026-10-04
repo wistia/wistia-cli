@@ -42,6 +42,11 @@ func newSubfolders(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks *ho
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization naming this folder (any permission) can also be used; it
+// lists the folder's subfolders.
 func (s *Subfolders) List(ctx context.Context, request operations.GetFoldersFolderIDSubfoldersRequest, opts ...operations.Option) (*operations.GetFoldersFolderIDSubfoldersResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -312,6 +317,11 @@ func (s *Subfolders) List(ctx context.Context, request operations.GetFoldersFold
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `update` permission on this folder can also
+// be used.
 func (s *Subfolders) Create(ctx context.Context, request operations.PostFoldersFolderIDSubfoldersRequest, opts ...operations.Option) (*operations.PostFoldersFolderIDSubfoldersResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -610,6 +620,11 @@ func (s *Subfolders) Create(ctx context.Context, request operations.PostFoldersF
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization naming this folder (any permission) can also be used. The
+// embedded media are limited to those the token's authorizations name.
 func (s *Subfolders) Get(ctx context.Context, request operations.GetFoldersFolderIDSubfoldersSubfolderIDRequest, opts ...operations.Option) (*operations.GetFoldersFolderIDSubfoldersSubfolderIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -855,6 +870,11 @@ func (s *Subfolders) Get(ctx context.Context, request operations.GetFoldersFolde
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `update` permission on this folder can also
+// be used.
 func (s *Subfolders) Update(ctx context.Context, request operations.PutFoldersFolderIDSubfoldersSubfolderIDRequest, opts ...operations.Option) (*operations.PutFoldersFolderIDSubfoldersSubfolderIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1017,6 +1037,31 @@ func (s *Subfolders) Update(ctx context.Context, request operations.PutFoldersFo
 			}
 			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
+	case httpRes.StatusCode == 403:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out sdkerrors.PutFoldersFolderIDSubfoldersSubfolderIDForbiddenError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
+			}
+
+			out.HTTPMeta = components.HTTPMetadata{
+				Request:  req,
+				Response: httpRes,
+			}
+			return nil, &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
 	case httpRes.StatusCode == 404:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
@@ -1103,6 +1148,11 @@ func (s *Subfolders) Update(ctx context.Context, request operations.PutFoldersFo
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `update` permission on this folder can also
+// be used.
 func (s *Subfolders) Delete(ctx context.Context, request operations.DeleteFoldersFolderIDSubfoldersSubfolderIDRequest, opts ...operations.Option) (*operations.DeleteFoldersFolderIDSubfoldersSubfolderIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1258,6 +1308,31 @@ func (s *Subfolders) Delete(ctx context.Context, request operations.DeleteFolder
 			}
 			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
+	case httpRes.StatusCode == 403:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out sdkerrors.DeleteFoldersFolderIDSubfoldersSubfolderIDForbiddenError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
+			}
+
+			out.HTTPMeta = components.HTTPMetadata{
+				Request:  req,
+				Response: httpRes,
+			}
+			return nil, &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
 	case httpRes.StatusCode == 404:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
@@ -1344,6 +1419,11 @@ func (s *Subfolders) Delete(ctx context.Context, request operations.DeleteFolder
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `update` permission on this folder can also
+// be used.
 //
 // An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
 // created with the `all:delegate_to_contact_permissions` scope and an

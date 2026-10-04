@@ -33,7 +33,7 @@ wistia custom-metadata-field-definitions put-custom-metadata-field-definitions-k
 
 ```
       --body string            Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.
-  -c, --config-param string    JSON value (one of: { "options": object[] } | { "allows_group_refs": boolean })
+  -c, --config-param string    Type-specific configuration changes. Only valid for field types that have any; currently option add, edit, or remove operations for a single_select or multi_select field.
       --default-value string   A default value for the field, matching the field_type's format.
   -h, --help                   help for put-custom-metadata-field-definitions-key
   -k, --key string             The field's immutable key (or pass it as the [key] argument)

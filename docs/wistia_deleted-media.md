@@ -40,7 +40,7 @@ wistia deleted-media [flags]
 ### SEE ALSO
 
 * [wistia](wistia.md)	 - Data API: Wistia Data API
-* [wistia deleted-media get](wistia_deleted-media_get.md)	 - List Deleted Media
-* [wistia deleted-media post-deleted-media-restore](wistia_deleted-media_post-deleted-media-restore.md)	 - Restore Deleted Media
+* [wistia deleted-media list](wistia_deleted-media_list.md)	 - List Deleted Media
+* [wistia deleted-media restore](wistia_deleted-media_restore.md)	 - Restore Deleted Media
 
 Exit codes: 0 ok · 1 runtime · 2 usage · 3 authentication/authorization

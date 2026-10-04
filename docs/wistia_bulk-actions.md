@@ -40,6 +40,6 @@ wistia bulk-actions [flags]
 ### SEE ALSO
 
 * [wistia](wistia.md)	 - Data API: Wistia Data API
-* [wistia bulk-actions post-bulk](wistia_bulk-actions_post-bulk.md)	 - Create Bulk Actions
+* [wistia bulk-actions create](wistia_bulk-actions_create.md)	 - Create Bulk Actions
 
 Exit codes: 0 ok · 1 runtime · 2 usage · 3 authentication/authorization

@@ -54,7 +54,7 @@ wistia media list [flags]
                                           require offset pagination.
                                           (options: name, created, updated, position)
       --sort-direction string             Ordering Sort Direction (0 = desc, 1 = asc; default is 1) (options: 0, 1)
-      --speaker-profile-ids stringArray   Filter media assigned to any of these reusable speaker profiles.
+      --speaker-profile-ids stringArray   Filter media assigned to any of these reusable speaker profiles. Blank IDs are ignored; a list with no ID returns 400.
       --tags stringArray                  Find all of the medias that match all of these tag names.
       --type string                       A string specifying which type of media you would like to get. (options: Video, Audio, Image, PdfDocument, MicrosoftOfficeDocument, Swf, UnknownType)
 ```
