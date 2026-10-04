@@ -172,10 +172,10 @@ func WithTimeout(timeout time.Duration) SDKOption {
 // New creates a new instance of the SDK with the provided options
 func New(opts ...SDKOption) *Wistia {
 	sdk := &Wistia{
-		SDKVersion: "0.2.0",
+		SDKVersion: "0.2.1",
 		sdkConfiguration: config.SDKConfiguration{
-			UserAgent:         "speakeasy-sdk/go 0.2.0 2.943.0 edge-version github.com/wistia/wistia-cli/internal/sdk",
-			SDKVersion:        "0.2.0",
+			UserAgent:         "speakeasy-sdk/go 0.2.1 2.943.0 edge-version github.com/wistia/wistia-cli/internal/sdk",
+			SDKVersion:        "0.2.1",
 			GenVersion:        "2.943.0",
 			OpenAPIDocVersion: "edge-version",
 			ServerList:        ServerList,

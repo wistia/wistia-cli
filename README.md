@@ -280,8 +280,8 @@ Configuration is stored in `~/.config/wistia/config.yaml`.
   * [`delete-custom-metadata-field-definitions-key`](docs/wistia_custom-metadata-field-definitions_delete-custom-metadata-field-definitions-key.md) - Archive Custom Metadata Field Definition
   * [`post-custom-metadata-field-definitions-key-restore`](docs/wistia_custom-metadata-field-definitions_post-custom-metadata-field-definitions-key-restore.md) - Restore Custom Metadata Field Definition
 * [`deleted-media`](docs/wistia_deleted-media.md) - Operations for deleted-media
-  * [`get`](docs/wistia_deleted-media_get.md) - List Deleted Media
-  * [`post-deleted-media-restore`](docs/wistia_deleted-media_post-deleted-media-restore.md) - Restore Deleted Media
+  * [`list`](docs/wistia_deleted-media_list.md) - List Deleted Media
+  * [`restore`](docs/wistia_deleted-media_restore.md) - Restore Deleted Media
 * [`media`](docs/wistia_media.md) - Operations for media
   * [`list`](docs/wistia_media_list.md) - List Media
   * [`get`](docs/wistia_media_get.md) - Show Media
@@ -373,7 +373,7 @@ Configuration is stored in `~/.config/wistia/config.yaml`.
   * [`create`](docs/wistia_tags_create.md) - Create Tags
   * [`delete`](docs/wistia_tags_delete.md) - Delete Tag
 * [`bulk-actions`](docs/wistia_bulk-actions.md) - Operations for bulk-actions
-  * [`post-bulk`](docs/wistia_bulk-actions_post-bulk.md) - Create Bulk Actions
+  * [`create`](docs/wistia_bulk-actions_create.md) - Create Bulk Actions
 * [`bulk`](docs/wistia_bulk.md) - Operations for bulk
   * [`purchase`](docs/wistia_bulk_purchase.md) - Create Bulk Purchase
 * [`taggings`](docs/wistia_taggings.md) - Operations for taggings
