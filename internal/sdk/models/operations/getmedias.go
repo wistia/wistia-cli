@@ -258,7 +258,7 @@ type GetMediasRequest struct {
 	HashedIds []string `queryParam:"style=form,explode=true,name=hashed_ids[]"`
 	// Find all of the medias that match all of these tag names.
 	Tags []string `queryParam:"style=form,explode=true,name=tags[]"`
-	// Filter media assigned to any of these reusable speaker profiles.
+	// Filter media assigned to any of these reusable speaker profiles. Blank IDs are ignored; a list with no ID returns 400.
 	SpeakerProfileIds []string `queryParam:"style=form,explode=true,name=speaker_profile_ids[]"`
 	// Filter by archived status. True will return only archived medias, while false will return only active medias.
 	Archived *bool `queryParam:"style=form,explode=true,name=archived"`

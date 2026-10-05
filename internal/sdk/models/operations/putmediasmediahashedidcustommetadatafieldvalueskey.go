@@ -13,140 +13,70 @@ import (
 	"time"
 )
 
-type PutMediasMediaHashedIDCustomMetadataFieldValuesKeyTypeRequest string
+type ValueRequestType string
 
 const (
-	PutMediasMediaHashedIDCustomMetadataFieldValuesKeyTypeRequestContact      PutMediasMediaHashedIDCustomMetadataFieldValuesKeyTypeRequest = "contact"
-	PutMediasMediaHashedIDCustomMetadataFieldValuesKeyTypeRequestContactGroup PutMediasMediaHashedIDCustomMetadataFieldValuesKeyTypeRequest = "contact_group"
+	ValueRequestTypeStr        ValueRequestType = "str"
+	ValueRequestTypeNumber     ValueRequestType = "number"
+	ValueRequestTypeBoolean    ValueRequestType = "boolean"
+	ValueRequestTypeArrayOfAny ValueRequestType = "arrayOfAny"
 )
 
-func (e PutMediasMediaHashedIDCustomMetadataFieldValuesKeyTypeRequest) ToPointer() *PutMediasMediaHashedIDCustomMetadataFieldValuesKeyTypeRequest {
-	return &e
-}
-func (e *PutMediasMediaHashedIDCustomMetadataFieldValuesKeyTypeRequest) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	switch v {
-	case "contact":
-		fallthrough
-	case "contact_group":
-		*e = PutMediasMediaHashedIDCustomMetadataFieldValuesKeyTypeRequest(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for PutMediasMediaHashedIDCustomMetadataFieldValuesKeyTypeRequest: %v", v)
-	}
-}
-
-type ValueRequest struct {
-	Type *PutMediasMediaHashedIDCustomMetadataFieldValuesKeyTypeRequest `json:"type,omitzero"`
-	ID   *string                                                        `json:"id,omitzero"`
-}
-
-func (v ValueRequest) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(v, "", false)
-}
-
-func (v *ValueRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &v, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (v *ValueRequest) GetType() *PutMediasMediaHashedIDCustomMetadataFieldValuesKeyTypeRequest {
-	if v == nil {
-		return nil
-	}
-	return v.Type
-}
-
-func (v *ValueRequest) GetID() *string {
-	if v == nil {
-		return nil
-	}
-	return v.ID
-}
-
-type ValueRequestUnionType string
-
-const (
-	ValueRequestUnionTypeStr          ValueRequestUnionType = "str"
-	ValueRequestUnionTypeNumber       ValueRequestUnionType = "number"
-	ValueRequestUnionTypeBoolean      ValueRequestUnionType = "boolean"
-	ValueRequestUnionTypeArrayOfAny   ValueRequestUnionType = "arrayOfAny"
-	ValueRequestUnionTypeValueRequest ValueRequestUnionType = "value_request"
-)
-
-// ValueRequestUnion - The new value for this field, typed to match the definition's `field_type`:
-// a string for text-like types (text, short_text, url, email, money, time, datetime),
+// ValueRequest - The new value for this field, typed to match the definition's `field_type`:
+// a string for text-like types (text, short_text, time, datetime),
 // a number for `number`, an ISO 8601 date string like "2026-07-10" for `date`,
 // a boolean for `boolean`, the chosen option's key (a string) for `single_select`,
-// an array of the chosen options' keys for `multi_select`, a contact reference
-// object `{"type": "contact" | "contact_group", "id": "<hashed_id>"}` for
-// `contact_ref`, and an array of contact reference objects for `contact_multi_ref`.
-// Contact group references require the field to allow groups.
-// Null (or omitting the property) clears the field; for `multi_select` and
-// `contact_multi_ref`, an empty array also clears it.
-type ValueRequestUnion struct {
-	Str          *string       `queryParam:"inline" union:"member"`
-	Number       *float64      `queryParam:"inline" union:"member"`
-	Boolean      *bool         `queryParam:"inline" union:"member"`
-	ArrayOfAny   []any         `queryParam:"inline" union:"member"`
-	ValueRequest *ValueRequest `queryParam:"inline" union:"member"`
+// and an array of the chosen options' keys for `multi_select`.
+// Null (or omitting the property) clears the field; for `multi_select`,
+// an empty array also clears it.
+type ValueRequest struct {
+	Str        *string  `queryParam:"inline" union:"member"`
+	Number     *float64 `queryParam:"inline" union:"member"`
+	Boolean    *bool    `queryParam:"inline" union:"member"`
+	ArrayOfAny []any    `queryParam:"inline" union:"member"`
 
-	Type ValueRequestUnionType
+	Type ValueRequestType
 }
 
-func CreateValueRequestUnionStr(str string) ValueRequestUnion {
-	typ := ValueRequestUnionTypeStr
+func CreateValueRequestStr(str string) ValueRequest {
+	typ := ValueRequestTypeStr
 
-	return ValueRequestUnion{
+	return ValueRequest{
 		Str:  &str,
 		Type: typ,
 	}
 }
 
-func CreateValueRequestUnionNumber(number float64) ValueRequestUnion {
-	typ := ValueRequestUnionTypeNumber
+func CreateValueRequestNumber(number float64) ValueRequest {
+	typ := ValueRequestTypeNumber
 
-	return ValueRequestUnion{
+	return ValueRequest{
 		Number: &number,
 		Type:   typ,
 	}
 }
 
-func CreateValueRequestUnionBoolean(boolean bool) ValueRequestUnion {
-	typ := ValueRequestUnionTypeBoolean
+func CreateValueRequestBoolean(boolean bool) ValueRequest {
+	typ := ValueRequestTypeBoolean
 
-	return ValueRequestUnion{
+	return ValueRequest{
 		Boolean: &boolean,
 		Type:    typ,
 	}
 }
 
-func CreateValueRequestUnionArrayOfAny(arrayOfAny []any) ValueRequestUnion {
-	typ := ValueRequestUnionTypeArrayOfAny
+func CreateValueRequestArrayOfAny(arrayOfAny []any) ValueRequest {
+	typ := ValueRequestTypeArrayOfAny
 
-	return ValueRequestUnion{
+	return ValueRequest{
 		ArrayOfAny: arrayOfAny,
 		Type:       typ,
 	}
 }
 
-func CreateValueRequestUnionValueRequest(valueRequest ValueRequest) ValueRequestUnion {
-	typ := ValueRequestUnionTypeValueRequest
-
-	return ValueRequestUnion{
-		ValueRequest: &valueRequest,
-		Type:         typ,
-	}
-}
-
-func (u *ValueRequestUnion) UnmarshalJSON(data []byte) (err error) {
+func (u *ValueRequest) UnmarshalJSON(data []byte) (err error) {
 	previous := *u
-	*u = ValueRequestUnion{}
+	*u = ValueRequest{}
 	defer func() {
 		if err != nil {
 			*u = previous
@@ -159,7 +89,7 @@ func (u *ValueRequestUnion) UnmarshalJSON(data []byte) (err error) {
 	var str string = ""
 	if err := utils.UnmarshalJSON(data, &str, "", true, nil); err == nil {
 		candidates = append(candidates, utils.UnionCandidate{
-			Type:  ValueRequestUnionTypeStr,
+			Type:  ValueRequestTypeStr,
 			Value: &str,
 		})
 	}
@@ -167,7 +97,7 @@ func (u *ValueRequestUnion) UnmarshalJSON(data []byte) (err error) {
 	var number float64 = float64(0)
 	if err := utils.UnmarshalJSON(data, &number, "", true, nil); err == nil {
 		candidates = append(candidates, utils.UnionCandidate{
-			Type:  ValueRequestUnionTypeNumber,
+			Type:  ValueRequestTypeNumber,
 			Value: &number,
 		})
 	}
@@ -175,7 +105,7 @@ func (u *ValueRequestUnion) UnmarshalJSON(data []byte) (err error) {
 	var boolean bool = false
 	if err := utils.UnmarshalJSON(data, &boolean, "", true, nil); err == nil {
 		candidates = append(candidates, utils.UnionCandidate{
-			Type:  ValueRequestUnionTypeBoolean,
+			Type:  ValueRequestTypeBoolean,
 			Value: &boolean,
 		})
 	}
@@ -183,53 +113,42 @@ func (u *ValueRequestUnion) UnmarshalJSON(data []byte) (err error) {
 	var arrayOfAny []any = []any{}
 	if err := utils.UnmarshalJSON(data, &arrayOfAny, "", true, nil); err == nil {
 		candidates = append(candidates, utils.UnionCandidate{
-			Type:  ValueRequestUnionTypeArrayOfAny,
+			Type:  ValueRequestTypeArrayOfAny,
 			Value: arrayOfAny,
 		})
 	}
 
-	var valueRequest ValueRequest = ValueRequest{}
-	if err := utils.UnmarshalJSON(data, &valueRequest, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  ValueRequestUnionTypeValueRequest,
-			Value: &valueRequest,
-		})
-	}
-
 	if len(candidates) == 0 {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for ValueRequestUnion", string(data))
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for ValueRequest", string(data))
 	}
 
 	// Pick the best candidate using multi-stage filtering
 	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for ValueRequestUnion", string(data))
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for ValueRequest", string(data))
 	}
 
 	// Set the union type and value based on the best candidate
-	u.Type = best.Type.(ValueRequestUnionType)
+	u.Type = best.Type.(ValueRequestType)
 	switch best.Type {
-	case ValueRequestUnionTypeStr:
+	case ValueRequestTypeStr:
 		u.Str = best.Value.(*string)
 		return nil
-	case ValueRequestUnionTypeNumber:
+	case ValueRequestTypeNumber:
 		u.Number = best.Value.(*float64)
 		return nil
-	case ValueRequestUnionTypeBoolean:
+	case ValueRequestTypeBoolean:
 		u.Boolean = best.Value.(*bool)
 		return nil
-	case ValueRequestUnionTypeArrayOfAny:
+	case ValueRequestTypeArrayOfAny:
 		u.ArrayOfAny = best.Value.([]any)
-		return nil
-	case ValueRequestUnionTypeValueRequest:
-		u.ValueRequest = best.Value.(*ValueRequest)
 		return nil
 	}
 
-	return fmt.Errorf("could not unmarshal `%s` into any supported union types for ValueRequestUnion", string(data))
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for ValueRequest", string(data))
 }
 
-func (u ValueRequestUnion) MarshalJSON() ([]byte, error) {
+func (u ValueRequest) MarshalJSON() ([]byte, error) {
 	if u.Str != nil {
 		return utils.MarshalJSON(u.Str, "", true)
 	}
@@ -246,29 +165,22 @@ func (u ValueRequestUnion) MarshalJSON() ([]byte, error) {
 		return utils.MarshalJSON(u.ArrayOfAny, "", true)
 	}
 
-	if u.ValueRequest != nil {
-		return utils.MarshalJSON(u.ValueRequest, "", true)
-	}
-
-	return nil, errors.New("could not marshal union type ValueRequestUnion: all fields are null")
+	return nil, errors.New("could not marshal union type ValueRequest: all fields are null")
 }
 
 type PutMediasMediaHashedIDCustomMetadataFieldValuesKeyRequestBody struct {
 	// The new value for this field, typed to match the definition's `field_type`:
-	// a string for text-like types (text, short_text, url, email, money, time, datetime),
+	// a string for text-like types (text, short_text, time, datetime),
 	// a number for `number`, an ISO 8601 date string like "2026-07-10" for `date`,
 	// a boolean for `boolean`, the chosen option's key (a string) for `single_select`,
-	// an array of the chosen options' keys for `multi_select`, a contact reference
-	// object `{"type": "contact" | "contact_group", "id": "<hashed_id>"}` for
-	// `contact_ref`, and an array of contact reference objects for `contact_multi_ref`.
-	// Contact group references require the field to allow groups.
-	// Null (or omitting the property) clears the field; for `multi_select` and
-	// `contact_multi_ref`, an empty array also clears it.
+	// and an array of the chosen options' keys for `multi_select`.
+	// Null (or omitting the property) clears the field; for `multi_select`,
+	// an empty array also clears it.
 	//
-	Value optionalnullable.OptionalNullable[ValueRequestUnion] `json:"value,omitzero"`
+	Value optionalnullable.OptionalNullable[ValueRequest] `json:"value,omitzero"`
 }
 
-func (p *PutMediasMediaHashedIDCustomMetadataFieldValuesKeyRequestBody) GetValue() optionalnullable.OptionalNullable[ValueRequestUnion] {
+func (p *PutMediasMediaHashedIDCustomMetadataFieldValuesKeyRequestBody) GetValue() optionalnullable.OptionalNullable[ValueRequest] {
 	if p == nil {
 		return nil
 	}
@@ -364,19 +276,19 @@ func (e *PutMediasMediaHashedIDCustomMetadataFieldValuesKeyFieldType) IsExact() 
 	return false
 }
 
-type PutMediasMediaHashedIDCustomMetadataFieldValuesKeyValueTypeResponse string
+type PutMediasMediaHashedIDCustomMetadataFieldValuesKeyValueType string
 
 const (
-	PutMediasMediaHashedIDCustomMetadataFieldValuesKeyValueTypeResponseContact      PutMediasMediaHashedIDCustomMetadataFieldValuesKeyValueTypeResponse = "contact"
-	PutMediasMediaHashedIDCustomMetadataFieldValuesKeyValueTypeResponseContactGroup PutMediasMediaHashedIDCustomMetadataFieldValuesKeyValueTypeResponse = "contact_group"
+	PutMediasMediaHashedIDCustomMetadataFieldValuesKeyValueTypeContact      PutMediasMediaHashedIDCustomMetadataFieldValuesKeyValueType = "contact"
+	PutMediasMediaHashedIDCustomMetadataFieldValuesKeyValueTypeContactGroup PutMediasMediaHashedIDCustomMetadataFieldValuesKeyValueType = "contact_group"
 )
 
-func (e PutMediasMediaHashedIDCustomMetadataFieldValuesKeyValueTypeResponse) ToPointer() *PutMediasMediaHashedIDCustomMetadataFieldValuesKeyValueTypeResponse {
+func (e PutMediasMediaHashedIDCustomMetadataFieldValuesKeyValueType) ToPointer() *PutMediasMediaHashedIDCustomMetadataFieldValuesKeyValueType {
 	return &e
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *PutMediasMediaHashedIDCustomMetadataFieldValuesKeyValueTypeResponse) IsExact() bool {
+func (e *PutMediasMediaHashedIDCustomMetadataFieldValuesKeyValueType) IsExact() bool {
 	if e != nil {
 		switch *e {
 		case "contact", "contact_group":
@@ -387,8 +299,8 @@ func (e *PutMediasMediaHashedIDCustomMetadataFieldValuesKeyValueTypeResponse) Is
 }
 
 type PutMediasMediaHashedIDCustomMetadataFieldValuesKeyValueResponse struct {
-	Type *PutMediasMediaHashedIDCustomMetadataFieldValuesKeyValueTypeResponse `json:"type,omitzero"`
-	ID   *string                                                              `json:"id,omitzero"`
+	Type *PutMediasMediaHashedIDCustomMetadataFieldValuesKeyValueType `json:"type,omitzero"`
+	ID   *string                                                      `json:"id,omitzero"`
 }
 
 func (p PutMediasMediaHashedIDCustomMetadataFieldValuesKeyValueResponse) MarshalJSON() ([]byte, error) {
@@ -402,7 +314,7 @@ func (p *PutMediasMediaHashedIDCustomMetadataFieldValuesKeyValueResponse) Unmars
 	return nil
 }
 
-func (p *PutMediasMediaHashedIDCustomMetadataFieldValuesKeyValueResponse) GetType() *PutMediasMediaHashedIDCustomMetadataFieldValuesKeyValueTypeResponse {
+func (p *PutMediasMediaHashedIDCustomMetadataFieldValuesKeyValueResponse) GetType() *PutMediasMediaHashedIDCustomMetadataFieldValuesKeyValueType {
 	if p == nil {
 		return nil
 	}
