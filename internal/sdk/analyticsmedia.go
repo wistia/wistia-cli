@@ -46,6 +46,11 @@ func newAnalyticsMedia(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `view-stats` permission on this media can also
+// be used.
 func (s *AnalyticsMedia) Get(ctx context.Context, request operations.GetAnalyticsMediasMediaIDRequest, opts ...operations.Option) (*operations.GetAnalyticsMediasMediaIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -346,6 +351,11 @@ func (s *AnalyticsMedia) Get(ctx context.Context, request operations.GetAnalytic
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `view-stats` permission on this media can also
+// be used.
 func (s *AnalyticsMedia) GetTimeseries(ctx context.Context, request operations.GetAnalyticsMediasMediaIDTimeseriesRequest, opts ...operations.Option) (*operations.GetAnalyticsMediasMediaIDTimeseriesResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -646,6 +656,11 @@ func (s *AnalyticsMedia) GetTimeseries(ctx context.Context, request operations.G
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `view-stats` permission on this media can also
+// be used.
 func (s *AnalyticsMedia) GetEmbedLocations(ctx context.Context, request operations.GetAnalyticsMediasMediaIDEmbedLocationsRequest, opts ...operations.Option) (*operations.GetAnalyticsMediasMediaIDEmbedLocationsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -948,6 +963,11 @@ func (s *AnalyticsMedia) GetEmbedLocations(ctx context.Context, request operatio
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `view-stats` permission on this media can also
+// be used.
 func (s *AnalyticsMedia) GetEmbedLocationsTimeseries(ctx context.Context, request operations.GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesRequest, opts ...operations.Option) (*operations.GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1248,6 +1268,11 @@ func (s *AnalyticsMedia) GetEmbedLocationsTimeseries(ctx context.Context, reques
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `view-stats` permission on this media can also
+// be used.
 func (s *AnalyticsMedia) GetTraffic(ctx context.Context, request operations.GetAnalyticsMediasMediaIDTrafficRequest, opts ...operations.Option) (*operations.GetAnalyticsMediasMediaIDTrafficResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1548,6 +1573,11 @@ func (s *AnalyticsMedia) GetTraffic(ctx context.Context, request operations.GetA
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `view-stats` permission on this media can also
+// be used.
 func (s *AnalyticsMedia) GetConversions(ctx context.Context, request operations.GetAnalyticsMediasMediaIDConversionsRequest, opts ...operations.Option) (*operations.GetAnalyticsMediasMediaIDConversionsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1848,6 +1878,11 @@ func (s *AnalyticsMedia) GetConversions(ctx context.Context, request operations.
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `view-stats` permission on this media can also
+// be used.
 func (s *AnalyticsMedia) GetLanguages(ctx context.Context, request operations.GetAnalyticsMediasMediaIDLanguagesRequest, opts ...operations.Option) (*operations.GetAnalyticsMediasMediaIDLanguagesResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

@@ -45,7 +45,7 @@ type Authorization struct {
 	Type PostExpiringTokenType `json:"type"`
 	// The id of the object the permissions are being performed on: the hashed id of a `media` or `folder`, or the numeric `id` of the `account` (as returned by `GET /modern/account`), which must be the token's own account.
 	ID string `json:"id"`
-	// The permissions granted on the object. `media` supports `show`, `update`, `destroy` and `edit-transcripts`; `folder` supports `show`, `update` and `destroy`; `account` supports `create-folders`. Any permission implicitly allows viewing the object; all other permissions must be declared explicitly.
+	// The permissions granted on the object. `media` supports `show`, `update`, `destroy`, `edit-transcripts`, `view-stats`, `translate` and `archive`; `folder` supports `show`, `update`, `destroy` and `upload`; `account` supports `show`, `create-folders` and `view-stats`. Any permission implicitly allows viewing the object (and, for a `media`, downloading it); all other permissions must be declared explicitly. The `archive` permission also allows restoring the media. `create-folders` also allows copying any folder the token names. `view-stats` on an `account` allows reading the account-wide analytics endpoints. The token's creator must hold every permission a rule grants, including the implied ones, or the request fails with a 422. A rule naming a `media` also covers the localized media (translations and dubs) created from it; when a rule names a localized media directly, the two rules combine. A rule naming a `folder` also covers its subfolders: any permission lists and shows them, and `update` creates, renames and deletes them.
 	Permissions []string `json:"permissions"`
 }
 

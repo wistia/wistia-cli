@@ -26,7 +26,7 @@ func initCopyCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "copy [media-hashed-id]",
 		Short:   "Copy Media",
-		Long:    "This endpoint copies a media and its assets to a destination folder (defaults to source media).\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
+		Long:    "This endpoint copies a media and its assets to a destination folder (defaults to source media).\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and\nauthorizations naming this media and granting the `upload` permission on\nthe destination folder (the media's own folder when `folder_id` is\nomitted) can also be used.",
 		Example: "  wistia media copy --media-hashed-id <id>",
 		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runCopyCmd,
