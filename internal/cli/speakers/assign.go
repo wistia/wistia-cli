@@ -17,7 +17,7 @@ import (
 
 var assignCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "media-hashed-id", Shorthand: "m", FieldPath: "MediaHashedID", Kind: flagutil.FlagKindString, Required: true, Description: "The hashed ID of the media to assign the speaker to. [required]"},
-	{FlagName: "speaker-profile-id", Shorthand: "s", FieldPath: "Body.SpeakerProfileID", Kind: flagutil.FlagKindString, Required: true, Description: "The reusable speaker profile to assign, from List Speakers. Create a new profile first when the person isn't in the account's speaker library. [required]"},
+	{FlagName: "speaker-profile-id", Shorthand: "s", FieldPath: "Body.SpeakerProfileID", Kind: flagutil.FlagKindString, Required: true, Description: "The reusable speaker profile to assign, as returned by List Speakers. Look the person up there first; create a profile only when they aren't listed. [required]"},
 	{FlagName: "detected-speaker-id", FieldPath: "Body.DetectedSpeakerID", Kind: flagutil.FlagKindString, Optional: true, Description: "Only when the user identifies which voice is this person (e.g. \"Speaker 1 is Annie\"): that speaker's 'detected_speaker_id', such as 'default_speaker_0', from the media's diarized transcript segments. Every turn by that voice is attributed to the profile, and assigning a second detected speaker to the same profile merges them. Omit it to credit the person on the media without naming any turns; don't guess which voice is theirs."},
 	{FlagName: "expected-version", Shorthand: "e", FieldPath: "Body.ExpectedVersion", Kind: flagutil.FlagKindInt64, Optional: true, Description: "The media's current 'speaker_data_version' from its diarized transcript segments. Required with 'detected_speaker_id'; a stale value returns 409."},
 }

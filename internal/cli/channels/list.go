@@ -28,7 +28,7 @@ func initListCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "list",
 		Short:   "List Channels",
-		Long:    "Lists all Channels belonging to an account. This endpoint can also be used to\ndo a batch fetch based off of the hashed id.\n\n## Requires api token with one of the following permissions\n```\nRead all folder and media data\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
+		Long:    "Lists all Channels belonging to an account. This endpoint can also be used to\ndo a batch fetch based off of the hashed id.\n\n## Requires api token with one of the following permissions\n```\nRead all folder and media data\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\nauthorization naming a channel (any permission) can also be used; it\nlists the channels the token names.",
 		Example: "  wistia channels list",
 		Args:    cobra.NoArgs,
 		RunE:    runListCmd,

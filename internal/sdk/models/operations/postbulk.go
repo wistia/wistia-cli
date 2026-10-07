@@ -54,7 +54,8 @@ func (e *ActionOperation) UnmarshalJSON(data []byte) error {
 // ActionResourceType - The type of resource to operate on. `folder` means a top-level folder
 // (previously called a project); use `subfolder` for a folder nested
 // inside one. `captions` operates on a single caption track -- one media
-// in one language.
+// in one language. `media_speaker` assigns speaker profiles to a media
+// (`create`) or removes one assignment (`delete`).
 //
 // The `customization_*` types each write one concern of a media's player
 // customizations and accept `update` only. Their `id` is the media's
@@ -72,6 +73,7 @@ const (
 	ActionResourceTypeChannel                    ActionResourceType = "channel"
 	ActionResourceTypeChannelEpisode             ActionResourceType = "channel_episode"
 	ActionResourceTypeCaptions                   ActionResourceType = "captions"
+	ActionResourceTypeMediaSpeaker               ActionResourceType = "media_speaker"
 	ActionResourceTypeCustomizationAccess        ActionResourceType = "customization_access"
 	ActionResourceTypeCustomizationAccessibility ActionResourceType = "customization_accessibility"
 	ActionResourceTypeCustomizationAppearance    ActionResourceType = "customization_appearance"
@@ -104,6 +106,8 @@ func (e *ActionResourceType) UnmarshalJSON(data []byte) error {
 	case "channel_episode":
 		fallthrough
 	case "captions":
+		fallthrough
+	case "media_speaker":
 		fallthrough
 	case "customization_access":
 		fallthrough
@@ -154,6 +158,14 @@ func (e *ActionResourceType) UnmarshalJSON(data []byte) error {
 // folder. Omit `subfolder_id` to move the media to the folder's root
 // level.
 //
+// A `media_speaker` create takes the Assign Speaker body, or, for several
+// people on one media, `speakers`, a list of 1 to 20 objects each with a
+// `speaker_profile_id` and an optional `detected_speaker_id`, plus
+// `expected_version` (the media's `speaker_data_version`), which is
+// required when any entry names a detected speaker. The list is assigned
+// in order as one change, so every speaker on a media goes in one action.
+// A `media_speaker` delete takes an optional `expected_version`.
+//
 // A `customization_*` payload is a partial update of that concern only:
 // just the fields you send are changed, and a field naming another
 // concern's setting fails the action.
@@ -183,7 +195,8 @@ type PostBulkAction struct {
 	// The type of resource to operate on. `folder` means a top-level folder
 	// (previously called a project); use `subfolder` for a folder nested
 	// inside one. `captions` operates on a single caption track -- one media
-	// in one language.
+	// in one language. `media_speaker` assigns speaker profiles to a media
+	// (`create`) or removes one assignment (`delete`).
 	//
 	// The `customization_*` types each write one concern of a media's player
 	// customizations and accept `update` only. Their `id` is the media's
@@ -200,6 +213,9 @@ type PostBulkAction struct {
 	// For `captions` this is the caption track's own ID (the `id` field
 	// returned by List Captions), not the media's -- a media can have a track
 	// per language.
+	//
+	// For `media_speaker`, a `create` takes the media's hashed ID and a
+	// `delete` takes the `media_speaker_id`; both require it.
 	//
 	ID *string `json:"id,omitzero"`
 	// The data for the operation. Required for create, update, and move
@@ -224,6 +240,14 @@ type PostBulkAction struct {
 	// and accepts an optional `subfolder_id`, which must belong to that
 	// folder. Omit `subfolder_id` to move the media to the folder's root
 	// level.
+	//
+	// A `media_speaker` create takes the Assign Speaker body, or, for several
+	// people on one media, `speakers`, a list of 1 to 20 objects each with a
+	// `speaker_profile_id` and an optional `detected_speaker_id`, plus
+	// `expected_version` (the media's `speaker_data_version`), which is
+	// required when any entry names a detected speaker. The list is assigned
+	// in order as one change, so every speaker on a media goes in one action.
+	// A `media_speaker` delete takes an optional `expected_version`.
 	//
 	// A `customization_*` payload is a partial update of that concern only:
 	// just the fields you send are changed, and a field naming another

@@ -25,7 +25,7 @@ func initPublishCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "publish [channel-episode-hashed-id]",
 		Short:   "Publish Channel Episode",
-		Long:    "Publishes an existing channel episode in a channel.\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
+		Long:    "Publishes an existing channel episode in a channel.\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\nauthorization granting the `update` permission on the episode's channel\ncan also be used.",
 		Example: "  wistia channel-episodes publish --channel-episode-hashed-id <id>",
 		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runPublishCmd,

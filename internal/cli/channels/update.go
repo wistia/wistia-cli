@@ -30,7 +30,7 @@ func initUpdateCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "update [channel-hashed-id]",
 		Short:   "Update Channel",
-		Long:    "Updates a channel.",
+		Long:    "Updates a channel.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\nauthorization granting the `update` permission on this channel can also\nbe used. The `update` permission also allows managing the channel's\nepisodes and collaborators.",
 		Example: "  wistia channels update --channel-hashed-id <id>",
 		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runUpdateCmd,

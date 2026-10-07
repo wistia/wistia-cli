@@ -28,7 +28,7 @@ func initCreateCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "create",
 		Short:   "Create Channel",
-		Long:    "Creates a channel.",
+		Long:    "Creates a channel.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\nauthorization granting the `create-channels` permission on the account\ncan also be used.",
 		Example: "  wistia channels create",
 		Args:    cobra.NoArgs,
 		RunE:    runCreateCmd,

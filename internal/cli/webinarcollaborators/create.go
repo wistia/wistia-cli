@@ -25,7 +25,7 @@ func initCreateCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "create [webinar-id]",
 		Short:   "Create Webinar Collaborator",
-		Long:    "Invites a collaborator (producer) to a webinar by specifying their email address. Creates a new contact if one doesn't exist with that email. Note that viewers cannot be webinar collaborators.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
+		Long:    "Invites a collaborator (producer) to a webinar by specifying their email address. Creates a new contact if one doesn't exist with that email. Note that viewers cannot be webinar collaborators.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\nauthorization granting the `update` permission on this webinar can also\nbe used.",
 		Example: "  wistia webinar-collaborators create --webinar-id <id> --email jim@wistia.com",
 		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runCreateCmd,

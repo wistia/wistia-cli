@@ -26,7 +26,7 @@ func initTranslateCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "translate [media-hashed-id]",
 		Short:   "Translate Media",
-		Long:    "Translates the transcript for a media.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
+		Long:    "Translates the transcript for a media.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\nauthorization granting the `translate` permission on this media can also\nbe used. The translation is attributed to the contact the token was\ncreated for.",
 		Example: "  wistia media translate --media-hashed-id <id> --target-language <value>",
 		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runTranslateCmd,
