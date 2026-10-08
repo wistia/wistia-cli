@@ -27,7 +27,7 @@ func initGetEmbedLocationsCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "get-embed-locations",
 		Short:   "Show Account Embed Locations",
-		Long:    "Retrieve embed location analytics for the entire account. Returns a list of domains\nwhere the account's media are embedded, ranked by the chosen metric.\n\nThe date range between `start_date` and `end_date` must not exceed 2 years.\n\n\n## Requires api token with one of the following permissions\n```\nRead detailed stats\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
+		Long:    "Retrieve embed location analytics for the entire account. Returns a list of domains\nwhere the account's media are embedded, ranked by the chosen metric.\n\nThe date range between `start_date` and `end_date` must not exceed 2 years.\n\n\n## Requires api token with one of the following permissions\n```\nRead detailed stats\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\n`account` authorization granting the `view-stats` permission can also\nbe used.",
 		Example: "  wistia analytics-account get-embed-locations --start-date 2024-04-04 --end-date 2026-04-14",
 		Args:    cobra.NoArgs,
 		RunE:    runGetEmbedLocationsCmd,
@@ -72,7 +72,10 @@ func runGetEmbedLocationsCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.AnalyticsAccount.GetEmbedLocations(cmd.Context(), *req, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

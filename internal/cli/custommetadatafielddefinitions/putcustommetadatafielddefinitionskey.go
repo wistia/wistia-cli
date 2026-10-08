@@ -20,7 +20,7 @@ var putCustomMetadataFieldDefinitionsKeyCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "label", Shorthand: "l", FieldPath: "Body.Label", Kind: flagutil.FlagKindString, Optional: true, Description: "The field's display name. Must be unique per account among active fields (case-insensitive)."},
 	{FlagName: "default-value", FieldPath: "Body.DefaultValue", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"default_value,omitempty"`, Description: "A default value for the field, matching the field_type's format."},
 	{FlagName: "position", Shorthand: "p", FieldPath: "Body.Position", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"position,omitempty"`, Description: "The field's display order within the account, ascending from 0."},
-	{FlagName: "config-param", Shorthand: "c", FieldPath: "Body.Config", Kind: flagutil.FlagKindUnion, Union: &flagutil.UnionMeta{Discriminated: false, Optional: true, TypeDescription: "JSON value (one of: { \"options\": object[] } | { \"allows_group_refs\": boolean })"}},
+	{FlagName: "config-param", Shorthand: "c", FieldPath: "Body.Config", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"config,omitempty"`, Description: "Type-specific configuration changes. Only valid for field types that have any; currently option add, edit, or remove operations for a single_select or multi_select field."},
 }
 
 // initPutCustomMetadataFieldDefinitionsKeyCmd initializes the put-custom-metadata-field-definitions-key command.
@@ -42,7 +42,7 @@ func initPutCustomMetadataFieldDefinitionsKeyCmd(parent *cobra.Command) error {
 		return fmt.Errorf("invalid metadata for put-custom-metadata-field-definitions-key: %w", err)
 	}
 	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
-	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Required: false, Kind: "json", BodyFlag: true})
 	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
 	if err := flagutil.AnnotateBodyFields(cmd, putCustomMetadataFieldDefinitionsKeyCmdMeta, "Body", "body"); err != nil {
 		return fmt.Errorf("annotate body fields for put-custom-metadata-field-definitions-key: %w", err)
@@ -90,7 +90,10 @@ func runPutCustomMetadataFieldDefinitionsKeyCmd(cmd *cobra.Command, args []strin
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.CustomMetadataFieldDefinitions.PutCustomMetadataFieldDefinitionsKey(cmd.Context(), *req, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

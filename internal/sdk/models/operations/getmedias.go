@@ -151,7 +151,7 @@ func (e *GetMediasSortDirection) UnmarshalJSON(data []byte) error {
 	}
 }
 
-// GetMediasInclude - Set to `speakers` to include active transcript speaker assignments used for diarization. Webinar hosts and panelists are not included.
+// GetMediasInclude - Set to `speakers` to add each media's `speakers` array, its active transcript speaker assignments used for diarization. Webinar hosts and panelists are not included.
 type GetMediasInclude string
 
 const (
@@ -250,7 +250,7 @@ type GetMediasRequest struct {
 	// Format for media descriptions
 	//lint:ignore U1000 accessed via reflection for JSON marshaling
 	descriptionFormat *string `const:"markdown" queryParam:"style=form,explode=true,name=description_format"`
-	// Set to `speakers` to include active transcript speaker assignments used for diarization. Webinar hosts and panelists are not included.
+	// Set to `speakers` to add each media's `speakers` array, its active transcript speaker assignments used for diarization. Webinar hosts and panelists are not included.
 	Include *GetMediasInclude `queryParam:"style=form,explode=true,name=include"`
 	// A string specifying which type of media you would like to get.
 	Type *GetMediasQueryParamType `queryParam:"style=form,explode=true,name=type"`
@@ -258,7 +258,7 @@ type GetMediasRequest struct {
 	HashedIds []string `queryParam:"style=form,explode=true,name=hashed_ids[]"`
 	// Find all of the medias that match all of these tag names.
 	Tags []string `queryParam:"style=form,explode=true,name=tags[]"`
-	// Filter media assigned to any of these reusable speaker profiles.
+	// Filter media assigned to any of these reusable speaker profiles. Blank IDs are ignored; a list with no ID returns 400.
 	SpeakerProfileIds []string `queryParam:"style=form,explode=true,name=speaker_profile_ids[]"`
 	// Filter by archived status. True will return only archived medias, while false will return only active medias.
 	Archived *bool `queryParam:"style=form,explode=true,name=archived"`

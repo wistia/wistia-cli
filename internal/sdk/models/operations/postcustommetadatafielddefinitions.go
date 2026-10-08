@@ -13,24 +13,19 @@ import (
 	"time"
 )
 
-// FieldTypeRequest - The field's data type. Immutable after creation. `url`, `email`, `money`, `contact_ref`, and `contact_multi_ref` are early-access types: creating one on an account without access returns 422 naming the types the account can use. Existing fields of these types keep working.
+// FieldTypeRequest - The field's data type. Immutable after creation.
 type FieldTypeRequest string
 
 const (
-	FieldTypeRequestText            FieldTypeRequest = "text"
-	FieldTypeRequestNumber          FieldTypeRequest = "number"
-	FieldTypeRequestDate            FieldTypeRequest = "date"
-	FieldTypeRequestBoolean         FieldTypeRequest = "boolean"
-	FieldTypeRequestSingleSelect    FieldTypeRequest = "single_select"
-	FieldTypeRequestShortText       FieldTypeRequest = "short_text"
-	FieldTypeRequestURL             FieldTypeRequest = "url"
-	FieldTypeRequestEmail           FieldTypeRequest = "email"
-	FieldTypeRequestMoney           FieldTypeRequest = "money"
-	FieldTypeRequestTime            FieldTypeRequest = "time"
-	FieldTypeRequestDatetime        FieldTypeRequest = "datetime"
-	FieldTypeRequestMultiSelect     FieldTypeRequest = "multi_select"
-	FieldTypeRequestContactRef      FieldTypeRequest = "contact_ref"
-	FieldTypeRequestContactMultiRef FieldTypeRequest = "contact_multi_ref"
+	FieldTypeRequestText         FieldTypeRequest = "text"
+	FieldTypeRequestNumber       FieldTypeRequest = "number"
+	FieldTypeRequestDate         FieldTypeRequest = "date"
+	FieldTypeRequestBoolean      FieldTypeRequest = "boolean"
+	FieldTypeRequestSingleSelect FieldTypeRequest = "single_select"
+	FieldTypeRequestShortText    FieldTypeRequest = "short_text"
+	FieldTypeRequestTime         FieldTypeRequest = "time"
+	FieldTypeRequestDatetime     FieldTypeRequest = "datetime"
+	FieldTypeRequestMultiSelect  FieldTypeRequest = "multi_select"
 )
 
 func (e FieldTypeRequest) ToPointer() *FieldTypeRequest {
@@ -54,53 +49,17 @@ func (e *FieldTypeRequest) UnmarshalJSON(data []byte) error {
 		fallthrough
 	case "short_text":
 		fallthrough
-	case "url":
-		fallthrough
-	case "email":
-		fallthrough
-	case "money":
-		fallthrough
 	case "time":
 		fallthrough
 	case "datetime":
 		fallthrough
 	case "multi_select":
-		fallthrough
-	case "contact_ref":
-		fallthrough
-	case "contact_multi_ref":
 		*e = FieldTypeRequest(v)
 		return nil
 	default:
 		return fmt.Errorf("invalid value for FieldTypeRequest: %v", v)
 	}
 }
-
-type PostCustomMetadataFieldDefinitionsConfigRequest2 struct {
-	// For contact_ref and contact_multi_ref fields, whether values may reference contact groups in addition to contacts. Defaults to false (contacts only).
-	AllowsGroupRefs bool `json:"allows_group_refs"`
-}
-
-func (p PostCustomMetadataFieldDefinitionsConfigRequest2) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(p, "", false)
-}
-
-func (p *PostCustomMetadataFieldDefinitionsConfigRequest2) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &p, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (p *PostCustomMetadataFieldDefinitionsConfigRequest2) GetAllowsGroupRefs() bool {
-	if p == nil {
-		return false
-	}
-	return p.AllowsGroupRefs
-}
-
-// #region class-body-postcustommetadatafielddefinitionsconfigrequest2
-// #endregion class-body-postcustommetadatafielddefinitionsconfigrequest2
 
 type PostCustomMetadataFieldDefinitionsOptionRequest struct {
 	// The option's immutable identifier, unique within the field. Defaults to a parameterized label.
@@ -109,17 +68,6 @@ type PostCustomMetadataFieldDefinitionsOptionRequest struct {
 	Label string `json:"label"`
 	// The option's display order within the field, ascending from 0.
 	Position optionalnullable.OptionalNullable[int64] `json:"position,omitzero"`
-}
-
-func (p PostCustomMetadataFieldDefinitionsOptionRequest) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(p, "", false)
-}
-
-func (p *PostCustomMetadataFieldDefinitionsOptionRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &p, "", false, nil); err != nil {
-		return err
-	}
-	return nil
 }
 
 func (p *PostCustomMetadataFieldDefinitionsOptionRequest) GetKey() *string {
@@ -143,127 +91,17 @@ func (p *PostCustomMetadataFieldDefinitionsOptionRequest) GetPosition() optional
 	return p.Position
 }
 
-type PostCustomMetadataFieldDefinitionsConfigRequest1 struct {
+// PostCustomMetadataFieldDefinitionsConfigRequest - Type-specific configuration. Only valid for field types that have any; currently the select options for a single_select or multi_select field.
+type PostCustomMetadataFieldDefinitionsConfigRequest struct {
 	// The options to create on a single_select or multi_select field.
 	Options []PostCustomMetadataFieldDefinitionsOptionRequest `json:"options"`
 }
 
-func (p PostCustomMetadataFieldDefinitionsConfigRequest1) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(p, "", false)
-}
-
-func (p *PostCustomMetadataFieldDefinitionsConfigRequest1) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &p, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (p *PostCustomMetadataFieldDefinitionsConfigRequest1) GetOptions() []PostCustomMetadataFieldDefinitionsOptionRequest {
+func (p *PostCustomMetadataFieldDefinitionsConfigRequest) GetOptions() []PostCustomMetadataFieldDefinitionsOptionRequest {
 	if p == nil {
 		return []PostCustomMetadataFieldDefinitionsOptionRequest{}
 	}
 	return p.Options
-}
-
-// #region class-body-postcustommetadatafielddefinitionsconfigrequest1
-// #endregion class-body-postcustommetadatafielddefinitionsconfigrequest1
-
-type PostCustomMetadataFieldDefinitionsConfigRequestUnionType string
-
-const (
-	PostCustomMetadataFieldDefinitionsConfigRequestUnionTypePostCustomMetadataFieldDefinitionsConfigRequest1 PostCustomMetadataFieldDefinitionsConfigRequestUnionType = "post_custom_metadata_field_definitions_config_request_1"
-	PostCustomMetadataFieldDefinitionsConfigRequestUnionTypePostCustomMetadataFieldDefinitionsConfigRequest2 PostCustomMetadataFieldDefinitionsConfigRequestUnionType = "post_custom_metadata_field_definitions_config_request_2"
-)
-
-// PostCustomMetadataFieldDefinitionsConfigRequestUnion - Type-specific configuration. Only valid for field types that have any: the select options for a single_select or multi_select field, or `allows_group_refs` for a contact_ref or contact_multi_ref field.
-type PostCustomMetadataFieldDefinitionsConfigRequestUnion struct {
-	PostCustomMetadataFieldDefinitionsConfigRequest1 *PostCustomMetadataFieldDefinitionsConfigRequest1 `queryParam:"inline" union:"member"`
-	PostCustomMetadataFieldDefinitionsConfigRequest2 *PostCustomMetadataFieldDefinitionsConfigRequest2 `queryParam:"inline" union:"member"`
-
-	Type PostCustomMetadataFieldDefinitionsConfigRequestUnionType
-}
-
-func CreatePostCustomMetadataFieldDefinitionsConfigRequestUnionPostCustomMetadataFieldDefinitionsConfigRequest1(postCustomMetadataFieldDefinitionsConfigRequest1 PostCustomMetadataFieldDefinitionsConfigRequest1) PostCustomMetadataFieldDefinitionsConfigRequestUnion {
-	typ := PostCustomMetadataFieldDefinitionsConfigRequestUnionTypePostCustomMetadataFieldDefinitionsConfigRequest1
-
-	return PostCustomMetadataFieldDefinitionsConfigRequestUnion{
-		PostCustomMetadataFieldDefinitionsConfigRequest1: &postCustomMetadataFieldDefinitionsConfigRequest1,
-		Type: typ,
-	}
-}
-
-func CreatePostCustomMetadataFieldDefinitionsConfigRequestUnionPostCustomMetadataFieldDefinitionsConfigRequest2(postCustomMetadataFieldDefinitionsConfigRequest2 PostCustomMetadataFieldDefinitionsConfigRequest2) PostCustomMetadataFieldDefinitionsConfigRequestUnion {
-	typ := PostCustomMetadataFieldDefinitionsConfigRequestUnionTypePostCustomMetadataFieldDefinitionsConfigRequest2
-
-	return PostCustomMetadataFieldDefinitionsConfigRequestUnion{
-		PostCustomMetadataFieldDefinitionsConfigRequest2: &postCustomMetadataFieldDefinitionsConfigRequest2,
-		Type: typ,
-	}
-}
-
-func (u *PostCustomMetadataFieldDefinitionsConfigRequestUnion) UnmarshalJSON(data []byte) (err error) {
-	previous := *u
-	*u = PostCustomMetadataFieldDefinitionsConfigRequestUnion{}
-	defer func() {
-		if err != nil {
-			*u = previous
-		}
-	}()
-
-	var candidates []utils.UnionCandidate
-
-	// Collect all valid candidates
-	var postCustomMetadataFieldDefinitionsConfigRequest1 PostCustomMetadataFieldDefinitionsConfigRequest1 = PostCustomMetadataFieldDefinitionsConfigRequest1{}
-	if err := utils.UnmarshalJSON(data, &postCustomMetadataFieldDefinitionsConfigRequest1, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  PostCustomMetadataFieldDefinitionsConfigRequestUnionTypePostCustomMetadataFieldDefinitionsConfigRequest1,
-			Value: &postCustomMetadataFieldDefinitionsConfigRequest1,
-		})
-	}
-
-	var postCustomMetadataFieldDefinitionsConfigRequest2 PostCustomMetadataFieldDefinitionsConfigRequest2 = PostCustomMetadataFieldDefinitionsConfigRequest2{}
-	if err := utils.UnmarshalJSON(data, &postCustomMetadataFieldDefinitionsConfigRequest2, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  PostCustomMetadataFieldDefinitionsConfigRequestUnionTypePostCustomMetadataFieldDefinitionsConfigRequest2,
-			Value: &postCustomMetadataFieldDefinitionsConfigRequest2,
-		})
-	}
-
-	if len(candidates) == 0 {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for PostCustomMetadataFieldDefinitionsConfigRequestUnion", string(data))
-	}
-
-	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestUnionCandidate(candidates, data)
-	if best == nil {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for PostCustomMetadataFieldDefinitionsConfigRequestUnion", string(data))
-	}
-
-	// Set the union type and value based on the best candidate
-	u.Type = best.Type.(PostCustomMetadataFieldDefinitionsConfigRequestUnionType)
-	switch best.Type {
-	case PostCustomMetadataFieldDefinitionsConfigRequestUnionTypePostCustomMetadataFieldDefinitionsConfigRequest1:
-		u.PostCustomMetadataFieldDefinitionsConfigRequest1 = best.Value.(*PostCustomMetadataFieldDefinitionsConfigRequest1)
-		return nil
-	case PostCustomMetadataFieldDefinitionsConfigRequestUnionTypePostCustomMetadataFieldDefinitionsConfigRequest2:
-		u.PostCustomMetadataFieldDefinitionsConfigRequest2 = best.Value.(*PostCustomMetadataFieldDefinitionsConfigRequest2)
-		return nil
-	}
-
-	return fmt.Errorf("could not unmarshal `%s` into any supported union types for PostCustomMetadataFieldDefinitionsConfigRequestUnion", string(data))
-}
-
-func (u PostCustomMetadataFieldDefinitionsConfigRequestUnion) MarshalJSON() ([]byte, error) {
-	if u.PostCustomMetadataFieldDefinitionsConfigRequest1 != nil {
-		return utils.MarshalJSON(u.PostCustomMetadataFieldDefinitionsConfigRequest1, "", true)
-	}
-
-	if u.PostCustomMetadataFieldDefinitionsConfigRequest2 != nil {
-		return utils.MarshalJSON(u.PostCustomMetadataFieldDefinitionsConfigRequest2, "", true)
-	}
-
-	return nil, errors.New("could not marshal union type PostCustomMetadataFieldDefinitionsConfigRequestUnion: all fields are null")
 }
 
 type PostCustomMetadataFieldDefinitionsRequest struct {
@@ -271,15 +109,25 @@ type PostCustomMetadataFieldDefinitionsRequest struct {
 	Key string `json:"key"`
 	// The field's display name. Must be unique per account among active fields (case-insensitive).
 	Label string `json:"label"`
-	// The field's data type. Immutable after creation. `url`, `email`, `money`, `contact_ref`, and `contact_multi_ref` are early-access types: creating one on an account without access returns 422 naming the types the account can use. Existing fields of these types keep working.
+	// The field's data type. Immutable after creation.
 	FieldType FieldTypeRequest `json:"field_type"`
 	// An optional default value for the field, matching the field_type's format.
 	DefaultValue optionalnullable.OptionalNullable[string] `json:"default_value,omitzero"`
 	// The field's display order within the account, ascending from 0.
 	Position optionalnullable.OptionalNullable[int64] `json:"position,omitzero"`
-	// Type-specific configuration. Only valid for field types that have any: the select options for a single_select or multi_select field, or `allows_group_refs` for a contact_ref or contact_multi_ref field.
-	//
-	Config *PostCustomMetadataFieldDefinitionsConfigRequestUnion `json:"config,omitzero"`
+	// Type-specific configuration. Only valid for field types that have any; currently the select options for a single_select or multi_select field.
+	Config *PostCustomMetadataFieldDefinitionsConfigRequest `json:"config,omitzero"`
+}
+
+func (p PostCustomMetadataFieldDefinitionsRequest) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(p, "", false)
+}
+
+func (p *PostCustomMetadataFieldDefinitionsRequest) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &p, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (p *PostCustomMetadataFieldDefinitionsRequest) GetKey() string {
@@ -317,7 +165,7 @@ func (p *PostCustomMetadataFieldDefinitionsRequest) GetPosition() optionalnullab
 	return p.Position
 }
 
-func (p *PostCustomMetadataFieldDefinitionsRequest) GetConfig() *PostCustomMetadataFieldDefinitionsConfigRequestUnion {
+func (p *PostCustomMetadataFieldDefinitionsRequest) GetConfig() *PostCustomMetadataFieldDefinitionsConfigRequest {
 	if p == nil {
 		return nil
 	}
@@ -503,69 +351,69 @@ func (p *PostCustomMetadataFieldDefinitionsConfigResponse1) GetOptions() []PostC
 // #region class-body-postcustommetadatafielddefinitionsconfigresponse1
 // #endregion class-body-postcustommetadatafielddefinitionsconfigresponse1
 
-type PostCustomMetadataFieldDefinitionsConfigResponseUnionType string
+type PostCustomMetadataFieldDefinitionsConfigUnionType string
 
 const (
-	PostCustomMetadataFieldDefinitionsConfigResponseUnionTypePostCustomMetadataFieldDefinitionsConfigResponse1 PostCustomMetadataFieldDefinitionsConfigResponseUnionType = "post_custom_metadata_field_definitions_config_response_1"
-	PostCustomMetadataFieldDefinitionsConfigResponseUnionTypePostCustomMetadataFieldDefinitionsConfigResponse2 PostCustomMetadataFieldDefinitionsConfigResponseUnionType = "post_custom_metadata_field_definitions_config_response_2"
-	PostCustomMetadataFieldDefinitionsConfigResponseUnionTypePostCustomMetadataFieldDefinitionsConfigResponse3 PostCustomMetadataFieldDefinitionsConfigResponseUnionType = "post_custom_metadata_field_definitions_config_response_3"
-	PostCustomMetadataFieldDefinitionsConfigResponseUnionTypeUnknown                                           PostCustomMetadataFieldDefinitionsConfigResponseUnionType = "Unknown"
+	PostCustomMetadataFieldDefinitionsConfigUnionTypePostCustomMetadataFieldDefinitionsConfigResponse1 PostCustomMetadataFieldDefinitionsConfigUnionType = "post_custom_metadata_field_definitions_config_response_1"
+	PostCustomMetadataFieldDefinitionsConfigUnionTypePostCustomMetadataFieldDefinitionsConfigResponse2 PostCustomMetadataFieldDefinitionsConfigUnionType = "post_custom_metadata_field_definitions_config_response_2"
+	PostCustomMetadataFieldDefinitionsConfigUnionTypePostCustomMetadataFieldDefinitionsConfigResponse3 PostCustomMetadataFieldDefinitionsConfigUnionType = "post_custom_metadata_field_definitions_config_response_3"
+	PostCustomMetadataFieldDefinitionsConfigUnionTypeUnknown                                           PostCustomMetadataFieldDefinitionsConfigUnionType = "Unknown"
 )
 
-// PostCustomMetadataFieldDefinitionsConfigResponseUnion - Type-specific configuration. Present only for field types that have any: an object with `options` for single_select and multi_select fields, an object with `used_currencies` for money fields, and an object with `allows_group_refs` for contact_ref and contact_multi_ref fields.
-type PostCustomMetadataFieldDefinitionsConfigResponseUnion struct {
+// PostCustomMetadataFieldDefinitionsConfigUnion - Type-specific configuration. Present only for field types that have any: an object with `options` for single_select and multi_select fields, an object with `used_currencies` for money fields, and an object with `allows_group_refs` for contact_ref and contact_multi_ref fields.
+type PostCustomMetadataFieldDefinitionsConfigUnion struct {
 	PostCustomMetadataFieldDefinitionsConfigResponse1 *PostCustomMetadataFieldDefinitionsConfigResponse1 `queryParam:"inline" union:"member"`
 	PostCustomMetadataFieldDefinitionsConfigResponse2 *PostCustomMetadataFieldDefinitionsConfigResponse2 `queryParam:"inline" union:"member"`
 	PostCustomMetadataFieldDefinitionsConfigResponse3 *PostCustomMetadataFieldDefinitionsConfigResponse3 `queryParam:"inline" union:"member"`
 	UnknownRaw                                        json.RawMessage                                    `json:"-" union:"unknown"`
 
-	Type PostCustomMetadataFieldDefinitionsConfigResponseUnionType
+	Type PostCustomMetadataFieldDefinitionsConfigUnionType
 }
 
-func CreatePostCustomMetadataFieldDefinitionsConfigResponseUnionPostCustomMetadataFieldDefinitionsConfigResponse1(postCustomMetadataFieldDefinitionsConfigResponse1 PostCustomMetadataFieldDefinitionsConfigResponse1) PostCustomMetadataFieldDefinitionsConfigResponseUnion {
-	typ := PostCustomMetadataFieldDefinitionsConfigResponseUnionTypePostCustomMetadataFieldDefinitionsConfigResponse1
+func CreatePostCustomMetadataFieldDefinitionsConfigUnionPostCustomMetadataFieldDefinitionsConfigResponse1(postCustomMetadataFieldDefinitionsConfigResponse1 PostCustomMetadataFieldDefinitionsConfigResponse1) PostCustomMetadataFieldDefinitionsConfigUnion {
+	typ := PostCustomMetadataFieldDefinitionsConfigUnionTypePostCustomMetadataFieldDefinitionsConfigResponse1
 
-	return PostCustomMetadataFieldDefinitionsConfigResponseUnion{
+	return PostCustomMetadataFieldDefinitionsConfigUnion{
 		PostCustomMetadataFieldDefinitionsConfigResponse1: &postCustomMetadataFieldDefinitionsConfigResponse1,
 		Type: typ,
 	}
 }
 
-func CreatePostCustomMetadataFieldDefinitionsConfigResponseUnionPostCustomMetadataFieldDefinitionsConfigResponse2(postCustomMetadataFieldDefinitionsConfigResponse2 PostCustomMetadataFieldDefinitionsConfigResponse2) PostCustomMetadataFieldDefinitionsConfigResponseUnion {
-	typ := PostCustomMetadataFieldDefinitionsConfigResponseUnionTypePostCustomMetadataFieldDefinitionsConfigResponse2
+func CreatePostCustomMetadataFieldDefinitionsConfigUnionPostCustomMetadataFieldDefinitionsConfigResponse2(postCustomMetadataFieldDefinitionsConfigResponse2 PostCustomMetadataFieldDefinitionsConfigResponse2) PostCustomMetadataFieldDefinitionsConfigUnion {
+	typ := PostCustomMetadataFieldDefinitionsConfigUnionTypePostCustomMetadataFieldDefinitionsConfigResponse2
 
-	return PostCustomMetadataFieldDefinitionsConfigResponseUnion{
+	return PostCustomMetadataFieldDefinitionsConfigUnion{
 		PostCustomMetadataFieldDefinitionsConfigResponse2: &postCustomMetadataFieldDefinitionsConfigResponse2,
 		Type: typ,
 	}
 }
 
-func CreatePostCustomMetadataFieldDefinitionsConfigResponseUnionPostCustomMetadataFieldDefinitionsConfigResponse3(postCustomMetadataFieldDefinitionsConfigResponse3 PostCustomMetadataFieldDefinitionsConfigResponse3) PostCustomMetadataFieldDefinitionsConfigResponseUnion {
-	typ := PostCustomMetadataFieldDefinitionsConfigResponseUnionTypePostCustomMetadataFieldDefinitionsConfigResponse3
+func CreatePostCustomMetadataFieldDefinitionsConfigUnionPostCustomMetadataFieldDefinitionsConfigResponse3(postCustomMetadataFieldDefinitionsConfigResponse3 PostCustomMetadataFieldDefinitionsConfigResponse3) PostCustomMetadataFieldDefinitionsConfigUnion {
+	typ := PostCustomMetadataFieldDefinitionsConfigUnionTypePostCustomMetadataFieldDefinitionsConfigResponse3
 
-	return PostCustomMetadataFieldDefinitionsConfigResponseUnion{
+	return PostCustomMetadataFieldDefinitionsConfigUnion{
 		PostCustomMetadataFieldDefinitionsConfigResponse3: &postCustomMetadataFieldDefinitionsConfigResponse3,
 		Type: typ,
 	}
 }
 
-func CreatePostCustomMetadataFieldDefinitionsConfigResponseUnionUnknown(raw json.RawMessage) PostCustomMetadataFieldDefinitionsConfigResponseUnion {
-	return PostCustomMetadataFieldDefinitionsConfigResponseUnion{
+func CreatePostCustomMetadataFieldDefinitionsConfigUnionUnknown(raw json.RawMessage) PostCustomMetadataFieldDefinitionsConfigUnion {
+	return PostCustomMetadataFieldDefinitionsConfigUnion{
 		UnknownRaw: raw,
-		Type:       PostCustomMetadataFieldDefinitionsConfigResponseUnionTypeUnknown,
+		Type:       PostCustomMetadataFieldDefinitionsConfigUnionTypeUnknown,
 	}
 }
 
-func (u PostCustomMetadataFieldDefinitionsConfigResponseUnion) GetUnknownRaw() json.RawMessage {
+func (u PostCustomMetadataFieldDefinitionsConfigUnion) GetUnknownRaw() json.RawMessage {
 	return u.UnknownRaw
 }
 
-func (u PostCustomMetadataFieldDefinitionsConfigResponseUnion) IsUnknown() bool {
-	return u.Type == PostCustomMetadataFieldDefinitionsConfigResponseUnionTypeUnknown
+func (u PostCustomMetadataFieldDefinitionsConfigUnion) IsUnknown() bool {
+	return u.Type == PostCustomMetadataFieldDefinitionsConfigUnionTypeUnknown
 }
 
-func (u *PostCustomMetadataFieldDefinitionsConfigResponseUnion) UnmarshalJSON(data []byte) error {
-	*u = PostCustomMetadataFieldDefinitionsConfigResponseUnion{}
+func (u *PostCustomMetadataFieldDefinitionsConfigUnion) UnmarshalJSON(data []byte) error {
+	*u = PostCustomMetadataFieldDefinitionsConfigUnion{}
 
 	var candidates []utils.UnionCandidate
 
@@ -573,7 +421,7 @@ func (u *PostCustomMetadataFieldDefinitionsConfigResponseUnion) UnmarshalJSON(da
 	var postCustomMetadataFieldDefinitionsConfigResponse1 PostCustomMetadataFieldDefinitionsConfigResponse1 = PostCustomMetadataFieldDefinitionsConfigResponse1{}
 	if err := utils.UnmarshalJSON(data, &postCustomMetadataFieldDefinitionsConfigResponse1, "", true, nil); err == nil {
 		candidates = append(candidates, utils.UnionCandidate{
-			Type:  PostCustomMetadataFieldDefinitionsConfigResponseUnionTypePostCustomMetadataFieldDefinitionsConfigResponse1,
+			Type:  PostCustomMetadataFieldDefinitionsConfigUnionTypePostCustomMetadataFieldDefinitionsConfigResponse1,
 			Value: &postCustomMetadataFieldDefinitionsConfigResponse1,
 		})
 	}
@@ -581,7 +429,7 @@ func (u *PostCustomMetadataFieldDefinitionsConfigResponseUnion) UnmarshalJSON(da
 	var postCustomMetadataFieldDefinitionsConfigResponse2 PostCustomMetadataFieldDefinitionsConfigResponse2 = PostCustomMetadataFieldDefinitionsConfigResponse2{}
 	if err := utils.UnmarshalJSON(data, &postCustomMetadataFieldDefinitionsConfigResponse2, "", true, nil); err == nil {
 		candidates = append(candidates, utils.UnionCandidate{
-			Type:  PostCustomMetadataFieldDefinitionsConfigResponseUnionTypePostCustomMetadataFieldDefinitionsConfigResponse2,
+			Type:  PostCustomMetadataFieldDefinitionsConfigUnionTypePostCustomMetadataFieldDefinitionsConfigResponse2,
 			Value: &postCustomMetadataFieldDefinitionsConfigResponse2,
 		})
 	}
@@ -589,14 +437,14 @@ func (u *PostCustomMetadataFieldDefinitionsConfigResponseUnion) UnmarshalJSON(da
 	var postCustomMetadataFieldDefinitionsConfigResponse3 PostCustomMetadataFieldDefinitionsConfigResponse3 = PostCustomMetadataFieldDefinitionsConfigResponse3{}
 	if err := utils.UnmarshalJSON(data, &postCustomMetadataFieldDefinitionsConfigResponse3, "", true, nil); err == nil {
 		candidates = append(candidates, utils.UnionCandidate{
-			Type:  PostCustomMetadataFieldDefinitionsConfigResponseUnionTypePostCustomMetadataFieldDefinitionsConfigResponse3,
+			Type:  PostCustomMetadataFieldDefinitionsConfigUnionTypePostCustomMetadataFieldDefinitionsConfigResponse3,
 			Value: &postCustomMetadataFieldDefinitionsConfigResponse3,
 		})
 	}
 
 	if len(candidates) == 0 {
 		u.UnknownRaw = json.RawMessage(data)
-		u.Type = PostCustomMetadataFieldDefinitionsConfigResponseUnionTypeUnknown
+		u.Type = PostCustomMetadataFieldDefinitionsConfigUnionTypeUnknown
 		return nil
 	}
 
@@ -604,30 +452,30 @@ func (u *PostCustomMetadataFieldDefinitionsConfigResponseUnion) UnmarshalJSON(da
 	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
 		u.UnknownRaw = json.RawMessage(data)
-		u.Type = PostCustomMetadataFieldDefinitionsConfigResponseUnionTypeUnknown
+		u.Type = PostCustomMetadataFieldDefinitionsConfigUnionTypeUnknown
 		return nil
 	}
 
 	// Set the union type and value based on the best candidate
-	u.Type = best.Type.(PostCustomMetadataFieldDefinitionsConfigResponseUnionType)
+	u.Type = best.Type.(PostCustomMetadataFieldDefinitionsConfigUnionType)
 	switch best.Type {
-	case PostCustomMetadataFieldDefinitionsConfigResponseUnionTypePostCustomMetadataFieldDefinitionsConfigResponse1:
+	case PostCustomMetadataFieldDefinitionsConfigUnionTypePostCustomMetadataFieldDefinitionsConfigResponse1:
 		u.PostCustomMetadataFieldDefinitionsConfigResponse1 = best.Value.(*PostCustomMetadataFieldDefinitionsConfigResponse1)
 		return nil
-	case PostCustomMetadataFieldDefinitionsConfigResponseUnionTypePostCustomMetadataFieldDefinitionsConfigResponse2:
+	case PostCustomMetadataFieldDefinitionsConfigUnionTypePostCustomMetadataFieldDefinitionsConfigResponse2:
 		u.PostCustomMetadataFieldDefinitionsConfigResponse2 = best.Value.(*PostCustomMetadataFieldDefinitionsConfigResponse2)
 		return nil
-	case PostCustomMetadataFieldDefinitionsConfigResponseUnionTypePostCustomMetadataFieldDefinitionsConfigResponse3:
+	case PostCustomMetadataFieldDefinitionsConfigUnionTypePostCustomMetadataFieldDefinitionsConfigResponse3:
 		u.PostCustomMetadataFieldDefinitionsConfigResponse3 = best.Value.(*PostCustomMetadataFieldDefinitionsConfigResponse3)
 		return nil
 	}
 
 	u.UnknownRaw = json.RawMessage(data)
-	u.Type = PostCustomMetadataFieldDefinitionsConfigResponseUnionTypeUnknown
+	u.Type = PostCustomMetadataFieldDefinitionsConfigUnionTypeUnknown
 	return nil
 }
 
-func (u PostCustomMetadataFieldDefinitionsConfigResponseUnion) MarshalJSON() ([]byte, error) {
+func (u PostCustomMetadataFieldDefinitionsConfigUnion) MarshalJSON() ([]byte, error) {
 	if u.PostCustomMetadataFieldDefinitionsConfigResponse1 != nil {
 		return utils.MarshalJSON(u.PostCustomMetadataFieldDefinitionsConfigResponse1, "", true)
 	}
@@ -643,7 +491,7 @@ func (u PostCustomMetadataFieldDefinitionsConfigResponseUnion) MarshalJSON() ([]
 	if u.UnknownRaw != nil {
 		return json.RawMessage(u.UnknownRaw), nil
 	}
-	return nil, errors.New("could not marshal union type PostCustomMetadataFieldDefinitionsConfigResponseUnion: all fields are null")
+	return nil, errors.New("could not marshal union type PostCustomMetadataFieldDefinitionsConfigUnion: all fields are null")
 }
 
 // PostCustomMetadataFieldDefinitionsSource - The surface the write came through.
@@ -779,7 +627,7 @@ type PostCustomMetadataFieldDefinitionsResponseBody struct {
 	ArchivedAt optionalnullable.OptionalNullable[time.Time] `json:"archived_at,omitzero"`
 	// Type-specific configuration. Present only for field types that have any: an object with `options` for single_select and multi_select fields, an object with `used_currencies` for money fields, and an object with `allows_group_refs` for contact_ref and contact_multi_ref fields.
 	//
-	Config *PostCustomMetadataFieldDefinitionsConfigResponseUnion `json:"config,omitzero"`
+	Config *PostCustomMetadataFieldDefinitionsConfigUnion `json:"config,omitzero"`
 	// The date that the field was originally created.
 	CreatedAt *time.Time `json:"created_at,omitzero"`
 	// The date that the field was last updated.
@@ -835,7 +683,7 @@ func (p *PostCustomMetadataFieldDefinitionsResponseBody) GetArchivedAt() optiona
 	return p.ArchivedAt
 }
 
-func (p *PostCustomMetadataFieldDefinitionsResponseBody) GetConfig() *PostCustomMetadataFieldDefinitionsConfigResponseUnion {
+func (p *PostCustomMetadataFieldDefinitionsResponseBody) GetConfig() *PostCustomMetadataFieldDefinitionsConfigUnion {
 	if p == nil {
 		return nil
 	}

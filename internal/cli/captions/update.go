@@ -16,7 +16,7 @@ import (
 
 var updateCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "media-hashed-id", Shorthand: "m", FieldPath: "MediaHashedID", Kind: flagutil.FlagKindString, Required: true, Description: "Unique identifier for the media. [required]"},
-	{FlagName: "language-code", Shorthand: "l", FieldPath: "LanguageCode", Kind: flagutil.FlagKindString, Required: true, Description: "Language code conforming to ISO-639-2 for which the captions should be updated. [required]"},
+	{FlagName: "language-code", Shorthand: "l", FieldPath: "LanguageCode", Kind: flagutil.FlagKindString, Required: true, Pattern: "^[a-z]{3}$", Description: "Language code conforming to ISO-639-2 for which the captions should be updated. [required]"},
 	{FlagName: "caption-file", Shorthand: "c", FieldPath: "Body.CaptionFile", Kind: flagutil.FlagKindString, Required: true, Description: "Either an attached SRT file or a string parameter with the contents of an SRT file. [required]"},
 }
 
@@ -38,7 +38,7 @@ func initUpdateCmd(parent *cobra.Command) error {
 		return fmt.Errorf("invalid metadata for update: %w", err)
 	}
 	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
-	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Required: false, Kind: "json", BodyFlag: true})
 	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
 	if err := flagutil.AnnotateBodyFields(cmd, updateCmdMeta, "Body", "body"); err != nil {
 		return fmt.Errorf("annotate body fields for update: %w", err)
@@ -75,7 +75,10 @@ func runUpdateCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.Captions.Update(cmd.Context(), *req, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

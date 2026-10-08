@@ -15,7 +15,7 @@ import (
 )
 
 var createCmdMeta = []flagutil.FlagMeta{
-	{FlagName: "name", Shorthand: "n", FieldPath: "Name", Kind: flagutil.FlagKindString, Required: true, MinLength: 1, Description: "The speaker's display name. Leading and trailing whitespace is removed. [required]"},
+	{FlagName: "name", Shorthand: "n", FieldPath: "Name", Kind: flagutil.FlagKindString, Required: true, MinLength: 1, HasMaxLength: true, MaxLength: 255, Description: "The speaker's display name. Leading and trailing whitespace is removed. [required]"},
 	{FlagName: "title", Shorthand: "t", FieldPath: "Title", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"title,omitempty"`, Description: "The speaker's title. Leading and trailing whitespace is removed. Omit it, or send null or an empty string, to leave it unset."},
 }
 
@@ -37,7 +37,7 @@ func initCreateCmd(parent *cobra.Command) error {
 		return fmt.Errorf("invalid metadata for create: %w", err)
 	}
 	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
-	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Required: false, Kind: "json", BodyFlag: true})
 	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
 	if err := flagutil.AnnotateBodyFields(cmd, createCmdMeta, "", "body"); err != nil {
 		return fmt.Errorf("annotate body fields for create: %w", err)
@@ -74,7 +74,10 @@ func runCreateCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.Speakers.Create(cmd.Context(), *request, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

@@ -15,9 +15,9 @@ type GetAnalyticsWebinarsWebinarIDRequest struct {
 	WebinarID string `pathParam:"style=simple,explode=false,name=webinarId"`
 	// Whether to include on-demand viewing data after the live event ended.
 	IncludePostEvent *bool `default:"false" queryParam:"style=form,explode=true,name=include_post_event"`
-	// Start date for the post-event analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date. Only used when include_post_event is true.
+	// Start date for the post-event analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date. Defaults to the date the event ended. Only used when include_post_event is true.
 	PostEventStartDate *types.Date `queryParam:"style=form,explode=true,name=post_event_start_date"`
-	// End date for the post-event analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date. Only used when include_post_event is true.
+	// End date for the post-event analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date. Defaults to tomorrow, so the range runs through today. Only used when include_post_event is true.
 	PostEventEndDate *types.Date `queryParam:"style=form,explode=true,name=post_event_end_date"`
 }
 
@@ -185,7 +185,7 @@ func (p *PollQuestion) GetOptions() optionalnullable.OptionalNullable[[]GetAnaly
 
 // GetAnalyticsWebinarsWebinarIDResponseBody - Success response with aggregate analytics for the webinar.
 type GetAnalyticsWebinarsWebinarIDResponseBody struct {
-	// The total number of registrations for the webinar.
+	// The number of registrations made before the event ended. When include_post_event is true, registrations after the event ended are counted in on_demand_registrations.
 	Registrations optionalnullable.OptionalNullable[int64] `json:"registrations,omitzero"`
 	// The number of registrations imported from external sources.
 	ImportedRegistrations optionalnullable.OptionalNullable[int64] `json:"imported_registrations,omitzero"`
@@ -209,7 +209,7 @@ type GetAnalyticsWebinarsWebinarIDResponseBody struct {
 	CurrentlyWatching optionalnullable.OptionalNullable[int64] `json:"currently_watching,omitzero"`
 	// The number of attendees who were actively engaged.
 	EngagedAttendees optionalnullable.OptionalNullable[int64] `json:"engaged_attendees,omitzero"`
-	// The total number of registration page impressions.
+	// The number of registration page impressions before the event ended. When include_post_event is true, impressions after the event ended are counted in on_demand_impressions.
 	Impressions optionalnullable.OptionalNullable[int64] `json:"impressions,omitzero"`
 	// The number of on-demand page impressions.
 	OnDemandImpressions optionalnullable.OptionalNullable[int64] `json:"on_demand_impressions,omitzero"`

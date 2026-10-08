@@ -80,7 +80,10 @@ func runGetMediaExtendedAudioDescriptionsIdCmd(cmd *cobra.Command, args []string
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.MediaExtendedAudioDescriptions.GetMediaExtendedAudioDescriptionsID(cmd.Context(), *req, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

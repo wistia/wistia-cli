@@ -23,7 +23,7 @@ func initCreateCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "create",
 		Short:   "Invite Contacts",
-		Long:    "Invites one or more people to the account by email. Accepts a\ncomma/whitespace/newline-separated list; each entry becomes a new contact\nif one does not already exist for that email.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
+		Long:    "Invites one or more people to the account by email. Accepts a\ncomma/whitespace/newline-separated list; each entry becomes a new contact\nif one does not already exist for that email.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\n`account` authorization granting the `manage-team` permission can also be\nused.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
 		Example: "  wistia contacts create --contacts 'alice@example.com, bob@example.com'",
 		Args:    cobra.NoArgs,
 		RunE:    runCreateCmd,
@@ -36,7 +36,7 @@ func initCreateCmd(parent *cobra.Command) error {
 		return fmt.Errorf("invalid metadata for create: %w", err)
 	}
 	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
-	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Required: false, Kind: "json", BodyFlag: true})
 	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
 	if err := flagutil.AnnotateBodyFields(cmd, createCmdMeta, "", "body"); err != nil {
 		return fmt.Errorf("annotate body fields for create: %w", err)
@@ -73,7 +73,10 @@ func runCreateCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.Contacts.Create(cmd.Context(), *request, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

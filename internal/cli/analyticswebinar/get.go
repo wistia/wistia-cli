@@ -18,8 +18,8 @@ import (
 var getCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "webinar-id", Shorthand: "w", FieldPath: "WebinarID", Kind: flagutil.FlagKindString, Required: true, Description: "The hashed ID of the webinar. [required]"},
 	{FlagName: "include-post-event", Shorthand: "i", FieldPath: "IncludePostEvent", Kind: flagutil.FlagKindBool, Optional: true, HasDefault: true, Description: "Whether to include on-demand viewing data after the live event ended."},
-	{FlagName: "post-event-start-date", FieldPath: "PostEventStartDate", Kind: flagutil.FlagKindDate, Optional: true, Description: "Start date for the post-event analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date. Only used when include_post_event is true."},
-	{FlagName: "post-event-end-date", FieldPath: "PostEventEndDate", Kind: flagutil.FlagKindDate, Optional: true, Description: "End date for the post-event analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date. Only used when include_post_event is true."},
+	{FlagName: "post-event-start-date", FieldPath: "PostEventStartDate", Kind: flagutil.FlagKindDate, Optional: true, Description: "Start date for the post-event analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date. Defaults to the date the event ended. Only used when include_post_event is true."},
+	{FlagName: "post-event-end-date", FieldPath: "PostEventEndDate", Kind: flagutil.FlagKindDate, Optional: true, Description: "End date for the post-event analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date. Defaults to tomorrow, so the range runs through today. Only used when include_post_event is true."},
 }
 
 // initGetCmd initializes the get command.
@@ -27,7 +27,7 @@ func initGetCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "get [webinar-id]",
 		Short:   "Show Webinar Analytics",
-		Long:    "Retrieve aggregate analytics for a webinar. This endpoint provides\nBottler-powered analytics including registrations, attendance, engagement,\nchat activity, and poll results.\n\n\n## Requires api token with one of the following permissions\n```\nRead detailed stats\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
+		Long:    "Retrieve aggregate analytics for a webinar. This endpoint provides\nBottler-powered analytics including registrations, attendance, engagement,\nchat activity, and poll results.\n\n\n## Requires api token with one of the following permissions\n```\nRead detailed stats\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\nauthorization granting the `view-stats` permission on this webinar can also\nbe used.",
 		Example: "  wistia analytics-webinar get --webinar-id <id>",
 		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runGetCmd,
@@ -82,7 +82,10 @@ func runGetCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.AnalyticsWebinar.Get(cmd.Context(), *req, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}
