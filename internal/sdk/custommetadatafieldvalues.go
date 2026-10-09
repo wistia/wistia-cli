@@ -46,6 +46,11 @@ func newCustomMetadataFieldValues(rootSDK *Wistia, sdkConfig config.SDKConfigura
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope, an `account`
+// authorization granting the `access-custom-metadata` permission and an
+// authorization granting any permission on the media can also be used.
 func (s *CustomMetadataFieldValues) GetMediasMediaHashedIDCustomMetadataFieldValues(ctx context.Context, request operations.GetMediasMediaHashedIDCustomMetadataFieldValuesRequest, opts ...operations.Option) (*operations.GetMediasMediaHashedIDCustomMetadataFieldValuesResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -282,16 +287,14 @@ func (s *CustomMetadataFieldValues) GetMediasMediaHashedIDCustomMetadataFieldVal
 //
 // The request body carries a single polymorphic `value` field whose JSON type must match the definition's `field_type`:
 //
-// - text-like types (`text`, `short_text`, `url`, `email`, `money`, `time`, `datetime`) — a string; format-validated per type (e.g. money is `"USD 12.34"`, time is 24-hour `"14:30"`, datetime is UTC ISO 8601 `"2026-07-10T14:30:00Z"`)
+// - text-like types (`text`, `short_text`, `time`, `datetime`) — a string; format-validated per type (e.g. time is 24-hour `"14:30"`, datetime is UTC ISO 8601 `"2026-07-10T14:30:00Z"`)
 // - `number` — a JSON number (a numeric string is coerced)
 // - `date` — an ISO 8601 date string like `"2026-07-10"`
 // - `boolean` — a JSON boolean; `false` persists as false (it does not clear the field)
 // - `single_select` — the chosen option's key (a string); unknown option keys return a 422
 // - `multi_select` — an array of the chosen options' keys (strings); unknown option keys or a non-array value return a 422
-// - `contact_ref` — a contact reference object `{"type": "contact" | "contact_group", "id": "<hashed_id>"}`; unknown ids, ids from another account, and group references on fields that do not allow groups return a 422
-// - `contact_multi_ref` — an array of contact reference objects; the same 422 rules apply per reference, and a non-array value returns a 422
 //
-// A null or absent `value` clears the field (equivalent to the DELETE endpoint), as does an empty array for `multi_select` and `contact_multi_ref`. Type mismatches and format violations return a 422 with a field-level message.
+// A null or absent `value` clears the field (equivalent to the DELETE endpoint), as does an empty array for `multi_select`. Type mismatches and format violations return a 422 with a field-level message.
 //
 // Only values for active field definitions can be written. Requires the custom metadata feature to be available on your account.
 //
@@ -305,6 +308,12 @@ func (s *CustomMetadataFieldValues) GetMediasMediaHashedIDCustomMetadataFieldVal
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope, an `account`
+// authorization granting the `access-custom-metadata` permission and an
+// authorization granting the `update` permission on the media can also be
+// used.
 func (s *CustomMetadataFieldValues) PutMediasMediaHashedIDCustomMetadataFieldValuesKey(ctx context.Context, request operations.PutMediasMediaHashedIDCustomMetadataFieldValuesKeyRequest, opts ...operations.Option) (*operations.PutMediasMediaHashedIDCustomMetadataFieldValuesKeyResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -587,6 +596,12 @@ func (s *CustomMetadataFieldValues) PutMediasMediaHashedIDCustomMetadataFieldVal
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope, an `account`
+// authorization granting the `access-custom-metadata` permission and an
+// authorization granting the `update` permission on the media can also be
+// used.
 func (s *CustomMetadataFieldValues) DeleteMediasMediaHashedIDCustomMetadataFieldValuesKey(ctx context.Context, request operations.DeleteMediasMediaHashedIDCustomMetadataFieldValuesKeyRequest, opts ...operations.Option) (*operations.DeleteMediasMediaHashedIDCustomMetadataFieldValuesKeyResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -805,6 +820,11 @@ func (s *CustomMetadataFieldValues) DeleteMediasMediaHashedIDCustomMetadataField
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope, an `account`
+// authorization granting the `access-custom-metadata` permission and an
+// authorization granting any permission on the media can also be used.
 func (s *CustomMetadataFieldValues) GetMediasMediaHashedIDCustomMetadataFieldValuesKey(ctx context.Context, request operations.GetMediasMediaHashedIDCustomMetadataFieldValuesKeyRequest, opts ...operations.Option) (*operations.GetMediasMediaHashedIDCustomMetadataFieldValuesKeyResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

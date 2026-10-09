@@ -33,6 +33,11 @@ func newMediaExtendedAudioDescriptions(rootSDK *Wistia, sdkConfig config.SDKConf
 
 // GetMediaExtendedAudioDescriptions - List Media Extended Audio Descriptions
 // Lists all extended audio descriptions belonging to the account. Supports pagination and sorting.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization naming a media (any permission) can also be used; it lists
+// the extended audio descriptions of the media the token names.
 func (s *MediaExtendedAudioDescriptions) GetMediaExtendedAudioDescriptions(ctx context.Context, request *operations.GetMediaExtendedAudioDescriptionsRequest, opts ...operations.Option) (*operations.GetMediaExtendedAudioDescriptionsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -268,6 +273,11 @@ func (s *MediaExtendedAudioDescriptions) GetMediaExtendedAudioDescriptions(ctx c
 
 // GetMediaExtendedAudioDescriptionsID - Show Media Extended Audio Description
 // Retrieves a single extended audio description by its hashed id, including download links.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization naming the extended audio description's media (any
+// permission) can also be used.
 func (s *MediaExtendedAudioDescriptions) GetMediaExtendedAudioDescriptionsID(ctx context.Context, request operations.GetMediaExtendedAudioDescriptionsIDRequest, opts ...operations.Option) (*operations.GetMediaExtendedAudioDescriptionsIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -499,6 +509,11 @@ func (s *MediaExtendedAudioDescriptions) GetMediaExtendedAudioDescriptionsID(ctx
 
 // DeleteMediaExtendedAudioDescriptionsID - Delete Media Extended Audio Description
 // Deletes an extended audio description by its hashed id.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `update` permission on the extended audio
+// description's media can also be used.
 func (s *MediaExtendedAudioDescriptions) DeleteMediaExtendedAudioDescriptionsID(ctx context.Context, request operations.DeleteMediaExtendedAudioDescriptionsIDRequest, opts ...operations.Option) (*operations.DeleteMediaExtendedAudioDescriptionsIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -756,6 +771,12 @@ func (s *MediaExtendedAudioDescriptions) DeleteMediaExtendedAudioDescriptionsID(
 // PostMediaExtendedAudioDescriptionsOrder - Order Extended Audio Description
 // Orders an extended audio description for a media. The request will charge the credit card on the account when the order is ready.
 // Only accounts on paid plans with the `order_audio_descriptions` feature can use this endpoint.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `order-audio-descriptions` permission on the
+// media can also be used. The order is attributed to the contact the token
+// was created for.
 func (s *MediaExtendedAudioDescriptions) PostMediaExtendedAudioDescriptionsOrder(ctx context.Context, request operations.PostMediaExtendedAudioDescriptionsOrderRequest, opts ...operations.Option) (*operations.PostMediaExtendedAudioDescriptionsOrderResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1045,6 +1066,11 @@ func (s *MediaExtendedAudioDescriptions) PostMediaExtendedAudioDescriptionsOrder
 // GetMediaExtendedAudioDescriptionsOrderStatusID - Get Order Status
 // Returns the current status of an extended audio description order. Use the order id returned
 // from the order endpoint to poll for status updates.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization naming the order's media (any permission) can also be
+// used.
 func (s *MediaExtendedAudioDescriptions) GetMediaExtendedAudioDescriptionsOrderStatusID(ctx context.Context, request operations.GetMediaExtendedAudioDescriptionsOrderStatusIDRequest, opts ...operations.Option) (*operations.GetMediaExtendedAudioDescriptionsOrderStatusIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

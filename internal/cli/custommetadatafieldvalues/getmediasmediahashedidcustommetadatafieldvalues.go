@@ -24,7 +24,7 @@ func initGetMediasMediaHashedIdCustomMetadataFieldValuesCmd(parent *cobra.Comman
 	var cmd = &cobra.Command{
 		Use:     "get-medias-media-hashed-id [media-hashed-id]",
 		Short:   "List Custom Metadata Field Values",
-		Long:    "Use this endpoint to request the custom metadata field values set on a media, ordered by the field definition's position.\n\nOnly values for active field definitions are returned. Requires the custom metadata feature to be available on your account.\n\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\nRead all data\nRead all folder and media data\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
+		Long:    "Use this endpoint to request the custom metadata field values set on a media, ordered by the field definition's position.\n\nOnly values for active field definitions are returned. Requires the custom metadata feature to be available on your account.\n\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\nRead all data\nRead all folder and media data\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope, an `account`\nauthorization granting the `access-custom-metadata` permission and an\nauthorization granting any permission on the media can also be used.",
 		Example: "  wistia custom-metadata-field-values get-medias-media-hashed-id --media-hashed-id <id>",
 		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runGetMediasMediaHashedIdCustomMetadataFieldValuesCmd,
@@ -80,7 +80,10 @@ func runGetMediasMediaHashedIdCustomMetadataFieldValuesCmd(cmd *cobra.Command, a
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.CustomMetadataFieldValues.GetMediasMediaHashedIDCustomMetadataFieldValues(cmd.Context(), *req, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

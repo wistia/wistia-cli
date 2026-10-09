@@ -24,7 +24,7 @@ func initBulkCreateCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "bulk-create",
 		Short:   "Bulk Tag Media",
-		Long:    "This method accepts a list of medias to tag. It processes requests asynchronously and will return a background_job_status object rather than the typical Media response object.\n\nThe tags will be added to the existing tags on each media file, not replaced.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
+		Long:    "This method accepts a list of medias to tag. It processes requests asynchronously and will return a background_job_status object rather than the typical Media response object.\n\nThe tags will be added to the existing tags on each media file, not replaced.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nExpiring access tokens created with authorizations cannot be used; such\nrequests fail with a 403.",
 		Example: "  wistia taggings bulk-create --hashed-ids <value 1> --hashed-ids <value 2> --hashed-ids <value 3> --tag-names <value 1>",
 		Args:    cobra.NoArgs,
 		RunE:    runBulkCreateCmd,
@@ -38,7 +38,7 @@ func initBulkCreateCmd(parent *cobra.Command) error {
 		return fmt.Errorf("invalid metadata for bulk-create: %w", err)
 	}
 	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
-	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Required: false, Kind: "json", BodyFlag: true})
 	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
 	if err := flagutil.AnnotateBodyFields(cmd, bulkCreateCmdMeta, "", "body"); err != nil {
 		return fmt.Errorf("annotate body fields for bulk-create: %w", err)
@@ -75,7 +75,10 @@ func runBulkCreateCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.Taggings.BulkCreate(cmd.Context(), *request, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

@@ -39,6 +39,7 @@ type Config struct {
 	Security     SecurityConfig `yaml:"security,omitempty"`
 	OutputFormat string         `yaml:"output_format,omitempty"`
 	Timeout      string         `yaml:"timeout,omitempty"`
+	NoKeyring    string         `yaml:"no_keyring,omitempty"`
 }
 
 var (
@@ -144,24 +145,30 @@ func GetConfigValue(key string) string {
 		return cfg.OutputFormat
 	case "timeout":
 		return cfg.Timeout
+	case "no-keyring":
+		return cfg.NoKeyring
 	}
 	return ""
 }
 
 // ResolveCredential resolves a credential value using the priority chain:
-// flag > env var > config file. Returns the value and its source
-// ("flag", "env", "config", or "unset").
+// flag > env var > config file > flag default. Returns the value and its source
+// ("flag", "env", "config", "default", or "unset").
 // Used for global parameters. For security credentials, use ResolveSecurityCredential
 // which includes the OS keychain tier.
-func ResolveCredential(cmd *cobra.Command, flagName string) (value, source string) {
-	if val, changed := flagutil.GetStringFlag(cmd, flagName); changed && val != "" {
-		return val, "flag"
+func ResolveCredential(cmd *cobra.Command, flagName string, hasSchemaDefault bool) (value, source string) {
+	flagValue, changed := flagutil.GetStringFlag(cmd, flagName)
+	if changed && flagValue != "" {
+		return flagValue, "flag"
 	}
 	if val := GetEnvValue(flagName); val != "" {
 		return val, "env"
 	}
 	if val := GetConfigValue(flagName); val != "" {
 		return val, "config"
+	}
+	if hasSchemaDefault && !changed && flagValue != "" {
+		return flagValue, "default"
 	}
 	return "", "unset"
 }
@@ -172,11 +179,8 @@ func ResolveCredential(cmd *cobra.Command, flagName string) (value, source strin
 // This is used for security fields (tokens, API keys, passwords). For global
 // parameters, use ResolveCredential which skips the keyring tier.
 func ResolveSecurityCredential(cmd *cobra.Command, flagName string) (value, source string) {
-	if val, changed := flagutil.GetStringFlag(cmd, flagName); changed && val != "" {
-		return val, "flag"
-	}
-	if val := GetEnvValue(flagName); val != "" {
-		return val, "env"
+	if val, source := ResolveExplicitSecurityCredential(cmd, flagName); val != "" {
+		return val, source
 	}
 	if val := GetKeyringValue(flagName); val != "" {
 		return val, "keyring"
@@ -187,13 +191,22 @@ func ResolveSecurityCredential(cmd *cobra.Command, flagName string) (value, sour
 	return "", "unset"
 }
 
-// ResolveRequestSecurityCredential skips the OS keychain on --dry-run (keychain reads can prompt).
-func ResolveRequestSecurityCredential(cmd *cobra.Command, flagName string) (value, source string) {
+// ResolveExplicitSecurityCredential resolves a security credential from the
+// flag or env var only, without touching the OS keychain or the config file.
+func ResolveExplicitSecurityCredential(cmd *cobra.Command, flagName string) (value, source string) {
 	if val, changed := flagutil.GetStringFlag(cmd, flagName); changed && val != "" {
 		return val, "flag"
 	}
 	if val := GetEnvValue(flagName); val != "" {
 		return val, "env"
+	}
+	return "", "unset"
+}
+
+// ResolveRequestSecurityCredential skips the OS keychain on --dry-run (keychain reads can prompt).
+func ResolveRequestSecurityCredential(cmd *cobra.Command, flagName string) (value, source string) {
+	if val, source := ResolveExplicitSecurityCredential(cmd, flagName); val != "" {
+		return val, source
 	}
 	dryRun, _ := flagutil.GetBoolFlag(cmd, "dry-run")
 	if !dryRun {
@@ -275,6 +288,19 @@ func PickCredential(candidates []CredentialCandidate, allowedFields []string) in
 		}
 	}
 	return best
+}
+
+// PickExplicitCredential is PickCredential restricted to the complete
+// alternatives supplied by a flag or env var; -1 when there is none.
+func PickExplicitCredential(candidates []CredentialCandidate, allowedFields []string) int {
+	explicit := make([]CredentialCandidate, len(candidates))
+	for i, candidate := range candidates {
+		explicit[i] = CredentialCandidate{Field: candidate.Field}
+		if candidate.Complete && candidate.bestSourceRank() <= CredentialSourceRank("env") {
+			explicit[i] = candidate
+		}
+	}
+	return PickCredential(explicit, allowedFields)
 }
 
 // GetConfigPath returns the path to the configuration file.

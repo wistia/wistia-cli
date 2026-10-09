@@ -47,6 +47,11 @@ func newAnalyticsAccount(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hoo
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// `account` authorization granting the `view-stats` permission can also
+// be used.
 func (s *AnalyticsAccount) Get(ctx context.Context, request operations.GetAnalyticsAccountRequest, opts ...operations.Option) (*operations.GetAnalyticsAccountResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -346,6 +351,11 @@ func (s *AnalyticsAccount) Get(ctx context.Context, request operations.GetAnalyt
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// `account` authorization granting the `view-stats` permission can also
+// be used.
 func (s *AnalyticsAccount) GetTimeseries(ctx context.Context, request operations.GetAnalyticsAccountTimeseriesRequest, opts ...operations.Option) (*operations.GetAnalyticsAccountTimeseriesResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -649,6 +659,11 @@ func (s *AnalyticsAccount) GetTimeseries(ctx context.Context, request operations
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// `account` authorization granting the `view-stats` permission can also
+// be used.
 func (s *AnalyticsAccount) GetTopContent(ctx context.Context, request operations.GetAnalyticsAccountTopContentRequest, opts ...operations.Option) (*operations.GetAnalyticsAccountTopContentResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -949,6 +964,11 @@ func (s *AnalyticsAccount) GetTopContent(ctx context.Context, request operations
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// `account` authorization granting the `view-stats` permission can also
+// be used.
 func (s *AnalyticsAccount) GetEmbedLocations(ctx context.Context, request operations.GetAnalyticsAccountEmbedLocationsRequest, opts ...operations.Option) (*operations.GetAnalyticsAccountEmbedLocationsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1257,6 +1277,11 @@ func (s *AnalyticsAccount) GetEmbedLocations(ctx context.Context, request operat
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// `account` authorization granting the `view-stats` permission can also
+// be used.
 func (s *AnalyticsAccount) FindMediaByEmbedLocation(ctx context.Context, request operations.GetAnalyticsAccountMediaByEmbedLocationRequest, opts ...operations.Option) (*operations.GetAnalyticsAccountMediaByEmbedLocationResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

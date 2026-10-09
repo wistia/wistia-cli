@@ -4,18 +4,20 @@
 package cli
 
 import (
+	"charm.land/huh/v2"
+	"charm.land/lipgloss/v2"
 	"encoding/json"
 	"fmt"
-	"github.com/charmbracelet/huh"
-	"github.com/charmbracelet/lipgloss"
 	"github.com/spf13/cobra"
 	"github.com/wistia/wistia-cli/internal/client"
 	"github.com/wistia/wistia-cli/internal/config"
 	"github.com/wistia/wistia-cli/internal/flagutil"
 	"github.com/wistia/wistia-cli/internal/interactive"
+	"github.com/wistia/wistia-cli/internal/output"
 	"github.com/wistia/wistia-cli/internal/usage"
 	"golang.org/x/term"
 	"os"
+	"strings"
 )
 
 // initConfigureCmd initializes the configure command.
@@ -34,6 +36,7 @@ Priority: CLI flags > environment variables > OS keychain > config file`,
 		Args: cobra.NoArgs,
 		RunE: runConfigureCmd,
 	}
+	cmd.Flags().String("default-output-format", "", "Store the default output format without opening the form. Options: "+strings.Join(output.Formats, ", ")+". Pass an empty value to clear it.")
 	parent.AddCommand(cmd)
 	return nil
 }
@@ -53,9 +56,23 @@ func runConfigureCmd(cmd *cobra.Command, args []string) error {
 
 	keychainStored := false
 
-	formMode := interactive.Resolve(cmd).FormMode()
+	formMode := interactive.Resolve(cmd).SetupFormMode(flagutil.AnyFlagChanged(cmd, "bearer-auth", "default-output-format"))
+	if cmd.Flags().Changed("default-output-format") {
+		formMode = interactive.FormOff
+	}
 	if formMode == interactive.FormOff {
 		changed := false
+		if f := cmd.Flags().Lookup("default-output-format"); f != nil && f.Changed {
+			switch v := f.Value.String(); v {
+			case "":
+				cfg.OutputFormat = ""
+			case "pretty", "json", "yaml", "table", "toon":
+				cfg.OutputFormat = v
+			default:
+				return flagutil.WithCLIValidation(fmt.Errorf("invalid --default-output-format %q; options: pretty, json, yaml, table, toon", v))
+			}
+			changed = true
+		}
 		if f := cmd.Flags().Lookup("bearer-auth"); f != nil && f.Changed {
 			v, _ := cmd.Flags().GetString("bearer-auth")
 			if config.StoreSecret("bearer-auth", v, &cfg.Security.BearerAuth) == nil {
@@ -164,8 +181,12 @@ func dryRunLocalNoop(cmd *cobra.Command, message string) bool {
 }
 
 // configureFormTheme builds the form theme for the configure command.
-func configureFormTheme() *huh.Theme {
-	t := *huh.ThemeBase()
+func configureFormTheme() huh.Theme {
+	return huh.ThemeFunc(configureFormStyles)
+}
+
+func configureFormStyles(isDark bool) *huh.Styles {
+	t := *huh.ThemeBase(isDark)
 
 	accent := lipgloss.Color("#38BDF8")
 	dimmed := lipgloss.Color("#64748B")

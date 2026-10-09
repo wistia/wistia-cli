@@ -24,7 +24,7 @@ import (
 // Empty allowedSecurityFields accepts every global security alternative.
 func NewClient(cmd *cobra.Command, allowedSecurityFields ...string) (*sdk.Wistia, error) {
 	var sdkOpts []sdk.SDKOption
-	sdkOpts = append(sdkOpts, sdk.WithSecurity(buildGlobalSecurity(cmd, allowedSecurityFields)))
+	sdkOpts = append(sdkOpts, sdk.WithSecurity(BuildGlobalSecurity(cmd, allowedSecurityFields)))
 	if serverURL, _ := flagutil.GetStringFlag(cmd, "server-url"); serverURL != "" {
 		if err := flagutil.ValidateServerURL(serverURL); err != nil {
 			return nil, err
@@ -101,8 +101,8 @@ func resolveStringFlag(cmd *cobra.Command, name string) string {
 	return config.GetString(name)
 }
 
-// buildGlobalSecurity reads security credentials with priority: flag > env var > keyring > config.
-func buildGlobalSecurity(cmd *cobra.Command, allowedSecurityFields []string) components.Security {
+// BuildGlobalSecurity reads security credentials with priority: flag > env var > keyring > config.
+func BuildGlobalSecurity(cmd *cobra.Command, allowedSecurityFields []string) components.Security {
 	_ = allowedSecurityFields
 	// Resolve request credentials: flag > env var > keyring > config file (keyring skipped for dry-run)
 	bearerAuth, _ := config.ResolveRequestSecurityCredential(cmd, "bearer-auth")
