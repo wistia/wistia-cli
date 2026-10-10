@@ -15,8 +15,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/charmbracelet/huh"
-	"github.com/charmbracelet/lipgloss"
+	"charm.land/huh/v2"
+	"charm.land/lipgloss/v2"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"golang.org/x/term"
@@ -622,8 +622,12 @@ func formWidth() int {
 }
 
 // formTheme builds the interactive prompt theme.
-func formTheme() *huh.Theme {
-	t := *huh.ThemeBase()
+func formTheme() huh.Theme {
+	return huh.ThemeFunc(formStyles)
+}
+
+func formStyles(isDark bool) *huh.Styles {
+	t := *huh.ThemeBase(isDark)
 
 	accent := lipgloss.Color("#38BDF8")
 	dimmed := lipgloss.Color("#64748B")
@@ -667,11 +671,11 @@ func printCommandHeader(cmd *cobra.Command, totalRequired, totalOptional int) {
 	infoStyle := lipgloss.NewStyle().Foreground(dimmed)
 
 	fmt.Fprintln(os.Stderr)
-	fmt.Fprintln(os.Stderr, titleStyle.Render(cmd.CommandPath()))
+	lipgloss.Fprintln(os.Stderr, titleStyle.Render(cmd.CommandPath()))
 	if cmd.Long != "" {
-		fmt.Fprintln(os.Stderr, descStyle.Render(strings.SplitN(cmd.Long, "\n", 2)[0]))
+		lipgloss.Fprintln(os.Stderr, descStyle.Render(strings.SplitN(cmd.Long, "\n", 2)[0]))
 	} else if cmd.Short != "" {
-		fmt.Fprintln(os.Stderr, descStyle.Render(cmd.Short))
+		lipgloss.Fprintln(os.Stderr, descStyle.Render(cmd.Short))
 	}
 	var parts []string
 	if totalRequired > 0 {
@@ -681,7 +685,7 @@ func printCommandHeader(cmd *cobra.Command, totalRequired, totalOptional int) {
 		parts = append(parts, fmt.Sprintf("%d optional", totalOptional))
 	}
 	if len(parts) > 0 {
-		fmt.Fprintln(os.Stderr, infoStyle.Render(strings.Join(parts, ", ")+" field(s)"))
+		lipgloss.Fprintln(os.Stderr, infoStyle.Render(strings.Join(parts, ", ")+" field(s)"))
 	}
 	fmt.Fprintln(os.Stderr)
 }
@@ -764,7 +768,7 @@ func optionalArgDescription(summary string) string {
 	return summary + " · optional, leave empty to skip"
 }
 
-func runPromptField(field PromptField, theme *huh.Theme, width int) (PromptAnswer, error) {
+func runPromptField(field PromptField, theme huh.Theme, width int) (PromptAnswer, error) {
 	if field.Repeatable && field.target == promptTargetFlag {
 		return runRepeatableFlagPrompt(field, theme, width)
 	}
@@ -885,7 +889,7 @@ func runPromptField(field PromptField, theme *huh.Theme, width int) (PromptAnswe
 	return PromptAnswer{Set: true, Values: []string{value}}, nil
 }
 
-func runRepeatableFlagPrompt(field PromptField, theme *huh.Theme, width int) (PromptAnswer, error) {
+func runRepeatableFlagPrompt(field PromptField, theme huh.Theme, width int) (PromptAnswer, error) {
 	values := make([]string, 0, 1)
 	for {
 		value := ""

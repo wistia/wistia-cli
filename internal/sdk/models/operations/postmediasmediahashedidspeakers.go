@@ -13,7 +13,7 @@ import (
 // PostMediasMediaHashedIDSpeakersRequestBody - The speaker profile to assign to the media and, optionally, the detected
 // speaker whose turns it should name.
 type PostMediasMediaHashedIDSpeakersRequestBody struct {
-	// The reusable speaker profile to assign, from List Speakers. Create a new profile first when the person isn't in the account's speaker library.
+	// The reusable speaker profile to assign, as returned by List Speakers. Look the person up there first; create a profile only when they aren't listed.
 	SpeakerProfileID string `json:"speaker_profile_id"`
 	// Only when the user identifies which voice is this person (e.g. "Speaker 1 is Annie"): that speaker's `detected_speaker_id`, such as `default_speaker_0`, from the media's diarized transcript segments. Every turn by that voice is attributed to the profile, and assigning a second detected speaker to the same profile merges them. Omit it to credit the person on the media without naming any turns; don't guess which voice is theirs.
 	DetectedSpeakerID *string `json:"detected_speaker_id,omitzero"`

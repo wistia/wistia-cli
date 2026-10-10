@@ -17,10 +17,10 @@ import (
 var postCustomMetadataFieldDefinitionsCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "key", Shorthand: "k", FieldPath: "Key", Kind: flagutil.FlagKindString, Required: true, Description: "The field's immutable identifier, unique within the account. Lowercase letters, numbers, underscores, and hyphens only; cannot start with an underscore or be a reserved name. [required]"},
 	{FlagName: "label", Shorthand: "l", FieldPath: "Label", Kind: flagutil.FlagKindString, Required: true, Description: "The field's display name. Must be unique per account among active fields (case-insensitive). [required]"},
-	{FlagName: "field-type", Shorthand: "f", FieldPath: "FieldType", Kind: flagutil.FlagKindEnum, Required: true, EnumValues: []string{"text", "number", "date", "boolean", "single_select", "short_text", "url", "email", "money", "time", "datetime", "multi_select", "contact_ref", "contact_multi_ref"}, Description: "The field's data type. Immutable after creation. 'url', 'email', 'money', 'contact_ref', and 'contact_multi_ref' are early-access types: creating one on an account without access returns 422 naming the types the account can use. Existing fields of these types keep working. (options: text, number, date, boolean, single_select, short_text, url, email, money, time, datetime, multi_select, contact_ref, contact_multi_ref) [required]"},
+	{FlagName: "field-type", Shorthand: "f", FieldPath: "FieldType", Kind: flagutil.FlagKindEnum, Required: true, EnumValues: []string{"text", "number", "date", "boolean", "single_select", "short_text", "time", "datetime", "multi_select"}, Description: "The field's data type. Immutable after creation. (options: text, number, date, boolean, single_select, short_text, time, datetime, multi_select) [required]"},
 	{FlagName: "default-value", FieldPath: "DefaultValue", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"default_value,omitempty"`, Description: "An optional default value for the field, matching the field_type's format."},
 	{FlagName: "position", Shorthand: "p", FieldPath: "Position", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"position,omitempty"`, Description: "The field's display order within the account, ascending from 0."},
-	{FlagName: "config-param", Shorthand: "c", FieldPath: "Config", Kind: flagutil.FlagKindUnion, Union: &flagutil.UnionMeta{Discriminated: false, Optional: true, TypeDescription: "JSON value (one of: { \"options\": object[] } | { \"allows_group_refs\": boolean })"}},
+	{FlagName: "config-param", Shorthand: "c", FieldPath: "Config", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"config,omitempty"`, Description: "Type-specific configuration. Only valid for field types that have any; currently the select options for a single_select or multi_select field."},
 }
 
 // initPostCustomMetadataFieldDefinitionsCmd initializes the post-custom-metadata-field-definitions command.
@@ -28,7 +28,7 @@ func initPostCustomMetadataFieldDefinitionsCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "post",
 		Short:   "Create Custom Metadata Field Definition",
-		Long:    "Creates a new custom metadata field definition. The key is immutable, must match `/\\A[a-z0-9_-]+\\z/`, cannot start with an underscore, and cannot be a reserved name. The label must be unique per account among active fields (case-insensitive). The field_type is immutable after creation.\n\nRequires the custom metadata feature to be available on your account.\n\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
+		Long:    "Creates a new custom metadata field definition. The key is immutable, must match `/\\A[a-z0-9_-]+\\z/`, cannot start with an underscore, and cannot be a reserved name. The label must be unique per account among active fields (case-insensitive). The field_type is immutable after creation.\n\nRequires the custom metadata feature to be available on your account.\n\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\n`account` authorization granting the `manage-custom-metadata` permission\ncan also be used.",
 		Example: "  wistia custom-metadata-field-definitions post --key client --label Client --field-type single_select",
 		Args:    cobra.NoArgs,
 		RunE:    runPostCustomMetadataFieldDefinitionsCmd,
@@ -41,7 +41,7 @@ func initPostCustomMetadataFieldDefinitionsCmd(parent *cobra.Command) error {
 		return fmt.Errorf("invalid metadata for post-custom-metadata-field-definitions: %w", err)
 	}
 	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
-	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Required: false, Kind: "json", BodyFlag: true})
 	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
 	if err := flagutil.AnnotateBodyFields(cmd, postCustomMetadataFieldDefinitionsCmdMeta, "", "body"); err != nil {
 		return fmt.Errorf("annotate body fields for post-custom-metadata-field-definitions: %w", err)
@@ -78,7 +78,10 @@ func runPostCustomMetadataFieldDefinitionsCmd(cmd *cobra.Command, args []string)
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.CustomMetadataFieldDefinitions.PostCustomMetadataFieldDefinitions(cmd.Context(), *request, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

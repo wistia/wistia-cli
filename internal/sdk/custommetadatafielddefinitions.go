@@ -46,6 +46,11 @@ func newCustomMetadataFieldDefinitions(rootSDK *Wistia, sdkConfig config.SDKConf
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// `account` authorization granting the `access-custom-metadata` or
+// `manage-custom-metadata` permission can also be used.
 func (s *CustomMetadataFieldDefinitions) GetCustomMetadataFieldDefinitions(ctx context.Context, request *operations.GetCustomMetadataFieldDefinitionsRequest, opts ...operations.Option) (*operations.GetCustomMetadataFieldDefinitionsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -293,6 +298,11 @@ func (s *CustomMetadataFieldDefinitions) GetCustomMetadataFieldDefinitions(ctx c
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// `account` authorization granting the `manage-custom-metadata` permission
+// can also be used.
 func (s *CustomMetadataFieldDefinitions) PostCustomMetadataFieldDefinitions(ctx context.Context, request operations.PostCustomMetadataFieldDefinitionsRequest, opts ...operations.Option) (*operations.PostCustomMetadataFieldDefinitionsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -594,6 +604,11 @@ func (s *CustomMetadataFieldDefinitions) PostCustomMetadataFieldDefinitions(ctx 
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// `account` authorization granting the `access-custom-metadata` or
+// `manage-custom-metadata` permission can also be used.
 func (s *CustomMetadataFieldDefinitions) GetCustomMetadataFieldDefinitionsKey(ctx context.Context, request operations.GetCustomMetadataFieldDefinitionsKeyRequest, opts ...operations.Option) (*operations.GetCustomMetadataFieldDefinitionsKeyResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -839,6 +854,11 @@ func (s *CustomMetadataFieldDefinitions) GetCustomMetadataFieldDefinitionsKey(ct
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// `account` authorization granting the `manage-custom-metadata` permission
+// can also be used.
 func (s *CustomMetadataFieldDefinitions) PutCustomMetadataFieldDefinitionsKey(ctx context.Context, request operations.PutCustomMetadataFieldDefinitionsKeyRequest, opts ...operations.Option) (*operations.PutCustomMetadataFieldDefinitionsKeyResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1116,6 +1136,11 @@ func (s *CustomMetadataFieldDefinitions) PutCustomMetadataFieldDefinitionsKey(ct
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// `account` authorization granting the `manage-custom-metadata` permission
+// can also be used.
 func (s *CustomMetadataFieldDefinitions) DeleteCustomMetadataFieldDefinitionsKey(ctx context.Context, request operations.DeleteCustomMetadataFieldDefinitionsKeyRequest, opts ...operations.Option) (*operations.DeleteCustomMetadataFieldDefinitionsKeyResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1332,6 +1357,11 @@ func (s *CustomMetadataFieldDefinitions) DeleteCustomMetadataFieldDefinitionsKey
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// `account` authorization granting the `manage-custom-metadata` permission
+// can also be used.
 func (s *CustomMetadataFieldDefinitions) PostCustomMetadataFieldDefinitionsKeyRestore(ctx context.Context, request operations.PostCustomMetadataFieldDefinitionsKeyRestoreRequest, opts ...operations.Option) (*operations.PostCustomMetadataFieldDefinitionsKeyRestoreResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

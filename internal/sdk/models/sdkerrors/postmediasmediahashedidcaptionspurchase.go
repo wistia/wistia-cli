@@ -36,6 +36,19 @@ func (e *PostMediasMediaHashedIDCaptionsPurchaseUnprocessableEntityError) Error(
 	return string(data)
 }
 
+// PostMediasMediaHashedIDCaptionsPurchaseForbiddenError - Forbidden, token is valid but account does not have access to feature
+type PostMediasMediaHashedIDCaptionsPurchaseForbiddenError struct {
+	Error_   *string                 `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata `json:"-"`
+}
+
+var _ error = &PostMediasMediaHashedIDCaptionsPurchaseForbiddenError{}
+
+func (e *PostMediasMediaHashedIDCaptionsPurchaseForbiddenError) Error() string {
+	data, _ := json.Marshal(e)
+	return string(data)
+}
+
 // PostMediasMediaHashedIDCaptionsPurchaseUnauthorizedError - Unauthorized, invalid or missing token
 type PostMediasMediaHashedIDCaptionsPurchaseUnauthorizedError struct {
 	// A machine-readable identifier for the specific authorization failure.
