@@ -31,7 +31,7 @@ func initListAllCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "list-all",
 		Short:   "List Captions",
-		Long:    "Lists captions belonging to the account. Results can be narrowed to a specific media\nwith `media_id`, or to several media and languages at once with `media_ids[]` and\n`languages[]`. Each caption includes its text, so combining these filters with\npagination fetches transcripts for many media in a few requests. Pass\n`include=metadata` to omit transcript text when only track and language\ninformation is needed.\n\n## Requires api token with one of the following permissions\n```\nRead all folder and media data\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
+		Long:    "Lists captions belonging to the account. Results can be narrowed to a specific media\nwith `media_id`, or to several media and languages at once with `media_ids[]` and\n`languages[]`. Each caption includes its text, so combining these filters with\npagination fetches transcripts for many media in a few requests. Pass\n`include=metadata` to omit transcript text when only track and language\ninformation is needed.\n\n## Requires api token with one of the following permissions\n```\nRead all folder and media data\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope can also be\nused. It lists only the captions of media it grants the `edit-transcripts`\npermission on; no other permission reaches a media's captions.",
 		Example: "  wistia captions list-all",
 		Args:    cobra.NoArgs,
 		RunE:    runListAllCmd,
@@ -76,7 +76,10 @@ func runListAllCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.Captions.ListAll(cmd.Context(), req, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

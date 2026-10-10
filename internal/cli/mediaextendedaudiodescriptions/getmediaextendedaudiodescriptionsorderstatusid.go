@@ -24,7 +24,7 @@ func initGetMediaExtendedAudioDescriptionsOrderStatusIdCmd(parent *cobra.Command
 	var cmd = &cobra.Command{
 		Use:     "get-media-extended-audio-descriptions-order-status-id [id]",
 		Short:   "Get Order Status",
-		Long:    "Returns the current status of an extended audio description order. Use the order id returned\nfrom the order endpoint to poll for status updates.",
+		Long:    "Returns the current status of an extended audio description order. Use the order id returned\nfrom the order endpoint to poll for status updates.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\nauthorization naming the order's media (any permission) can also be\nused.",
 		Example: "  wistia media-extended-audio-descriptions get-media-extended-audio-descriptions-order-status-id --id <id>",
 		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runGetMediaExtendedAudioDescriptionsOrderStatusIdCmd,
@@ -80,7 +80,10 @@ func runGetMediaExtendedAudioDescriptionsOrderStatusIdCmd(cmd *cobra.Command, ar
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.MediaExtendedAudioDescriptions.GetMediaExtendedAudioDescriptionsOrderStatusID(cmd.Context(), *req, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

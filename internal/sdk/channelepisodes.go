@@ -44,6 +44,11 @@ func newChannelEpisodes(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hook
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization naming the episode's channel (any permission) can also be
+// used.
 func (s *ChannelEpisodes) Get(ctx context.Context, request operations.GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDRequest, opts ...operations.Option) (*operations.GetChannelsChannelHashedIDChannelEpisodesChannelEpisodeIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -260,6 +265,11 @@ func (s *ChannelEpisodes) Get(ctx context.Context, request operations.GetChannel
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `update` permission on this channel can also
+// be used.
 func (s *ChannelEpisodes) Create(ctx context.Context, request operations.PostChannelsChannelHashedIDChannelEpisodesRequest, opts ...operations.Option) (*operations.PostChannelsChannelHashedIDChannelEpisodesResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -534,6 +544,11 @@ func (s *ChannelEpisodes) Create(ctx context.Context, request operations.PostCha
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization naming a channel (any permission) can also be used; it
+// lists the episodes of the channels the token names.
 func (s *ChannelEpisodes) List(ctx context.Context, request *operations.GetChannelEpisodesRequest, opts ...operations.Option) (*operations.GetChannelEpisodesResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -778,6 +793,11 @@ func (s *ChannelEpisodes) List(ctx context.Context, request *operations.GetChann
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `update` permission on the episode's channel
+// can also be used.
 func (s *ChannelEpisodes) Update(ctx context.Context, request operations.PutChannelEpisodesChannelEpisodeHashedIDRequest, opts ...operations.Option) (*operations.PutChannelEpisodesChannelEpisodeHashedIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1026,6 +1046,11 @@ func (s *ChannelEpisodes) Update(ctx context.Context, request operations.PutChan
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `update` permission on the episode's channel
+// can also be used.
 func (s *ChannelEpisodes) Delete(ctx context.Context, request operations.DeleteChannelEpisodesChannelEpisodeHashedIDRequest, opts ...operations.Option) (*operations.DeleteChannelEpisodesChannelEpisodeHashedIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1266,6 +1291,11 @@ func (s *ChannelEpisodes) Delete(ctx context.Context, request operations.DeleteC
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `update` permission on the episode's channel
+// can also be used.
 func (s *ChannelEpisodes) Publish(ctx context.Context, request operations.PutChannelEpisodesChannelEpisodeHashedIDPublishRequest, opts ...operations.Option) (*operations.PutChannelEpisodesChannelEpisodeHashedIDPublishResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1513,6 +1543,11 @@ func (s *ChannelEpisodes) Publish(ctx context.Context, request operations.PutCha
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `update` permission on the episode's channel
+// can also be used.
 func (s *ChannelEpisodes) Unpublish(ctx context.Context, request operations.PutChannelEpisodesChannelEpisodeHashedIDUnpublishRequest, opts ...operations.Option) (*operations.PutChannelEpisodesChannelEpisodeHashedIDUnpublishResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

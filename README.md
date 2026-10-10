@@ -245,6 +245,8 @@ Secret credentials (tokens, API keys, passwords) are automatically stored in:
 
 If no keychain is available (e.g., in CI environments), credentials fall back to the config file.
 
+Where the keychain cannot be unlocked (e.g., headless Linux or SSH sessions with a locked GNOME Keyring), skip it entirely with `--no-keyring`, `WISTIA_CLI_NO_KEYRING=true`, or `no_keyring: true` in the config file. The keychain is then never read or written, and secrets are stored in the config file instead; flags and environment variables still take precedence.
+
 ### 4. Configuration file
 
 Run the interactive `configure` command to store non-secret settings:
@@ -280,8 +282,8 @@ Configuration is stored in `~/.config/wistia/config.yaml`.
   * [`delete-custom-metadata-field-definitions-key`](docs/wistia_custom-metadata-field-definitions_delete-custom-metadata-field-definitions-key.md) - Archive Custom Metadata Field Definition
   * [`post-custom-metadata-field-definitions-key-restore`](docs/wistia_custom-metadata-field-definitions_post-custom-metadata-field-definitions-key-restore.md) - Restore Custom Metadata Field Definition
 * [`deleted-media`](docs/wistia_deleted-media.md) - Operations for deleted-media
-  * [`get`](docs/wistia_deleted-media_get.md) - List Deleted Media
-  * [`post-deleted-media-restore`](docs/wistia_deleted-media_post-deleted-media-restore.md) - Restore Deleted Media
+  * [`list`](docs/wistia_deleted-media_list.md) - List Deleted Media
+  * [`restore`](docs/wistia_deleted-media_restore.md) - Restore Deleted Media
 * [`media`](docs/wistia_media.md) - Operations for media
   * [`list`](docs/wistia_media_list.md) - List Media
   * [`get`](docs/wistia_media_get.md) - Show Media
@@ -343,6 +345,8 @@ Configuration is stored in `~/.config/wistia/config.yaml`.
   * [`remove`](docs/wistia_speakers_remove.md) - Remove Speaker from Media
   * [`list`](docs/wistia_speakers_list.md) - List Speakers
   * [`create`](docs/wistia_speakers_create.md) - Create Speaker
+  * [`update`](docs/wistia_speakers_update.md) - Update Speaker
+  * [`delete`](docs/wistia_speakers_delete.md) - Delete Speaker
 * [`localizations`](docs/wistia_localizations.md) - Operations for localizations
   * [`list`](docs/wistia_localizations_list.md) - List Localizations
   * [`create`](docs/wistia_localizations_create.md) - Create Localization
@@ -373,7 +377,7 @@ Configuration is stored in `~/.config/wistia/config.yaml`.
   * [`create`](docs/wistia_tags_create.md) - Create Tags
   * [`delete`](docs/wistia_tags_delete.md) - Delete Tag
 * [`bulk-actions`](docs/wistia_bulk-actions.md) - Operations for bulk-actions
-  * [`post-bulk`](docs/wistia_bulk-actions_post-bulk.md) - Create Bulk Actions
+  * [`create`](docs/wistia_bulk-actions_create.md) - Create Bulk Actions
 * [`bulk`](docs/wistia_bulk.md) - Operations for bulk
   * [`purchase`](docs/wistia_bulk_purchase.md) - Create Bulk Purchase
 * [`taggings`](docs/wistia_taggings.md) - Operations for taggings

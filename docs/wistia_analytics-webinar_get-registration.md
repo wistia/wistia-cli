@@ -19,6 +19,11 @@ Tokens with the "Act with a team member's permissions" permission
 made with such a token are authorized using the permissions of the
 contact assigned to the token.
 
+An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+created with the `all:delegate_to_contact_permissions` scope and an
+authorization granting the `view-stats` permission on this webinar can also
+be used.
+
 ```
 wistia analytics-webinar get-registration [webinar-id] [flags]
 ```
@@ -35,8 +40,8 @@ wistia analytics-webinar get-registration [webinar-id] [flags]
   -g, --granularity string             The time granularity for the timeseries data. (options: daily, weekly, monthly) [required]
   -h, --help                           help for get-registration
   -i, --include-post-event             Whether to include on-demand viewing data after the live event ended.
-      --post-event-end-date string     End date for the post-event analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date. Only used when include_post_event is true.
-      --post-event-start-date string   Start date for the post-event analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date. Only used when include_post_event is true.
+      --post-event-end-date string     End date for the post-event analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date. Defaults to tomorrow, so the range runs through today. Only used when include_post_event is true.
+      --post-event-start-date string   Start date for the post-event analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date. Defaults to the date the event ended. Only used when include_post_event is true.
   -w, --webinar-id string              The hashed ID of the webinar. (or pass it as the [webinar-id] argument)
 ```
 
@@ -53,6 +58,7 @@ wistia analytics-webinar get-registration [webinar-id] [flags]
       --interactive            Prompt for missing inputs and open guided configure/auth forms (forms fall back to line prompts on stdin off-TTY) (default true)
   -q, --jq string              Filter and transform output using a jq expression (e.g., '.name', '.items[] | .id')
       --no-interactive         Disable all interactive features (auto-prompting, explorer auto-launch, TUI forms)
+      --no-keyring             Never read or write the OS keychain; store secrets in the config file instead (env: WISTIA_CLI_NO_KEYRING)
   -o, --output-format string   Specify the output format. Options: pretty, json, yaml, table, toon. (default "pretty")
       --raw-output             Write --jq string results as raw text instead of JSON strings (like jq -r); non-string results stay JSON
       --server string          Select a server by index (for indexed servers) or name (for named servers)
