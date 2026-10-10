@@ -40,7 +40,7 @@ func initPostRemixesRemixHashedIdContinueCmd(parent *cobra.Command) error {
 		return fmt.Errorf("invalid metadata for post-remixes-remix-hashed-id-continue: %w", err)
 	}
 	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
-	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Required: false, Kind: "json", BodyFlag: true})
 	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
 	if err := flagutil.AnnotateBodyFields(cmd, postRemixesRemixHashedIDContinueCmdMeta, "Body", "body"); err != nil {
 		return fmt.Errorf("annotate body fields for post-remixes-remix-hashed-id-continue: %w", err)
@@ -88,7 +88,10 @@ func runPostRemixesRemixHashedIdContinueCmd(cmd *cobra.Command, args []string) e
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.Remix.PostRemixesRemixHashedIDContinue(cmd.Context(), *req, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

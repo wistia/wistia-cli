@@ -15,7 +15,7 @@ import (
 )
 
 var updateBrandPreloadCmdMeta = []flagutil.FlagMeta{
-	{FlagName: "selected-player-color", FieldPath: "SelectedPlayerColor", Kind: flagutil.FlagKindString, Optional: true, Description: "Hex color string (e.g. \"#3366FF\") for the account's default player\ncolor — 6 hex digits, with or without the leading '#'. Omit or send\nan empty string to leave the current color untouched (there is no\nclear operation — color always has a value). Malformed values are\nrejected at the API boundary; without this check, the model's\nsanitize step would return nil and silently reset the account color\nto the global default."},
+	{FlagName: "selected-player-color", FieldPath: "SelectedPlayerColor", Kind: flagutil.FlagKindString, Optional: true, Pattern: "^(#?[0-9a-fA-F]{6})?$", Description: "Hex color string (e.g. \"#3366FF\") for the account's default player\ncolor — 6 hex digits, with or without the leading '#'. Omit or send\nan empty string to leave the current color untouched (there is no\nclear operation — color always has a value). Malformed values are\nrejected at the API boundary; without this check, the model's\nsanitize step would return nil and silently reset the account color\nto the global default."},
 	{FlagName: "selected-logo-hashed-id", FieldPath: "SelectedLogoHashedID", Kind: flagutil.FlagKindString, Optional: true, Description: "Bakery hashed_id of an uploaded logo image, which will become the\naccount's default page logo. Omit to leave the current logo\nuntouched. Pass an empty string to clear the logo."},
 }
 
@@ -38,7 +38,7 @@ func initUpdateBrandPreloadCmd(parent *cobra.Command) error {
 		return fmt.Errorf("invalid metadata for update-brand-preload: %w", err)
 	}
 	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF. Use --schema to print the exact JSON Schema.")
-	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Required: false, Kind: "json", BodyFlag: true})
 	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
 	if err := flagutil.AnnotateBodyFields(cmd, updateBrandPreloadCmdMeta, "", "body"); err != nil {
 		return fmt.Errorf("annotate body fields for update-brand-preload: %w", err)
@@ -80,7 +80,10 @@ func runUpdateBrandPreloadCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.Account.UpdateBrandPreload(cmd.Context(), request, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

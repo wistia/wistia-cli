@@ -24,11 +24,11 @@ func InitDeletedMediaRoot(parent *cobra.Command) error {
 		Aliases: []string{"dm"},
 	}
 
-	if err := initGetDeletedMediaCmd(DeletedMediaCmd); err != nil {
+	if err := initListCmd(DeletedMediaCmd); err != nil {
 		return err
 	}
 
-	if err := initPostDeletedMediaRestoreCmd(DeletedMediaCmd); err != nil {
+	if err := initRestoreCmd(DeletedMediaCmd); err != nil {
 		return err
 	}
 

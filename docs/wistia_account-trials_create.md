@@ -11,6 +11,11 @@ start trial" onboarding CTA.
 Requires the current contact to be authorized to start the trial via
 the account's AccountPolicy — otherwise returns 403.
 
+[Expiring access tokens](https://docs.wistia.com/reference/post_expiring-token)
+with authorizations cannot use this endpoint: starting a trial is an
+account-level action authorized as the persisted contact, not through a
+token's authorizations. Such requests are forbidden.
+
 ## Requires api token with one of the following permissions
 ```
 Read, update & delete anything
@@ -45,6 +50,7 @@ wistia account-trials create [flags]
       --interactive            Prompt for missing inputs and open guided configure/auth forms (forms fall back to line prompts on stdin off-TTY) (default true)
   -q, --jq string              Filter and transform output using a jq expression (e.g., '.name', '.items[] | .id')
       --no-interactive         Disable all interactive features (auto-prompting, explorer auto-launch, TUI forms)
+      --no-keyring             Never read or write the OS keychain; store secrets in the config file instead (env: WISTIA_CLI_NO_KEYRING)
   -o, --output-format string   Specify the output format. Options: pretty, json, yaml, table, toon. (default "pretty")
       --raw-output             Write --jq string results as raw text instead of JSON strings (like jq -r); non-string results stay JSON
       --server string          Select a server by index (for indexed servers) or name (for named servers)

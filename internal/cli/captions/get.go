@@ -26,7 +26,7 @@ func initGetCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "get",
 		Short:   "Show Captions",
-		Long:    "Returns a media's captions in the specified language.\nSupports multiple formats: JSON (default), SRT, VTT, and TXT.\nUse file extensions (.srt, .vtt, .txt) or Accept headers to specify format.\n\n## Requires api token with one of the following permissions\n```\nRead all folder and media data\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
+		Long:    "Returns a media's captions in the specified language.\nSupports multiple formats: JSON (default), SRT, VTT, and TXT.\nUse file extensions (.srt, .vtt, .txt) or Accept headers to specify format.\n\n## Requires api token with one of the following permissions\n```\nRead all folder and media data\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\nauthorization granting the `edit-transcripts` permission on this media can\nalso be used. For a token granted any other permission on the media the\ncaptions are not found.",
 		Example: "  wistia captions get --media-hashed-id <id> --language-code <value>",
 		Args:    cobra.NoArgs,
 		RunE:    runGetCmd,
@@ -70,7 +70,10 @@ func runGetCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.Captions.Get(cmd.Context(), *req, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

@@ -35,6 +35,19 @@ func (e *PostWebinarsWebinarIDCollaboratorsNotFoundError) Error() string {
 	return string(data)
 }
 
+// PostWebinarsWebinarIDCollaboratorsForbiddenError - Forbidden, token is valid but account does not have access to feature
+type PostWebinarsWebinarIDCollaboratorsForbiddenError struct {
+	Error_   *string                 `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata `json:"-"`
+}
+
+var _ error = &PostWebinarsWebinarIDCollaboratorsForbiddenError{}
+
+func (e *PostWebinarsWebinarIDCollaboratorsForbiddenError) Error() string {
+	data, _ := json.Marshal(e)
+	return string(data)
+}
+
 // PostWebinarsWebinarIDCollaboratorsUnauthorizedError - Unauthorized, invalid or missing token
 type PostWebinarsWebinarIDCollaboratorsUnauthorizedError struct {
 	// A machine-readable identifier for the specific authorization failure.

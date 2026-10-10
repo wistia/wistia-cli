@@ -39,6 +39,11 @@ func newAccountTrials(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks 
 // Requires the current contact to be authorized to start the trial via
 // the account's AccountPolicy — otherwise returns 403.
 //
+// [Expiring access tokens](https://docs.wistia.com/reference/post_expiring-token)
+// with authorizations cannot use this endpoint: starting a trial is an
+// account-level action authorized as the persisted contact, not through a
+// token's authorizations. Such requests are forbidden.
+//
 // ## Requires api token with one of the following permissions
 // ```
 // Read, update & delete anything

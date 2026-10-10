@@ -42,6 +42,11 @@ func newFolderSharings(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization naming this folder (any permission) can also be used; it
+// lists the folder's sharings.
 func (s *FolderSharings) List(ctx context.Context, request operations.GetFoldersFolderIDSharingsRequest, opts ...operations.Option) (*operations.GetFoldersFolderIDSharingsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -287,6 +292,11 @@ func (s *FolderSharings) List(ctx context.Context, request operations.GetFolders
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `share` permission on this folder can also
+// be used.
 func (s *FolderSharings) Create(ctx context.Context, request operations.PostFoldersFolderIDSharingsRequest, opts ...operations.Option) (*operations.PostFoldersFolderIDSharingsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -539,6 +549,10 @@ func (s *FolderSharings) Create(ctx context.Context, request operations.PostFold
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization naming this folder (any permission) can also be used.
 func (s *FolderSharings) Get(ctx context.Context, request operations.GetFoldersFolderIDSharingsSharingIDRequest, opts ...operations.Option) (*operations.GetFoldersFolderIDSharingsSharingIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -780,6 +794,11 @@ func (s *FolderSharings) Get(ctx context.Context, request operations.GetFoldersF
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `update` permission on this folder can also
+// be used.
 func (s *FolderSharings) Update(ctx context.Context, request operations.PutFoldersFolderIDSharingsSharingIDRequest, opts ...operations.Option) (*operations.PutFoldersFolderIDSharingsSharingIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -942,6 +961,31 @@ func (s *FolderSharings) Update(ctx context.Context, request operations.PutFolde
 			}
 			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
+	case httpRes.StatusCode == 403:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out sdkerrors.PutFoldersFolderIDSharingsSharingIDForbiddenError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
+			}
+
+			out.HTTPMeta = components.HTTPMetadata{
+				Request:  req,
+				Response: httpRes,
+			}
+			return nil, &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
 	case httpRes.StatusCode == 404:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
@@ -1028,6 +1072,11 @@ func (s *FolderSharings) Update(ctx context.Context, request operations.PutFolde
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `update` permission on this folder can also
+// be used.
 func (s *FolderSharings) Delete(ctx context.Context, request operations.DeleteFoldersFolderIDSharingsSharingIDRequest, opts ...operations.Option) (*operations.DeleteFoldersFolderIDSharingsSharingIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1167,6 +1216,31 @@ func (s *FolderSharings) Delete(ctx context.Context, request operations.DeleteFo
 			}
 
 			var out sdkerrors.DeleteFoldersFolderIDSharingsSharingIDUnauthorizedError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
+			}
+
+			out.HTTPMeta = components.HTTPMetadata{
+				Request:  req,
+				Response: httpRes,
+			}
+			return nil, &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
+	case httpRes.StatusCode == 403:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out sdkerrors.DeleteFoldersFolderIDSharingsSharingIDForbiddenError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}

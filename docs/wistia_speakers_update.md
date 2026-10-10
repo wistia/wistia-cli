@@ -1,54 +1,48 @@
-## wistia deleted-media get
+## wistia speakers update
 
-List Deleted Media
+Update Speaker
 
 ### Synopsis
 
-Lists media that has been soft-deleted and is still inside the account's
-restore window. Media is listed only while it can still be restored — 30 days
-on most plans, 14 on free plans. After which it is permanently purged.
+Changes a speaker profile's name or title. The profile is shared, so the
+change applies everywhere the person is assigned, on every video and
+webinar. Send at least one field; fields you omit are left as they are.
 
 
 ## Requires api token with one of the following permissions
 ```
-Read all folder and media data
+All data
 ```
 
 Tokens with the "Act with a team member's permissions" permission
 (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 made with such a token are authorized using the permissions of the
-contact assigned to the token.
+contact assigned to the token. Only account owners and managers can
+change speaker profiles.
+
+An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+created with the `all:delegate_to_contact_permissions` scope and an
+`account` authorization granting the `manage-speakers` permission can also
+be used.
 
 ```
-wistia deleted-media get [flags]
+wistia speakers update [speaker-profile-id] [flags]
 ```
 
 ### Examples
 
 ```
-  wistia deleted-media get
+  wistia speakers update --speaker-profile-id <id>
 ```
 
 ### Options
 
 ```
-  -c, --cursor string            If 'cursor[enabled]' is set to 1 then cursor pagination is enabled and the
-                                 first set of records are fetched up to the 'per_page'. Cursor
-                                 pagination will also be turned on if 'cursor[before]' or 'cursor[after]'
-                                 are set. Records returned will have a 'cursor' property set which can be used to fetch more records in the same 'sort_by' ordering.
-                                 The cursor value of the last record can be used to fetch records after the current result set and
-                                 the cursor of the first record can be used to fetch records before the result set.
-                                 
-                                 NOTE: a cursor value is only valid if the 'sort_by' value hasn't changed from the
-                                 last fetch. For example, you cannot fetch using 'sort_by' id and then pass that
-                                 cursor value to a 'sort_by' name.
-      --hashed-ids stringArray   Restrict the results to the deleted media with these hashed IDs.
-  -h, --help                     help for get
-      --page int                 The page number to retrieve. This cannot be combined with 'cursor',
-                                 pagination.
-      --per-page int             The number of medias per page. Use this for both offset pagination and cursor pagination.
-      --sort-by string           Field to order by. When omitted, results are ordered most-recently-deleted first. (options: id, deleted, name, type, created)
-      --sort-direction string    Direction to order by. (0 = desc, 1 = asc; default is 1) (options: 0, 1)
+      --body string                 Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.
+  -h, --help                        help for update
+  -n, --name string                 The speaker's new display name. Leading and trailing whitespace is removed.
+  -s, --speaker-profile-id string   The 'speaker_profile_id' of the profile to change. (or pass it as the [speaker-profile-id] argument)
+  -t, --title string                The speaker's new title. Leading and trailing whitespace is removed. Send null or an empty string to clear it.
 ```
 
 ### Options inherited from parent commands
@@ -64,6 +58,7 @@ wistia deleted-media get [flags]
       --interactive            Prompt for missing inputs and open guided configure/auth forms (forms fall back to line prompts on stdin off-TTY) (default true)
   -q, --jq string              Filter and transform output using a jq expression (e.g., '.name', '.items[] | .id')
       --no-interactive         Disable all interactive features (auto-prompting, explorer auto-launch, TUI forms)
+      --no-keyring             Never read or write the OS keychain; store secrets in the config file instead (env: WISTIA_CLI_NO_KEYRING)
   -o, --output-format string   Specify the output format. Options: pretty, json, yaml, table, toon. (default "pretty")
       --raw-output             Write --jq string results as raw text instead of JSON strings (like jq -r); non-string results stay JSON
       --server string          Select a server by index (for indexed servers) or name (for named servers)
@@ -74,12 +69,12 @@ wistia deleted-media get [flags]
 
 ### SEE ALSO
 
-* [wistia deleted-media](wistia_deleted-media.md)	 - Operations for deleted-media
+* [wistia speakers](wistia_speakers.md)	 - Operations for speakers
 
 ### Machine interface
 
-* `wistia deleted-media get --usage` — this command's flags, defaults and env vars as machine-readable KDL
-* `wistia deleted-media get --dry-run` — preview the request without OS-keychain access or a network call (human preview on stderr)
+* `wistia speakers update --usage` — this command's flags, defaults and env vars as machine-readable KDL
+* `wistia speakers update --dry-run` — preview the request without OS-keychain access or a network call (human preview on stderr)
 * `--dry-run --output-format json` (or a caller-explicit `--jq`) writes one preview object per request as NDJSON on stdout; jq is not applied to previews
 * `--output-format json` or `--jq <expr>` for machine-readable live output; in agent mode errors are a JSON envelope on stderr
 

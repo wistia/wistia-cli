@@ -24,7 +24,7 @@ func initGetMediaExtendedAudioDescriptionsIdCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "get-media-extended-audio-descriptions-id [id]",
 		Short:   "Show Media Extended Audio Description",
-		Long:    "Retrieves a single extended audio description by its hashed id, including download links.",
+		Long:    "Retrieves a single extended audio description by its hashed id, including download links.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\nauthorization naming the extended audio description's media (any\npermission) can also be used.",
 		Example: "  wistia media-extended-audio-descriptions get-media-extended-audio-descriptions-id --id <id>",
 		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runGetMediaExtendedAudioDescriptionsIdCmd,
@@ -80,7 +80,10 @@ func runGetMediaExtendedAudioDescriptionsIdCmd(cmd *cobra.Command, args []string
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.MediaExtendedAudioDescriptions.GetMediaExtendedAudioDescriptionsID(cmd.Context(), *req, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

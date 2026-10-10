@@ -8,16 +8,14 @@ Sets (or replaces) the value of a custom metadata field on a media, addressed by
 
 The request body carries a single polymorphic `value` field whose JSON type must match the definition's `field_type`:
 
-- text-like types (`text`, `short_text`, `url`, `email`, `money`, `time`, `datetime`) — a string; format-validated per type (e.g. money is `"USD 12.34"`, time is 24-hour `"14:30"`, datetime is UTC ISO 8601 `"2026-07-10T14:30:00Z"`)
+- text-like types (`text`, `short_text`, `time`, `datetime`) — a string; format-validated per type (e.g. time is 24-hour `"14:30"`, datetime is UTC ISO 8601 `"2026-07-10T14:30:00Z"`)
 - `number` — a JSON number (a numeric string is coerced)
 - `date` — an ISO 8601 date string like `"2026-07-10"`
 - `boolean` — a JSON boolean; `false` persists as false (it does not clear the field)
 - `single_select` — the chosen option's key (a string); unknown option keys return a 422
 - `multi_select` — an array of the chosen options' keys (strings); unknown option keys or a non-array value return a 422
-- `contact_ref` — a contact reference object `{"type": "contact" | "contact_group", "id": "<hashed_id>"}`; unknown ids, ids from another account, and group references on fields that do not allow groups return a 422
-- `contact_multi_ref` — an array of contact reference objects; the same 422 rules apply per reference, and a non-array value returns a 422
 
-A null or absent `value` clears the field (equivalent to the DELETE endpoint), as does an empty array for `multi_select` and `contact_multi_ref`. Type mismatches and format violations return a 422 with a field-level message.
+A null or absent `value` clears the field (equivalent to the DELETE endpoint), as does an empty array for `multi_select`. Type mismatches and format violations return a 422 with a field-level message.
 
 Only values for active field definitions can be written. Requires the custom metadata feature to be available on your account.
 
@@ -32,6 +30,12 @@ Tokens with the "Act with a team member's permissions" permission
 (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 made with such a token are authorized using the permissions of the
 contact assigned to the token.
+
+An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+created with the `all:delegate_to_contact_permissions` scope, an `account`
+authorization granting the `access-custom-metadata` permission and an
+authorization granting the `update` permission on the media can also be
+used.
 
 ```
 wistia custom-metadata-field-values put-medias-media-hashed-id-custom-metadata-field-values-key [flags]
@@ -50,7 +54,7 @@ wistia custom-metadata-field-values put-medias-media-hashed-id-custom-metadata-f
   -h, --help                     help for put-medias-media-hashed-id-custom-metadata-field-values-key
   -k, --key string               The field definition's immutable key. [required]
   -m, --media-hashed-id string   The hashed ID of the media whose custom metadata field value is to be set. [required]
-  -v, --value string             JSON value (one of: string | number | boolean | array of any | { "type": string, "id": string })
+  -v, --value string             JSON value (one of: string | number | boolean | array of any)
 ```
 
 ### Options inherited from parent commands
@@ -66,6 +70,7 @@ wistia custom-metadata-field-values put-medias-media-hashed-id-custom-metadata-f
       --interactive            Prompt for missing inputs and open guided configure/auth forms (forms fall back to line prompts on stdin off-TTY) (default true)
   -q, --jq string              Filter and transform output using a jq expression (e.g., '.name', '.items[] | .id')
       --no-interactive         Disable all interactive features (auto-prompting, explorer auto-launch, TUI forms)
+      --no-keyring             Never read or write the OS keychain; store secrets in the config file instead (env: WISTIA_CLI_NO_KEYRING)
   -o, --output-format string   Specify the output format. Options: pretty, json, yaml, table, toon. (default "pretty")
       --raw-output             Write --jq string results as raw text instead of JSON strings (like jq -r); non-string results stay JSON
       --server string          Select a server by index (for indexed servers) or name (for named servers)

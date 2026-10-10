@@ -24,7 +24,7 @@ func initResolveCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "resolve [identifier]",
 		Short:   "Resolve share link",
-		Long:    "Resolves a share link URL segment — the part after `/s/` in a share\nlink like `https://example.wistia.com/s/summer-sale` — to the share\nlink and the media it points to, including the media's hashed ID.\n\nThe identifier may be the share link's hashed ID or its custom slug.\nHistorical slugs that were later changed still resolve to the link.\n\n## Requires api token with one of the following permissions\n```\nRead all folder and media data\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
+		Long:    "Resolves a share link URL segment — the part after `/s/` in a share\nlink like `https://example.wistia.com/s/summer-sale` — to the share\nlink and the media it points to, including the media's hashed ID.\n\nThe identifier may be the share link's hashed ID or its custom slug.\nHistorical slugs that were later changed still resolve to the link.\n\n## Requires api token with one of the following permissions\n```\nRead all folder and media data\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\nauthorization naming the share link's media (any permission) can also be\nused. The share link of a media the token does not name is not found.",
 		Example: "  wistia share-links resolve --identifier <value>",
 		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runResolveCmd,
@@ -79,7 +79,10 @@ func runResolveCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.ShareLinks.Resolve(cmd.Context(), *req, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}
