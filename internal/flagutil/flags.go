@@ -13,6 +13,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"sort"
 	"strconv"
 	"strings"
 	"sync/atomic"
@@ -32,6 +33,16 @@ func FlagChanged(cmd *cobra.Command, name string) bool {
 	}
 	if f := cmd.InheritedFlags().Lookup(name); f != nil {
 		return f.Changed
+	}
+	return false
+}
+
+// AnyFlagChanged reports whether any of the named flags was explicitly set.
+func AnyFlagChanged(cmd *cobra.Command, names ...string) bool {
+	for _, name := range names {
+		if FlagChanged(cmd, name) {
+			return true
+		}
 	}
 	return false
 }
@@ -276,6 +287,54 @@ func looksLikePath(val string) bool {
 	return len(ext) > 1 && len(ext) < len(val)
 }
 
+// UnknownFlagSuggestionHint names the visible flags closest to the one a
+// parse error reports as unknown. Like cobra's command suggestions, a flag
+// qualifies at an edit distance of at most two or when it starts with the
+// typed name; a flag that is itself a prefix of the typed name also
+// qualifies when the typed name is at most twice as long (--output → --out,
+// but not --identity-file → --id). When several flags qualify, only those at
+// the smallest edit distance are named.
+func UnknownFlagSuggestionHint(cmd *cobra.Command, errMsg string) string {
+	const prefix = "unknown flag: --"
+	if !strings.HasPrefix(errMsg, prefix) {
+		return ""
+	}
+	typed := strings.ToLower(strings.TrimPrefix(errMsg, prefix))
+	if typed == "" {
+		return ""
+	}
+	seen := map[string]bool{}
+	var names, prefixes []string
+	visit := func(f *pflag.Flag) {
+		name := strings.ToLower(f.Name)
+		if f.Hidden || seen[name] {
+			return
+		}
+		seen[name] = true
+		names = append(names, f.Name)
+		if strings.HasPrefix(name, typed) || (strings.HasPrefix(typed, name) && len(typed) <= 2*len(name)) {
+			prefixes = append(prefixes, f.Name)
+		}
+	}
+	cmd.Flags().VisitAll(visit)
+	cmd.InheritedFlags().VisitAll(visit)
+	matches := nearest(typed, names, 2)
+	if len(matches) == 0 {
+		matches = nearest(typed, prefixes, -1)
+	}
+	for i, name := range matches {
+		matches[i] = "--" + name
+	}
+	switch len(matches) {
+	case 0:
+		return ""
+	case 1:
+		return "Did you mean " + matches[0] + "?"
+	}
+	sort.Strings(matches)
+	return "Did you mean one of " + strings.Join(matches, ", ") + "?"
+}
+
 func ShorthandConfusionHint(cmd *cobra.Command, args []string, errMsg string) string {
 	for i, arg := range args {
 		if arg == "--" {
@@ -387,19 +446,10 @@ func closestMatch(val string, candidates []string) string {
 			return prefix
 		}
 	}
-	best, bestDist, ties := "", 3, 0
-	for _, c := range candidates {
-		switch d := editDistance(val, strings.ToLower(c)); {
-		case d < bestDist:
-			best, bestDist, ties = c, d, 1
-		case d == bestDist:
-			ties++
-		}
+	if matches := nearest(val, candidates, 2); len(matches) == 1 {
+		return matches[0]
 	}
-	if ties != 1 {
-		return ""
-	}
-	return best
+	return ""
 }
 
 func SpacedBoolValueHint(cmd *cobra.Command, args []string) string {
@@ -512,6 +562,17 @@ func SetStdinReadDeadline(enabled bool) {
 
 const AnnotationWholeBodyFlag = "speakeasy_whole_body_flag"
 
+// AnnotationRequestInput marks a flag that supplies part of the request
+// (a field, parameter, union variant or declared input), as opposed to one
+// that steers the command (pagination, output, polling, credentials).
+const AnnotationRequestInput = "speakeasy_request_input"
+
+func MarkRequestInput(cmd *cobra.Command, names ...string) {
+	for _, name := range names {
+		_ = cmd.Flags().SetAnnotation(name, AnnotationRequestInput, []string{"true"})
+	}
+}
+
 type MissingRequiredFlagError struct {
 	FlagName string
 	Detail   string // optional suffix, e.g. "(or provide via stdin)"
@@ -569,7 +630,56 @@ func ResolveBodyFlag(cmd *cobra.Command, flagName string) error {
 	return cmd.Flags().Set(flagName, resolved)
 }
 
-// ReadStdinBody returns nil, nil when stdin is a TTY.
+// stdinSkipped is the stdin an earlier ReadStdinBody gave up on as silent, so
+// later reads in the same invocation neither wait again nor race the reader
+// still blocked on it.
+var stdinSkipped atomic.Pointer[os.File]
+
+// ResetStdinSkip clears the silent-stdin marker at the start of an invocation.
+func ResetStdinSkip() {
+	stdinSkipped.Store(nil)
+}
+
+// commandLineSuppliesInput reports positional arguments or a request-input
+// flag set on the command line.
+func commandLineSuppliesInput(cmd *cobra.Command) bool {
+	if len(cmd.Flags().Args()) > 0 {
+		return true
+	}
+	supplied := false
+	cmd.LocalFlags().VisitAll(func(f *pflag.Flag) {
+		supplied = supplied || (f.Changed && len(f.Annotations[AnnotationRequestInput]) > 0)
+	})
+	return supplied
+}
+
+const (
+	stdinIdle int32 = iota
+	stdinData
+	stdinAbandoned
+)
+
+// firstReadSignal settles, exactly once, whether the pipe delivered input
+// before the reader was abandoned.
+type firstReadSignal struct {
+	r     io.Reader
+	state atomic.Int32
+}
+
+func (f *firstReadSignal) Read(p []byte) (int, error) {
+	if f.state.Load() == stdinAbandoned {
+		return 0, io.EOF
+	}
+	n, err := f.r.Read(p)
+	if !f.state.CompareAndSwap(stdinIdle, stdinData) && f.state.Load() == stdinAbandoned {
+		return 0, io.EOF
+	}
+	return n, err
+}
+
+// ReadStdinBody returns nil, nil when stdin is a TTY, or in agent mode when
+// the command line already supplies input and a pipe delivers nothing within
+// stdinReadDeadline.
 func ReadStdinBody(cmd *cobra.Command, bodyFlag string) ([]byte, error) {
 	in := cmd.InOrStdin()
 	stdin := os.Stdin // captured once for the reader goroutine
@@ -583,6 +693,9 @@ func ReadStdinBody(cmd *cobra.Command, bodyFlag string) ([]byte, error) {
 	if stat.Mode().IsRegular() {
 		return io.ReadAll(stdin)
 	}
+	if stdinSkipped.Load() == stdin {
+		return nil, nil
+	}
 	if !stdinDeadlineEnabled.Load() {
 		data, err := io.ReadAll(stdin)
 		if err != nil {
@@ -595,20 +708,32 @@ func ReadStdinBody(cmd *cobra.Command, bodyFlag string) ([]byte, error) {
 		data []byte
 		err  error
 	}
+	reader := &firstReadSignal{r: stdin}
 	ch := make(chan readResult, 1)
 	go func() {
-		data, err := io.ReadAll(stdin)
+		data, err := io.ReadAll(reader)
 		ch <- readResult{data: data, err: err}
 	}()
+	timer := time.NewTimer(stdinReadDeadline)
+	defer timer.Stop()
+	var r readResult
 	select {
-	case r := <-ch:
-		if r.err != nil {
-			return nil, fmt.Errorf("failed to read stdin: %w", r.err)
+	case r = <-ch:
+	case <-timer.C:
+		select {
+		case r = <-ch:
+		default:
+			if commandLineSuppliesInput(cmd) && reader.state.CompareAndSwap(stdinIdle, stdinAbandoned) {
+				stdinSkipped.Store(stdin)
+				return nil, nil
+			}
+			return nil, &StdinTimeoutError{BodyFlag: bodyFlag}
 		}
-		return r.data, nil
-	case <-time.After(stdinReadDeadline):
-		return nil, &StdinTimeoutError{BodyFlag: bodyFlag}
 	}
+	if r.err != nil {
+		return nil, fmt.Errorf("failed to read stdin: %w", r.err)
+	}
+	return r.data, nil
 }
 
 func AttachStdinBody(cmd *cobra.Command, bodyFlag string) (bool, error) {
@@ -623,8 +748,71 @@ func AttachStdinBody(cmd *cobra.Command, bodyFlag string) (bool, error) {
 	return true, nil
 }
 
+// MergePresetStdinBody merges an intent's preset into the body AttachStdinBody
+// re-attached from stdin, as MergePresetBody does for a body flag.
+func MergePresetStdinBody(cmd *cobra.Command, m PresetMerge) error {
+	in := cmd.InOrStdin()
+	if in == os.Stdin {
+		return nil
+	}
+	data, err := io.ReadAll(in)
+	if err != nil {
+		return fmt.Errorf("failed to read stdin: %w", err)
+	}
+	merged, err := MergePresetBody(string(data), m)
+	if err != nil {
+		return err
+	}
+	cmd.SetIn(strings.NewReader(merged))
+	return nil
+}
+
+func DefaultBodyInput(cmd *cobra.Command, bodyFlags []string, key, flagName string, value any) error {
+	for _, name := range bodyFlags {
+		if name != "" && FlagChanged(cmd, name) {
+			if err := ResolveBodyFlag(cmd, name); err != nil {
+				return err
+			}
+			s, _ := GetStringFlag(cmd, name)
+			if bodyDecidesKey([]byte(s), key) {
+				return nil
+			}
+			return MergeInputIntoBody(cmd, name, key, "--"+flagName, value)
+		}
+	}
+	data, err := ReadStdinBody(cmd, "")
+	if err != nil {
+		return err
+	}
+	if len(bytes.TrimSpace(data)) > 0 {
+		cmd.SetIn(bytes.NewReader(data))
+		if bodyDecidesKey(data, key) {
+			return nil
+		}
+		return MergeInputIntoBody(cmd, "", key, "--"+flagName, value)
+	}
+	return cmd.Flags().Set(flagName, fmt.Sprint(value))
+}
+
+func bodyDecidesKey(raw []byte, key string) bool {
+	var obj map[string]json.RawMessage
+	if err := json.Unmarshal(raw, &obj); err != nil || obj == nil {
+		return true
+	}
+	_, present := obj[key]
+	return present
+}
+
 // bodyFlagName is "" when the body was attached from stdin by AttachStdinBody.
 func MergeInputIntoBody(cmd *cobra.Command, bodyFlagName, key, input string, value any) error {
+	return MergeInputIntoBodyPath(cmd, bodyFlagName, []string{key}, input, value, nil)
+}
+
+// BodyPathCheck vets a caller object on the path before an input is written
+// beneath it; field is the object's dotted path.
+type BodyPathCheck func(pointer, field, source string, existing json.RawMessage) error
+
+func MergeInputIntoBodyPath(cmd *cobra.Command, bodyFlagName string, path []string, input string, value any, check BodyPathCheck) error {
 	source, raw := "stdin", []byte(nil)
 	if bodyFlagName != "" {
 		s, _ := GetStringFlag(cmd, bodyFlagName)
@@ -647,14 +835,13 @@ func MergeInputIntoBody(cmd *cobra.Command, bodyFlagName, key, input string, val
 		}
 		return fmt.Errorf("cannot combine %s with %s: the body must be a JSON object", input, source)
 	}
-	if _, present := obj[key]; present {
-		return fmt.Errorf("key %q is set both by %s and by %s; pass exactly one", key, input, source)
-	}
 	encodedValue, err := json.Marshal(value)
 	if err != nil {
 		return err
 	}
-	obj[key] = encodedValue
+	if err := mergeBodyPath(obj, path, "", "", input, source, encodedValue, check); err != nil {
+		return err
+	}
 	merged, err := json.Marshal(obj)
 	if err != nil {
 		return err
@@ -664,4 +851,53 @@ func MergeInputIntoBody(cmd *cobra.Command, bodyFlagName, key, input string, val
 	}
 	cmd.SetIn(bytes.NewReader(merged))
 	return nil
+}
+
+func mergeBodyPath(obj map[string]json.RawMessage, path []string, pointer, field, input, source string, value json.RawMessage, check BodyPathCheck) error {
+	key := path[0]
+	pointer += "/" + presetPointerToken(key)
+	if field != "" {
+		field += "."
+	}
+	field += key
+	existing, present := obj[key]
+	if len(path) == 1 {
+		if present {
+			return fmt.Errorf("key %q is set both by %s and by %s; pass exactly one", field, input, source)
+		}
+		obj[key] = value
+		return nil
+	}
+	child := map[string]json.RawMessage{}
+	if present {
+		if err := json.Unmarshal(existing, &child); err != nil || child == nil {
+			return fmt.Errorf("cannot combine %s with %s: %s must be a JSON object", input, source, field)
+		}
+		if check != nil {
+			if err := check(pointer, field, source, existing); err != nil {
+				return err
+			}
+		}
+	}
+	if err := mergeBodyPath(child, path[1:], pointer, field, input, source, value, check); err != nil {
+		return err
+	}
+	encoded, err := json.Marshal(child)
+	if err != nil {
+		return err
+	}
+	obj[key] = encoded
+	return nil
+}
+
+func SetBodyPath(body map[string]any, path []string, value any) {
+	for _, key := range path[:len(path)-1] {
+		child, ok := body[key].(map[string]any)
+		if !ok {
+			child = map[string]any{}
+			body[key] = child
+		}
+		body = child
+	}
+	body[path[len(path)-1]] = value
 }

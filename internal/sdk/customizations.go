@@ -42,6 +42,11 @@ func newCustomizations(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization for this media can also be used; any permission granted on
+// the media allows reading its customizations.
 func (s *Customizations) Get(ctx context.Context, request operations.GetMediasMediaIDCustomizationsRequest, opts ...operations.Option) (*operations.GetMediasMediaIDCustomizationsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -283,6 +288,10 @@ func (s *Customizations) Get(ctx context.Context, request operations.GetMediasMe
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `edit` permission on this media can also be used.
 func (s *Customizations) Create(ctx context.Context, request operations.PostMediasMediaIDCustomizationsRequest, opts ...operations.Option) (*operations.PostMediasMediaIDCustomizationsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -531,6 +540,10 @@ func (s *Customizations) Create(ctx context.Context, request operations.PostMedi
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `edit` permission on this media can also be used.
 func (s *Customizations) Update(ctx context.Context, request operations.PutMediasMediaIDCustomizationsRequest, opts ...operations.Option) (*operations.PutMediasMediaIDCustomizationsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -693,6 +706,31 @@ func (s *Customizations) Update(ctx context.Context, request operations.PutMedia
 			}
 			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
+	case httpRes.StatusCode == 403:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out sdkerrors.PutMediasMediaIDCustomizationsForbiddenError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
+			}
+
+			out.HTTPMeta = components.HTTPMetadata{
+				Request:  req,
+				Response: httpRes,
+			}
+			return nil, &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
 	case httpRes.StatusCode == 404:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
@@ -779,6 +817,10 @@ func (s *Customizations) Update(ctx context.Context, request operations.PutMedia
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `edit` permission on this media can also be used.
 func (s *Customizations) Delete(ctx context.Context, request operations.DeleteMediasMediaIDCustomizationsRequest, opts ...operations.Option) (*operations.DeleteMediasMediaIDCustomizationsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -905,6 +947,31 @@ func (s *Customizations) Delete(ctx context.Context, request operations.DeleteMe
 			}
 			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
+	case httpRes.StatusCode == 403:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out sdkerrors.DeleteMediasMediaIDCustomizationsForbiddenError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
+			}
+
+			out.HTTPMeta = components.HTTPMetadata{
+				Request:  req,
+				Response: httpRes,
+			}
+			return nil, &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
 	case httpRes.StatusCode == 404:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
@@ -992,6 +1059,11 @@ func (s *Customizations) Delete(ctx context.Context, request operations.DeleteMe
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization for this media can also be used; any permission granted on
+// the media allows reading its customizations.
 func (s *Customizations) GetAppearance(ctx context.Context, request operations.GetMediasMediaIDCustomizationsAppearanceRequest, opts ...operations.Option) (*operations.GetMediasMediaIDCustomizationsAppearanceResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1235,6 +1307,10 @@ func (s *Customizations) GetAppearance(ctx context.Context, request operations.G
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `edit` permission on this media can also be used.
 func (s *Customizations) UpdateAppearance(ctx context.Context, request operations.PutMediasMediaIDCustomizationsAppearanceRequest, opts ...operations.Option) (*operations.PutMediasMediaIDCustomizationsAppearanceResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1535,6 +1611,11 @@ func (s *Customizations) UpdateAppearance(ctx context.Context, request operation
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization for this media can also be used; any permission granted on
+// the media allows reading its customizations.
 func (s *Customizations) GetPlayback(ctx context.Context, request operations.GetMediasMediaIDCustomizationsPlaybackRequest, opts ...operations.Option) (*operations.GetMediasMediaIDCustomizationsPlaybackResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1778,6 +1859,10 @@ func (s *Customizations) GetPlayback(ctx context.Context, request operations.Get
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `edit` permission on this media can also be used.
 func (s *Customizations) UpdatePlayback(ctx context.Context, request operations.PutMediasMediaIDCustomizationsPlaybackRequest, opts ...operations.Option) (*operations.PutMediasMediaIDCustomizationsPlaybackResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -2078,6 +2163,11 @@ func (s *Customizations) UpdatePlayback(ctx context.Context, request operations.
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization for this media can also be used; any permission granted on
+// the media allows reading its customizations.
 func (s *Customizations) GetThumbnail(ctx context.Context, request operations.GetMediasMediaIDCustomizationsThumbnailRequest, opts ...operations.Option) (*operations.GetMediasMediaIDCustomizationsThumbnailResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -2321,6 +2411,10 @@ func (s *Customizations) GetThumbnail(ctx context.Context, request operations.Ge
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `edit` permission on this media can also be used.
 func (s *Customizations) UpdateThumbnail(ctx context.Context, request operations.PutMediasMediaIDCustomizationsThumbnailRequest, opts ...operations.Option) (*operations.PutMediasMediaIDCustomizationsThumbnailResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -2620,6 +2714,11 @@ func (s *Customizations) UpdateThumbnail(ctx context.Context, request operations
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization for this media can also be used; any permission granted on
+// the media allows reading its customizations.
 func (s *Customizations) GetAccessibility(ctx context.Context, request operations.GetMediasMediaIDCustomizationsAccessibilityRequest, opts ...operations.Option) (*operations.GetMediasMediaIDCustomizationsAccessibilityResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -2863,6 +2962,10 @@ func (s *Customizations) GetAccessibility(ctx context.Context, request operation
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `edit` permission on this media can also be used.
 func (s *Customizations) UpdateAccessibility(ctx context.Context, request operations.PutMediasMediaIDCustomizationsAccessibilityRequest, opts ...operations.Option) (*operations.PutMediasMediaIDCustomizationsAccessibilityResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -3162,6 +3265,11 @@ func (s *Customizations) UpdateAccessibility(ctx context.Context, request operat
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization for this media can also be used; any permission granted on
+// the media allows reading its customizations.
 func (s *Customizations) GetChapters(ctx context.Context, request operations.GetMediasMediaIDCustomizationsChaptersRequest, opts ...operations.Option) (*operations.GetMediasMediaIDCustomizationsChaptersResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -3404,6 +3512,10 @@ func (s *Customizations) GetChapters(ctx context.Context, request operations.Get
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `edit` permission on this media can also be used.
 func (s *Customizations) UpdateChapters(ctx context.Context, request operations.PutMediasMediaIDCustomizationsChaptersRequestRequest, opts ...operations.Option) (*operations.PutMediasMediaIDCustomizationsChaptersResponseResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -3703,6 +3815,11 @@ func (s *Customizations) UpdateChapters(ctx context.Context, request operations.
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization for this media can also be used; any permission granted on
+// the media allows reading its customizations.
 func (s *Customizations) GetEngagement(ctx context.Context, request operations.GetMediasMediaIDCustomizationsEngagementRequest, opts ...operations.Option) (*operations.GetMediasMediaIDCustomizationsEngagementResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -3946,6 +4063,10 @@ func (s *Customizations) GetEngagement(ctx context.Context, request operations.G
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `edit` permission on this media can also be used.
 func (s *Customizations) UpdateEngagement(ctx context.Context, request operations.PutMediasMediaIDCustomizationsEngagementRequest, opts ...operations.Option) (*operations.PutMediasMediaIDCustomizationsEngagementResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -4246,6 +4367,11 @@ func (s *Customizations) UpdateEngagement(ctx context.Context, request operation
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization for this media can also be used; any permission granted on
+// the media allows reading its customizations.
 func (s *Customizations) GetRelatedMedia(ctx context.Context, request operations.GetMediasMediaIDCustomizationsRelatedMediaRequest, opts ...operations.Option) (*operations.GetMediasMediaIDCustomizationsRelatedMediaResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -4489,6 +4615,10 @@ func (s *Customizations) GetRelatedMedia(ctx context.Context, request operations
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `edit` permission on this media can also be used.
 func (s *Customizations) UpdateRelatedMedia(ctx context.Context, request operations.PutMediasMediaIDCustomizationsRelatedMediaRequest, opts ...operations.Option) (*operations.PutMediasMediaIDCustomizationsRelatedMediaResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -4789,6 +4919,11 @@ func (s *Customizations) UpdateRelatedMedia(ctx context.Context, request operati
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization for this media can also be used; any permission granted on
+// the media allows reading its customizations.
 func (s *Customizations) GetSharing(ctx context.Context, request operations.GetMediasMediaIDCustomizationsSharingRequest, opts ...operations.Option) (*operations.GetMediasMediaIDCustomizationsSharingResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -5032,6 +5167,10 @@ func (s *Customizations) GetSharing(ctx context.Context, request operations.GetM
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `edit` permission on this media can also be used.
 func (s *Customizations) UpdateSharing(ctx context.Context, request operations.PutMediasMediaIDCustomizationsSharingRequest, opts ...operations.Option) (*operations.PutMediasMediaIDCustomizationsSharingResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -5331,6 +5470,11 @@ func (s *Customizations) UpdateSharing(ctx context.Context, request operations.P
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization for this media can also be used; any permission granted on
+// the media allows reading its customizations.
 func (s *Customizations) GetLeadCapture(ctx context.Context, request operations.GetMediasMediaIDCustomizationsLeadCaptureRequest, opts ...operations.Option) (*operations.GetMediasMediaIDCustomizationsLeadCaptureResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -5573,6 +5717,10 @@ func (s *Customizations) GetLeadCapture(ctx context.Context, request operations.
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `edit` permission on this media can also be used.
 func (s *Customizations) UpdateLeadCapture(ctx context.Context, request operations.PutMediasMediaIDCustomizationsLeadCaptureRequest, opts ...operations.Option) (*operations.PutMediasMediaIDCustomizationsLeadCaptureResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -5872,6 +6020,11 @@ func (s *Customizations) UpdateLeadCapture(ctx context.Context, request operatio
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization for this media can also be used; any permission granted on
+// the media allows reading its customizations.
 func (s *Customizations) GetAccess(ctx context.Context, request operations.GetMediasMediaIDCustomizationsAccessRequest, opts ...operations.Option) (*operations.GetMediasMediaIDCustomizationsAccessResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -6114,6 +6267,10 @@ func (s *Customizations) GetAccess(ctx context.Context, request operations.GetMe
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `edit` permission on this media can also be used.
 func (s *Customizations) UpdateAccess(ctx context.Context, request operations.PutMediasMediaIDCustomizationsAccessRequest, opts ...operations.Option) (*operations.PutMediasMediaIDCustomizationsAccessResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

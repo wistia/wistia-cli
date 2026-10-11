@@ -23,6 +23,7 @@ Sources are shown as:
   [env]     - Set via environment variable (WISTIA_CLI_*)
   [keyring] - Set via OS keychain (stored by configure command)
   [config]  - Set via config file (~/.config/wistia/config.yaml)
+  [default] - Built-in global parameter flag default
   [unset]   - Not configured
 
 Credential values are masked for security.`,
@@ -46,7 +47,7 @@ func runWhoamiCmd(cmd *cobra.Command, args []string) error {
 		}
 		credentials := map[string]any{}
 		{
-			value, source := config.ResolveSecurityCredential(cmd, "bearer-auth")
+			value, source := config.ResolveRequestSecurityCredential(cmd, "bearer-auth")
 			credentials["bearer-auth"] = map[string]any{"source": source, "value": maskSecret(value)}
 		}
 		info["credentials"] = credentials
@@ -65,7 +66,7 @@ func runWhoamiCmd(cmd *cobra.Command, args []string) error {
 
 	// HTTP Bearer
 	{
-		value, source := config.ResolveSecurityCredential(cmd, "bearer-auth")
+		value, source := config.ResolveRequestSecurityCredential(cmd, "bearer-auth")
 		fmt.Fprintf(out, "  --%-25s [%-7s] %s\n", "bearer-auth", source, maskSecret(value))
 	}
 

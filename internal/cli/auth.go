@@ -4,9 +4,9 @@
 package cli
 
 import (
+	"charm.land/huh/v2"
+	"charm.land/lipgloss/v2"
 	"fmt"
-	"github.com/charmbracelet/huh"
-	"github.com/charmbracelet/lipgloss"
 	"github.com/spf13/cobra"
 	"github.com/wistia/wistia-cli/internal/config"
 	"github.com/wistia/wistia-cli/internal/flagutil"
@@ -101,7 +101,7 @@ func runAuthLoginCmd(cmd *cobra.Command, args []string) error {
 	}
 
 	keychainStored := false
-	formMode := interactive.Resolve(cmd).FormMode()
+	formMode := interactive.Resolve(cmd).SetupFormMode(flagutil.AnyFlagChanged(cmd, "bearer-auth"))
 
 	if formMode == interactive.FormOff {
 		// Non-interactive: store any explicitly-set flags without prompting
@@ -182,14 +182,22 @@ func runAuthLogoutCmd(cmd *cobra.Command, args []string) error {
 	}
 
 	out := cmd.OutOrStdout()
-	fmt.Fprintln(out, "All authentication credentials have been cleared.")
+	if !config.KeyringAvailable() {
+		fmt.Fprintln(out, "Authentication credentials have been cleared from the config file; the OS keychain was skipped, so credentials stored there (if any) were kept.")
+	} else {
+		fmt.Fprintln(out, "All authentication credentials have been cleared.")
+	}
 	fmt.Fprintf(out, "Configuration saved to %s\n", config.GetConfigPath())
 	return nil
 }
 
 // authFormTheme builds the form theme for auth login.
-func authFormTheme() *huh.Theme {
-	t := *huh.ThemeBase()
+func authFormTheme() huh.Theme {
+	return huh.ThemeFunc(authFormStyles)
+}
+
+func authFormStyles(isDark bool) *huh.Styles {
+	t := *huh.ThemeBase(isDark)
 
 	accent := lipgloss.Color("#38BDF8")
 	dimmed := lipgloss.Color("#64748B")

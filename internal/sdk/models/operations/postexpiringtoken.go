@@ -5,69 +5,699 @@ package operations
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
 	"github.com/wistia/wistia-cli/internal/sdk/sdkinternal/utils"
 )
 
-// PostExpiringTokenType - The type of object the permission is being performed on. Supports `media`, `folder` and `account`.
-type PostExpiringTokenType string
+type Permission6 string
 
 const (
-	PostExpiringTokenTypeMedia   PostExpiringTokenType = "media"
-	PostExpiringTokenTypeFolder  PostExpiringTokenType = "folder"
-	PostExpiringTokenTypeAccount PostExpiringTokenType = "account"
+	Permission6Show    Permission6 = "show"
+	Permission6Destroy Permission6 = "destroy"
 )
 
-func (e PostExpiringTokenType) ToPointer() *PostExpiringTokenType {
+func (e Permission6) ToPointer() *Permission6 {
 	return &e
 }
-func (e *PostExpiringTokenType) UnmarshalJSON(data []byte) error {
+func (e *Permission6) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
 		return err
 	}
 	switch v {
-	case "media":
+	case "show":
 		fallthrough
-	case "folder":
-		fallthrough
-	case "account":
-		*e = PostExpiringTokenType(v)
+	case "destroy":
+		*e = Permission6(v)
 		return nil
 	default:
-		return fmt.Errorf("invalid value for PostExpiringTokenType: %v", v)
+		return fmt.Errorf("invalid value for Permission6: %v", v)
 	}
 }
 
-type Authorization struct {
-	// The type of object the permission is being performed on. Supports `media`, `folder` and `account`.
-	Type PostExpiringTokenType `json:"type"`
-	// The id of the object the permissions are being performed on: the hashed id of a `media` or `folder`, or the numeric `id` of the `account` (as returned by `GET /modern/account`), which must be the token's own account.
+// ReviewBundleAuthorization - A rule on one review bundle. Creating a review bundle needs no rule on a
+// review bundle; it needs the `share` permission on every media in it.
+type ReviewBundleAuthorization struct {
+	//lint:ignore U1000 accessed via reflection for JSON marshaling
+	type_ string `const:"review-bundle" json:"type"`
+	// The review bundle's hashed id.
 	ID string `json:"id"`
-	// The permissions granted on the object. `media` supports `show`, `update`, `destroy` and `edit-transcripts`; `folder` supports `show`, `update` and `destroy`; `account` supports `create-folders`. Any permission implicitly allows viewing the object; all other permissions must be declared explicitly.
-	Permissions []string `json:"permissions"`
+	// The permissions granted on the review bundle.
+	Permissions []Permission6 `json:"permissions"`
 }
 
-func (a *Authorization) GetType() PostExpiringTokenType {
-	if a == nil {
-		return PostExpiringTokenType("")
+func (r ReviewBundleAuthorization) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(r, "", false)
+}
+
+func (r *ReviewBundleAuthorization) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &r, "", false, nil); err != nil {
+		return err
 	}
-	return a.Type
+	return nil
 }
 
-func (a *Authorization) GetID() string {
+func (r *ReviewBundleAuthorization) GetType() string {
+	return "review-bundle"
+}
+
+func (r *ReviewBundleAuthorization) GetID() string {
+	if r == nil {
+		return ""
+	}
+	return r.ID
+}
+
+func (r *ReviewBundleAuthorization) GetPermissions() []Permission6 {
+	if r == nil {
+		return []Permission6{}
+	}
+	return r.Permissions
+}
+
+type Permission5 string
+
+const (
+	Permission5Show    Permission5 = "show"
+	Permission5Update  Permission5 = "update"
+	Permission5Destroy Permission5 = "destroy"
+)
+
+func (e Permission5) ToPointer() *Permission5 {
+	return &e
+}
+func (e *Permission5) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "show":
+		fallthrough
+	case "update":
+		fallthrough
+	case "destroy":
+		*e = Permission5(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for Permission5: %v", v)
+	}
+}
+
+// ChannelAuthorization - A rule on one channel. It also covers the channel's episodes and
+// collaborators: any permission lists and shows its episodes, and `update`
+// adds, edits, publishes, unpublishes and removes episodes and lists, invites
+// and removes collaborators.
+type ChannelAuthorization struct {
+	//lint:ignore U1000 accessed via reflection for JSON marshaling
+	type_ string `const:"channel" json:"type"`
+	// The channel's hashed id.
+	ID string `json:"id"`
+	// The permissions granted on the channel.
+	Permissions []Permission5 `json:"permissions"`
+}
+
+func (c ChannelAuthorization) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(c, "", false)
+}
+
+func (c *ChannelAuthorization) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &c, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (c *ChannelAuthorization) GetType() string {
+	return "channel"
+}
+
+func (c *ChannelAuthorization) GetID() string {
+	if c == nil {
+		return ""
+	}
+	return c.ID
+}
+
+func (c *ChannelAuthorization) GetPermissions() []Permission5 {
+	if c == nil {
+		return []Permission5{}
+	}
+	return c.Permissions
+}
+
+type Permission4 string
+
+const (
+	Permission4Show      Permission4 = "show"
+	Permission4Update    Permission4 = "update"
+	Permission4Destroy   Permission4 = "destroy"
+	Permission4ViewStats Permission4 = "view-stats"
+)
+
+func (e Permission4) ToPointer() *Permission4 {
+	return &e
+}
+func (e *Permission4) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "show":
+		fallthrough
+	case "update":
+		fallthrough
+	case "destroy":
+		fallthrough
+	case "view-stats":
+		*e = Permission4(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for Permission4: %v", v)
+	}
+}
+
+// WebinarAuthorization - A rule on one webinar. It also covers the webinar's registrations and
+// collaborators: any permission lists its registrations, and `update` registers
+// attendees and lists, invites and removes collaborators.
+type WebinarAuthorization struct {
+	//lint:ignore U1000 accessed via reflection for JSON marshaling
+	type_ string `const:"webinar" json:"type"`
+	// The webinar's hashed id.
+	ID string `json:"id"`
+	// The permissions granted on the webinar.
+	Permissions []Permission4 `json:"permissions"`
+}
+
+func (w WebinarAuthorization) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(w, "", false)
+}
+
+func (w *WebinarAuthorization) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &w, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (w *WebinarAuthorization) GetType() string {
+	return "webinar"
+}
+
+func (w *WebinarAuthorization) GetID() string {
+	if w == nil {
+		return ""
+	}
+	return w.ID
+}
+
+func (w *WebinarAuthorization) GetPermissions() []Permission4 {
+	if w == nil {
+		return []Permission4{}
+	}
+	return w.Permissions
+}
+
+type Permission3 string
+
+const (
+	Permission3Show                 Permission3 = "show"
+	Permission3CreateFolders        Permission3 = "create-folders"
+	Permission3CreateChannels       Permission3 = "create-channels"
+	Permission3CreateWebinars       Permission3 = "create-webinars"
+	Permission3ViewStats            Permission3 = "view-stats"
+	Permission3ManageTeam           Permission3 = "manage-team"
+	Permission3AccessCustomMetadata Permission3 = "access-custom-metadata"
+	Permission3ManageCustomMetadata Permission3 = "manage-custom-metadata"
+	Permission3ViewSpeakers         Permission3 = "view-speakers"
+	Permission3ManageSpeakers       Permission3 = "manage-speakers"
+	Permission3ViewTags             Permission3 = "view-tags"
+	Permission3ManageTags           Permission3 = "manage-tags"
+	Permission3ManageAllowedDomains Permission3 = "manage-allowed-domains"
+)
+
+func (e Permission3) ToPointer() *Permission3 {
+	return &e
+}
+func (e *Permission3) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "show":
+		fallthrough
+	case "create-folders":
+		fallthrough
+	case "create-channels":
+		fallthrough
+	case "create-webinars":
+		fallthrough
+	case "view-stats":
+		fallthrough
+	case "manage-team":
+		fallthrough
+	case "access-custom-metadata":
+		fallthrough
+	case "manage-custom-metadata":
+		fallthrough
+	case "view-speakers":
+		fallthrough
+	case "manage-speakers":
+		fallthrough
+	case "view-tags":
+		fallthrough
+	case "manage-tags":
+		fallthrough
+	case "manage-allowed-domains":
+		*e = Permission3(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for Permission3: %v", v)
+	}
+}
+
+// AccountAuthorization - A rule on the token's own account. `create-folders` also allows copying any
+// folder the token names, and `view-stats` allows reading the account-wide
+// analytics endpoints. `manage-team` allows inviting contacts to the account.
+// `access-custom-metadata` allows listing and showing the
+// account's custom metadata field definitions and, together with a media rule,
+// reading that media's custom metadata values; `manage-custom-metadata` implies
+// it and also allows creating, updating, archiving and restoring definitions.
+// `view-speakers` lists the account's speaker profiles, and `manage-speakers`
+// also creates, edits and deletes them.
+// `view-tags` lists the account's tags, and `manage-tags` also creates and
+// deletes them.
+// `manage-allowed-domains` lists, shows, adds and deletes the account's allowed
+// domains; without it a token sees none.
+type AccountAuthorization struct {
+	//lint:ignore U1000 accessed via reflection for JSON marshaling
+	type_ string `const:"account" json:"type"`
+	// The account's numeric `id`, as returned by `GET /modern/account`. It must be the token's own account.
+	ID string `json:"id"`
+	// The permissions granted on the account.
+	Permissions []Permission3 `json:"permissions"`
+}
+
+func (a AccountAuthorization) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(a, "", false)
+}
+
+func (a *AccountAuthorization) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &a, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (a *AccountAuthorization) GetType() string {
+	return "account"
+}
+
+func (a *AccountAuthorization) GetID() string {
 	if a == nil {
 		return ""
 	}
 	return a.ID
 }
 
-func (a *Authorization) GetPermissions() []string {
+func (a *AccountAuthorization) GetPermissions() []Permission3 {
 	if a == nil {
-		return []string{}
+		return []Permission3{}
 	}
 	return a.Permissions
+}
+
+type Permission2 string
+
+const (
+	Permission2Show      Permission2 = "show"
+	Permission2Update    Permission2 = "update"
+	Permission2Destroy   Permission2 = "destroy"
+	Permission2Upload    Permission2 = "upload"
+	Permission2Share     Permission2 = "share"
+	Permission2ViewStats Permission2 = "view-stats"
+)
+
+func (e Permission2) ToPointer() *Permission2 {
+	return &e
+}
+func (e *Permission2) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "show":
+		fallthrough
+	case "update":
+		fallthrough
+	case "destroy":
+		fallthrough
+	case "upload":
+		fallthrough
+	case "share":
+		fallthrough
+	case "view-stats":
+		*e = Permission2(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for Permission2: %v", v)
+	}
+}
+
+// FolderAuthorization - A rule on one folder. It also covers the folder's subfolders: any permission
+// lists and shows them, and `update` creates, renames and deletes them. It
+// also covers the folder's sharings: any permission lists and shows them,
+// `share` creates them, and `update` edits and deletes them.
+type FolderAuthorization struct {
+	//lint:ignore U1000 accessed via reflection for JSON marshaling
+	type_ string `const:"folder" json:"type"`
+	// The folder's hashed id.
+	ID string `json:"id"`
+	// The permissions granted on the folder.
+	Permissions []Permission2 `json:"permissions"`
+}
+
+func (f FolderAuthorization) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(f, "", false)
+}
+
+func (f *FolderAuthorization) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &f, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (f *FolderAuthorization) GetType() string {
+	return "folder"
+}
+
+func (f *FolderAuthorization) GetID() string {
+	if f == nil {
+		return ""
+	}
+	return f.ID
+}
+
+func (f *FolderAuthorization) GetPermissions() []Permission2 {
+	if f == nil {
+		return []Permission2{}
+	}
+	return f.Permissions
+}
+
+type Permission1 string
+
+const (
+	Permission1Show                   Permission1 = "show"
+	Permission1Update                 Permission1 = "update"
+	Permission1Destroy                Permission1 = "destroy"
+	Permission1EditTranscripts        Permission1 = "edit-transcripts"
+	Permission1ViewStats              Permission1 = "view-stats"
+	Permission1Translate              Permission1 = "translate"
+	Permission1Archive                Permission1 = "archive"
+	Permission1Edit                   Permission1 = "edit"
+	Permission1Share                  Permission1 = "share"
+	Permission1OrderAudioDescriptions Permission1 = "order-audio-descriptions"
+	Permission1CreateTranscripts      Permission1 = "create-transcripts"
+)
+
+func (e Permission1) ToPointer() *Permission1 {
+	return &e
+}
+func (e *Permission1) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "show":
+		fallthrough
+	case "update":
+		fallthrough
+	case "destroy":
+		fallthrough
+	case "edit-transcripts":
+		fallthrough
+	case "view-stats":
+		fallthrough
+	case "translate":
+		fallthrough
+	case "archive":
+		fallthrough
+	case "edit":
+		fallthrough
+	case "share":
+		fallthrough
+	case "order-audio-descriptions":
+		fallthrough
+	case "create-transcripts":
+		*e = Permission1(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for Permission1: %v", v)
+	}
+}
+
+// MediaAuthorization - A rule on one media. It also covers the localized media (translations and
+// dubs) created from the media; when a rule names a localized media directly,
+// the two rules combine.
+type MediaAuthorization struct {
+	//lint:ignore U1000 accessed via reflection for JSON marshaling
+	type_ string `const:"media" json:"type"`
+	// The media's hashed id.
+	ID string `json:"id"`
+	// The permissions granted on the media. `show` also allows downloading the
+	// media, `archive` also allows restoring it and `edit` allows changing its
+	// player customizations. `edit-transcripts` also lists and shows the
+	// media's localizations, and deletes them together with `update`; no other
+	// permission reaches a media's localizations. `translate` orders text
+	// translations and localizations (dubs). Any permission lists and shows the
+	// media's extended audio descriptions, `update` deletes them and
+	// `order-audio-descriptions` orders one. `edit-transcripts` is the only
+	// permission that also reaches the media's captions and speaker data;
+	// `show`, `update` and `destroy` apply to the media itself and never to
+	// those nested resources. `create-transcripts` allows uploading and
+	// purchasing captions for the media without reading or editing existing
+	// ones. `share` allows adding the media to a new review bundle.
+	//
+	Permissions []Permission1 `json:"permissions"`
+}
+
+func (m MediaAuthorization) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MediaAuthorization) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MediaAuthorization) GetType() string {
+	return "media"
+}
+
+func (m *MediaAuthorization) GetID() string {
+	if m == nil {
+		return ""
+	}
+	return m.ID
+}
+
+func (m *MediaAuthorization) GetPermissions() []Permission1 {
+	if m == nil {
+		return []Permission1{}
+	}
+	return m.Permissions
+}
+
+type AuthorizationType string
+
+const (
+	AuthorizationTypeMedia        AuthorizationType = "media"
+	AuthorizationTypeFolder       AuthorizationType = "folder"
+	AuthorizationTypeAccount      AuthorizationType = "account"
+	AuthorizationTypeWebinar      AuthorizationType = "webinar"
+	AuthorizationTypeChannel      AuthorizationType = "channel"
+	AuthorizationTypeReviewBundle AuthorizationType = "review-bundle"
+)
+
+type Authorization struct {
+	MediaAuthorization        *MediaAuthorization        `queryParam:"inline" union:"member"`
+	FolderAuthorization       *FolderAuthorization       `queryParam:"inline" union:"member"`
+	AccountAuthorization      *AccountAuthorization      `queryParam:"inline" union:"member"`
+	WebinarAuthorization      *WebinarAuthorization      `queryParam:"inline" union:"member"`
+	ChannelAuthorization      *ChannelAuthorization      `queryParam:"inline" union:"member"`
+	ReviewBundleAuthorization *ReviewBundleAuthorization `queryParam:"inline" union:"member"`
+
+	Type AuthorizationType
+}
+
+func CreateAuthorizationMedia(media MediaAuthorization) Authorization {
+	typ := AuthorizationTypeMedia
+
+	return Authorization{
+		MediaAuthorization: &media,
+		Type:               typ,
+	}
+}
+
+func CreateAuthorizationFolder(folder FolderAuthorization) Authorization {
+	typ := AuthorizationTypeFolder
+
+	return Authorization{
+		FolderAuthorization: &folder,
+		Type:                typ,
+	}
+}
+
+func CreateAuthorizationAccount(account AccountAuthorization) Authorization {
+	typ := AuthorizationTypeAccount
+
+	return Authorization{
+		AccountAuthorization: &account,
+		Type:                 typ,
+	}
+}
+
+func CreateAuthorizationWebinar(webinar WebinarAuthorization) Authorization {
+	typ := AuthorizationTypeWebinar
+
+	return Authorization{
+		WebinarAuthorization: &webinar,
+		Type:                 typ,
+	}
+}
+
+func CreateAuthorizationChannel(channel ChannelAuthorization) Authorization {
+	typ := AuthorizationTypeChannel
+
+	return Authorization{
+		ChannelAuthorization: &channel,
+		Type:                 typ,
+	}
+}
+
+func CreateAuthorizationReviewBundle(reviewBundle ReviewBundleAuthorization) Authorization {
+	typ := AuthorizationTypeReviewBundle
+
+	return Authorization{
+		ReviewBundleAuthorization: &reviewBundle,
+		Type:                      typ,
+	}
+}
+
+func (u *Authorization) UnmarshalJSON(data []byte) (err error) {
+	previous := *u
+	*u = Authorization{}
+	defer func() {
+		if err != nil {
+			*u = previous
+		}
+	}()
+
+	type discriminator struct {
+		Type string `json:"type"`
+	}
+
+	dis := new(discriminator)
+	if err := json.Unmarshal(data, &dis); err != nil {
+		return fmt.Errorf("could not unmarshal discriminator: %w", err)
+	}
+
+	switch dis.Type {
+	case "media":
+		mediaAuthorization := new(MediaAuthorization)
+		if err := utils.UnmarshalJSON(data, &mediaAuthorization, "", true, nil); err != nil {
+			return fmt.Errorf("could not unmarshal `%s` into expected (Type == media) type MediaAuthorization within Authorization: %w", string(data), err)
+		}
+
+		u.MediaAuthorization = mediaAuthorization
+		u.Type = AuthorizationTypeMedia
+		return nil
+	case "folder":
+		folderAuthorization := new(FolderAuthorization)
+		if err := utils.UnmarshalJSON(data, &folderAuthorization, "", true, nil); err != nil {
+			return fmt.Errorf("could not unmarshal `%s` into expected (Type == folder) type FolderAuthorization within Authorization: %w", string(data), err)
+		}
+
+		u.FolderAuthorization = folderAuthorization
+		u.Type = AuthorizationTypeFolder
+		return nil
+	case "account":
+		accountAuthorization := new(AccountAuthorization)
+		if err := utils.UnmarshalJSON(data, &accountAuthorization, "", true, nil); err != nil {
+			return fmt.Errorf("could not unmarshal `%s` into expected (Type == account) type AccountAuthorization within Authorization: %w", string(data), err)
+		}
+
+		u.AccountAuthorization = accountAuthorization
+		u.Type = AuthorizationTypeAccount
+		return nil
+	case "webinar":
+		webinarAuthorization := new(WebinarAuthorization)
+		if err := utils.UnmarshalJSON(data, &webinarAuthorization, "", true, nil); err != nil {
+			return fmt.Errorf("could not unmarshal `%s` into expected (Type == webinar) type WebinarAuthorization within Authorization: %w", string(data), err)
+		}
+
+		u.WebinarAuthorization = webinarAuthorization
+		u.Type = AuthorizationTypeWebinar
+		return nil
+	case "channel":
+		channelAuthorization := new(ChannelAuthorization)
+		if err := utils.UnmarshalJSON(data, &channelAuthorization, "", true, nil); err != nil {
+			return fmt.Errorf("could not unmarshal `%s` into expected (Type == channel) type ChannelAuthorization within Authorization: %w", string(data), err)
+		}
+
+		u.ChannelAuthorization = channelAuthorization
+		u.Type = AuthorizationTypeChannel
+		return nil
+	case "review-bundle":
+		reviewBundleAuthorization := new(ReviewBundleAuthorization)
+		if err := utils.UnmarshalJSON(data, &reviewBundleAuthorization, "", true, nil); err != nil {
+			return fmt.Errorf("could not unmarshal `%s` into expected (Type == review-bundle) type ReviewBundleAuthorization within Authorization: %w", string(data), err)
+		}
+
+		u.ReviewBundleAuthorization = reviewBundleAuthorization
+		u.Type = AuthorizationTypeReviewBundle
+		return nil
+	}
+
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for Authorization", string(data))
+}
+
+func (u Authorization) MarshalJSON() ([]byte, error) {
+	if u.MediaAuthorization != nil {
+		return utils.MarshalJSON(u.MediaAuthorization, "", true)
+	}
+
+	if u.FolderAuthorization != nil {
+		return utils.MarshalJSON(u.FolderAuthorization, "", true)
+	}
+
+	if u.AccountAuthorization != nil {
+		return utils.MarshalJSON(u.AccountAuthorization, "", true)
+	}
+
+	if u.WebinarAuthorization != nil {
+		return utils.MarshalJSON(u.WebinarAuthorization, "", true)
+	}
+
+	if u.ChannelAuthorization != nil {
+		return utils.MarshalJSON(u.ChannelAuthorization, "", true)
+	}
+
+	if u.ReviewBundleAuthorization != nil {
+		return utils.MarshalJSON(u.ReviewBundleAuthorization, "", true)
+	}
+
+	return nil, errors.New("could not marshal union type Authorization: all fields are null")
 }
 
 type ExpiringAccessToken struct {
@@ -75,7 +705,14 @@ type ExpiringAccessToken struct {
 	ExpiresAt *string `json:"expires_at,omitzero"`
 	// The scopes the token will be granted. `graphql:all` allows GraphQL requests (e.g. the embedded transcript editor) and `all:delegate_to_contact_permissions` allows REST API requests authorized by the token's authorizations. Defaults to `["graphql:all"]` when omitted.
 	Scopes []string `json:"scopes,omitzero"`
-	// a list of authorizations the token will have
+	// The rules the token carries. Each rule names one object by `type` and `id`
+	// and lists the `permissions` granted on it; which permissions a rule may
+	// grant depends on its `type`.
+	//
+	// Any permission implicitly allows viewing the object; every other permission
+	// must be declared explicitly. The token's creator must hold every permission
+	// a rule grants, including the implied ones, or the request fails with a 422.
+	//
 	Authorizations []Authorization `json:"authorizations,omitzero"`
 }
 
