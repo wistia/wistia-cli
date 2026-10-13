@@ -43,6 +43,11 @@ func newTags(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks *hooks.Ho
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `view-tags` or `manage-tags` permission on the
+// account can also be used.
 func (s *Tags) List(ctx context.Context, request *operations.GetTagsRequest, opts ...operations.Option) (*operations.GetTagsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -288,6 +293,11 @@ func (s *Tags) List(ctx context.Context, request *operations.GetTagsRequest, opt
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `manage-tags` permission on the account can also
+// be used.
 func (s *Tags) Create(ctx context.Context, request operations.PostTagsRequest, opts ...operations.Option) (*operations.PostTagsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -586,6 +596,11 @@ func (s *Tags) Create(ctx context.Context, request operations.PostTagsRequest, o
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `manage-tags` permission on the account can also
+// be used.
 func (s *Tags) Delete(ctx context.Context, request operations.DeleteTagsNameRequest, opts ...operations.Option) (*operations.DeleteTagsNameResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
