@@ -31,14 +31,15 @@ func newBulkActions(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks *h
 	}
 }
 
-// PostBulk - Create Bulk Actions
+// Create Bulk Actions
 // Submits a batch of up to 1000 create, update, delete, and move actions to be
 // processed asynchronously. Returns a background job status whose Show
 // endpoint reports aggregate progress and per-action results, including the
 // hashed IDs of created records.
 //
 // Supported resource types are `media`, `folder`, `subfolder`, `channel`,
-// `channel_episode`, `captions`, and the ten `customization_*` concerns. A
+// `channel_episode`, `captions`, `media_speaker`, and the ten
+// `customization_*` concerns. A
 // `folder` is a top-level folder (previously called a project); a `subfolder`
 // is nested inside one and requires `folder_id` and `name` when created. A
 // `captions` action operates on one caption track -- one media in one
@@ -51,6 +52,16 @@ func newBulkActions(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks *h
 // A `move` action targets one media and accepts a destination `folder_id` and
 // optional `subfolder_id`. Bulk moves can use different destinations and are
 // not subject to the Move Media endpoint's 100-item limit or separate throttle.
+//
+// A `media_speaker` action labels speakers on one media. A `create` takes the
+// media's hashed ID as its `id` and the Assign Speaker body, or, to assign
+// several people on that media, a `speakers` list of up to 20 objects each
+// with a `speaker_profile_id` and an optional `detected_speaker_id`, plus the
+// media's `expected_version`. A media's speakers are assigned together, so a
+// failure leaves that media unchanged; put all of one media's speakers in one
+// action, since each named speaker changes the media's version. A `delete` takes a `media_speaker_id`
+// as its `id` and an optional `expected_version`. Neither can be used in a
+// `job`.
 //
 // Player customizations are addressed one concern at a time
 // (`customization_appearance`, `customization_playback`, and so on), matching
@@ -86,7 +97,13 @@ func newBulkActions(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks *h
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
-func (s *BulkActions) PostBulk(ctx context.Context, request operations.PostBulkRequest, opts ...operations.Option) (*operations.PostBulkResponse, error) {
+//
+// [Expiring access tokens](https://docs.wistia.com/reference/post_expiring-token)
+// with authorizations cannot use this endpoint: each action is authorized
+// later, in a background job, as the persisted contact that submitted it,
+// and a token's authorizations are not carried into that job. Such requests
+// are forbidden.
+func (s *BulkActions) Create(ctx context.Context, request operations.PostBulkRequest, opts ...operations.Option) (*operations.PostBulkResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,
@@ -257,6 +274,31 @@ func (s *BulkActions) PostBulk(ctx context.Context, request operations.PostBulkR
 			}
 
 			var out sdkerrors.PostBulkUnauthorizedError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
+			}
+
+			out.HTTPMeta = components.HTTPMetadata{
+				Request:  req,
+				Response: httpRes,
+			}
+			return nil, &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
+	case httpRes.StatusCode == 403:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out sdkerrors.PostBulkForbiddenError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}

@@ -27,7 +27,7 @@ func initGetLanguagesCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "get-languages [media-id]",
 		Short:   "Show Media Languages",
-		Long:    "Retrieve language analytics for a video. Returns a breakdown of plays by\nviewer browser language, sorted by number of plays in descending order.\n\nThe date range between `start_date` and `end_date` must not exceed 2 years.\n\n\n## Requires api token with one of the following permissions\n```\nRead detailed stats\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
+		Long:    "Retrieve language analytics for a video. Returns a breakdown of plays by\nviewer browser language, sorted by number of plays in descending order.\n\nThe date range between `start_date` and `end_date` must not exceed 2 years.\n\n\n## Requires api token with one of the following permissions\n```\nRead detailed stats\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\nauthorization granting the `view-stats` permission on this media can also\nbe used.",
 		Example: "  wistia analytics-media get-languages --media-id <id> --start-date 2026-07-01 --end-date 2024-01-19",
 		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runGetLanguagesCmd,
@@ -83,7 +83,10 @@ func runGetLanguagesCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.AnalyticsMedia.GetLanguages(cmd.Context(), *req, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}
