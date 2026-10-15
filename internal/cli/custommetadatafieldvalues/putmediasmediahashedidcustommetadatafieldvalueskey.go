@@ -17,7 +17,7 @@ import (
 var putMediasMediaHashedIDCustomMetadataFieldValuesKeyCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "media-hashed-id", Shorthand: "m", FieldPath: "MediaHashedID", Kind: flagutil.FlagKindString, Required: true, Description: "The hashed ID of the media whose custom metadata field value is to be set. [required]"},
 	{FlagName: "key", Shorthand: "k", FieldPath: "Key", Kind: flagutil.FlagKindString, Required: true, Description: "The field definition's immutable key. [required]"},
-	{FlagName: "value", Shorthand: "v", FieldPath: "Body.Value", Kind: flagutil.FlagKindUnion, Union: &flagutil.UnionMeta{Discriminated: false, Optional: true, TypeDescription: "JSON value (one of: string | number | boolean | array of any | { \"type\": string, \"id\": string })"}},
+	{FlagName: "value", Shorthand: "v", FieldPath: "Body.Value", Kind: flagutil.FlagKindUnion, Union: &flagutil.UnionMeta{Discriminated: false, Optional: true, TypeDescription: "JSON value (one of: string | number | boolean | array of any)"}},
 }
 
 // initPutMediasMediaHashedIdCustomMetadataFieldValuesKeyCmd initializes the put-medias-media-hashed-id-custom-metadata-field-values-key command.
@@ -25,7 +25,7 @@ func initPutMediasMediaHashedIdCustomMetadataFieldValuesKeyCmd(parent *cobra.Com
 	var cmd = &cobra.Command{
 		Use:     "put-medias-media-hashed-id-custom-metadata-field-values-key",
 		Short:   "Set Custom Metadata Field Value",
-		Long:    "Sets (or replaces) the value of a custom metadata field on a media, addressed by the field definition's immutable key. The lookup is case-insensitive.\n\nThe request body carries a single polymorphic `value` field whose JSON type must match the definition's `field_type`:\n\n- text-like types (`text`, `short_text`, `url`, `email`, `money`, `time`, `datetime`) — a string; format-validated per type (e.g. money is `\"USD 12.34\"`, time is 24-hour `\"14:30\"`, datetime is UTC ISO 8601 `\"2026-07-10T14:30:00Z\"`)\n- `number` — a JSON number (a numeric string is coerced)\n- `date` — an ISO 8601 date string like `\"2026-07-10\"`\n- `boolean` — a JSON boolean; `false` persists as false (it does not clear the field)\n- `single_select` — the chosen option's key (a string); unknown option keys return a 422\n- `multi_select` — an array of the chosen options' keys (strings); unknown option keys or a non-array value return a 422\n- `contact_ref` — a contact reference object `{\"type\": \"contact\" | \"contact_group\", \"id\": \"<hashed_id>\"}`; unknown ids, ids from another account, and group references on fields that do not allow groups return a 422\n- `contact_multi_ref` — an array of contact reference objects; the same 422 rules apply per reference, and a non-array value returns a 422\n\nA null or absent `value` clears the field (equivalent to the DELETE endpoint), as does an empty array for `multi_select` and `contact_multi_ref`. Type mismatches and format violations return a 422 with a field-level message.\n\nOnly values for active field definitions can be written. Requires the custom metadata feature to be available on your account.\n\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\nUpload, read & update all media\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
+		Long:    "Sets (or replaces) the value of a custom metadata field on a media, addressed by the field definition's immutable key. The lookup is case-insensitive.\n\nThe request body carries a single polymorphic `value` field whose JSON type must match the definition's `field_type`:\n\n- text-like types (`text`, `short_text`, `time`, `datetime`) — a string; format-validated per type (e.g. time is 24-hour `\"14:30\"`, datetime is UTC ISO 8601 `\"2026-07-10T14:30:00Z\"`)\n- `number` — a JSON number (a numeric string is coerced)\n- `date` — an ISO 8601 date string like `\"2026-07-10\"`\n- `boolean` — a JSON boolean; `false` persists as false (it does not clear the field)\n- `single_select` — the chosen option's key (a string); unknown option keys return a 422\n- `multi_select` — an array of the chosen options' keys (strings); unknown option keys or a non-array value return a 422\n\nA null or absent `value` clears the field (equivalent to the DELETE endpoint), as does an empty array for `multi_select`. Type mismatches and format violations return a 422 with a field-level message.\n\nOnly values for active field definitions can be written. Requires the custom metadata feature to be available on your account.\n\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\nUpload, read & update all media\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope, an `account`\nauthorization granting the `access-custom-metadata` permission and an\nauthorization granting the `update` permission on the media can also be\nused.",
 		Example: "  wistia custom-metadata-field-values put-medias-media-hashed-id-custom-metadata-field-values-key --media-hashed-id <id> --key client",
 		Args:    cobra.NoArgs,
 		RunE:    runPutMediasMediaHashedIdCustomMetadataFieldValuesKeyCmd,
@@ -39,7 +39,7 @@ func initPutMediasMediaHashedIdCustomMetadataFieldValuesKeyCmd(parent *cobra.Com
 		return fmt.Errorf("invalid metadata for put-medias-media-hashed-id-custom-metadata-field-values-key: %w", err)
 	}
 	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
-	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Required: false, Kind: "json", BodyFlag: true})
 	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
 	if err := flagutil.AnnotateBodyFields(cmd, putMediasMediaHashedIDCustomMetadataFieldValuesKeyCmdMeta, "Body", "body"); err != nil {
 		return fmt.Errorf("annotate body fields for put-medias-media-hashed-id-custom-metadata-field-values-key: %w", err)
@@ -76,7 +76,10 @@ func runPutMediasMediaHashedIdCustomMetadataFieldValuesKeyCmd(cmd *cobra.Command
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.CustomMetadataFieldValues.PutMediasMediaHashedIDCustomMetadataFieldValuesKey(cmd.Context(), *req, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

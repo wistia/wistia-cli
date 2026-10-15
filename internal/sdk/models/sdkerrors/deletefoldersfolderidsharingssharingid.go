@@ -35,6 +35,19 @@ func (e *DeleteFoldersFolderIDSharingsSharingIDNotFoundError) Error() string {
 	return string(data)
 }
 
+// DeleteFoldersFolderIDSharingsSharingIDForbiddenError - Forbidden, token is valid but account does not have access to feature
+type DeleteFoldersFolderIDSharingsSharingIDForbiddenError struct {
+	Error_   *string                 `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata `json:"-"`
+}
+
+var _ error = &DeleteFoldersFolderIDSharingsSharingIDForbiddenError{}
+
+func (e *DeleteFoldersFolderIDSharingsSharingIDForbiddenError) Error() string {
+	data, _ := json.Marshal(e)
+	return string(data)
+}
+
 // DeleteFoldersFolderIDSharingsSharingIDUnauthorizedError - Unauthorized, invalid or missing token
 type DeleteFoldersFolderIDSharingsSharingIDUnauthorizedError struct {
 	// A machine-readable identifier for the specific authorization failure.

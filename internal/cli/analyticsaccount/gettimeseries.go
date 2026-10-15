@@ -25,7 +25,7 @@ func initGetTimeseriesCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "get-timeseries",
 		Short:   "Show Account Analytics Timeseries",
-		Long:    "Retrieve analytics timeseries data for the entire account over a date range with\nconfigurable granularity. Returns an array of timestamped metric buckets aggregated\nacross all of the account's media.\n\nThe date range between `start_date` and `end_date` must not exceed 2 years.\n\n\n## Requires api token with one of the following permissions\n```\nRead detailed stats\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
+		Long:    "Retrieve analytics timeseries data for the entire account over a date range with\nconfigurable granularity. Returns an array of timestamped metric buckets aggregated\nacross all of the account's media.\n\nThe date range between `start_date` and `end_date` must not exceed 2 years.\n\n\n## Requires api token with one of the following permissions\n```\nRead detailed stats\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\n`account` authorization granting the `view-stats` permission can also\nbe used.",
 		Example: "  wistia analytics-account get-timeseries --start-date 2025-08-24 --end-date 2025-08-13 --granularity weekly",
 		Args:    cobra.NoArgs,
 		RunE:    runGetTimeseriesCmd,
@@ -70,7 +70,10 @@ func runGetTimeseriesCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.AnalyticsAccount.GetTimeseries(cmd.Context(), *req, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}
