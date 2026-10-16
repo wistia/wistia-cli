@@ -26,7 +26,7 @@ func initGetByDateCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "get-by-date [media-id]",
 		Short:   "Show Media Stats by Date",
-		Long:    "Retrieve stats for a media organized by day, between a start and end date paramater (inclusive). If start and end date are not provided, defaults to yesterday and today.\n\n\n## Requires api token with one of the following permissions\n```\nRead detailed stats\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
+		Long:    "Retrieve stats for a media organized by day, between a start and end date paramater (inclusive). If start and end date are not provided, defaults to yesterday and today.\n\n\n## Requires api token with one of the following permissions\n```\nRead detailed stats\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\nauthorization granting the `view-stats` permission on this media can also\nbe used.",
 		Example: "  wistia stats-media get-by-date --media-id <id>",
 		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runGetByDateCmd,
@@ -82,7 +82,10 @@ func runGetByDateCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.StatsMedia.GetByDate(cmd.Context(), *req, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

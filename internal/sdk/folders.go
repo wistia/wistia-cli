@@ -810,9 +810,10 @@ func (s *Folders) Get(ctx context.Context, request operations.GetFoldersIDReques
 // An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
 // created with the `all:delegate_to_contact_permissions` scope and an
 // authorization granting the `update` permission on this folder can also be
-// used. The `update` permission also allows bulk-deleting the folder's
-// subfolders and using the folder as the destination when moving or
-// bulk-copying media the token may update.
+// used. The `update` permission also allows creating, renaming and deleting
+// the folder's subfolders and using the folder as the destination when
+// moving or bulk-copying media the token may update, or when restoring
+// media the token may archive.
 func (s *Folders) Update(ctx context.Context, request operations.PutFoldersIDRequest, opts ...operations.Option) (*operations.PutFoldersIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1363,6 +1364,13 @@ func (s *Folders) Delete(ctx context.Context, request operations.DeleteFoldersID
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope, an
+// authorization for this folder (any permission qualifies) and an `account`
+// authorization granting the `create-folders` permission can also be used.
+// `adminEmail` selects the copy's administrator (defaults to the account
+// owner). The new folder is not covered by the token that copied it.
 func (s *Folders) Copy(ctx context.Context, request operations.PostFoldersIDCopyRequest, opts ...operations.Option) (*operations.PostFoldersIDCopyResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1509,6 +1517,31 @@ func (s *Folders) Copy(ctx context.Context, request operations.PostFoldersIDCopy
 			}
 
 			var out sdkerrors.PostFoldersIDCopyUnauthorizedError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
+			}
+
+			out.HTTPMeta = components.HTTPMetadata{
+				Request:  req,
+				Response: httpRes,
+			}
+			return nil, &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
+	case httpRes.StatusCode == 403:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out sdkerrors.PostFoldersIDCopyForbiddenError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}

@@ -26,7 +26,7 @@ func initTranslateCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "translate [media-hashed-id]",
 		Short:   "Translate Media",
-		Long:    "Translates the transcript for a media.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
+		Long:    "Translates the transcript for a media.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\nauthorization granting the `translate` permission on this media can also\nbe used. The translation is attributed to the contact the token was\ncreated for.",
 		Example: "  wistia media translate --media-hashed-id <id> --target-language <value>",
 		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runTranslateCmd,
@@ -39,7 +39,7 @@ func initTranslateCmd(parent *cobra.Command) error {
 		return fmt.Errorf("invalid metadata for translate: %w", err)
 	}
 	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
-	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Required: false, Kind: "json", BodyFlag: true})
 	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
 	if err := flagutil.AnnotateBodyFields(cmd, translateCmdMeta, "Body", "body"); err != nil {
 		return fmt.Errorf("annotate body fields for translate: %w", err)
@@ -87,7 +87,10 @@ func runTranslateCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.Media.Translate(cmd.Context(), *req, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

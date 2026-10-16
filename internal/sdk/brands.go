@@ -46,6 +46,11 @@ func newBrands(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks *hooks.
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization naming a brand (any permission) can also be used; it lists
+// the brands the token names.
 func (s *Brands) List(ctx context.Context, request *operations.GetBrandsRequest, opts ...operations.Option) (*operations.GetBrandsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -299,6 +304,13 @@ func (s *Brands) List(ctx context.Context, request *operations.GetBrandsRequest,
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// `account` authorization granting the `create-brands` permission can also
+// be used. The new brand is not covered by the token that created it, so
+// follow-up requests need a token whose authorizations name the returned
+// hashed id.
 func (s *Brands) Create(ctx context.Context, request *operations.PostBrandsRequest, opts ...operations.Option) (*operations.PostBrandsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -572,6 +584,10 @@ func (s *Brands) Create(ctx context.Context, request *operations.PostBrandsReque
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization naming this brand (any permission) can also be used.
 func (s *Brands) Get(ctx context.Context, request operations.GetBrandsBrandIDRequest, opts ...operations.Option) (*operations.GetBrandsBrandIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -817,6 +833,11 @@ func (s *Brands) Get(ctx context.Context, request operations.GetBrandsBrandIDReq
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `update` permission on this brand can also be
+// used.
 func (s *Brands) Update(ctx context.Context, request operations.PutBrandsBrandIDRequest, opts ...operations.Option) (*operations.PutBrandsBrandIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1120,6 +1141,11 @@ func (s *Brands) Update(ctx context.Context, request operations.PutBrandsBrandID
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `destroy` permission on this brand can also be
+// used.
 func (s *Brands) Delete(ctx context.Context, request operations.DeleteBrandsBrandIDRequest, opts ...operations.Option) (*operations.DeleteBrandsBrandIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1432,6 +1458,11 @@ func (s *Brands) Delete(ctx context.Context, request operations.DeleteBrandsBran
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope can also be
+// used when its authorizations grant the `update` permission on this brand
+// and on the media, folder or channel being branded.
 func (s *Brands) Apply(ctx context.Context, request operations.PostBrandsBrandIDApplyRequest, opts ...operations.Option) (*operations.PostBrandsBrandIDApplyResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
