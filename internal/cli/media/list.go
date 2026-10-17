@@ -22,11 +22,11 @@ var listCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "sort-direction", FieldPath: "SortDirection", Kind: flagutil.FlagKindIntEnum, Optional: true, EnumValues: []string{"0", "1"}, Description: "Ordering Sort Direction (0 = desc, 1 = asc; default is 1) (options: 0, 1)"},
 	{FlagName: "folder-id", Shorthand: "f", FieldPath: "FolderID", Kind: flagutil.FlagKindString, Optional: true, Description: "A hashed ID specifying the folder from which you would like to get results."},
 	{FlagName: "name", Shorthand: "n", FieldPath: "Name", Kind: flagutil.FlagKindString, Optional: true, Description: "Find a media or medias whose name exactly matches this parameter."},
-	{FlagName: "include", Shorthand: "i", FieldPath: "Include", Kind: flagutil.FlagKindEnum, Optional: true, EnumValues: []string{"speakers"}, Description: "Set to 'speakers' to include active transcript speaker assignments used for diarization. Webinar hosts and panelists are not included. (options: speakers)"},
+	{FlagName: "include", Shorthand: "i", FieldPath: "Include", Kind: flagutil.FlagKindEnum, Optional: true, EnumValues: []string{"speakers"}, Description: "Set to 'speakers' to add each media's 'speakers' array, its active transcript speaker assignments used for diarization. Webinar hosts and panelists are not included. (options: speakers)"},
 	{FlagName: "type", FieldPath: "Type", Kind: flagutil.FlagKindEnum, Optional: true, EnumValues: []string{"Video", "Audio", "Image", "PdfDocument", "MicrosoftOfficeDocument", "Swf", "UnknownType"}, Description: "A string specifying which type of media you would like to get. (options: Video, Audio, Image, PdfDocument, MicrosoftOfficeDocument, Swf, UnknownType)"},
 	{FlagName: "hashed-ids", FieldPath: "HashedIds", Kind: flagutil.FlagKindStringArray, Optional: true, Description: "Find all of the medias by these hashed_ids."},
 	{FlagName: "tags", FieldPath: "Tags", Kind: flagutil.FlagKindStringArray, Optional: true, Description: "Find all of the medias that match all of these tag names."},
-	{FlagName: "speaker-profile-ids", FieldPath: "SpeakerProfileIds", Kind: flagutil.FlagKindStringArray, Optional: true, Description: "Filter media assigned to any of these reusable speaker profiles."},
+	{FlagName: "speaker-profile-ids", FieldPath: "SpeakerProfileIds", Kind: flagutil.FlagKindStringArray, Optional: true, Description: "Filter media assigned to any of these reusable speaker profiles. Blank IDs are ignored; a list with no ID returns 400."},
 	{FlagName: "archived", Shorthand: "a", FieldPath: "Archived", Kind: flagutil.FlagKindBool, Optional: true, Description: "Filter by archived status. True will return only archived medias, while false will return only active medias."},
 }
 
@@ -79,7 +79,10 @@ func runListCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.Media.List(cmd.Context(), req, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

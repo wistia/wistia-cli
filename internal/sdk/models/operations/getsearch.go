@@ -291,12 +291,12 @@ type GetSearchRequest struct {
 	// `resource_type` must include `media`. Use an empty `q` to match all media.
 	//
 	// The value shape depends on the field's type:
-	// - Select, text, url, and email fields take a value
+	// - Select and text fields take a value
 	//   (`custom_metadata[region]=emea`) or an array of values matched as OR
 	//   (`custom_metadata[region][]=emea&custom_metadata[region][]=amer`). Select fields
 	//   match on option keys.
 	// - Boolean fields take `true` or `false`.
-	// - Number, money, and time fields take an exact number (`custom_metadata[year]=2026`)
+	// - Number and time fields take an exact number (`custom_metadata[year]=2026`)
 	//   or a range object (`custom_metadata[budget][min]=100&custom_metadata[budget][max]=500`;
 	//   either bound may be omitted).
 	// - Date and datetime fields take a `YYYY-MM-DD` date matching that UTC day, or a
@@ -304,8 +304,6 @@ type GetSearchRequest struct {
 	//   `custom_metadata[shoot_date][before]=2026-02-01T00:00:00Z`). A bare-date bound
 	//   covers its whole UTC day: `after` starts at the day's beginning and `before`
 	//   runs through the day's end.
-	// - Contact fields (`contact_ref`, `contact_multi_ref`) only support the presence
-	//   filter below; a value filter on them is rejected.
 	// - Any field type accepts a presence filter: `custom_metadata[region][exists]=false`
 	//   returns media missing the field entirely (useful for metadata coverage audits),
 	//   and `exists=true` returns media that have any value for it.

@@ -30,7 +30,7 @@ func initUpdateCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "update [channel-hashed-id]",
 		Short:   "Update Channel",
-		Long:    "Updates a channel.",
+		Long:    "Updates a channel.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\nauthorization granting the `update` permission on this channel can also\nbe used. The `update` permission also allows managing the channel's\nepisodes and collaborators.",
 		Example: "  wistia channels update --channel-hashed-id <id>",
 		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runUpdateCmd,
@@ -43,7 +43,7 @@ func initUpdateCmd(parent *cobra.Command) error {
 		return fmt.Errorf("invalid metadata for update: %w", err)
 	}
 	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
-	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Required: false, Kind: "json", BodyFlag: true})
 	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
 	if err := flagutil.AnnotateBodyFields(cmd, updateCmdMeta, "Body", "body"); err != nil {
 		return fmt.Errorf("annotate body fields for update: %w", err)
@@ -91,7 +91,10 @@ func runUpdateCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.Channels.Update(cmd.Context(), *req, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}
