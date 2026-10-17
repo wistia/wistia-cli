@@ -25,6 +25,11 @@ made with such a token are authorized using the permissions of the
 contact assigned to the token, who must be able to edit the media's
 transcript and view the account's speaker profiles.
 
+An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+created with the `all:delegate_to_contact_permissions` scope and an
+authorization granting the `edit-transcripts` permission on this media can
+also be used.
+
 ```
 wistia speakers assign [media-hashed-id] [flags]
 ```
@@ -43,7 +48,7 @@ wistia speakers assign [media-hashed-id] [flags]
   -e, --expected-version int         The media's current 'speaker_data_version' from its diarized transcript segments. Required with 'detected_speaker_id'; a stale value returns 409.
   -h, --help                         help for assign
   -m, --media-hashed-id string       The hashed ID of the media to assign the speaker to. (or pass it as the [media-hashed-id] argument)
-  -s, --speaker-profile-id string    The reusable speaker profile to assign, from List Speakers. Create a new profile first when the person isn't in the account's speaker library. [required]
+  -s, --speaker-profile-id string    The reusable speaker profile to assign, as returned by List Speakers. Look the person up there first; create a profile only when they aren't listed. [required]
 ```
 
 ### Options inherited from parent commands
@@ -59,6 +64,7 @@ wistia speakers assign [media-hashed-id] [flags]
       --interactive            Prompt for missing inputs and open guided configure/auth forms (forms fall back to line prompts on stdin off-TTY) (default true)
   -q, --jq string              Filter and transform output using a jq expression (e.g., '.name', '.items[] | .id')
       --no-interactive         Disable all interactive features (auto-prompting, explorer auto-launch, TUI forms)
+      --no-keyring             Never read or write the OS keychain; store secrets in the config file instead (env: WISTIA_CLI_NO_KEYRING)
   -o, --output-format string   Specify the output format. Options: pretty, json, yaml, table, toon. (default "pretty")
       --raw-output             Write --jq string results as raw text instead of JSON strings (like jq -r); non-string results stay JSON
       --server string          Select a server by index (for indexed servers) or name (for named servers)
