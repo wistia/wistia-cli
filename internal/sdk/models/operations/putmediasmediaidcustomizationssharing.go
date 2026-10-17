@@ -192,8 +192,9 @@ func (p *PutMediasMediaIDCustomizationsSharingPluginRequest) GetShare() *ShareRe
 }
 
 // PutMediasMediaIDCustomizationsSharingRequestBody - Social/embed/download share bar for a video. Every field is optional; only
-// the fields you send are changed (partial update). Send a field as null to
-// reset it to its default.
+// the fields you send are changed (partial update), except plugin.share.channels,
+// which replaces the whole list. Send a field as null to reset it to its
+// default. Only fields declared nullable support this reset.
 type PutMediasMediaIDCustomizationsSharingRequestBody struct {
 	Plugin *PutMediasMediaIDCustomizationsSharingPluginRequest `json:"plugin,omitzero"`
 }
