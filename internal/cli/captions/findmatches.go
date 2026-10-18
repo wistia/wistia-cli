@@ -16,7 +16,7 @@ import (
 
 var findMatchesCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "media-ids", Shorthand: "m", FieldPath: "MediaIds", Kind: flagutil.FlagKindStringArray, Required: true, Description: "Explicit hashed IDs of the media whose captions should be searched. [required]"},
-	{FlagName: "target-text", Shorthand: "t", FieldPath: "TargetText", Kind: flagutil.FlagKindString, Required: true, MinLength: 1, Description: "Exact caption wording to locate. [required]"},
+	{FlagName: "target-text", Shorthand: "t", FieldPath: "TargetText", Kind: flagutil.FlagKindString, Required: true, MinLength: 1, HasMaxLength: true, MaxLength: 500, Description: "Exact caption wording to locate. [required]"},
 	{FlagName: "language-code", Shorthand: "l", FieldPath: "LanguageCode", Kind: flagutil.FlagKindString, Optional: true, MinLength: 1, Description: "Exact IETF language tag. Omit when each media has only one caption track."},
 	{FlagName: "occurrence", FieldPath: "Occurrence", Kind: flagutil.FlagKindInt64, Optional: true, HasMinimum: true, Minimum: 1, Description: "One-based exact occurrence to return, including occurrences after the first 10."},
 	{FlagName: "start-ms", Shorthand: "s", FieldPath: "StartMs", Kind: flagutil.FlagKindInt64, Optional: true, HasMinimum: true, Minimum: 0, Description: "Optional start of a time range used to disambiguate the match."},
@@ -42,7 +42,7 @@ func initFindMatchesCmd(parent *cobra.Command) error {
 		return fmt.Errorf("invalid metadata for find-matches: %w", err)
 	}
 	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
-	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Required: false, Kind: "json", BodyFlag: true})
 	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
 	if err := flagutil.AnnotateBodyFields(cmd, findMatchesCmdMeta, "", "body"); err != nil {
 		return fmt.Errorf("annotate body fields for find-matches: %w", err)
@@ -79,7 +79,10 @@ func runFindMatchesCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.Captions.FindMatches(cmd.Context(), *request, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

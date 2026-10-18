@@ -17,7 +17,7 @@ import (
 
 var assignCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "media-hashed-id", Shorthand: "m", FieldPath: "MediaHashedID", Kind: flagutil.FlagKindString, Required: true, Description: "The hashed ID of the media to assign the speaker to. [required]"},
-	{FlagName: "speaker-profile-id", Shorthand: "s", FieldPath: "Body.SpeakerProfileID", Kind: flagutil.FlagKindString, Required: true, Description: "The reusable speaker profile to assign, from List Speakers. Create a new profile first when the person isn't in the account's speaker library. [required]"},
+	{FlagName: "speaker-profile-id", Shorthand: "s", FieldPath: "Body.SpeakerProfileID", Kind: flagutil.FlagKindString, Required: true, Description: "The reusable speaker profile to assign, as returned by List Speakers. Look the person up there first; create a profile only when they aren't listed. [required]"},
 	{FlagName: "detected-speaker-id", FieldPath: "Body.DetectedSpeakerID", Kind: flagutil.FlagKindString, Optional: true, Description: "Only when the user identifies which voice is this person (e.g. \"Speaker 1 is Annie\"): that speaker's 'detected_speaker_id', such as 'default_speaker_0', from the media's diarized transcript segments. Every turn by that voice is attributed to the profile, and assigning a second detected speaker to the same profile merges them. Omit it to credit the person on the media without naming any turns; don't guess which voice is theirs."},
 	{FlagName: "expected-version", Shorthand: "e", FieldPath: "Body.ExpectedVersion", Kind: flagutil.FlagKindInt64, Optional: true, Description: "The media's current 'speaker_data_version' from its diarized transcript segments. Required with 'detected_speaker_id'; a stale value returns 409."},
 }
@@ -27,7 +27,7 @@ func initAssignCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "assign [media-hashed-id]",
 		Short:   "Assign Speaker to Media",
-		Long:    "Assigns a reusable speaker profile to a media. With `detected_speaker_id`,\nevery turn by that detected speaker is attributed to the profile, and\nassigning a second detected speaker to the same profile merges them.\nWithout it, the speaker is credited on the media without naming turns.\n\nNaming a detected speaker requires the current `speaker_data_version` as\n`expected_version`, and isn't available while the account has speaker\nidentification turned off.\n\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token, who must be able to edit the media's\ntranscript and view the account's speaker profiles.",
+		Long:    "Assigns a reusable speaker profile to a media. With `detected_speaker_id`,\nevery turn by that detected speaker is attributed to the profile, and\nassigning a second detected speaker to the same profile merges them.\nWithout it, the speaker is credited on the media without naming turns.\n\nNaming a detected speaker requires the current `speaker_data_version` as\n`expected_version`, and isn't available while the account has speaker\nidentification turned off.\n\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token, who must be able to edit the media's\ntranscript and view the account's speaker profiles.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\nauthorization granting the `edit-transcripts` permission on this media can\nalso be used.",
 		Example: "  wistia speakers assign --media-hashed-id <id> --speaker-profile-id abc123def4",
 		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runAssignCmd,
@@ -40,7 +40,7 @@ func initAssignCmd(parent *cobra.Command) error {
 		return fmt.Errorf("invalid metadata for assign: %w", err)
 	}
 	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
-	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Required: false, Kind: "json", BodyFlag: true})
 	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
 	if err := flagutil.AnnotateBodyFields(cmd, assignCmdMeta, "Body", "body"); err != nil {
 		return fmt.Errorf("annotate body fields for assign: %w", err)
@@ -88,7 +88,10 @@ func runAssignCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.Speakers.Assign(cmd.Context(), *req, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}
