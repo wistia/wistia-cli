@@ -149,6 +149,7 @@ const (
 	GetBackgroundJobStatusBackgroundJobStatusIDOperationUpdate   GetBackgroundJobStatusBackgroundJobStatusIDOperation = "update"
 	GetBackgroundJobStatusBackgroundJobStatusIDOperationDelete   GetBackgroundJobStatusBackgroundJobStatusIDOperation = "delete"
 	GetBackgroundJobStatusBackgroundJobStatusIDOperationMove     GetBackgroundJobStatusBackgroundJobStatusIDOperation = "move"
+	GetBackgroundJobStatusBackgroundJobStatusIDOperationAddTags  GetBackgroundJobStatusBackgroundJobStatusIDOperation = "add_tags"
 	GetBackgroundJobStatusBackgroundJobStatusIDOperationPurchase GetBackgroundJobStatusBackgroundJobStatusIDOperation = "purchase"
 )
 
@@ -160,7 +161,7 @@ func (e GetBackgroundJobStatusBackgroundJobStatusIDOperation) ToPointer() *GetBa
 func (e *GetBackgroundJobStatusBackgroundJobStatusIDOperation) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "create", "update", "delete", "move", "purchase":
+		case "create", "update", "delete", "move", "add_tags", "purchase":
 			return true
 		}
 	}

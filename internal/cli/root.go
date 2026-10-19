@@ -63,6 +63,7 @@ import (
 	"github.com/wistia/wistia-cli/internal/usage"
 	"golang.org/x/term"
 	"os"
+	"os/signal"
 	"strings"
 )
 
@@ -98,8 +99,17 @@ func NewRootCommand() (*cobra.Command, error) {
 			if err := config.Init("wistia", "WISTIA_CLI"); err != nil {
 				return err
 			}
+			config.SetKeyringWarningOutput(cmd.ErrOrStderr())
+			if noKeyring, changed := flagutil.GetBoolFlag(cmd, "no-keyring"); changed {
+				if noKeyring {
+					config.DisableKeyring()
+				}
+			} else if config.GetString("no-keyring") == "true" {
+				config.DisableKeyring()
+			}
 			output.InitAgentMode(cmd)
 			flagutil.SetStdinReadDeadline(output.IsAgentMode())
+			flagutil.ResetStdinSkip()
 			return nil
 		},
 	}
@@ -298,6 +308,8 @@ func NewRootCommand() (*cobra.Command, error) {
 	// Global security flags
 	rootCmd.PersistentFlags().String("bearer-auth", "", "HTTP Bearer")
 	_ = rootCmd.PersistentFlags().SetAnnotation("bearer-auth", "speakeasy:group", []string{"Authentication"})
+	rootCmd.PersistentFlags().Bool("no-keyring", false, "Never read or write the OS keychain; store secrets in the config file instead (env: WISTIA_CLI_NO_KEYRING)")
+	_ = rootCmd.PersistentFlags().SetAnnotation("no-keyring", "speakeasy:group", []string{"Authentication"})
 
 	// Annotate persistent flags for grouped help display
 	for _, ga := range []struct{ flag, group string }{
@@ -329,6 +341,7 @@ func NewRootCommand() (*cobra.Command, error) {
 	usage.Intercept(rootCmd)
 	// Cobra validates Args before any PersistentPreRunE runs.
 	output.InstallErrorHandling(rootCmd)
+	output.InstallHelpStyling(rootCmd)
 
 	return rootCmd, nil
 }
@@ -339,13 +352,27 @@ func Execute() error {
 	if err != nil {
 		return err
 	}
+	ctx, stop := InterruptContext(context.Background())
+	defer stop()
 
 	output.InitAgentMode(rootCmd)
 	if shouldAutoExplore() {
-		return runExplorer(rootCmd)
+		return runExplorer(ctx, rootCmd)
 	}
 
-	return ExecuteRoot(context.Background(), rootCmd, os.Args[1:])
+	return ExecuteRoot(ctx, rootCmd, os.Args[1:])
+}
+
+// InterruptContext cancels on the first interrupt. The default signal
+// behavior is restored once the context is done, so a second interrupt still
+// terminates a command that does not observe its context.
+func InterruptContext(parent context.Context) (context.Context, context.CancelFunc) {
+	ctx, stop := signal.NotifyContext(parent, os.Interrupt)
+	go func() {
+		<-ctx.Done()
+		stop()
+	}()
+	return ctx, stop
 }
 
 func ExecuteRoot(ctx context.Context, root *cobra.Command, args []string) error {
@@ -393,7 +420,7 @@ func initExploreCmd(parent *cobra.Command) {
 			if err := interactive.Resolve(cmd).ValidateDirectExplore(); err != nil {
 				return err
 			}
-			return runExplorer(cmd.Root())
+			return runExplorer(cmd.Context(), cmd.Root())
 		},
 	})
 }
@@ -423,7 +450,7 @@ func ExplorerHandoffArgs(root *cobra.Command, selectedArgs []string) []string {
 }
 
 // runExplorer launches the explorer TUI and handles command execution handoff.
-func runExplorer(root *cobra.Command) error {
+func runExplorer(ctx context.Context, root *cobra.Command) error {
 	selectedArgs, err := explorer.Run(root, Version)
 	if err != nil {
 		return err
@@ -436,7 +463,7 @@ func runExplorer(root *cobra.Command) error {
 	if err != nil {
 		return err
 	}
-	return ExecuteRoot(context.Background(), freshRoot, ExplorerHandoffArgs(root, selectedArgs))
+	return ExecuteRoot(ctx, freshRoot, ExplorerHandoffArgs(root, selectedArgs))
 }
 
 // globalFlagGroupOrder defines the display order for flag groups in help output.

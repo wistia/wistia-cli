@@ -39,6 +39,10 @@ func newContact(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks *hooks
 //
 // Idempotent: a repeat call returns the timestamp of the first dismissal.
 //
+// [Expiring access tokens](https://docs.wistia.com/reference/post_expiring-token)
+// created with authorizations cannot be used: this endpoint responds with a
+// 403, whatever the authorizations grant.
+//
 // ## Requires api token with one of the following permissions
 // ```
 // Read, update & delete anything
@@ -182,6 +186,31 @@ func (s *Contact) DismissDesktopInstallPrompt(ctx context.Context, opts ...opera
 			}
 
 			var out sdkerrors.PostContactDismissDesktopInstallPromptUnauthorizedError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
+			}
+
+			out.HTTPMeta = components.HTTPMetadata{
+				Request:  req,
+				Response: httpRes,
+			}
+			return nil, &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
+	case httpRes.StatusCode == 403:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out sdkerrors.PostContactDismissDesktopInstallPromptForbiddenError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}

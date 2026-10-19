@@ -42,6 +42,11 @@ func newStatsProjects(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks 
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `view-stats` permission on this folder can also
+// be used.
 func (s *StatsProjects) Get(ctx context.Context, request operations.GetStatsProjectsProjectIDRequest, opts ...operations.Option) (*operations.GetStatsProjectsProjectIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

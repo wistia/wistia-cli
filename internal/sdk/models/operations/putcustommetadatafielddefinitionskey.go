@@ -13,32 +13,6 @@ import (
 	"time"
 )
 
-type PutCustomMetadataFieldDefinitionsKeyConfigRequest2 struct {
-	// For contact_ref and contact_multi_ref fields, whether values may reference contact groups in addition to contacts. Defaults to false (contacts only).
-	AllowsGroupRefs bool `json:"allows_group_refs"`
-}
-
-func (p PutCustomMetadataFieldDefinitionsKeyConfigRequest2) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(p, "", false)
-}
-
-func (p *PutCustomMetadataFieldDefinitionsKeyConfigRequest2) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &p, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (p *PutCustomMetadataFieldDefinitionsKeyConfigRequest2) GetAllowsGroupRefs() bool {
-	if p == nil {
-		return false
-	}
-	return p.AllowsGroupRefs
-}
-
-// #region class-body-putcustommetadatafielddefinitionskeyconfigrequest2
-// #endregion class-body-putcustommetadatafielddefinitionskeyconfigrequest2
-
 type PutCustomMetadataFieldDefinitionsKeyOptionRequest struct {
 	// The option's immutable identifier. Required to edit or remove an existing option; defaults to a parameterized label when adding.
 	Key *string `json:"key,omitzero"`
@@ -50,17 +24,6 @@ type PutCustomMetadataFieldDefinitionsKeyOptionRequest struct {
 	Destroy *bool `json:"destroy,omitzero"`
 	// When true, allows removing an option that is still in use by media values.
 	Force *bool `json:"force,omitzero"`
-}
-
-func (p PutCustomMetadataFieldDefinitionsKeyOptionRequest) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(p, "", false)
-}
-
-func (p *PutCustomMetadataFieldDefinitionsKeyOptionRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &p, "", false, nil); err != nil {
-		return err
-	}
-	return nil
 }
 
 func (p *PutCustomMetadataFieldDefinitionsKeyOptionRequest) GetKey() *string {
@@ -98,127 +61,17 @@ func (p *PutCustomMetadataFieldDefinitionsKeyOptionRequest) GetForce() *bool {
 	return p.Force
 }
 
-type PutCustomMetadataFieldDefinitionsKeyConfigRequest1 struct {
+// PutCustomMetadataFieldDefinitionsKeyConfigRequest - Type-specific configuration changes. Only valid for field types that have any; currently option add, edit, or remove operations for a single_select or multi_select field.
+type PutCustomMetadataFieldDefinitionsKeyConfigRequest struct {
 	// Option add, edit, or remove operations, matched by their immutable key.
 	Options []PutCustomMetadataFieldDefinitionsKeyOptionRequest `json:"options"`
 }
 
-func (p PutCustomMetadataFieldDefinitionsKeyConfigRequest1) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(p, "", false)
-}
-
-func (p *PutCustomMetadataFieldDefinitionsKeyConfigRequest1) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &p, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (p *PutCustomMetadataFieldDefinitionsKeyConfigRequest1) GetOptions() []PutCustomMetadataFieldDefinitionsKeyOptionRequest {
+func (p *PutCustomMetadataFieldDefinitionsKeyConfigRequest) GetOptions() []PutCustomMetadataFieldDefinitionsKeyOptionRequest {
 	if p == nil {
 		return []PutCustomMetadataFieldDefinitionsKeyOptionRequest{}
 	}
 	return p.Options
-}
-
-// #region class-body-putcustommetadatafielddefinitionskeyconfigrequest1
-// #endregion class-body-putcustommetadatafielddefinitionskeyconfigrequest1
-
-type PutCustomMetadataFieldDefinitionsKeyConfigRequestUnionType string
-
-const (
-	PutCustomMetadataFieldDefinitionsKeyConfigRequestUnionTypePutCustomMetadataFieldDefinitionsKeyConfigRequest1 PutCustomMetadataFieldDefinitionsKeyConfigRequestUnionType = "put_custom_metadata_field_definitions_key__config_request_1"
-	PutCustomMetadataFieldDefinitionsKeyConfigRequestUnionTypePutCustomMetadataFieldDefinitionsKeyConfigRequest2 PutCustomMetadataFieldDefinitionsKeyConfigRequestUnionType = "put_custom_metadata_field_definitions_key__config_request_2"
-)
-
-// PutCustomMetadataFieldDefinitionsKeyConfigRequestUnion - Type-specific configuration changes. Only valid for field types that have any: option add, edit, or remove operations for a single_select or multi_select field, or `allows_group_refs` for a contact_ref or contact_multi_ref field.
-type PutCustomMetadataFieldDefinitionsKeyConfigRequestUnion struct {
-	PutCustomMetadataFieldDefinitionsKeyConfigRequest1 *PutCustomMetadataFieldDefinitionsKeyConfigRequest1 `queryParam:"inline" union:"member"`
-	PutCustomMetadataFieldDefinitionsKeyConfigRequest2 *PutCustomMetadataFieldDefinitionsKeyConfigRequest2 `queryParam:"inline" union:"member"`
-
-	Type PutCustomMetadataFieldDefinitionsKeyConfigRequestUnionType
-}
-
-func CreatePutCustomMetadataFieldDefinitionsKeyConfigRequestUnionPutCustomMetadataFieldDefinitionsKeyConfigRequest1(putCustomMetadataFieldDefinitionsKeyConfigRequest1 PutCustomMetadataFieldDefinitionsKeyConfigRequest1) PutCustomMetadataFieldDefinitionsKeyConfigRequestUnion {
-	typ := PutCustomMetadataFieldDefinitionsKeyConfigRequestUnionTypePutCustomMetadataFieldDefinitionsKeyConfigRequest1
-
-	return PutCustomMetadataFieldDefinitionsKeyConfigRequestUnion{
-		PutCustomMetadataFieldDefinitionsKeyConfigRequest1: &putCustomMetadataFieldDefinitionsKeyConfigRequest1,
-		Type: typ,
-	}
-}
-
-func CreatePutCustomMetadataFieldDefinitionsKeyConfigRequestUnionPutCustomMetadataFieldDefinitionsKeyConfigRequest2(putCustomMetadataFieldDefinitionsKeyConfigRequest2 PutCustomMetadataFieldDefinitionsKeyConfigRequest2) PutCustomMetadataFieldDefinitionsKeyConfigRequestUnion {
-	typ := PutCustomMetadataFieldDefinitionsKeyConfigRequestUnionTypePutCustomMetadataFieldDefinitionsKeyConfigRequest2
-
-	return PutCustomMetadataFieldDefinitionsKeyConfigRequestUnion{
-		PutCustomMetadataFieldDefinitionsKeyConfigRequest2: &putCustomMetadataFieldDefinitionsKeyConfigRequest2,
-		Type: typ,
-	}
-}
-
-func (u *PutCustomMetadataFieldDefinitionsKeyConfigRequestUnion) UnmarshalJSON(data []byte) (err error) {
-	previous := *u
-	*u = PutCustomMetadataFieldDefinitionsKeyConfigRequestUnion{}
-	defer func() {
-		if err != nil {
-			*u = previous
-		}
-	}()
-
-	var candidates []utils.UnionCandidate
-
-	// Collect all valid candidates
-	var putCustomMetadataFieldDefinitionsKeyConfigRequest1 PutCustomMetadataFieldDefinitionsKeyConfigRequest1 = PutCustomMetadataFieldDefinitionsKeyConfigRequest1{}
-	if err := utils.UnmarshalJSON(data, &putCustomMetadataFieldDefinitionsKeyConfigRequest1, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  PutCustomMetadataFieldDefinitionsKeyConfigRequestUnionTypePutCustomMetadataFieldDefinitionsKeyConfigRequest1,
-			Value: &putCustomMetadataFieldDefinitionsKeyConfigRequest1,
-		})
-	}
-
-	var putCustomMetadataFieldDefinitionsKeyConfigRequest2 PutCustomMetadataFieldDefinitionsKeyConfigRequest2 = PutCustomMetadataFieldDefinitionsKeyConfigRequest2{}
-	if err := utils.UnmarshalJSON(data, &putCustomMetadataFieldDefinitionsKeyConfigRequest2, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  PutCustomMetadataFieldDefinitionsKeyConfigRequestUnionTypePutCustomMetadataFieldDefinitionsKeyConfigRequest2,
-			Value: &putCustomMetadataFieldDefinitionsKeyConfigRequest2,
-		})
-	}
-
-	if len(candidates) == 0 {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for PutCustomMetadataFieldDefinitionsKeyConfigRequestUnion", string(data))
-	}
-
-	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestUnionCandidate(candidates, data)
-	if best == nil {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for PutCustomMetadataFieldDefinitionsKeyConfigRequestUnion", string(data))
-	}
-
-	// Set the union type and value based on the best candidate
-	u.Type = best.Type.(PutCustomMetadataFieldDefinitionsKeyConfigRequestUnionType)
-	switch best.Type {
-	case PutCustomMetadataFieldDefinitionsKeyConfigRequestUnionTypePutCustomMetadataFieldDefinitionsKeyConfigRequest1:
-		u.PutCustomMetadataFieldDefinitionsKeyConfigRequest1 = best.Value.(*PutCustomMetadataFieldDefinitionsKeyConfigRequest1)
-		return nil
-	case PutCustomMetadataFieldDefinitionsKeyConfigRequestUnionTypePutCustomMetadataFieldDefinitionsKeyConfigRequest2:
-		u.PutCustomMetadataFieldDefinitionsKeyConfigRequest2 = best.Value.(*PutCustomMetadataFieldDefinitionsKeyConfigRequest2)
-		return nil
-	}
-
-	return fmt.Errorf("could not unmarshal `%s` into any supported union types for PutCustomMetadataFieldDefinitionsKeyConfigRequestUnion", string(data))
-}
-
-func (u PutCustomMetadataFieldDefinitionsKeyConfigRequestUnion) MarshalJSON() ([]byte, error) {
-	if u.PutCustomMetadataFieldDefinitionsKeyConfigRequest1 != nil {
-		return utils.MarshalJSON(u.PutCustomMetadataFieldDefinitionsKeyConfigRequest1, "", true)
-	}
-
-	if u.PutCustomMetadataFieldDefinitionsKeyConfigRequest2 != nil {
-		return utils.MarshalJSON(u.PutCustomMetadataFieldDefinitionsKeyConfigRequest2, "", true)
-	}
-
-	return nil, errors.New("could not marshal union type PutCustomMetadataFieldDefinitionsKeyConfigRequestUnion: all fields are null")
 }
 
 type PutCustomMetadataFieldDefinitionsKeyRequestBody struct {
@@ -228,9 +81,19 @@ type PutCustomMetadataFieldDefinitionsKeyRequestBody struct {
 	DefaultValue optionalnullable.OptionalNullable[string] `json:"default_value,omitzero"`
 	// The field's display order within the account, ascending from 0.
 	Position optionalnullable.OptionalNullable[int64] `json:"position,omitzero"`
-	// Type-specific configuration changes. Only valid for field types that have any: option add, edit, or remove operations for a single_select or multi_select field, or `allows_group_refs` for a contact_ref or contact_multi_ref field.
-	//
-	Config *PutCustomMetadataFieldDefinitionsKeyConfigRequestUnion `json:"config,omitzero"`
+	// Type-specific configuration changes. Only valid for field types that have any; currently option add, edit, or remove operations for a single_select or multi_select field.
+	Config *PutCustomMetadataFieldDefinitionsKeyConfigRequest `json:"config,omitzero"`
+}
+
+func (p PutCustomMetadataFieldDefinitionsKeyRequestBody) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(p, "", false)
+}
+
+func (p *PutCustomMetadataFieldDefinitionsKeyRequestBody) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &p, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (p *PutCustomMetadataFieldDefinitionsKeyRequestBody) GetLabel() *string {
@@ -254,7 +117,7 @@ func (p *PutCustomMetadataFieldDefinitionsKeyRequestBody) GetPosition() optional
 	return p.Position
 }
 
-func (p *PutCustomMetadataFieldDefinitionsKeyRequestBody) GetConfig() *PutCustomMetadataFieldDefinitionsKeyConfigRequestUnion {
+func (p *PutCustomMetadataFieldDefinitionsKeyRequestBody) GetConfig() *PutCustomMetadataFieldDefinitionsKeyConfigRequest {
 	if p == nil {
 		return nil
 	}
@@ -460,69 +323,69 @@ func (p *PutCustomMetadataFieldDefinitionsKeyConfigResponse1) GetOptions() []Put
 // #region class-body-putcustommetadatafielddefinitionskeyconfigresponse1
 // #endregion class-body-putcustommetadatafielddefinitionskeyconfigresponse1
 
-type PutCustomMetadataFieldDefinitionsKeyConfigResponseUnionType string
+type PutCustomMetadataFieldDefinitionsKeyConfigUnionType string
 
 const (
-	PutCustomMetadataFieldDefinitionsKeyConfigResponseUnionTypePutCustomMetadataFieldDefinitionsKeyConfigResponse1 PutCustomMetadataFieldDefinitionsKeyConfigResponseUnionType = "put_custom_metadata_field_definitions_key__config_response_1"
-	PutCustomMetadataFieldDefinitionsKeyConfigResponseUnionTypePutCustomMetadataFieldDefinitionsKeyConfigResponse2 PutCustomMetadataFieldDefinitionsKeyConfigResponseUnionType = "put_custom_metadata_field_definitions_key__config_response_2"
-	PutCustomMetadataFieldDefinitionsKeyConfigResponseUnionTypePutCustomMetadataFieldDefinitionsKeyConfigResponse3 PutCustomMetadataFieldDefinitionsKeyConfigResponseUnionType = "put_custom_metadata_field_definitions_key__config_response_3"
-	PutCustomMetadataFieldDefinitionsKeyConfigResponseUnionTypeUnknown                                             PutCustomMetadataFieldDefinitionsKeyConfigResponseUnionType = "Unknown"
+	PutCustomMetadataFieldDefinitionsKeyConfigUnionTypePutCustomMetadataFieldDefinitionsKeyConfigResponse1 PutCustomMetadataFieldDefinitionsKeyConfigUnionType = "put_custom_metadata_field_definitions_key__config_response_1"
+	PutCustomMetadataFieldDefinitionsKeyConfigUnionTypePutCustomMetadataFieldDefinitionsKeyConfigResponse2 PutCustomMetadataFieldDefinitionsKeyConfigUnionType = "put_custom_metadata_field_definitions_key__config_response_2"
+	PutCustomMetadataFieldDefinitionsKeyConfigUnionTypePutCustomMetadataFieldDefinitionsKeyConfigResponse3 PutCustomMetadataFieldDefinitionsKeyConfigUnionType = "put_custom_metadata_field_definitions_key__config_response_3"
+	PutCustomMetadataFieldDefinitionsKeyConfigUnionTypeUnknown                                             PutCustomMetadataFieldDefinitionsKeyConfigUnionType = "Unknown"
 )
 
-// PutCustomMetadataFieldDefinitionsKeyConfigResponseUnion - Type-specific configuration. Present only for field types that have any: an object with `options` for single_select and multi_select fields, an object with `used_currencies` for money fields, and an object with `allows_group_refs` for contact_ref and contact_multi_ref fields.
-type PutCustomMetadataFieldDefinitionsKeyConfigResponseUnion struct {
+// PutCustomMetadataFieldDefinitionsKeyConfigUnion - Type-specific configuration. Present only for field types that have any: an object with `options` for single_select and multi_select fields, an object with `used_currencies` for money fields, and an object with `allows_group_refs` for contact_ref and contact_multi_ref fields.
+type PutCustomMetadataFieldDefinitionsKeyConfigUnion struct {
 	PutCustomMetadataFieldDefinitionsKeyConfigResponse1 *PutCustomMetadataFieldDefinitionsKeyConfigResponse1 `queryParam:"inline" union:"member"`
 	PutCustomMetadataFieldDefinitionsKeyConfigResponse2 *PutCustomMetadataFieldDefinitionsKeyConfigResponse2 `queryParam:"inline" union:"member"`
 	PutCustomMetadataFieldDefinitionsKeyConfigResponse3 *PutCustomMetadataFieldDefinitionsKeyConfigResponse3 `queryParam:"inline" union:"member"`
 	UnknownRaw                                          json.RawMessage                                      `json:"-" union:"unknown"`
 
-	Type PutCustomMetadataFieldDefinitionsKeyConfigResponseUnionType
+	Type PutCustomMetadataFieldDefinitionsKeyConfigUnionType
 }
 
-func CreatePutCustomMetadataFieldDefinitionsKeyConfigResponseUnionPutCustomMetadataFieldDefinitionsKeyConfigResponse1(putCustomMetadataFieldDefinitionsKeyConfigResponse1 PutCustomMetadataFieldDefinitionsKeyConfigResponse1) PutCustomMetadataFieldDefinitionsKeyConfigResponseUnion {
-	typ := PutCustomMetadataFieldDefinitionsKeyConfigResponseUnionTypePutCustomMetadataFieldDefinitionsKeyConfigResponse1
+func CreatePutCustomMetadataFieldDefinitionsKeyConfigUnionPutCustomMetadataFieldDefinitionsKeyConfigResponse1(putCustomMetadataFieldDefinitionsKeyConfigResponse1 PutCustomMetadataFieldDefinitionsKeyConfigResponse1) PutCustomMetadataFieldDefinitionsKeyConfigUnion {
+	typ := PutCustomMetadataFieldDefinitionsKeyConfigUnionTypePutCustomMetadataFieldDefinitionsKeyConfigResponse1
 
-	return PutCustomMetadataFieldDefinitionsKeyConfigResponseUnion{
+	return PutCustomMetadataFieldDefinitionsKeyConfigUnion{
 		PutCustomMetadataFieldDefinitionsKeyConfigResponse1: &putCustomMetadataFieldDefinitionsKeyConfigResponse1,
 		Type: typ,
 	}
 }
 
-func CreatePutCustomMetadataFieldDefinitionsKeyConfigResponseUnionPutCustomMetadataFieldDefinitionsKeyConfigResponse2(putCustomMetadataFieldDefinitionsKeyConfigResponse2 PutCustomMetadataFieldDefinitionsKeyConfigResponse2) PutCustomMetadataFieldDefinitionsKeyConfigResponseUnion {
-	typ := PutCustomMetadataFieldDefinitionsKeyConfigResponseUnionTypePutCustomMetadataFieldDefinitionsKeyConfigResponse2
+func CreatePutCustomMetadataFieldDefinitionsKeyConfigUnionPutCustomMetadataFieldDefinitionsKeyConfigResponse2(putCustomMetadataFieldDefinitionsKeyConfigResponse2 PutCustomMetadataFieldDefinitionsKeyConfigResponse2) PutCustomMetadataFieldDefinitionsKeyConfigUnion {
+	typ := PutCustomMetadataFieldDefinitionsKeyConfigUnionTypePutCustomMetadataFieldDefinitionsKeyConfigResponse2
 
-	return PutCustomMetadataFieldDefinitionsKeyConfigResponseUnion{
+	return PutCustomMetadataFieldDefinitionsKeyConfigUnion{
 		PutCustomMetadataFieldDefinitionsKeyConfigResponse2: &putCustomMetadataFieldDefinitionsKeyConfigResponse2,
 		Type: typ,
 	}
 }
 
-func CreatePutCustomMetadataFieldDefinitionsKeyConfigResponseUnionPutCustomMetadataFieldDefinitionsKeyConfigResponse3(putCustomMetadataFieldDefinitionsKeyConfigResponse3 PutCustomMetadataFieldDefinitionsKeyConfigResponse3) PutCustomMetadataFieldDefinitionsKeyConfigResponseUnion {
-	typ := PutCustomMetadataFieldDefinitionsKeyConfigResponseUnionTypePutCustomMetadataFieldDefinitionsKeyConfigResponse3
+func CreatePutCustomMetadataFieldDefinitionsKeyConfigUnionPutCustomMetadataFieldDefinitionsKeyConfigResponse3(putCustomMetadataFieldDefinitionsKeyConfigResponse3 PutCustomMetadataFieldDefinitionsKeyConfigResponse3) PutCustomMetadataFieldDefinitionsKeyConfigUnion {
+	typ := PutCustomMetadataFieldDefinitionsKeyConfigUnionTypePutCustomMetadataFieldDefinitionsKeyConfigResponse3
 
-	return PutCustomMetadataFieldDefinitionsKeyConfigResponseUnion{
+	return PutCustomMetadataFieldDefinitionsKeyConfigUnion{
 		PutCustomMetadataFieldDefinitionsKeyConfigResponse3: &putCustomMetadataFieldDefinitionsKeyConfigResponse3,
 		Type: typ,
 	}
 }
 
-func CreatePutCustomMetadataFieldDefinitionsKeyConfigResponseUnionUnknown(raw json.RawMessage) PutCustomMetadataFieldDefinitionsKeyConfigResponseUnion {
-	return PutCustomMetadataFieldDefinitionsKeyConfigResponseUnion{
+func CreatePutCustomMetadataFieldDefinitionsKeyConfigUnionUnknown(raw json.RawMessage) PutCustomMetadataFieldDefinitionsKeyConfigUnion {
+	return PutCustomMetadataFieldDefinitionsKeyConfigUnion{
 		UnknownRaw: raw,
-		Type:       PutCustomMetadataFieldDefinitionsKeyConfigResponseUnionTypeUnknown,
+		Type:       PutCustomMetadataFieldDefinitionsKeyConfigUnionTypeUnknown,
 	}
 }
 
-func (u PutCustomMetadataFieldDefinitionsKeyConfigResponseUnion) GetUnknownRaw() json.RawMessage {
+func (u PutCustomMetadataFieldDefinitionsKeyConfigUnion) GetUnknownRaw() json.RawMessage {
 	return u.UnknownRaw
 }
 
-func (u PutCustomMetadataFieldDefinitionsKeyConfigResponseUnion) IsUnknown() bool {
-	return u.Type == PutCustomMetadataFieldDefinitionsKeyConfigResponseUnionTypeUnknown
+func (u PutCustomMetadataFieldDefinitionsKeyConfigUnion) IsUnknown() bool {
+	return u.Type == PutCustomMetadataFieldDefinitionsKeyConfigUnionTypeUnknown
 }
 
-func (u *PutCustomMetadataFieldDefinitionsKeyConfigResponseUnion) UnmarshalJSON(data []byte) error {
-	*u = PutCustomMetadataFieldDefinitionsKeyConfigResponseUnion{}
+func (u *PutCustomMetadataFieldDefinitionsKeyConfigUnion) UnmarshalJSON(data []byte) error {
+	*u = PutCustomMetadataFieldDefinitionsKeyConfigUnion{}
 
 	var candidates []utils.UnionCandidate
 
@@ -530,7 +393,7 @@ func (u *PutCustomMetadataFieldDefinitionsKeyConfigResponseUnion) UnmarshalJSON(
 	var putCustomMetadataFieldDefinitionsKeyConfigResponse1 PutCustomMetadataFieldDefinitionsKeyConfigResponse1 = PutCustomMetadataFieldDefinitionsKeyConfigResponse1{}
 	if err := utils.UnmarshalJSON(data, &putCustomMetadataFieldDefinitionsKeyConfigResponse1, "", true, nil); err == nil {
 		candidates = append(candidates, utils.UnionCandidate{
-			Type:  PutCustomMetadataFieldDefinitionsKeyConfigResponseUnionTypePutCustomMetadataFieldDefinitionsKeyConfigResponse1,
+			Type:  PutCustomMetadataFieldDefinitionsKeyConfigUnionTypePutCustomMetadataFieldDefinitionsKeyConfigResponse1,
 			Value: &putCustomMetadataFieldDefinitionsKeyConfigResponse1,
 		})
 	}
@@ -538,7 +401,7 @@ func (u *PutCustomMetadataFieldDefinitionsKeyConfigResponseUnion) UnmarshalJSON(
 	var putCustomMetadataFieldDefinitionsKeyConfigResponse2 PutCustomMetadataFieldDefinitionsKeyConfigResponse2 = PutCustomMetadataFieldDefinitionsKeyConfigResponse2{}
 	if err := utils.UnmarshalJSON(data, &putCustomMetadataFieldDefinitionsKeyConfigResponse2, "", true, nil); err == nil {
 		candidates = append(candidates, utils.UnionCandidate{
-			Type:  PutCustomMetadataFieldDefinitionsKeyConfigResponseUnionTypePutCustomMetadataFieldDefinitionsKeyConfigResponse2,
+			Type:  PutCustomMetadataFieldDefinitionsKeyConfigUnionTypePutCustomMetadataFieldDefinitionsKeyConfigResponse2,
 			Value: &putCustomMetadataFieldDefinitionsKeyConfigResponse2,
 		})
 	}
@@ -546,14 +409,14 @@ func (u *PutCustomMetadataFieldDefinitionsKeyConfigResponseUnion) UnmarshalJSON(
 	var putCustomMetadataFieldDefinitionsKeyConfigResponse3 PutCustomMetadataFieldDefinitionsKeyConfigResponse3 = PutCustomMetadataFieldDefinitionsKeyConfigResponse3{}
 	if err := utils.UnmarshalJSON(data, &putCustomMetadataFieldDefinitionsKeyConfigResponse3, "", true, nil); err == nil {
 		candidates = append(candidates, utils.UnionCandidate{
-			Type:  PutCustomMetadataFieldDefinitionsKeyConfigResponseUnionTypePutCustomMetadataFieldDefinitionsKeyConfigResponse3,
+			Type:  PutCustomMetadataFieldDefinitionsKeyConfigUnionTypePutCustomMetadataFieldDefinitionsKeyConfigResponse3,
 			Value: &putCustomMetadataFieldDefinitionsKeyConfigResponse3,
 		})
 	}
 
 	if len(candidates) == 0 {
 		u.UnknownRaw = json.RawMessage(data)
-		u.Type = PutCustomMetadataFieldDefinitionsKeyConfigResponseUnionTypeUnknown
+		u.Type = PutCustomMetadataFieldDefinitionsKeyConfigUnionTypeUnknown
 		return nil
 	}
 
@@ -561,30 +424,30 @@ func (u *PutCustomMetadataFieldDefinitionsKeyConfigResponseUnion) UnmarshalJSON(
 	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
 		u.UnknownRaw = json.RawMessage(data)
-		u.Type = PutCustomMetadataFieldDefinitionsKeyConfigResponseUnionTypeUnknown
+		u.Type = PutCustomMetadataFieldDefinitionsKeyConfigUnionTypeUnknown
 		return nil
 	}
 
 	// Set the union type and value based on the best candidate
-	u.Type = best.Type.(PutCustomMetadataFieldDefinitionsKeyConfigResponseUnionType)
+	u.Type = best.Type.(PutCustomMetadataFieldDefinitionsKeyConfigUnionType)
 	switch best.Type {
-	case PutCustomMetadataFieldDefinitionsKeyConfigResponseUnionTypePutCustomMetadataFieldDefinitionsKeyConfigResponse1:
+	case PutCustomMetadataFieldDefinitionsKeyConfigUnionTypePutCustomMetadataFieldDefinitionsKeyConfigResponse1:
 		u.PutCustomMetadataFieldDefinitionsKeyConfigResponse1 = best.Value.(*PutCustomMetadataFieldDefinitionsKeyConfigResponse1)
 		return nil
-	case PutCustomMetadataFieldDefinitionsKeyConfigResponseUnionTypePutCustomMetadataFieldDefinitionsKeyConfigResponse2:
+	case PutCustomMetadataFieldDefinitionsKeyConfigUnionTypePutCustomMetadataFieldDefinitionsKeyConfigResponse2:
 		u.PutCustomMetadataFieldDefinitionsKeyConfigResponse2 = best.Value.(*PutCustomMetadataFieldDefinitionsKeyConfigResponse2)
 		return nil
-	case PutCustomMetadataFieldDefinitionsKeyConfigResponseUnionTypePutCustomMetadataFieldDefinitionsKeyConfigResponse3:
+	case PutCustomMetadataFieldDefinitionsKeyConfigUnionTypePutCustomMetadataFieldDefinitionsKeyConfigResponse3:
 		u.PutCustomMetadataFieldDefinitionsKeyConfigResponse3 = best.Value.(*PutCustomMetadataFieldDefinitionsKeyConfigResponse3)
 		return nil
 	}
 
 	u.UnknownRaw = json.RawMessage(data)
-	u.Type = PutCustomMetadataFieldDefinitionsKeyConfigResponseUnionTypeUnknown
+	u.Type = PutCustomMetadataFieldDefinitionsKeyConfigUnionTypeUnknown
 	return nil
 }
 
-func (u PutCustomMetadataFieldDefinitionsKeyConfigResponseUnion) MarshalJSON() ([]byte, error) {
+func (u PutCustomMetadataFieldDefinitionsKeyConfigUnion) MarshalJSON() ([]byte, error) {
 	if u.PutCustomMetadataFieldDefinitionsKeyConfigResponse1 != nil {
 		return utils.MarshalJSON(u.PutCustomMetadataFieldDefinitionsKeyConfigResponse1, "", true)
 	}
@@ -600,7 +463,7 @@ func (u PutCustomMetadataFieldDefinitionsKeyConfigResponseUnion) MarshalJSON() (
 	if u.UnknownRaw != nil {
 		return json.RawMessage(u.UnknownRaw), nil
 	}
-	return nil, errors.New("could not marshal union type PutCustomMetadataFieldDefinitionsKeyConfigResponseUnion: all fields are null")
+	return nil, errors.New("could not marshal union type PutCustomMetadataFieldDefinitionsKeyConfigUnion: all fields are null")
 }
 
 // PutCustomMetadataFieldDefinitionsKeySource - The surface the write came through.
@@ -736,7 +599,7 @@ type PutCustomMetadataFieldDefinitionsKeyResponseBody struct {
 	ArchivedAt optionalnullable.OptionalNullable[time.Time] `json:"archived_at,omitzero"`
 	// Type-specific configuration. Present only for field types that have any: an object with `options` for single_select and multi_select fields, an object with `used_currencies` for money fields, and an object with `allows_group_refs` for contact_ref and contact_multi_ref fields.
 	//
-	Config *PutCustomMetadataFieldDefinitionsKeyConfigResponseUnion `json:"config,omitzero"`
+	Config *PutCustomMetadataFieldDefinitionsKeyConfigUnion `json:"config,omitzero"`
 	// The date that the field was originally created.
 	CreatedAt *time.Time `json:"created_at,omitzero"`
 	// The date that the field was last updated.
@@ -792,7 +655,7 @@ func (p *PutCustomMetadataFieldDefinitionsKeyResponseBody) GetArchivedAt() optio
 	return p.ArchivedAt
 }
 
-func (p *PutCustomMetadataFieldDefinitionsKeyResponseBody) GetConfig() *PutCustomMetadataFieldDefinitionsKeyConfigResponseUnion {
+func (p *PutCustomMetadataFieldDefinitionsKeyResponseBody) GetConfig() *PutCustomMetadataFieldDefinitionsKeyConfigUnion {
 	if p == nil {
 		return nil
 	}
