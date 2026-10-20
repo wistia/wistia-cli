@@ -17,7 +17,7 @@ func initGetCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "get",
 		Short:   "Get Current Account",
-		Long:    "Retrieves a summary of the Wistia account including account name, description, URL and counts of records.\n\n## Requires api token with one of the following permissions\n```\n(any scope allowed)\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
+		Long:    "Retrieves a summary of the Wistia account including account name, description, URL and counts of records.\n\n## Requires api token with one of the following permissions\n```\n(any scope allowed)\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\n[Expiring access tokens](https://docs.wistia.com/reference/post_expiring-token)\ncreated with authorizations cannot be used: this endpoint responds with a\n403, whatever the authorizations grant.",
 		Example: "  wistia account get",
 		Args:    cobra.NoArgs,
 		RunE:    runGetCmd,
@@ -53,7 +53,10 @@ func runGetCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.Account.Get(cmd.Context(), sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

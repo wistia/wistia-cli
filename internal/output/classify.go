@@ -67,6 +67,10 @@ type Classification struct {
 	// only the recorded occurrence was surfaced. Empty when the carrier has
 	// no wildcard hops.
 	reasonCarrierPath []int
+	// credentialsMissing is set when a 403 was re-typed to authentication
+	// because the request carried no credential; hints declared for the
+	// permission reason do not apply to that caller.
+	credentialsMissing bool
 }
 
 type errorRule struct {
@@ -220,6 +224,15 @@ func Classify(cmd *cobra.Command, err error) Classification {
 		}
 		if c.Type == "" {
 			c.Type = classifyStatuslessError(err, c.Origin)
+		}
+		if c.Type == ErrorTypeAuthorization && c.StatusCode == 403 && flagutil.CredentialsMissing(cmd) {
+			c.Type = ErrorTypeAuthentication
+			c.credentialsMissing = true
+			ruleHints = nil
+			if hint := flagutil.CredentialsMissingHint(cmd); hint != "" {
+				ruleHints = []string{hint}
+				useReasonRule = true
+			}
 		}
 		if c.Reason == "" && c.StatusCode == 0 {
 			c.Reason = syntheticCLIReason(c.Type)
@@ -464,11 +477,11 @@ func assembleHints(cmd *cobra.Command, err error, c Classification, bodyMap, err
 		hints = append(hints, ruleHints...)
 	} else if declared, ok := declaredTypeHints[c.Type]; ok {
 		hints = append(hints, declared...)
-	} else {
+	} else if !omitsTypeHints(err) {
 		hints = append(hints, builtinTypeHints[c.Type]...)
 	}
 	hints = append(hints, errorCLIHints(err)...)
-	if declared := declaredCommandHints(cmd); declared != nil && c.Reason != "" {
+	if declared := declaredCommandHints(cmd); declared != nil && c.Reason != "" && !c.credentialsMissing {
 		hints = append(hints, declared[c.Reason]...)
 	}
 	seen := make(map[string]bool, len(hints))
@@ -529,6 +542,11 @@ func errorCLIHints(err error) []string {
 		return typed.CLIHints()
 	}
 	return nil
+}
+
+func omitsTypeHints(err error) bool {
+	var typed interface{ CLIOmitTypeHints() bool }
+	return errors.As(err, &typed) && typed.CLIOmitTypeHints()
 }
 
 func leadingHints(cmd *cobra.Command, err error, reason string) []string {
@@ -671,19 +689,13 @@ func cliReasonErrorType(reason string) ErrorType {
 
 type cliHintsError struct {
 	error
-	hints []string
+	hints         []string
+	omitTypeHints bool
 }
 
-func (e cliHintsError) CLIHints() []string { return e.hints }
-func (e cliHintsError) Unwrap() error      { return e.error }
-
-type cliLeadingHintsError struct {
-	error
-	hints []string
-}
-
-func (e cliLeadingHintsError) CLILeadingHints() []string { return e.hints }
-func (e cliLeadingHintsError) Unwrap() error             { return e.error }
+func (e cliHintsError) CLIHints() []string     { return e.hints }
+func (e cliHintsError) CLIOmitTypeHints() bool { return e.omitTypeHints }
+func (e cliHintsError) Unwrap() error          { return e.error }
 
 func withCLIHints(err error, hints []string) error {
 	if err == nil || len(hints) == 0 {

@@ -13,6 +13,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"net/url"
+	"reflect"
 	"sort"
 	"strings"
 
@@ -255,7 +256,7 @@ func isAllHex(value string) bool {
 	return true
 }
 
-func decodeJSON(body []byte) (interface{}, bool) {
+func parseJSON(body []byte) (interface{}, bool) {
 	dec := json.NewDecoder(bytes.NewReader(body))
 	dec.UseNumber()
 	var parsed interface{}
@@ -263,6 +264,14 @@ func decodeJSON(body []byte) (interface{}, bool) {
 		return nil, false
 	}
 	if err := dec.Decode(&struct{}{}); err != io.EOF {
+		return nil, false
+	}
+	return parsed, true
+}
+
+func decodeJSON(body []byte) (interface{}, bool) {
+	parsed, ok := parseJSON(body)
+	if !ok {
 		return nil, false
 	}
 	return redactJSON(parsed, 0), true
@@ -306,6 +315,14 @@ func previewBody(body []byte, contentType string) interface{} {
 	return redactBase64String(string(body))
 }
 
+func previewRequestBody(req *http.Request, body []byte) interface{} {
+	return previewBody(body, req.Header.Get("Content-Type"))
+}
+
+func previewResponseBody(req *http.Request, resp *http.Response, body []byte) interface{} {
+	return previewBody(body, resp.Header.Get("Content-Type"))
+}
+
 func previewForm(body []byte) string {
 	raw := string(body)
 	if _, err := url.ParseQuery(raw); err != nil {
@@ -323,6 +340,14 @@ func previewForm(body []byte) string {
 		if isSensitiveName(decodedKey) {
 			parts[i] = key + "=[REDACTED]"
 			continue
+		}
+		if parsed, ok := parseJSON([]byte(decodedValue)); ok {
+			if redacted := redactJSON(parsed, 0); !reflect.DeepEqual(parsed, redacted) {
+				if encoded, err := encodeJSON(redacted, ""); err == nil {
+					parts[i] = key + "=" + url.QueryEscape(encoded)
+					continue
+				}
+			}
 		}
 		redacted := redactBase64String(decodedValue)
 		if redacted != decodedValue {
@@ -471,7 +496,7 @@ func (c *DebugClient) Do(req *http.Request) (*http.Response, error) {
 		if readErr != nil {
 			fmt.Fprintf(c.Stderr, "[DEBUG] Request Body Read Error: %v\n", readErr)
 		} else {
-			body := previewBody(bodyData, req.Header.Get("Content-Type"))
+			body := previewRequestBody(req, bodyData)
 			fmt.Fprintf(c.Stderr, "[DEBUG] Request Body:\n  %s\n", formatBodyPreview(body, maxBodyPreview))
 		}
 	}
@@ -496,7 +521,7 @@ func (c *DebugClient) Do(req *http.Request) (*http.Response, error) {
 			if readErr != nil {
 				fmt.Fprintf(c.Stderr, "[DEBUG] Response Body Read Error: %v\n", readErr)
 			} else if len(bodyData) > 0 {
-				body := previewBody(bodyData, resp.Header.Get("Content-Type"))
+				body := previewResponseBody(req, resp, bodyData)
 				fmt.Fprintf(c.Stderr, "[DEBUG] Response Body:\n  %s\n", formatBodyPreview(body, maxBodyPreview))
 			}
 		}
@@ -561,7 +586,7 @@ func (c *DryRunClient) Do(req *http.Request) (*http.Response, error) {
 		if err != nil {
 			return nil, fmt.Errorf("read request body for dry-run preview: %w", err)
 		}
-		body = previewBody(bodyData, req.Header.Get("Content-Type"))
+		body = previewRequestBody(req, bodyData)
 	}
 	requestURL := redactURL(req.URL.String())
 	headers := redactHeaders(req.Header)

@@ -361,7 +361,7 @@ func (d *DeleteBrandsBrandIDPageLogoDimensions) GetHeight() *int64 {
 
 // DeleteBrandsBrandIDPageLogo - The brand logo used for pages. Null when unset.
 type DeleteBrandsBrandIDPageLogo struct {
-	// The Wistia delivery URL of the logo image, e.g. `https://embed-ssl.wistia.com/deliveries/abc123def456.png`. When writing, this must reference an image already in the account; the API cannot upload one.
+	// The Wistia delivery URL of the logo image, e.g. `https://embed-ssl.wistia.com/deliveries/abc123def456.png`. When writing, this must reference an image already in the account: the `asset.url` returned by uploading a file to the Upload API with `asset_type=brand_image`, or a URL read back from a brand.
 	URL        *string                                                                  `json:"url,omitzero"`
 	Dimensions optionalnullable.OptionalNullable[DeleteBrandsBrandIDPageLogoDimensions] `json:"dimensions,omitzero"`
 	// The size multiplier of the logo.
@@ -421,7 +421,7 @@ func (d *DeleteBrandsBrandIDPlayerLogoDimensions) GetHeight() *int64 {
 
 // DeleteBrandsBrandIDPlayerLogo - The brand logo used for the player. Null when unset.
 type DeleteBrandsBrandIDPlayerLogo struct {
-	// The Wistia delivery URL of the logo image, e.g. `https://embed-ssl.wistia.com/deliveries/abc123def456.png`. When writing, this must reference an image already in the account; the API cannot upload one.
+	// The Wistia delivery URL of the logo image, e.g. `https://embed-ssl.wistia.com/deliveries/abc123def456.png`. When writing, this must reference an image already in the account: the `asset.url` returned by uploading a file to the Upload API with `asset_type=brand_image`, or a URL read back from a brand.
 	URL        *string                                                                    `json:"url,omitzero"`
 	Dimensions optionalnullable.OptionalNullable[DeleteBrandsBrandIDPlayerLogoDimensions] `json:"dimensions,omitzero"`
 	// The size multiplier of the logo.
