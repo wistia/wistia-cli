@@ -17,7 +17,7 @@ func initDismissDesktopInstallPromptCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "dismiss-desktop-install-prompt",
 		Short:   "Dismiss Desktop Install Prompt",
-		Long:    "Marks the current contact's macOS install-prompt modal as dismissed.\nCalled by the SPA when a teammate invited via the Wistia desktop app\ncloses the \"Wistia is even better on your Mac\" modal — the modal\nnever shows again for that contact.\n\nIdempotent: a repeat call returns the timestamp of the first dismissal.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
+		Long:    "Marks the current contact's macOS install-prompt modal as dismissed.\nCalled by the SPA when a teammate invited via the Wistia desktop app\ncloses the \"Wistia is even better on your Mac\" modal — the modal\nnever shows again for that contact.\n\nIdempotent: a repeat call returns the timestamp of the first dismissal.\n\n[Expiring access tokens](https://docs.wistia.com/reference/post_expiring-token)\ncreated with authorizations cannot be used: this endpoint responds with a\n403, whatever the authorizations grant.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
 		Example: "  wistia contact dismiss-desktop-install-prompt",
 		Args:    cobra.NoArgs,
 		RunE:    runDismissDesktopInstallPromptCmd,
@@ -54,7 +54,10 @@ func runDismissDesktopInstallPromptCmd(cmd *cobra.Command, args []string) error 
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.Contact.DismissDesktopInstallPrompt(cmd.Context(), sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

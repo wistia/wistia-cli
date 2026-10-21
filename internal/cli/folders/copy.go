@@ -25,7 +25,7 @@ func initCopyCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "copy [id]",
 		Short:   "Copy Folder",
-		Long:    "This copies a folder (previously called project) and all its media and subfolders asynchronously in a background job.\n\nThis method does not copy the folder’s sharing information (i.e. users that could see the old folder will not automatically be able to see the new one).\n\nFor the request you can specify the owner of a new folder by passing an optional parameter. The person you specify must be a Manager in the account.\n\nThe body of the response will contain an object representing the background job that was created.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
+		Long:    "This copies a folder (previously called project) and all its media and subfolders asynchronously in a background job.\n\nThis method does not copy the folder’s sharing information (i.e. users that could see the old folder will not automatically be able to see the new one).\n\nFor the request you can specify the owner of a new folder by passing an optional parameter. The person you specify must be a Manager in the account.\n\nThe body of the response will contain an object representing the background job that was created.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope, an\nauthorization for this folder (any permission qualifies) and an `account`\nauthorization granting the `create-folders` permission can also be used.\n`adminEmail` selects the copy's administrator (defaults to the account\nowner). The new folder is not covered by the token that copied it.",
 		Example: "  wistia folders copy --id <id>",
 		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runCopyCmd,
@@ -38,7 +38,7 @@ func initCopyCmd(parent *cobra.Command) error {
 		return fmt.Errorf("invalid metadata for copy: %w", err)
 	}
 	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
-	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Required: false, Kind: "json", BodyFlag: true})
 	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
 	if err := flagutil.AnnotateBodyFields(cmd, copyCmdMeta, "Body", "body"); err != nil {
 		return fmt.Errorf("annotate body fields for copy: %w", err)
@@ -86,7 +86,10 @@ func runCopyCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.Folders.Copy(cmd.Context(), *req, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}
