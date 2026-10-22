@@ -32,20 +32,33 @@ func newSearch(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks *hooks.
 }
 
 // Search
-// Searches across folders, subfolders, medias, channels, channel episodes, and webinars.
-// Also searches through video transcripts, so media results may include transcript matches with
-// timestamps when the query matches spoken content.
+// Searches media, folders, subfolders, channels, channel episodes, and webinars
+// with filters, sorting, and paging, ranking every type in one list. Matches names,
+// descriptions, and transcripts; `total_count` and `counts_by_type` count every
+// match, not just the returned page, and `per_page=0` returns only the counts.
+//
+// Releases through 2026-09 serve the previous search, which takes `q` and nests
+// results by type under `data`. Accounts whose content isn't indexed for this
+// search receive a 403 and can use the previous search by sending
+// `X-Wistia-API-Version: 2026-09`.
 //
 // ## Requires api token with one of the following permissions
 // ```
 // Read all data
 // ```
 //
+// A token with `Read all folder and media data` is enough when you pass
+// `content_types` without `webinar`.
+//
 // Tokens with the "Act with a team member's permissions" permission
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
-func (s *Search) Search(ctx context.Context, request operations.GetSearchRequest, opts ...operations.Option) (*operations.GetSearchResponse, error) {
+//
+// [Expiring access tokens](https://docs.wistia.com/reference/post_expiring-token)
+// created with authorizations cannot be used: this search responds with a 403,
+// whatever the authorizations grant.
+func (s *Search) Search(ctx context.Context, request *operations.GetSearchRequest, opts ...operations.Option) (*operations.GetSearchResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,

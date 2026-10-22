@@ -16,7 +16,7 @@ type PostCaptionMatchesRequest struct {
 	TargetText string `json:"target_text"`
 	// Exact IETF language tag. Omit when each media has only one caption track.
 	LanguageCode *string `json:"language_code,omitzero"`
-	// One-based exact occurrence to return, including occurrences after the first 10.
+	// One-based exact occurrence to start the page of matches at, including occurrences after the first 10.
 	Occurrence *int64 `json:"occurrence,omitzero"`
 	// Optional start of a time range used to disambiguate the match.
 	StartMs *int64 `json:"start_ms,omitzero"`
@@ -275,7 +275,7 @@ type PostCaptionMatchesResult struct {
 	// Exact matches only.
 	Matches          []Match `json:"matches,omitzero"`
 	MatchesTruncated *bool   `json:"matches_truncated,omitzero"`
-	// The next one-based occurrence that can be requested when exact matches are truncated.
+	// The one-based occurrence to request as `occurrence` for the next page when exact matches are truncated.
 	NextOccurrence *int64 `json:"next_occurrence,omitzero"`
 	// Fuzzy alternatives when no exact match exists. These are not exact matches.
 	Suggestions          []Suggestion                              `json:"suggestions,omitzero"`
