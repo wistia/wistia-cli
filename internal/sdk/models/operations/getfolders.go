@@ -181,6 +181,11 @@ type GetFoldersRequest struct {
 	SortDirection *GetFoldersSortDirection `queryParam:"style=form,explode=true,name=sort_direction"`
 	// A collection of hashed ids belonging to folders to fetch
 	HashedIds []string `queryParam:"style=form,explode=true,name=hashed_ids[]"`
+	// When true, list only the token user's own My Library folders, instead
+	// of the content library folders. Account tokens act as the account
+	// owner, so they list the owner's My Library folders.
+	//
+	PersonalLibrary *bool `queryParam:"style=form,explode=true,name=personal_library"`
 }
 
 func (g GetFoldersRequest) MarshalJSON() ([]byte, error) {
@@ -234,6 +239,13 @@ func (g *GetFoldersRequest) GetHashedIds() []string {
 		return nil
 	}
 	return g.HashedIds
+}
+
+func (g *GetFoldersRequest) GetPersonalLibrary() *bool {
+	if g == nil {
+		return nil
+	}
+	return g.PersonalLibrary
 }
 
 // GetFoldersCode - A machine-readable identifier for the specific authorization failure.

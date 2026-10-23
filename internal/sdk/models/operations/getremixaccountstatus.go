@@ -73,6 +73,8 @@ type GetRemixAccountStatusResponseBody struct {
 	CreditBalance *float64 `json:"credit_balance,omitzero"`
 	// Account-specific Credit cost of one Remix creation or iteration, present in Credits mode.
 	RemixCreditCost *float64 `json:"remix_credit_cost,omitzero"`
+	// The remaining balance in user-facing units, e.g. "17 AI edits left this month" or "1,250 Credits available".
+	Summary *string `json:"summary,omitzero"`
 	// Next scheduled plan Credit grant (ISO 8601), when available in Credits mode.
 	CreditsRenewAt *time.Time `json:"credits_renew_at,omitzero"`
 }
@@ -135,6 +137,13 @@ func (g *GetRemixAccountStatusResponseBody) GetRemixCreditCost() *float64 {
 		return nil
 	}
 	return g.RemixCreditCost
+}
+
+func (g *GetRemixAccountStatusResponseBody) GetSummary() *string {
+	if g == nil {
+		return nil
+	}
+	return g.Summary
 }
 
 func (g *GetRemixAccountStatusResponseBody) GetCreditsRenewAt() *time.Time {

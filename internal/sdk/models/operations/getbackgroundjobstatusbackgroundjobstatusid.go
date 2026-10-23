@@ -149,6 +149,7 @@ const (
 	GetBackgroundJobStatusBackgroundJobStatusIDOperationUpdate   GetBackgroundJobStatusBackgroundJobStatusIDOperation = "update"
 	GetBackgroundJobStatusBackgroundJobStatusIDOperationDelete   GetBackgroundJobStatusBackgroundJobStatusIDOperation = "delete"
 	GetBackgroundJobStatusBackgroundJobStatusIDOperationMove     GetBackgroundJobStatusBackgroundJobStatusIDOperation = "move"
+	GetBackgroundJobStatusBackgroundJobStatusIDOperationAddTags  GetBackgroundJobStatusBackgroundJobStatusIDOperation = "add_tags"
 	GetBackgroundJobStatusBackgroundJobStatusIDOperationPurchase GetBackgroundJobStatusBackgroundJobStatusIDOperation = "purchase"
 )
 
@@ -160,7 +161,7 @@ func (e GetBackgroundJobStatusBackgroundJobStatusIDOperation) ToPointer() *GetBa
 func (e *GetBackgroundJobStatusBackgroundJobStatusIDOperation) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "create", "update", "delete", "move", "purchase":
+		case "create", "update", "delete", "move", "add_tags", "purchase":
 			return true
 		}
 	}
@@ -365,6 +366,9 @@ func (u *Object) UnmarshalJSON(data []byte) error {
 	}
 
 	if len(candidates) == 0 {
+		if !json.Valid(data) {
+			return fmt.Errorf("could not unmarshal `%s` into any supported union types for Object", string(data))
+		}
 		u.UnknownRaw = json.RawMessage(data)
 		u.Type = ObjectTypeUnknown
 		return nil
@@ -386,6 +390,9 @@ func (u *Object) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 
+	if !json.Valid(data) {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for Object", string(data))
+	}
 	u.UnknownRaw = json.RawMessage(data)
 	u.Type = ObjectTypeUnknown
 	return nil

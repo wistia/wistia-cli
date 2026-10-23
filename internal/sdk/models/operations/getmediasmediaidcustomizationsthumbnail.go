@@ -6,6 +6,7 @@ package operations
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
 	"github.com/wistia/wistia-cli/internal/sdk/sdkinternal/utils"
 )
@@ -133,6 +134,9 @@ func (u *GetMediasMediaIDCustomizationsThumbnailUnalteredStillImageAssetUnion) U
 	}
 
 	if len(candidates) == 0 {
+		if !json.Valid(data) {
+			return fmt.Errorf("could not unmarshal `%s` into any supported union types for GetMediasMediaIDCustomizationsThumbnailUnalteredStillImageAssetUnion", string(data))
+		}
 		u.UnknownRaw = json.RawMessage(data)
 		u.Type = GetMediasMediaIDCustomizationsThumbnailUnalteredStillImageAssetUnionTypeUnknown
 		return nil
@@ -157,6 +161,9 @@ func (u *GetMediasMediaIDCustomizationsThumbnailUnalteredStillImageAssetUnion) U
 		return nil
 	}
 
+	if !json.Valid(data) {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for GetMediasMediaIDCustomizationsThumbnailUnalteredStillImageAssetUnion", string(data))
+	}
 	u.UnknownRaw = json.RawMessage(data)
 	u.Type = GetMediasMediaIDCustomizationsThumbnailUnalteredStillImageAssetUnionTypeUnknown
 	return nil

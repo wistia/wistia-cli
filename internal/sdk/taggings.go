@@ -45,6 +45,9 @@ func newTaggings(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks *hook
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// Expiring access tokens created with authorizations cannot be used; such
+// requests fail with a 403.
 func (s *Taggings) BulkCreate(ctx context.Context, request operations.PostTaggingsBulkCreateRequest, opts ...operations.Option) (*operations.PostTaggingsBulkCreateResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

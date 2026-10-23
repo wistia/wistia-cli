@@ -44,6 +44,11 @@ func newWebinars(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks *hook
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization naming a webinar (any permission) can also be used; it
+// lists the webinars the token names.
 func (s *Webinars) List(ctx context.Context, request *operations.GetWebinarsRequest, opts ...operations.Option) (*operations.GetWebinarsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -314,6 +319,13 @@ func (s *Webinars) List(ctx context.Context, request *operations.GetWebinarsRequ
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// `account` authorization granting the `create-webinars` permission can also
+// be used. The new webinar is not covered by the token that created it, so
+// follow-up requests need a token whose authorizations name the returned
+// hashed id.
 func (s *Webinars) Create(ctx context.Context, request operations.PostWebinarsRequest, opts ...operations.Option) (*operations.PostWebinarsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -589,6 +601,10 @@ func (s *Webinars) Create(ctx context.Context, request operations.PostWebinarsRe
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization naming this webinar (any permission) can also be used.
 func (s *Webinars) Get(ctx context.Context, request operations.GetWebinarsIDRequest, opts ...operations.Option) (*operations.GetWebinarsIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -832,6 +848,12 @@ func (s *Webinars) Get(ctx context.Context, request operations.GetWebinarsIDRequ
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `update` permission on this webinar can also
+// be used. The `update` permission also allows registering attendees and
+// managing the webinar's collaborators.
 func (s *Webinars) Update(ctx context.Context, request operations.PutWebinarsIDRequest, opts ...operations.Option) (*operations.PutWebinarsIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1107,6 +1129,11 @@ func (s *Webinars) Update(ctx context.Context, request operations.PutWebinarsIDR
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `destroy` permission on this webinar can also
+// be used.
 func (s *Webinars) Delete(ctx context.Context, request operations.DeleteWebinarsIDRequest, opts ...operations.Option) (*operations.DeleteWebinarsIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

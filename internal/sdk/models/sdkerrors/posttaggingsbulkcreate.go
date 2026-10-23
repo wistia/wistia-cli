@@ -22,7 +22,7 @@ func (e *PostTaggingsBulkCreateInternalServerError) Error() string {
 	return string(data)
 }
 
-// PostTaggingsBulkCreateUnprocessableEntityError - Unprocessable entity, e.g. missing required parameters.
+// PostTaggingsBulkCreateUnprocessableEntityError - Unprocessable entity, e.g. missing required parameters or an invalid tag name.
 type PostTaggingsBulkCreateUnprocessableEntityError struct {
 	Error_   *string                 `json:"error,omitzero"`
 	HTTPMeta components.HTTPMetadata `json:"-"`
