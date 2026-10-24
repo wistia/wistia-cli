@@ -27,7 +27,7 @@ func initApplyCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "apply [brand-id]",
 		Short:   "Apply Brand",
-		Long:    "Applies a brand to a media, folder, or channel, so that resource is styled\nby the brand's colors, fonts, logos, and layout.\n\nA brand has no effect until it is applied to something. Media inherit from\ntheir folder, and folders from the account's default brand, so applying a\nbrand to a folder styles everything inside it that has no brand of its own.\n\nApplying the account-level default brand (`is_default: true`) is how a\nresource is un-branded: it detaches the resource so it inherits again.\n\nBy default this also clears any brand-mapped appearance settings the\nresource had set directly, so the brand is what shows. Pass\n`clear_overrides: false` to leave those in place.\n\nResponds with the brand now in effect on the resource, which is not always\nthe one you applied — detaching a media returns the brand it falls back to.\n\nWebinars can't be branded through this endpoint yet.\n\n## Requires api token with one of the following permissions\n```\nAll data\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
+		Long:    "Applies a brand to a media, folder, or channel, so that resource is styled\nby the brand's colors, fonts, logos, and layout.\n\nA brand has no effect until it is applied to something. Media inherit from\ntheir folder, and folders from the account's default brand, so applying a\nbrand to a folder styles everything inside it that has no brand of its own.\n\nApplying the account-level default brand (`is_default: true`) is how a\nresource is un-branded: it detaches the resource so it inherits again.\n\nBy default this also clears any brand-mapped appearance settings the\nresource had set directly, so the brand is what shows. Pass\n`clear_overrides: false` to leave those in place.\n\nResponds with the brand now in effect on the resource, which is not always\nthe one you applied — detaching a media returns the brand it falls back to.\n\nWebinars can't be branded through this endpoint yet.\n\n## Requires api token with one of the following permissions\n```\nAll data\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope can also be\nused when its authorizations grant the `update` permission on this brand\nand on the media, folder or channel being branded.",
 		Example: "  wistia brands apply --brand-id <id> --resource-type media --resource-id abcde12345",
 		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runApplyCmd,
@@ -40,7 +40,7 @@ func initApplyCmd(parent *cobra.Command) error {
 		return fmt.Errorf("invalid metadata for apply: %w", err)
 	}
 	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
-	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Required: false, Kind: "json", BodyFlag: true})
 	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
 	if err := flagutil.AnnotateBodyFields(cmd, applyCmdMeta, "Body", "body"); err != nil {
 		return fmt.Errorf("annotate body fields for apply: %w", err)
@@ -88,7 +88,10 @@ func runApplyCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.Brands.Apply(cmd.Context(), *req, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

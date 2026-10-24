@@ -1,19 +1,17 @@
-## wistia deleted-media post-deleted-media-restore
+## wistia deleted-media list
 
-Restore Deleted Media
+List Deleted Media
 
 ### Synopsis
 
-Restores one or more soft-deleted media. By default each media returns to the
-folder it was deleted from; pass folder_id to restore them into a specific
-folder instead. Only media still inside the restore window can be recovered.
-The restore runs asynchronously and the response includes a background job
-status.
+Lists media that has been soft-deleted and is still inside the account's
+restore window. Media is listed only while it can still be restored — 30 days
+on most plans, 14 on free plans. After which it is permanently purged.
 
 
 ## Requires api token with one of the following permissions
 ```
-Upload and view media
+Read all folder and media data
 ```
 
 Tokens with the "Act with a team member's permissions" permission
@@ -21,23 +19,42 @@ Tokens with the "Act with a team member's permissions" permission
 made with such a token are authorized using the permissions of the
 contact assigned to the token.
 
+An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+created with the `all:delegate_to_contact_permissions` scope and an
+`account` authorization granting the `manage-deleted-media` permission can
+also be used. Only the deleted media the token's `media` authorizations
+name are listed.
+
 ```
-wistia deleted-media post-deleted-media-restore [flags]
+wistia deleted-media list [flags]
 ```
 
 ### Examples
 
 ```
-  wistia deleted-media post-deleted-media-restore --media-hashed-ids abc123
+  wistia deleted-media list
 ```
 
 ### Options
 
 ```
-      --body string                    Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.
-  -f, --folder-id string               Optional hashed id of the folder to restore the media into. If omitted, each media returns to the folder it was deleted from.
-  -h, --help                           help for post-deleted-media-restore
-  -m, --media-hashed-ids stringArray   The hashed ids of the soft-deleted media to restore. Up to 1000 at a time. [required]
+  -c, --cursor string            If 'cursor[enabled]' is set to 1 then cursor pagination is enabled and the
+                                 first set of records are fetched up to the 'per_page'. Cursor
+                                 pagination will also be turned on if 'cursor[before]' or 'cursor[after]'
+                                 are set. Records returned will have a 'cursor' property set which can be used to fetch more records in the same 'sort_by' ordering.
+                                 The cursor value of the last record can be used to fetch records after the current result set and
+                                 the cursor of the first record can be used to fetch records before the result set.
+                                 
+                                 NOTE: a cursor value is only valid if the 'sort_by' value hasn't changed from the
+                                 last fetch. For example, you cannot fetch using 'sort_by' id and then pass that
+                                 cursor value to a 'sort_by' name.
+      --hashed-ids stringArray   Restrict the results to the deleted media with these hashed IDs.
+  -h, --help                     help for list
+      --page int                 The page number to retrieve. This cannot be combined with 'cursor',
+                                 pagination.
+      --per-page int             The number of medias per page. Use this for both offset pagination and cursor pagination.
+      --sort-by string           Field to order by. When omitted, results are ordered most-recently-deleted first. (options: id, deleted, name, type, created)
+      --sort-direction string    Direction to order by. (0 = desc, 1 = asc; default is 1) (options: 0, 1)
 ```
 
 ### Options inherited from parent commands
@@ -53,6 +70,7 @@ wistia deleted-media post-deleted-media-restore [flags]
       --interactive            Prompt for missing inputs and open guided configure/auth forms (forms fall back to line prompts on stdin off-TTY) (default true)
   -q, --jq string              Filter and transform output using a jq expression (e.g., '.name', '.items[] | .id')
       --no-interactive         Disable all interactive features (auto-prompting, explorer auto-launch, TUI forms)
+      --no-keyring             Never read or write the OS keychain; store secrets in the config file instead (env: WISTIA_CLI_NO_KEYRING)
   -o, --output-format string   Specify the output format. Options: pretty, json, yaml, table, toon. (default "pretty")
       --raw-output             Write --jq string results as raw text instead of JSON strings (like jq -r); non-string results stay JSON
       --server string          Select a server by index (for indexed servers) or name (for named servers)
@@ -67,8 +85,8 @@ wistia deleted-media post-deleted-media-restore [flags]
 
 ### Machine interface
 
-* `wistia deleted-media post-deleted-media-restore --usage` — this command's flags, defaults and env vars as machine-readable KDL
-* `wistia deleted-media post-deleted-media-restore --dry-run` — preview the request without OS-keychain access or a network call (human preview on stderr)
+* `wistia deleted-media list --usage` — this command's flags, defaults and env vars as machine-readable KDL
+* `wistia deleted-media list --dry-run` — preview the request without OS-keychain access or a network call (human preview on stderr)
 * `--dry-run --output-format json` (or a caller-explicit `--jq`) writes one preview object per request as NDJSON on stdout; jq is not applied to previews
 * `--output-format json` or `--jq <expr>` for machine-readable live output; in agent mode errors are a JSON envelope on stderr
 

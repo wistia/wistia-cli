@@ -36,6 +36,19 @@ func (e *PostMediasMediaHashedIDTrimsUnprocessableEntityError) Error() string {
 	return string(data)
 }
 
+// PostMediasMediaHashedIDTrimsNotFoundError - Resource not found
+type PostMediasMediaHashedIDTrimsNotFoundError struct {
+	Error_   *string                 `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata `json:"-"`
+}
+
+var _ error = &PostMediasMediaHashedIDTrimsNotFoundError{}
+
+func (e *PostMediasMediaHashedIDTrimsNotFoundError) Error() string {
+	data, _ := json.Marshal(e)
+	return string(data)
+}
+
 // PostMediasMediaHashedIDTrimsForbiddenError - Forbidden, token is valid but account does not have access to feature
 type PostMediasMediaHashedIDTrimsForbiddenError struct {
 	Error_   *string                 `json:"error,omitzero"`

@@ -13,21 +13,21 @@ import (
 	"time"
 )
 
-type GetSearchResourceType string
+type ContentTypes string
 
 const (
-	GetSearchResourceTypeMedia          GetSearchResourceType = "media"
-	GetSearchResourceTypeFolder         GetSearchResourceType = "folder"
-	GetSearchResourceTypeSubfolder      GetSearchResourceType = "subfolder"
-	GetSearchResourceTypeChannel        GetSearchResourceType = "channel"
-	GetSearchResourceTypeChannelEpisode GetSearchResourceType = "channel_episode"
-	GetSearchResourceTypeWebinar        GetSearchResourceType = "webinar"
+	ContentTypesMedia          ContentTypes = "media"
+	ContentTypesFolder         ContentTypes = "folder"
+	ContentTypesSubfolder      ContentTypes = "subfolder"
+	ContentTypesChannel        ContentTypes = "channel"
+	ContentTypesChannelEpisode ContentTypes = "channel_episode"
+	ContentTypesWebinar        ContentTypes = "webinar"
 )
 
-func (e GetSearchResourceType) ToPointer() *GetSearchResourceType {
+func (e ContentTypes) ToPointer() *ContentTypes {
 	return &e
 }
-func (e *GetSearchResourceType) UnmarshalJSON(data []byte) error {
+func (e *ContentTypes) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
 		return err
@@ -44,10 +44,39 @@ func (e *GetSearchResourceType) UnmarshalJSON(data []byte) error {
 	case "channel_episode":
 		fallthrough
 	case "webinar":
-		*e = GetSearchResourceType(v)
+		*e = ContentTypes(v)
 		return nil
 	default:
-		return fmt.Errorf("invalid value for GetSearchResourceType: %v", v)
+		return fmt.Errorf("invalid value for ContentTypes: %v", v)
+	}
+}
+
+type MediaTypes string
+
+const (
+	MediaTypesVideo MediaTypes = "Video"
+	MediaTypesAudio MediaTypes = "Audio"
+	MediaTypesOther MediaTypes = "Other"
+)
+
+func (e MediaTypes) ToPointer() *MediaTypes {
+	return &e
+}
+func (e *MediaTypes) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "Video":
+		fallthrough
+	case "Audio":
+		fallthrough
+	case "Other":
+		*e = MediaTypes(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for MediaTypes: %v", v)
 	}
 }
 
@@ -253,7 +282,180 @@ func (u CustomMetadataUnion) MarshalJSON() ([]byte, error) {
 	return nil, errors.New("could not marshal union type CustomMetadataUnion: all fields are null")
 }
 
-// GetSearchInclude - Pass `custom_metadata` to include each media result's custom metadata field values (same shape as the Get Custom Metadata Field Values endpoint). Only available on accounts with access to custom metadata (other accounts receive a 403 when this parameter is passed).
+type DurationGroup string
+
+const (
+	DurationGroupZeroMinus59                      DurationGroup = "0-59"
+	DurationGroupSixtyMinus179                    DurationGroup = "60-179"
+	DurationGroupOneHundredAndEightyMinus299      DurationGroup = "180-299"
+	DurationGroupThreeHundredMinus1799            DurationGroup = "300-1799"
+	DurationGroupOneThousandEightHundredMinus3599 DurationGroup = "1800-3599"
+	DurationGroupThreeThousandSixHundredPlus      DurationGroup = "3600+"
+)
+
+func (e DurationGroup) ToPointer() *DurationGroup {
+	return &e
+}
+func (e *DurationGroup) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "0-59":
+		fallthrough
+	case "60-179":
+		fallthrough
+	case "180-299":
+		fallthrough
+	case "300-1799":
+		fallthrough
+	case "1800-3599":
+		fallthrough
+	case "3600+":
+		*e = DurationGroup(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for DurationGroup: %v", v)
+	}
+}
+
+type PlayCountGroup string
+
+const (
+	PlayCountGroupZero                           PlayCountGroup = "0"
+	PlayCountGroupOneMinus100                    PlayCountGroup = "1-100"
+	PlayCountGroupOneHundredAndOneMinus1000      PlayCountGroup = "101-1000"
+	PlayCountGroupOneThousandAndOneMinus10000    PlayCountGroup = "1001-10000"
+	PlayCountGroupTenThousandAndOneMinus50000    PlayCountGroup = "10001-50000"
+	PlayCountGroupFiftyThousandAndOneMinus500000 PlayCountGroup = "50001-500000"
+	PlayCountGroupFiveHundredThousandAndOnePlus  PlayCountGroup = "500001+"
+)
+
+func (e PlayCountGroup) ToPointer() *PlayCountGroup {
+	return &e
+}
+func (e *PlayCountGroup) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "0":
+		fallthrough
+	case "1-100":
+		fallthrough
+	case "101-1000":
+		fallthrough
+	case "1001-10000":
+		fallthrough
+	case "10001-50000":
+		fallthrough
+	case "50001-500000":
+		fallthrough
+	case "500001+":
+		*e = PlayCountGroup(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for PlayCountGroup: %v", v)
+	}
+}
+
+type Origin string
+
+const (
+	OriginEditor Origin = "Editor"
+	OriginLive   Origin = "Live"
+	OriginRecord Origin = "Record"
+)
+
+func (e Origin) ToPointer() *Origin {
+	return &e
+}
+func (e *Origin) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "Editor":
+		fallthrough
+	case "Live":
+		fallthrough
+	case "Record":
+		*e = Origin(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for Origin: %v", v)
+	}
+}
+
+type ShareLinkVisibility string
+
+const (
+	ShareLinkVisibilityLocked         ShareLinkVisibility = "locked"
+	ShareLinkVisibilityAccount        ShareLinkVisibility = "account"
+	ShareLinkVisibilityUnlocked       ShareLinkVisibility = "unlocked"
+	ShareLinkVisibilityDomainVerified ShareLinkVisibility = "domain_verified"
+)
+
+func (e ShareLinkVisibility) ToPointer() *ShareLinkVisibility {
+	return &e
+}
+func (e *ShareLinkVisibility) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "locked":
+		fallthrough
+	case "account":
+		fallthrough
+	case "unlocked":
+		fallthrough
+	case "domain_verified":
+		*e = ShareLinkVisibility(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for ShareLinkVisibility: %v", v)
+	}
+}
+
+// Sort - Ordering. Omit for relevance ranking, which is what you want alongside a `query`; set it for content by recency or name ("the latest video" is `sort=newest` with `per_page=1`).
+type Sort string
+
+const (
+	SortNewest          Sort = "newest"
+	SortOldest          Sort = "oldest"
+	SortRecentlyUpdated Sort = "recently_updated"
+	SortName            Sort = "name"
+)
+
+func (e Sort) ToPointer() *Sort {
+	return &e
+}
+func (e *Sort) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "newest":
+		fallthrough
+	case "oldest":
+		fallthrough
+	case "recently_updated":
+		fallthrough
+	case "name":
+		*e = Sort(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for Sort: %v", v)
+	}
+}
+
+// GetSearchInclude - Pass `custom_metadata` to add each media result's `custom_metadata_field_values`, in the same shape as the Get Custom Metadata Field Values endpoint. Only available on accounts with access to custom metadata; other accounts receive a 403.
 type GetSearchInclude string
 
 const (
@@ -278,51 +480,70 @@ func (e *GetSearchInclude) UnmarshalJSON(data []byte) error {
 }
 
 type GetSearchRequest struct {
-	// The search query string
-	Q string `queryParam:"style=form,explode=true,name=q"`
-	// Filter results by one or more tag names. When multiple tags are provided, results matching any of the specified tags are returned (OR logic).
+	// Free-text search over names, descriptions, and transcripts. Omit to match everything.
+	Query *string `queryParam:"style=form,explode=true,name=query"`
+	// Match `query` as an exact phrase only, with no prefix or fuzzy expansion, so "power" doesn't match "powerful" (default false).
+	ExactMatch *bool `queryParam:"style=form,explode=true,name=exact_match"`
+	// Search only spoken words in transcripts. Results are media ranked by transcript relevance, each with timestamped transcript matches (default false).
+	TranscriptOnly *bool `queryParam:"style=form,explode=true,name=transcript_only"`
+	// Attach transcript matches to each record: timestamped snippets of where the query matched spoken words (default false; implied by `transcript_only`).
+	IncludeHighlights *bool `queryParam:"style=form,explode=true,name=include_highlights"`
+	// Record types to include. `folder` matches folders and subfolders together. For a generic request for media, files, or assets, use `media` to leave out folders and channels without assuming a media subtype.
+	ContentTypes []ContentTypes `queryParam:"style=form,explode=true,name=content_types[]"`
+	// Media subtypes to include. Set this only when the request is limited to video, audio, or another media type; "recording", "media", "file", and "asset" don't imply `Video`.
+	MediaTypes []MediaTypes `queryParam:"style=form,explode=true,name=media_types[]"`
+	// Hashed ID of a folder, subfolder, or channel to search inside; you don't need to know which of the three it is. Cannot be combined with `containers`. A folder scope also matches that folder's subfolder records, so pair it with `media_types` or `content_types` of `media` when counting or listing media. A channel scope matches that channel's episodes, not media.
+	InContainer *string `queryParam:"style=form,explode=true,name=in_container"`
+	// Folder or channel names to search within. Doesn't match subfolder names; use `in_container` for those.
+	Containers []string `queryParam:"style=form,explode=true,name=containers[]"`
+	// Tag names the content must have.
 	Tags []string `queryParam:"style=form,explode=true,name=tags[]"`
-	// Filter results by one or more resource types.
-	ResourceType []GetSearchResourceType `queryParam:"style=form,explode=true,name=resource_type[]"`
-	// Filter media by custom metadata field value, keyed by field key:
-	// `custom_metadata[<field_key>]=<value>`. Only available on accounts with access to
-	// custom metadata (other accounts receive a 403 when this parameter is passed).
-	// Custom metadata only exists on media, so results contain media only and
-	// `resource_type` must include `media`. Use an empty `q` to match all media.
-	//
-	// The value shape depends on the field's type:
-	// - Select, text, url, and email fields take a value
-	//   (`custom_metadata[region]=emea`) or an array of values matched as OR
-	//   (`custom_metadata[region][]=emea&custom_metadata[region][]=amer`). Select fields
-	//   match on option keys.
-	// - Boolean fields take `true` or `false`.
-	// - Number, money, and time fields take an exact number (`custom_metadata[year]=2026`)
-	//   or a range object (`custom_metadata[budget][min]=100&custom_metadata[budget][max]=500`;
-	//   either bound may be omitted).
-	// - Date and datetime fields take a `YYYY-MM-DD` date matching that UTC day, or a
-	//   range object with ISO8601 bounds (`custom_metadata[shoot_date][after]=2026-01-01`,
-	//   `custom_metadata[shoot_date][before]=2026-02-01T00:00:00Z`). A bare-date bound
-	//   covers its whole UTC day: `after` starts at the day's beginning and `before`
-	//   runs through the day's end.
-	// - Contact fields (`contact_ref`, `contact_multi_ref`) only support the presence
-	//   filter below; a value filter on them is rejected.
-	// - Any field type accepts a presence filter: `custom_metadata[region][exists]=false`
-	//   returns media missing the field entirely (useful for metadata coverage audits),
-	//   and `exists=true` returns media that have any value for it.
-	//
-	// Unknown or archived field keys return a 400, as do select option keys that don't
-	// exist on the field. The primary match set holds at most 100 media with no
-	// pagination; a non-blank `q` can add up to 100 more transcript-only matches, and
-	// an empty-`q` audit returns at most 100. Narrow large audits (e.g. with
-	// `created_after`/`created_before`) to complete full coverage.
-	//
+	// Filter media by custom metadata field value, keyed by field key. Select and text fields take a value (`custom_metadata[region]=emea`) or an array of values matched as OR. Boolean fields take `true` or `false`. Number and time fields take an exact number or a range (`custom_metadata[budget][min]=100&custom_metadata[budget][max]=500`), and date fields a `YYYY-MM-DD` date or a range with `after` and `before`. Any field accepts `custom_metadata[region][exists]=false` to find media missing the field, or `true` for media with any value. Only media can match, so other content types are excluded. Only available on accounts with access to custom metadata.
 	CustomMetadata map[string]CustomMetadataUnion `queryParam:"style=deepObject,explode=true,name=custom_metadata"`
-	// Pass `custom_metadata` to include each media result's custom metadata field values (same shape as the Get Custom Metadata Field Values endpoint). Only available on accounts with access to custom metadata (other accounts receive a 403 when this parameter is passed).
+	// Duration buckets, in seconds. Pass every bucket a range covers (for example, under 5 minutes is `0-59`, `60-179`, and `180-299`).
+	DurationGroup []DurationGroup `queryParam:"style=form,explode=true,name=duration_group[]"`
+	// Play-count buckets. Pass every bucket a range covers (for example, more than 100 plays is `101-1000`, `1001-10000`, `10001-50000`, `50001-500000`, and `500001+`).
+	PlayCountGroup []PlayCountGroup `queryParam:"style=form,explode=true,name=play_count_group[]"`
+	// How the media was created.
+	Origin []Origin `queryParam:"style=form,explode=true,name=origin[]"`
+	// Share-link visibility.
+	ShareLinkVisibility []ShareLinkVisibility `queryParam:"style=form,explode=true,name=share_link_visibility[]"`
+	// Hashed IDs of the contacts who uploaded the media.
+	UploadedBy []string `queryParam:"style=form,explode=true,name=uploaded_by[]"`
+	// Assignees, as `contact_<hashed ID>` for a contact or `group_<hashed ID>` for a contact group.
+	Assignees []string `queryParam:"style=form,explode=true,name=assignees[]"`
+	// Workflow status values.
+	WorkflowStatus []string `queryParam:"style=form,explode=true,name=workflow_status[]"`
+	// Speaker profile IDs, from List Speakers. Pass every matching profile; this filters assigned speakers, not people mentioned by name. A list with no ID returns 400.
+	SpeakerProfileIds []string `queryParam:"style=form,explode=true,name=speaker_profile_ids[]"`
+	// Language codes present in the transcript.
+	TranscriptLanguages []string `queryParam:"style=form,explode=true,name=transcript_languages[]"`
+	// Language codes the media is dubbed into.
+	DubbedLanguages []string `queryParam:"style=form,explode=true,name=dubbed_languages[]"`
+	// Leave out media with a transcript in any of these language codes. Includes media with no published transcripts; leave `has_transcript` unset unless the request is limited to media with or without captions.
+	NotTranscriptLanguages []string `queryParam:"style=form,explode=true,name=not_transcript_languages[]"`
+	// Leave out media already dubbed into any of these language codes.
+	NotDubbedLanguages []string `queryParam:"style=form,explode=true,name=not_dubbed_languages[]"`
+	// Only media with at least one published transcript (true) or none (false), which restricts results to media. Pair it with `media_types`, and leave out `Other`: images, documents, and logos never have captions. This checks whether a transcript exists, not whether captions are on in the player.
+	HasTranscript *bool `queryParam:"style=form,explode=true,name=has_transcript"`
+	// Only content with unresolved comments.
+	UnresolvedComments *bool `queryParam:"style=form,explode=true,name=unresolved_comments"`
+	// Only archived (true) or only non-archived (false) content.
+	Archived *bool `queryParam:"style=form,explode=true,name=archived"`
+	// Only content created at or after this time: ISO 8601 at any precision ("2026", "2026-08", "2026-08-01", or "2026-08-01T09:30:00Z") or epoch seconds. A truncated value starts at the beginning of its year, month, or day, in UTC.
+	CreatedAfter *string `queryParam:"style=form,explode=true,name=created_after"`
+	// Only content created at or before this time, in the same forms as `created_after`. A truncated value runs to the end of its year, month, or day, so `created_after=2026-08` with `created_before=2026-08` covers all of August 2026. Both bounds are inclusive, so "before 2026" is `created_before=2025`, and "before March 2026" is `created_before=2026-02`.
+	CreatedBefore *string `queryParam:"style=form,explode=true,name=created_before"`
+	// Ordering. Omit for relevance ranking, which is what you want alongside a `query`; set it for content by recency or name ("the latest video" is `sort=newest` with `per_page=1`).
+	Sort *Sort `queryParam:"style=form,explode=true,name=sort"`
+	// The page of results to return (default 1). Pages reach only the first 10,000 matches, so `page` × `per_page` can't pass 10,000. To reach later records, change the filters or sort and start again at page 1.
+	Page *int64 `queryParam:"style=form,explode=true,name=page"`
+	// Records per page (default 10, maximum 100). Pass 0 to return only `total_count` and `counts_by_type`.
+	PerPage *int64 `queryParam:"style=form,explode=true,name=per_page"`
+	// Pass `custom_metadata` to add each media result's `custom_metadata_field_values`, in the same shape as the Get Custom Metadata Field Values endpoint. Only available on accounts with access to custom metadata; other accounts receive a 403.
 	Include *GetSearchInclude `queryParam:"style=form,explode=true,name=include"`
-	// Filter results created on or after this datetime. Must be a valid ISO8601 timestamp in UTC (ending with 'Z').
-	CreatedAfter *time.Time `queryParam:"style=form,explode=true,name=created_after"`
-	// Filter results created on or before this datetime. Must be a valid ISO8601 timestamp in UTC (ending with 'Z').
-	CreatedBefore *time.Time `queryParam:"style=form,explode=true,name=created_before"`
+	// Attach `transcript_language_counts` and `dubbed_language_counts`: the 100 most common languages in the matched set, each with a label and media count (default false).
+	IncludeLanguageCounts *bool `queryParam:"style=form,explode=true,name=include_language_counts"`
 }
 
 func (g GetSearchRequest) MarshalJSON() ([]byte, error) {
@@ -336,11 +557,60 @@ func (g *GetSearchRequest) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (g *GetSearchRequest) GetQ() string {
+func (g *GetSearchRequest) GetQuery() *string {
 	if g == nil {
-		return ""
+		return nil
 	}
-	return g.Q
+	return g.Query
+}
+
+func (g *GetSearchRequest) GetExactMatch() *bool {
+	if g == nil {
+		return nil
+	}
+	return g.ExactMatch
+}
+
+func (g *GetSearchRequest) GetTranscriptOnly() *bool {
+	if g == nil {
+		return nil
+	}
+	return g.TranscriptOnly
+}
+
+func (g *GetSearchRequest) GetIncludeHighlights() *bool {
+	if g == nil {
+		return nil
+	}
+	return g.IncludeHighlights
+}
+
+func (g *GetSearchRequest) GetContentTypes() []ContentTypes {
+	if g == nil {
+		return nil
+	}
+	return g.ContentTypes
+}
+
+func (g *GetSearchRequest) GetMediaTypes() []MediaTypes {
+	if g == nil {
+		return nil
+	}
+	return g.MediaTypes
+}
+
+func (g *GetSearchRequest) GetInContainer() *string {
+	if g == nil {
+		return nil
+	}
+	return g.InContainer
+}
+
+func (g *GetSearchRequest) GetContainers() []string {
+	if g == nil {
+		return nil
+	}
+	return g.Containers
 }
 
 func (g *GetSearchRequest) GetTags() []string {
@@ -350,18 +620,151 @@ func (g *GetSearchRequest) GetTags() []string {
 	return g.Tags
 }
 
-func (g *GetSearchRequest) GetResourceType() []GetSearchResourceType {
-	if g == nil {
-		return nil
-	}
-	return g.ResourceType
-}
-
 func (g *GetSearchRequest) GetCustomMetadata() map[string]CustomMetadataUnion {
 	if g == nil {
 		return nil
 	}
 	return g.CustomMetadata
+}
+
+func (g *GetSearchRequest) GetDurationGroup() []DurationGroup {
+	if g == nil {
+		return nil
+	}
+	return g.DurationGroup
+}
+
+func (g *GetSearchRequest) GetPlayCountGroup() []PlayCountGroup {
+	if g == nil {
+		return nil
+	}
+	return g.PlayCountGroup
+}
+
+func (g *GetSearchRequest) GetOrigin() []Origin {
+	if g == nil {
+		return nil
+	}
+	return g.Origin
+}
+
+func (g *GetSearchRequest) GetShareLinkVisibility() []ShareLinkVisibility {
+	if g == nil {
+		return nil
+	}
+	return g.ShareLinkVisibility
+}
+
+func (g *GetSearchRequest) GetUploadedBy() []string {
+	if g == nil {
+		return nil
+	}
+	return g.UploadedBy
+}
+
+func (g *GetSearchRequest) GetAssignees() []string {
+	if g == nil {
+		return nil
+	}
+	return g.Assignees
+}
+
+func (g *GetSearchRequest) GetWorkflowStatus() []string {
+	if g == nil {
+		return nil
+	}
+	return g.WorkflowStatus
+}
+
+func (g *GetSearchRequest) GetSpeakerProfileIds() []string {
+	if g == nil {
+		return nil
+	}
+	return g.SpeakerProfileIds
+}
+
+func (g *GetSearchRequest) GetTranscriptLanguages() []string {
+	if g == nil {
+		return nil
+	}
+	return g.TranscriptLanguages
+}
+
+func (g *GetSearchRequest) GetDubbedLanguages() []string {
+	if g == nil {
+		return nil
+	}
+	return g.DubbedLanguages
+}
+
+func (g *GetSearchRequest) GetNotTranscriptLanguages() []string {
+	if g == nil {
+		return nil
+	}
+	return g.NotTranscriptLanguages
+}
+
+func (g *GetSearchRequest) GetNotDubbedLanguages() []string {
+	if g == nil {
+		return nil
+	}
+	return g.NotDubbedLanguages
+}
+
+func (g *GetSearchRequest) GetHasTranscript() *bool {
+	if g == nil {
+		return nil
+	}
+	return g.HasTranscript
+}
+
+func (g *GetSearchRequest) GetUnresolvedComments() *bool {
+	if g == nil {
+		return nil
+	}
+	return g.UnresolvedComments
+}
+
+func (g *GetSearchRequest) GetArchived() *bool {
+	if g == nil {
+		return nil
+	}
+	return g.Archived
+}
+
+func (g *GetSearchRequest) GetCreatedAfter() *string {
+	if g == nil {
+		return nil
+	}
+	return g.CreatedAfter
+}
+
+func (g *GetSearchRequest) GetCreatedBefore() *string {
+	if g == nil {
+		return nil
+	}
+	return g.CreatedBefore
+}
+
+func (g *GetSearchRequest) GetSort() *Sort {
+	if g == nil {
+		return nil
+	}
+	return g.Sort
+}
+
+func (g *GetSearchRequest) GetPage() *int64 {
+	if g == nil {
+		return nil
+	}
+	return g.Page
+}
+
+func (g *GetSearchRequest) GetPerPage() *int64 {
+	if g == nil {
+		return nil
+	}
+	return g.PerPage
 }
 
 func (g *GetSearchRequest) GetInclude() *GetSearchInclude {
@@ -371,18 +774,11 @@ func (g *GetSearchRequest) GetInclude() *GetSearchInclude {
 	return g.Include
 }
 
-func (g *GetSearchRequest) GetCreatedAfter() *time.Time {
+func (g *GetSearchRequest) GetIncludeLanguageCounts() *bool {
 	if g == nil {
 		return nil
 	}
-	return g.CreatedAfter
-}
-
-func (g *GetSearchRequest) GetCreatedBefore() *time.Time {
-	if g == nil {
-		return nil
-	}
-	return g.CreatedBefore
+	return g.IncludeLanguageCounts
 }
 
 // GetSearchCode - A machine-readable identifier for the specific authorization failure.
@@ -410,290 +806,16 @@ func (e *GetSearchCode) IsExact() bool {
 	return false
 }
 
-// GetSearchMedias - A link to where you can fetch the medias for this folder.
-type GetSearchMedias struct {
-	// A URL for fetching all child records of the parent record.
-	URL *string `json:"url,omitzero"`
-}
-
-func (g *GetSearchMedias) GetURL() *string {
-	if g == nil {
-		return nil
-	}
-	return g.URL
-}
-
-// GetSearchKind - Indicates the folder's access scope, relative to the requesting user. One of:
-// - `library`: a library the requester owns. Libraries can still be shared with specific contacts or contact groups; the only restriction is that they cannot be shared with the whole account.
-// - `shared`: a folder the requester has access to via a Contact or ContactGroup sharing — this includes both shared folders and another contact's library that the requester has been granted access to.
-// - `account`: a folder shared with the whole account (everyone in the company can see it).
-type GetSearchKind string
-
-const (
-	GetSearchKindLibrary GetSearchKind = "library"
-	GetSearchKindShared  GetSearchKind = "shared"
-	GetSearchKindAccount GetSearchKind = "account"
-)
-
-func (e GetSearchKind) ToPointer() *GetSearchKind {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *GetSearchKind) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "library", "shared", "account":
-			return true
-		}
-	}
-	return false
-}
-
-// GetSearchFolder - A folder (previously called a project) is a container in which to organize media into. It can be
-// used to set permissions that apply to all the media in the folder as well as
-// organizing media into subfolders (previously called media groups).
-type GetSearchFolder struct {
-	// A unique numeric identifier for the folder within the system.
-	ID int64 `json:"id"`
-	// The folder’s display name.
-	Name string `json:"name"`
-	// The folder’s description.
-	Description optionalnullable.OptionalNullable[string] `json:"description,omitzero"`
-	// The number of different medias that have been uploaded to the folder.
-	MediaCount int64 `json:"media_count"`
-	// A link to where you can fetch the medias for this folder.
-	Medias GetSearchMedias `json:"medias"`
-	// The date that the folder was originally created.
-	Created time.Time `json:"created"`
-	// The date that the folder was last updated.
-	Updated time.Time `json:"updated"`
-	// A private hashed id, uniquely identifying the folder within the system.
-	HashedID string `json:"hashed_id"`
-	// A boolean indicating whether the folder is available for public (anonymous) viewing.
-	Public bool `json:"public"`
-	// If the folder is public, this field contains a string representing the ID used for referencing the folder in public URLs.
-	PublicID             *string `json:"public_id"`
-	AnonymousCanUpload   *bool   `json:"anonymous_can_upload,omitzero"`
-	AnonymousCanDownload *bool   `json:"anonymous_can_download,omitzero"`
-	// Indicates the folder's access scope, relative to the requesting user. One of:
-	// - `library`: a library the requester owns. Libraries can still be shared with specific contacts or contact groups; the only restriction is that they cannot be shared with the whole account.
-	// - `shared`: a folder the requester has access to via a Contact or ContactGroup sharing — this includes both shared folders and another contact's library that the requester has been granted access to.
-	// - `account`: a folder shared with the whole account (everyone in the company can see it).
-	//
-	Kind GetSearchKind `json:"kind"`
-	// Whether this folder is someone's personal library ("My Library"). Unlike `kind`, this is a property of the folder itself and does not depend on who is requesting — it is `true` for a personal library even when that library has been shared with you (where `kind` would read `shared`). Use this, not `kind`, to tell whether a folder is a personal library.
-	//
-	PersonalLibrary bool `json:"personal_library"`
-	// A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
-	Cursor optionalnullable.OptionalNullable[string] `json:"cursor,omitzero"`
-}
-
-func (g GetSearchFolder) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(g, "", false)
-}
-
-func (g *GetSearchFolder) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &g, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (g *GetSearchFolder) GetID() int64 {
-	if g == nil {
-		return 0
-	}
-	return g.ID
-}
-
-func (g *GetSearchFolder) GetName() string {
-	if g == nil {
-		return ""
-	}
-	return g.Name
-}
-
-func (g *GetSearchFolder) GetDescription() optionalnullable.OptionalNullable[string] {
-	if g == nil {
-		return nil
-	}
-	return g.Description
-}
-
-func (g *GetSearchFolder) GetMediaCount() int64 {
-	if g == nil {
-		return 0
-	}
-	return g.MediaCount
-}
-
-func (g *GetSearchFolder) GetMedias() GetSearchMedias {
-	if g == nil {
-		return GetSearchMedias{}
-	}
-	return g.Medias
-}
-
-func (g *GetSearchFolder) GetCreated() time.Time {
-	if g == nil {
-		return time.Time{}
-	}
-	return g.Created
-}
-
-func (g *GetSearchFolder) GetUpdated() time.Time {
-	if g == nil {
-		return time.Time{}
-	}
-	return g.Updated
-}
-
-func (g *GetSearchFolder) GetHashedID() string {
-	if g == nil {
-		return ""
-	}
-	return g.HashedID
-}
-
-func (g *GetSearchFolder) GetPublic() bool {
-	if g == nil {
-		return false
-	}
-	return g.Public
-}
-
-func (g *GetSearchFolder) GetPublicID() *string {
-	if g == nil {
-		return nil
-	}
-	return g.PublicID
-}
-
-func (g *GetSearchFolder) GetAnonymousCanUpload() *bool {
-	if g == nil {
-		return nil
-	}
-	return g.AnonymousCanUpload
-}
-
-func (g *GetSearchFolder) GetAnonymousCanDownload() *bool {
-	if g == nil {
-		return nil
-	}
-	return g.AnonymousCanDownload
-}
-
-func (g *GetSearchFolder) GetKind() GetSearchKind {
-	if g == nil {
-		return GetSearchKind("")
-	}
-	return g.Kind
-}
-
-func (g *GetSearchFolder) GetPersonalLibrary() bool {
-	if g == nil {
-		return false
-	}
-	return g.PersonalLibrary
-}
-
-func (g *GetSearchFolder) GetCursor() optionalnullable.OptionalNullable[string] {
-	if g == nil {
-		return nil
-	}
-	return g.Cursor
-}
-
-// GetSearchSubfolder - A subfolder within a folder that contains media.
-type GetSearchSubfolder struct {
-	// A unique alphanumeric identifier for this subfolder.
-	HashedID *string `json:"hashed_id"`
-	// The display name of the subfolder.
-	Name optionalnullable.OptionalNullable[string] `json:"name,omitzero"`
-	// A description for the subfolder.
-	Description optionalnullable.OptionalNullable[string] `json:"description,omitzero"`
-	// The position of this subfolder within its folder, used for ordering.
-	Position *int64 `json:"position"`
-	// The date when the subfolder was created.
-	Created *time.Time `json:"created"`
-	// The date when the subfolder was last modified.
-	Updated *time.Time `json:"updated"`
-	// A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
-	Cursor optionalnullable.OptionalNullable[string] `json:"cursor,omitzero"`
-}
-
-func (g GetSearchSubfolder) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(g, "", false)
-}
-
-func (g *GetSearchSubfolder) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &g, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (g *GetSearchSubfolder) GetHashedID() *string {
-	if g == nil {
-		return nil
-	}
-	return g.HashedID
-}
-
-func (g *GetSearchSubfolder) GetName() optionalnullable.OptionalNullable[string] {
-	if g == nil {
-		return nil
-	}
-	return g.Name
-}
-
-func (g *GetSearchSubfolder) GetDescription() optionalnullable.OptionalNullable[string] {
-	if g == nil {
-		return nil
-	}
-	return g.Description
-}
-
-func (g *GetSearchSubfolder) GetPosition() *int64 {
-	if g == nil {
-		return nil
-	}
-	return g.Position
-}
-
-func (g *GetSearchSubfolder) GetCreated() *time.Time {
-	if g == nil {
-		return nil
-	}
-	return g.Created
-}
-
-func (g *GetSearchSubfolder) GetUpdated() *time.Time {
-	if g == nil {
-		return nil
-	}
-	return g.Updated
-}
-
-func (g *GetSearchSubfolder) GetCursor() optionalnullable.OptionalNullable[string] {
-	if g == nil {
-		return nil
-	}
-	return g.Cursor
-}
-
-// GetSearchType - A string representing what type of media this is.
+// GetSearchType - The record's content type, one of the `content_types` names.
 type GetSearchType string
 
 const (
-	GetSearchTypeVideo                   GetSearchType = "Video"
-	GetSearchTypeAudio                   GetSearchType = "Audio"
-	GetSearchTypeImage                   GetSearchType = "Image"
-	GetSearchTypePdfDocument             GetSearchType = "PdfDocument"
-	GetSearchTypeMicrosoftOfficeDocument GetSearchType = "MicrosoftOfficeDocument"
-	GetSearchTypeSwf                     GetSearchType = "Swf"
-	GetSearchTypeUnknownType             GetSearchType = "UnknownType"
+	GetSearchTypeMedia          GetSearchType = "media"
+	GetSearchTypeFolder         GetSearchType = "folder"
+	GetSearchTypeSubfolder      GetSearchType = "subfolder"
+	GetSearchTypeChannel        GetSearchType = "channel"
+	GetSearchTypeChannelEpisode GetSearchType = "channel_episode"
+	GetSearchTypeWebinar        GetSearchType = "webinar"
 )
 
 func (e GetSearchType) ToPointer() *GetSearchType {
@@ -704,102 +826,11 @@ func (e GetSearchType) ToPointer() *GetSearchType {
 func (e *GetSearchType) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Video", "Audio", "Image", "PdfDocument", "MicrosoftOfficeDocument", "Swf", "UnknownType":
+		case "media", "folder", "subfolder", "channel", "channel_episode", "webinar":
 			return true
 		}
 	}
 	return false
-}
-
-// GetSearchStatus - Post upload processing status. - `queued`: the file is waiting in the queue to be processed. - `processing`: the file is actively being processed. - `ready`: the file has been fully processed and is ready for embedding and viewing. - `failed`: the file was unable to be processed (usually a format or size error).
-type GetSearchStatus string
-
-const (
-	GetSearchStatusQueued     GetSearchStatus = "queued"
-	GetSearchStatusProcessing GetSearchStatus = "processing"
-	GetSearchStatusReady      GetSearchStatus = "ready"
-	GetSearchStatusFailed     GetSearchStatus = "failed"
-)
-
-func (e GetSearchStatus) ToPointer() *GetSearchStatus {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *GetSearchStatus) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "queued", "processing", "ready", "failed":
-			return true
-		}
-	}
-	return false
-}
-
-type GetSearchThumbnail struct {
-	URL    *string `json:"url,omitzero"`
-	Width  *int64  `json:"width,omitzero"`
-	Height *int64  `json:"height,omitzero"`
-}
-
-func (g *GetSearchThumbnail) GetURL() *string {
-	if g == nil {
-		return nil
-	}
-	return g.URL
-}
-
-func (g *GetSearchThumbnail) GetWidth() *int64 {
-	if g == nil {
-		return nil
-	}
-	return g.Width
-}
-
-func (g *GetSearchThumbnail) GetHeight() *int64 {
-	if g == nil {
-		return nil
-	}
-	return g.Height
-}
-
-type TranscriptMatch struct {
-	// The matched transcript text with context
-	Text string `json:"text"`
-	// Start time of the match in seconds
-	StartTimeSeconds float64 `json:"start_time_seconds"`
-	// Human-readable start time (e.g., "0:03" or "1:23:45")
-	StartTimeFormatted string `json:"start_time_formatted"`
-	// Thumbnail URL at the match timestamp
-	ThumbnailURL *string `json:"thumbnail_url"`
-}
-
-func (t *TranscriptMatch) GetText() string {
-	if t == nil {
-		return ""
-	}
-	return t.Text
-}
-
-func (t *TranscriptMatch) GetStartTimeSeconds() float64 {
-	if t == nil {
-		return 0.0
-	}
-	return t.StartTimeSeconds
-}
-
-func (t *TranscriptMatch) GetStartTimeFormatted() string {
-	if t == nil {
-		return ""
-	}
-	return t.StartTimeFormatted
-}
-
-func (t *TranscriptMatch) GetThumbnailURL() *string {
-	if t == nil {
-		return nil
-	}
-	return t.ThumbnailURL
 }
 
 // GetSearchFieldType - The field definition's data type, which determines the shape of `value`.
@@ -1026,6 +1057,9 @@ func (u *GetSearchValueUnion) UnmarshalJSON(data []byte) error {
 	}
 
 	if len(candidates) == 0 {
+		if !json.Valid(data) {
+			return fmt.Errorf("could not unmarshal `%s` into any supported union types for GetSearchValueUnion", string(data))
+		}
 		u.UnknownRaw = json.RawMessage(data)
 		u.Type = GetSearchValueUnionTypeUnknown
 		return nil
@@ -1059,6 +1093,9 @@ func (u *GetSearchValueUnion) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 
+	if !json.Valid(data) {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for GetSearchValueUnion", string(data))
+	}
 	u.UnknownRaw = json.RawMessage(data)
 	u.Type = GetSearchValueUnionTypeUnknown
 	return nil
@@ -1278,1440 +1315,450 @@ func (c *CustomMetadataFieldValue) GetLastWrite() optionalnullable.OptionalNulla
 	return c.LastWrite
 }
 
-// GetSearchMedia - A media generally represents a video or an audio which can be embedded into your website.
-//
-// CDN-backed medias are accessible using this url structure: https://fast.wistia.com/embed/medias/{hashed_id}.m3u8.
-// For more information, see https://docs.wistia.com/docs/asset-urls#getting-hls-assets.
-type GetSearchMedia struct {
-	// A unique numeric identifier for the media within the system.
-	ID *int64 `json:"id,omitzero"`
-	// The display name of the media.
-	Name *string `json:"name,omitzero"`
-	// A string representing what type of media this is.
+type TranscriptMatch struct {
+	Text               *string  `json:"text,omitzero"`
+	StartTimeSeconds   *float64 `json:"start_time_seconds,omitzero"`
+	StartTimeFormatted *string  `json:"start_time_formatted,omitzero"`
+}
+
+func (t *TranscriptMatch) GetText() *string {
+	if t == nil {
+		return nil
+	}
+	return t.Text
+}
+
+func (t *TranscriptMatch) GetStartTimeSeconds() *float64 {
+	if t == nil {
+		return nil
+	}
+	return t.StartTimeSeconds
+}
+
+func (t *TranscriptMatch) GetStartTimeFormatted() *string {
+	if t == nil {
+		return nil
+	}
+	return t.StartTimeFormatted
+}
+
+// Content - A matching record. Fields with no value are omitted, and each type carries only the fields that apply to it.
+type Content struct {
+	// The record's content type, one of the `content_types` names.
 	Type *GetSearchType `json:"type,omitzero"`
-	// Whether or not the media is archived, either true or false.
-	Archived *bool `json:"archived,omitzero"`
-	// The date when the media was originally uploaded.
-	Created *time.Time `json:"created,omitzero"`
-	// The date when the media was last changed.
-	Updated *time.Time `json:"updated,omitzero"`
-	// Specifies the length (in seconds) for audio and video files. Specifies number of pages in the document. Omitted for other types of media.
-	Duration optionalnullable.OptionalNullable[float64] `json:"duration,omitzero"`
-	// DEPRECATED: If you want to programmatically embed videos, follow the construct an embed code guide.
-	//
-	//
-	// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
-	EmbedCode *string `json:"embedCode,omitzero"`
-	// A unique alphanumeric identifier for this media.
-	HashedID *string `json:"hashed_id,omitzero"`
-	// A description for the media which usually appears near the top of the sidebar on the media's page.
+	// Media subtype, such as Video or Audio.
+	MediaType *string `json:"media_type,omitzero"`
+	// The record's hashed ID, accepted by other endpoints and by `in_container`.
+	HashedID    *string `json:"hashed_id,omitzero"`
+	Name        *string `json:"name,omitzero"`
 	Description *string `json:"description,omitzero"`
-	// A floating point value between 0 and 1 that indicates the progress of the processing for this file.
-	Progress *float64 `json:"progress,omitzero"`
-	// Post upload processing status. - `queued`: the file is waiting in the queue to be processed. - `processing`: the file is actively being processed. - `ready`: the file has been fully processed and is ready for embedding and viewing. - `failed`: the file was unable to be processed (usually a format or size error).
-	//
-	Status *GetSearchStatus `json:"status,omitzero"`
-	// The title of the section in which the media appears. This attribute is omitted if the media is not in a section (default).
-	Section   optionalnullable.OptionalNullable[string] `json:"section,omitzero"`
-	Thumbnail *GetSearchThumbnail                       `json:"thumbnail,omitzero"`
-	// Whether the media is protected (e.g. requires a password or other authentication to view). Null if the media is not protected.
-	Protected optionalnullable.OptionalNullable[bool] `json:"protected,omitzero"`
-	// The hashed ID of the folder this media belongs to
-	FolderHashedID *string `json:"folder_hashed_id"`
-	// Array of transcript matches with timestamps
-	TranscriptMatches []TranscriptMatch `json:"transcript_matches"`
-	// The media's custom metadata field values, present only when the request passed `include=custom_metadata`. Same shape as the Get Custom Metadata Field Values endpoint.
+	// The record's page in Wistia.
+	URL *string `json:"url,omitzero"`
+	// ISO 8601 creation time.
+	CreatedAt *string `json:"created_at,omitzero"`
+	// ISO 8601 last update time.
+	UpdatedAt *string `json:"updated_at,omitzero"`
+	Archived  *bool   `json:"archived,omitzero"`
+	// Length in seconds.
+	Duration  *float64 `json:"duration,omitzero"`
+	PlayCount *int64   `json:"play_count,omitzero"`
+	// How the media was created, such as Editor, Live, or Record.
+	Origin *string `json:"origin,omitzero"`
+	// Tag names.
+	Tags []string `json:"tags,omitzero"`
+	// Names of assigned speakers.
+	Speakers      []string `json:"speakers,omitzero"`
+	ThumbnailUrls []string `json:"thumbnail_urls,omitzero"`
+	// The uploader's contact hashed ID, as `uploaded_by[]` accepts.
+	UploadedBy *string `json:"uploaded_by,omitzero"`
+	// Name of the folder holding a media or subfolder, or of the channel holding an episode.
+	ContainerName *string `json:"container_name,omitzero"`
+	// Hashed ID of the folder holding a media, or of the channel holding an episode.
+	ContainerHashedID *string `json:"container_hashed_id,omitzero"`
+	// Hashed ID of the folder holding a subfolder.
+	FolderHashedID *string `json:"folder_hashed_id,omitzero"`
+	// Media in a folder or subfolder, or episodes in a channel.
+	MediaCount *int64 `json:"media_count,omitzero"`
+	// A webinar's lifecycle status.
+	LifecycleStatus *string `json:"lifecycle_status,omitzero"`
+	// ISO 8601 start time of a webinar.
+	ScheduledFor *string `json:"scheduled_for,omitzero"`
+	// A webinar's scheduled length in minutes.
+	EventDuration *float64 `json:"event_duration,omitzero"`
+	// Hashed ID of the media an episode plays.
+	MediaHashedID *string `json:"media_hashed_id,omitzero"`
+	// Whether an episode is published.
+	IsPublished *bool `json:"is_published,omitzero"`
+	// With `include=custom_metadata`, a media's custom metadata field values, in the same shape as the Get Custom Metadata Field Values endpoint.
 	CustomMetadataFieldValues []CustomMetadataFieldValue `json:"custom_metadata_field_values,omitzero"`
+	// With `include_highlights` or `transcript_only`, up to 3 places the query matched spoken words.
+	TranscriptMatches []TranscriptMatch `json:"transcript_matches,omitzero"`
 }
 
-func (g GetSearchMedia) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(g, "", false)
-}
-
-func (g *GetSearchMedia) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &g, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (g *GetSearchMedia) GetID() *int64 {
-	if g == nil {
-		return nil
-	}
-	return g.ID
-}
-
-func (g *GetSearchMedia) GetName() *string {
-	if g == nil {
-		return nil
-	}
-	return g.Name
-}
-
-func (g *GetSearchMedia) GetType() *GetSearchType {
-	if g == nil {
-		return nil
-	}
-	return g.Type
-}
-
-func (g *GetSearchMedia) GetArchived() *bool {
-	if g == nil {
-		return nil
-	}
-	return g.Archived
-}
-
-func (g *GetSearchMedia) GetCreated() *time.Time {
-	if g == nil {
-		return nil
-	}
-	return g.Created
-}
-
-func (g *GetSearchMedia) GetUpdated() *time.Time {
-	if g == nil {
-		return nil
-	}
-	return g.Updated
-}
-
-func (g *GetSearchMedia) GetDuration() optionalnullable.OptionalNullable[float64] {
-	if g == nil {
-		return nil
-	}
-	return g.Duration
-}
-
-func (g *GetSearchMedia) GetEmbedCode() *string {
-	if g == nil {
-		return nil
-	}
-	return g.EmbedCode
-}
-
-func (g *GetSearchMedia) GetHashedID() *string {
-	if g == nil {
-		return nil
-	}
-	return g.HashedID
-}
-
-func (g *GetSearchMedia) GetDescription() *string {
-	if g == nil {
-		return nil
-	}
-	return g.Description
-}
-
-func (g *GetSearchMedia) GetProgress() *float64 {
-	if g == nil {
-		return nil
-	}
-	return g.Progress
-}
-
-func (g *GetSearchMedia) GetStatus() *GetSearchStatus {
-	if g == nil {
-		return nil
-	}
-	return g.Status
-}
-
-func (g *GetSearchMedia) GetSection() optionalnullable.OptionalNullable[string] {
-	if g == nil {
-		return nil
-	}
-	return g.Section
-}
-
-func (g *GetSearchMedia) GetThumbnail() *GetSearchThumbnail {
-	if g == nil {
-		return nil
-	}
-	return g.Thumbnail
-}
-
-func (g *GetSearchMedia) GetProtected() optionalnullable.OptionalNullable[bool] {
-	if g == nil {
-		return nil
-	}
-	return g.Protected
-}
-
-func (g *GetSearchMedia) GetFolderHashedID() *string {
-	if g == nil {
-		return nil
-	}
-	return g.FolderHashedID
-}
-
-func (g *GetSearchMedia) GetTranscriptMatches() []TranscriptMatch {
-	if g == nil {
-		return []TranscriptMatch{}
-	}
-	return g.TranscriptMatches
-}
-
-func (g *GetSearchMedia) GetCustomMetadataFieldValues() []CustomMetadataFieldValue {
-	if g == nil {
-		return nil
-	}
-	return g.CustomMetadataFieldValues
-}
-
-type GetSearchEpisodeFormat string
-
-const (
-	GetSearchEpisodeFormatEpisodic            GetSearchEpisodeFormat = "episodic"
-	GetSearchEpisodeFormatEpisodicWithSeasons GetSearchEpisodeFormat = "episodic_with_seasons"
-	GetSearchEpisodeFormatSerial              GetSearchEpisodeFormat = "serial"
-)
-
-func (e GetSearchEpisodeFormat) ToPointer() *GetSearchEpisodeFormat {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *GetSearchEpisodeFormat) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "episodic", "episodic_with_seasons", "serial":
-			return true
-		}
-	}
-	return false
-}
-
-type GetSearchCategory1 string
-
-const (
-	GetSearchCategory1Arts                                           GetSearchCategory1 = "arts"
-	GetSearchCategory1ArtsGreaterThanBooks                           GetSearchCategory1 = "arts > books"
-	GetSearchCategory1ArtsGreaterThanDesign                          GetSearchCategory1 = "arts > design"
-	GetSearchCategory1ArtsGreaterThanFashionAndBeauty                GetSearchCategory1 = "arts > fashion_and_beauty"
-	GetSearchCategory1ArtsGreaterThanFood                            GetSearchCategory1 = "arts > food"
-	GetSearchCategory1ArtsGreaterThanPerformingArts                  GetSearchCategory1 = "arts > performing_arts"
-	GetSearchCategory1ArtsGreaterThanVisualArts                      GetSearchCategory1 = "arts > visual_arts"
-	GetSearchCategory1Business                                       GetSearchCategory1 = "business"
-	GetSearchCategory1BusinessGreaterThanCareers                     GetSearchCategory1 = "business > careers"
-	GetSearchCategory1BusinessGreaterThanEntrepreneurship            GetSearchCategory1 = "business > entrepreneurship"
-	GetSearchCategory1BusinessGreaterThanInvesting                   GetSearchCategory1 = "business > investing"
-	GetSearchCategory1BusinessGreaterThanManagement                  GetSearchCategory1 = "business > management"
-	GetSearchCategory1BusinessGreaterThanMarketing                   GetSearchCategory1 = "business > marketing"
-	GetSearchCategory1BusinessGreaterThanNonProfit                   GetSearchCategory1 = "business > non_profit"
-	GetSearchCategory1Comedy                                         GetSearchCategory1 = "comedy"
-	GetSearchCategory1ComedyGreaterThanComedyInterviews              GetSearchCategory1 = "comedy > comedy_interviews"
-	GetSearchCategory1ComedyGreaterThanImprov                        GetSearchCategory1 = "comedy > improv"
-	GetSearchCategory1ComedyGreaterThanStandUp                       GetSearchCategory1 = "comedy > stand_up"
-	GetSearchCategory1Education                                      GetSearchCategory1 = "education"
-	GetSearchCategory1EducationGreaterThanCourses                    GetSearchCategory1 = "education > courses"
-	GetSearchCategory1EducationGreaterThanHowTo                      GetSearchCategory1 = "education > how_to"
-	GetSearchCategory1EducationGreaterThanLanguageLearning           GetSearchCategory1 = "education > language_learning"
-	GetSearchCategory1EducationGreaterThanSelfImprovement            GetSearchCategory1 = "education > self_improvement"
-	GetSearchCategory1Fiction                                        GetSearchCategory1 = "fiction"
-	GetSearchCategory1FictionGreaterThanComedyFiction                GetSearchCategory1 = "fiction > comedy_fiction"
-	GetSearchCategory1FictionGreaterThanDrama                        GetSearchCategory1 = "fiction > drama"
-	GetSearchCategory1FictionGreaterThanScienceFiction               GetSearchCategory1 = "fiction > science_fiction"
-	GetSearchCategory1Government                                     GetSearchCategory1 = "government"
-	GetSearchCategory1HealthAndFitness                               GetSearchCategory1 = "health_and_fitness"
-	GetSearchCategory1HealthAndFitnessGreaterThanAlternativeHealth   GetSearchCategory1 = "health_and_fitness > alternative_health"
-	GetSearchCategory1HealthAndFitnessGreaterThanFitness             GetSearchCategory1 = "health_and_fitness > fitness"
-	GetSearchCategory1HealthAndFitnessGreaterThanMedicine            GetSearchCategory1 = "health_and_fitness > medicine"
-	GetSearchCategory1HealthAndFitnessGreaterThanMentalHealth        GetSearchCategory1 = "health_and_fitness > mental_health"
-	GetSearchCategory1HealthAndFitnessGreaterThanNutrition           GetSearchCategory1 = "health_and_fitness > nutrition"
-	GetSearchCategory1HealthAndFitnessGreaterThanSexuality           GetSearchCategory1 = "health_and_fitness > sexuality"
-	GetSearchCategory1History                                        GetSearchCategory1 = "history"
-	GetSearchCategory1KidsAndFamily                                  GetSearchCategory1 = "kids_and_family"
-	GetSearchCategory1KidsAndFamilyGreaterThanEducationForKids       GetSearchCategory1 = "kids_and_family > education_for_kids"
-	GetSearchCategory1KidsAndFamilyGreaterThanParenting              GetSearchCategory1 = "kids_and_family > parenting"
-	GetSearchCategory1KidsAndFamilyGreaterThanPetsAndAnimals         GetSearchCategory1 = "kids_and_family > pets_and_animals"
-	GetSearchCategory1KidsAndFamilyGreaterThanStoriesForKids         GetSearchCategory1 = "kids_and_family > stories_for_kids"
-	GetSearchCategory1Leisure                                        GetSearchCategory1 = "leisure"
-	GetSearchCategory1LeisureGreaterThanAnimationAndManga            GetSearchCategory1 = "leisure > animation_and_manga"
-	GetSearchCategory1LeisureGreaterThanAutomotive                   GetSearchCategory1 = "leisure > automotive"
-	GetSearchCategory1LeisureGreaterThanAviation                     GetSearchCategory1 = "leisure > aviation"
-	GetSearchCategory1LeisureGreaterThanCrafts                       GetSearchCategory1 = "leisure > crafts"
-	GetSearchCategory1LeisureGreaterThanGames                        GetSearchCategory1 = "leisure > games"
-	GetSearchCategory1LeisureGreaterThanHobbies                      GetSearchCategory1 = "leisure > hobbies"
-	GetSearchCategory1LeisureGreaterThanHomeAndGarden                GetSearchCategory1 = "leisure > home_and_garden"
-	GetSearchCategory1LeisureGreaterThanVideoGames                   GetSearchCategory1 = "leisure > video_games"
-	GetSearchCategory1Music                                          GetSearchCategory1 = "music"
-	GetSearchCategory1MusicGreaterThanMusicCommentary                GetSearchCategory1 = "music > music_commentary"
-	GetSearchCategory1MusicGreaterThanMusicHistory                   GetSearchCategory1 = "music > music_history"
-	GetSearchCategory1MusicGreaterThanMusicInterviews                GetSearchCategory1 = "music > music_interviews"
-	GetSearchCategory1News                                           GetSearchCategory1 = "news"
-	GetSearchCategory1NewsGreaterThanBusinessNews                    GetSearchCategory1 = "news > business_news"
-	GetSearchCategory1NewsGreaterThanDailyNews                       GetSearchCategory1 = "news > daily_news"
-	GetSearchCategory1NewsGreaterThanEntertainmentNews               GetSearchCategory1 = "news > entertainment_news"
-	GetSearchCategory1NewsGreaterThanNewsCommentary                  GetSearchCategory1 = "news > news_commentary"
-	GetSearchCategory1NewsGreaterThanPolitics                        GetSearchCategory1 = "news > politics"
-	GetSearchCategory1NewsGreaterThanSportsNews                      GetSearchCategory1 = "news > sports_news"
-	GetSearchCategory1NewsGreaterThanTechNews                        GetSearchCategory1 = "news > tech_news"
-	GetSearchCategory1ReligionAndSpirituality                        GetSearchCategory1 = "religion_and_spirituality"
-	GetSearchCategory1ReligionAndSpiritualityGreaterThanBuddhism     GetSearchCategory1 = "religion_and_spirituality > buddhism"
-	GetSearchCategory1ReligionAndSpiritualityGreaterThanChristianity GetSearchCategory1 = "religion_and_spirituality > christianity"
-	GetSearchCategory1ReligionAndSpiritualityGreaterThanHinduism     GetSearchCategory1 = "religion_and_spirituality > hinduism"
-	GetSearchCategory1ReligionAndSpiritualityGreaterThanIslam        GetSearchCategory1 = "religion_and_spirituality > islam"
-	GetSearchCategory1ReligionAndSpiritualityGreaterThanJudaism      GetSearchCategory1 = "religion_and_spirituality > judaism"
-	GetSearchCategory1ReligionAndSpiritualityGreaterThanReligion     GetSearchCategory1 = "religion_and_spirituality > religion"
-	GetSearchCategory1ReligionAndSpiritualityGreaterThanSpirituality GetSearchCategory1 = "religion_and_spirituality > spirituality"
-	GetSearchCategory1Science                                        GetSearchCategory1 = "science"
-	GetSearchCategory1ScienceGreaterThanAstronomy                    GetSearchCategory1 = "science > astronomy"
-	GetSearchCategory1ScienceGreaterThanChemistry                    GetSearchCategory1 = "science > chemistry"
-	GetSearchCategory1ScienceGreaterThanEarthSciences                GetSearchCategory1 = "science > earth_sciences"
-	GetSearchCategory1ScienceGreaterThanLifeSciences                 GetSearchCategory1 = "science > life_sciences"
-	GetSearchCategory1ScienceGreaterThanMathematics                  GetSearchCategory1 = "science > mathematics"
-	GetSearchCategory1ScienceGreaterThanNaturalSciences              GetSearchCategory1 = "science > natural_sciences"
-	GetSearchCategory1ScienceGreaterThanNature                       GetSearchCategory1 = "science > nature"
-	GetSearchCategory1ScienceGreaterThanPhysics                      GetSearchCategory1 = "science > physics"
-	GetSearchCategory1ScienceGreaterThanSocialSciences               GetSearchCategory1 = "science > social_sciences"
-	GetSearchCategory1SocietyAndCulture                              GetSearchCategory1 = "society_and_culture"
-	GetSearchCategory1SocietyAndCultureGreaterThanDocumentary        GetSearchCategory1 = "society_and_culture > documentary"
-	GetSearchCategory1SocietyAndCultureGreaterThanPersonalJournals   GetSearchCategory1 = "society_and_culture > personal_journals"
-	GetSearchCategory1SocietyAndCultureGreaterThanPhilosophy         GetSearchCategory1 = "society_and_culture > philosophy"
-	GetSearchCategory1SocietyAndCultureGreaterThanPlacesAndTravel    GetSearchCategory1 = "society_and_culture > places_and_travel"
-	GetSearchCategory1SocietyAndCultureGreaterThanRelationships      GetSearchCategory1 = "society_and_culture > relationships"
-	GetSearchCategory1Sports                                         GetSearchCategory1 = "sports"
-	GetSearchCategory1SportsGreaterThanBaseball                      GetSearchCategory1 = "sports > baseball"
-	GetSearchCategory1SportsGreaterThanBasketball                    GetSearchCategory1 = "sports > basketball"
-	GetSearchCategory1SportsGreaterThanCricket                       GetSearchCategory1 = "sports > cricket"
-	GetSearchCategory1SportsGreaterThanFantasySports                 GetSearchCategory1 = "sports > fantasy_sports"
-	GetSearchCategory1SportsGreaterThanFootball                      GetSearchCategory1 = "sports > football"
-	GetSearchCategory1SportsGreaterThanGolf                          GetSearchCategory1 = "sports > golf"
-	GetSearchCategory1SportsGreaterThanHockey                        GetSearchCategory1 = "sports > hockey"
-	GetSearchCategory1SportsGreaterThanRugby                         GetSearchCategory1 = "sports > rugby"
-	GetSearchCategory1SportsGreaterThanRunning                       GetSearchCategory1 = "sports > running"
-	GetSearchCategory1SportsGreaterThanSoccer                        GetSearchCategory1 = "sports > soccer"
-	GetSearchCategory1SportsGreaterThanSwimming                      GetSearchCategory1 = "sports > swimming"
-	GetSearchCategory1SportsGreaterThanTennis                        GetSearchCategory1 = "sports > tennis"
-	GetSearchCategory1SportsGreaterThanVolleyball                    GetSearchCategory1 = "sports > volleyball"
-	GetSearchCategory1SportsGreaterThanWilderness                    GetSearchCategory1 = "sports > wilderness"
-	GetSearchCategory1SportsGreaterThanWrestling                     GetSearchCategory1 = "sports > wrestling"
-	GetSearchCategory1Technology                                     GetSearchCategory1 = "technology"
-	GetSearchCategory1TrueCrime                                      GetSearchCategory1 = "true_crime"
-	GetSearchCategory1TvAndFilm                                      GetSearchCategory1 = "tv_and_film"
-	GetSearchCategory1TvAndFilmGreaterThanAfterShows                 GetSearchCategory1 = "tv_and_film > after_shows"
-	GetSearchCategory1TvAndFilmGreaterThanFilmHistory                GetSearchCategory1 = "tv_and_film > film_history"
-	GetSearchCategory1TvAndFilmGreaterThanFilmInterviews             GetSearchCategory1 = "tv_and_film > film_interviews"
-	GetSearchCategory1TvAndFilmGreaterThanFilmReviews                GetSearchCategory1 = "tv_and_film > film_reviews"
-	GetSearchCategory1TvAndFilmGreaterThanTvReviews                  GetSearchCategory1 = "tv_and_film > tv_reviews"
-)
-
-func (e GetSearchCategory1) ToPointer() *GetSearchCategory1 {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *GetSearchCategory1) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "arts", "arts > books", "arts > design", "arts > fashion_and_beauty", "arts > food", "arts > performing_arts", "arts > visual_arts", "business", "business > careers", "business > entrepreneurship", "business > investing", "business > management", "business > marketing", "business > non_profit", "comedy", "comedy > comedy_interviews", "comedy > improv", "comedy > stand_up", "education", "education > courses", "education > how_to", "education > language_learning", "education > self_improvement", "fiction", "fiction > comedy_fiction", "fiction > drama", "fiction > science_fiction", "government", "health_and_fitness", "health_and_fitness > alternative_health", "health_and_fitness > fitness", "health_and_fitness > medicine", "health_and_fitness > mental_health", "health_and_fitness > nutrition", "health_and_fitness > sexuality", "history", "kids_and_family", "kids_and_family > education_for_kids", "kids_and_family > parenting", "kids_and_family > pets_and_animals", "kids_and_family > stories_for_kids", "leisure", "leisure > animation_and_manga", "leisure > automotive", "leisure > aviation", "leisure > crafts", "leisure > games", "leisure > hobbies", "leisure > home_and_garden", "leisure > video_games", "music", "music > music_commentary", "music > music_history", "music > music_interviews", "news", "news > business_news", "news > daily_news", "news > entertainment_news", "news > news_commentary", "news > politics", "news > sports_news", "news > tech_news", "religion_and_spirituality", "religion_and_spirituality > buddhism", "religion_and_spirituality > christianity", "religion_and_spirituality > hinduism", "religion_and_spirituality > islam", "religion_and_spirituality > judaism", "religion_and_spirituality > religion", "religion_and_spirituality > spirituality", "science", "science > astronomy", "science > chemistry", "science > earth_sciences", "science > life_sciences", "science > mathematics", "science > natural_sciences", "science > nature", "science > physics", "science > social_sciences", "society_and_culture", "society_and_culture > documentary", "society_and_culture > personal_journals", "society_and_culture > philosophy", "society_and_culture > places_and_travel", "society_and_culture > relationships", "sports", "sports > baseball", "sports > basketball", "sports > cricket", "sports > fantasy_sports", "sports > football", "sports > golf", "sports > hockey", "sports > rugby", "sports > running", "sports > soccer", "sports > swimming", "sports > tennis", "sports > volleyball", "sports > wilderness", "sports > wrestling", "technology", "true_crime", "tv_and_film", "tv_and_film > after_shows", "tv_and_film > film_history", "tv_and_film > film_interviews", "tv_and_film > film_reviews", "tv_and_film > tv_reviews":
-			return true
-		}
-	}
-	return false
-}
-
-type GetSearchCategory2 string
-
-const (
-	GetSearchCategory2Arts                                           GetSearchCategory2 = "arts"
-	GetSearchCategory2ArtsGreaterThanBooks                           GetSearchCategory2 = "arts > books"
-	GetSearchCategory2ArtsGreaterThanDesign                          GetSearchCategory2 = "arts > design"
-	GetSearchCategory2ArtsGreaterThanFashionAndBeauty                GetSearchCategory2 = "arts > fashion_and_beauty"
-	GetSearchCategory2ArtsGreaterThanFood                            GetSearchCategory2 = "arts > food"
-	GetSearchCategory2ArtsGreaterThanPerformingArts                  GetSearchCategory2 = "arts > performing_arts"
-	GetSearchCategory2ArtsGreaterThanVisualArts                      GetSearchCategory2 = "arts > visual_arts"
-	GetSearchCategory2Business                                       GetSearchCategory2 = "business"
-	GetSearchCategory2BusinessGreaterThanCareers                     GetSearchCategory2 = "business > careers"
-	GetSearchCategory2BusinessGreaterThanEntrepreneurship            GetSearchCategory2 = "business > entrepreneurship"
-	GetSearchCategory2BusinessGreaterThanInvesting                   GetSearchCategory2 = "business > investing"
-	GetSearchCategory2BusinessGreaterThanManagement                  GetSearchCategory2 = "business > management"
-	GetSearchCategory2BusinessGreaterThanMarketing                   GetSearchCategory2 = "business > marketing"
-	GetSearchCategory2BusinessGreaterThanNonProfit                   GetSearchCategory2 = "business > non_profit"
-	GetSearchCategory2Comedy                                         GetSearchCategory2 = "comedy"
-	GetSearchCategory2ComedyGreaterThanComedyInterviews              GetSearchCategory2 = "comedy > comedy_interviews"
-	GetSearchCategory2ComedyGreaterThanImprov                        GetSearchCategory2 = "comedy > improv"
-	GetSearchCategory2ComedyGreaterThanStandUp                       GetSearchCategory2 = "comedy > stand_up"
-	GetSearchCategory2Education                                      GetSearchCategory2 = "education"
-	GetSearchCategory2EducationGreaterThanCourses                    GetSearchCategory2 = "education > courses"
-	GetSearchCategory2EducationGreaterThanHowTo                      GetSearchCategory2 = "education > how_to"
-	GetSearchCategory2EducationGreaterThanLanguageLearning           GetSearchCategory2 = "education > language_learning"
-	GetSearchCategory2EducationGreaterThanSelfImprovement            GetSearchCategory2 = "education > self_improvement"
-	GetSearchCategory2Fiction                                        GetSearchCategory2 = "fiction"
-	GetSearchCategory2FictionGreaterThanComedyFiction                GetSearchCategory2 = "fiction > comedy_fiction"
-	GetSearchCategory2FictionGreaterThanDrama                        GetSearchCategory2 = "fiction > drama"
-	GetSearchCategory2FictionGreaterThanScienceFiction               GetSearchCategory2 = "fiction > science_fiction"
-	GetSearchCategory2Government                                     GetSearchCategory2 = "government"
-	GetSearchCategory2HealthAndFitness                               GetSearchCategory2 = "health_and_fitness"
-	GetSearchCategory2HealthAndFitnessGreaterThanAlternativeHealth   GetSearchCategory2 = "health_and_fitness > alternative_health"
-	GetSearchCategory2HealthAndFitnessGreaterThanFitness             GetSearchCategory2 = "health_and_fitness > fitness"
-	GetSearchCategory2HealthAndFitnessGreaterThanMedicine            GetSearchCategory2 = "health_and_fitness > medicine"
-	GetSearchCategory2HealthAndFitnessGreaterThanMentalHealth        GetSearchCategory2 = "health_and_fitness > mental_health"
-	GetSearchCategory2HealthAndFitnessGreaterThanNutrition           GetSearchCategory2 = "health_and_fitness > nutrition"
-	GetSearchCategory2HealthAndFitnessGreaterThanSexuality           GetSearchCategory2 = "health_and_fitness > sexuality"
-	GetSearchCategory2History                                        GetSearchCategory2 = "history"
-	GetSearchCategory2KidsAndFamily                                  GetSearchCategory2 = "kids_and_family"
-	GetSearchCategory2KidsAndFamilyGreaterThanEducationForKids       GetSearchCategory2 = "kids_and_family > education_for_kids"
-	GetSearchCategory2KidsAndFamilyGreaterThanParenting              GetSearchCategory2 = "kids_and_family > parenting"
-	GetSearchCategory2KidsAndFamilyGreaterThanPetsAndAnimals         GetSearchCategory2 = "kids_and_family > pets_and_animals"
-	GetSearchCategory2KidsAndFamilyGreaterThanStoriesForKids         GetSearchCategory2 = "kids_and_family > stories_for_kids"
-	GetSearchCategory2Leisure                                        GetSearchCategory2 = "leisure"
-	GetSearchCategory2LeisureGreaterThanAnimationAndManga            GetSearchCategory2 = "leisure > animation_and_manga"
-	GetSearchCategory2LeisureGreaterThanAutomotive                   GetSearchCategory2 = "leisure > automotive"
-	GetSearchCategory2LeisureGreaterThanAviation                     GetSearchCategory2 = "leisure > aviation"
-	GetSearchCategory2LeisureGreaterThanCrafts                       GetSearchCategory2 = "leisure > crafts"
-	GetSearchCategory2LeisureGreaterThanGames                        GetSearchCategory2 = "leisure > games"
-	GetSearchCategory2LeisureGreaterThanHobbies                      GetSearchCategory2 = "leisure > hobbies"
-	GetSearchCategory2LeisureGreaterThanHomeAndGarden                GetSearchCategory2 = "leisure > home_and_garden"
-	GetSearchCategory2LeisureGreaterThanVideoGames                   GetSearchCategory2 = "leisure > video_games"
-	GetSearchCategory2Music                                          GetSearchCategory2 = "music"
-	GetSearchCategory2MusicGreaterThanMusicCommentary                GetSearchCategory2 = "music > music_commentary"
-	GetSearchCategory2MusicGreaterThanMusicHistory                   GetSearchCategory2 = "music > music_history"
-	GetSearchCategory2MusicGreaterThanMusicInterviews                GetSearchCategory2 = "music > music_interviews"
-	GetSearchCategory2News                                           GetSearchCategory2 = "news"
-	GetSearchCategory2NewsGreaterThanBusinessNews                    GetSearchCategory2 = "news > business_news"
-	GetSearchCategory2NewsGreaterThanDailyNews                       GetSearchCategory2 = "news > daily_news"
-	GetSearchCategory2NewsGreaterThanEntertainmentNews               GetSearchCategory2 = "news > entertainment_news"
-	GetSearchCategory2NewsGreaterThanNewsCommentary                  GetSearchCategory2 = "news > news_commentary"
-	GetSearchCategory2NewsGreaterThanPolitics                        GetSearchCategory2 = "news > politics"
-	GetSearchCategory2NewsGreaterThanSportsNews                      GetSearchCategory2 = "news > sports_news"
-	GetSearchCategory2NewsGreaterThanTechNews                        GetSearchCategory2 = "news > tech_news"
-	GetSearchCategory2ReligionAndSpirituality                        GetSearchCategory2 = "religion_and_spirituality"
-	GetSearchCategory2ReligionAndSpiritualityGreaterThanBuddhism     GetSearchCategory2 = "religion_and_spirituality > buddhism"
-	GetSearchCategory2ReligionAndSpiritualityGreaterThanChristianity GetSearchCategory2 = "religion_and_spirituality > christianity"
-	GetSearchCategory2ReligionAndSpiritualityGreaterThanHinduism     GetSearchCategory2 = "religion_and_spirituality > hinduism"
-	GetSearchCategory2ReligionAndSpiritualityGreaterThanIslam        GetSearchCategory2 = "religion_and_spirituality > islam"
-	GetSearchCategory2ReligionAndSpiritualityGreaterThanJudaism      GetSearchCategory2 = "religion_and_spirituality > judaism"
-	GetSearchCategory2ReligionAndSpiritualityGreaterThanReligion     GetSearchCategory2 = "religion_and_spirituality > religion"
-	GetSearchCategory2ReligionAndSpiritualityGreaterThanSpirituality GetSearchCategory2 = "religion_and_spirituality > spirituality"
-	GetSearchCategory2Science                                        GetSearchCategory2 = "science"
-	GetSearchCategory2ScienceGreaterThanAstronomy                    GetSearchCategory2 = "science > astronomy"
-	GetSearchCategory2ScienceGreaterThanChemistry                    GetSearchCategory2 = "science > chemistry"
-	GetSearchCategory2ScienceGreaterThanEarthSciences                GetSearchCategory2 = "science > earth_sciences"
-	GetSearchCategory2ScienceGreaterThanLifeSciences                 GetSearchCategory2 = "science > life_sciences"
-	GetSearchCategory2ScienceGreaterThanMathematics                  GetSearchCategory2 = "science > mathematics"
-	GetSearchCategory2ScienceGreaterThanNaturalSciences              GetSearchCategory2 = "science > natural_sciences"
-	GetSearchCategory2ScienceGreaterThanNature                       GetSearchCategory2 = "science > nature"
-	GetSearchCategory2ScienceGreaterThanPhysics                      GetSearchCategory2 = "science > physics"
-	GetSearchCategory2ScienceGreaterThanSocialSciences               GetSearchCategory2 = "science > social_sciences"
-	GetSearchCategory2SocietyAndCulture                              GetSearchCategory2 = "society_and_culture"
-	GetSearchCategory2SocietyAndCultureGreaterThanDocumentary        GetSearchCategory2 = "society_and_culture > documentary"
-	GetSearchCategory2SocietyAndCultureGreaterThanPersonalJournals   GetSearchCategory2 = "society_and_culture > personal_journals"
-	GetSearchCategory2SocietyAndCultureGreaterThanPhilosophy         GetSearchCategory2 = "society_and_culture > philosophy"
-	GetSearchCategory2SocietyAndCultureGreaterThanPlacesAndTravel    GetSearchCategory2 = "society_and_culture > places_and_travel"
-	GetSearchCategory2SocietyAndCultureGreaterThanRelationships      GetSearchCategory2 = "society_and_culture > relationships"
-	GetSearchCategory2Sports                                         GetSearchCategory2 = "sports"
-	GetSearchCategory2SportsGreaterThanBaseball                      GetSearchCategory2 = "sports > baseball"
-	GetSearchCategory2SportsGreaterThanBasketball                    GetSearchCategory2 = "sports > basketball"
-	GetSearchCategory2SportsGreaterThanCricket                       GetSearchCategory2 = "sports > cricket"
-	GetSearchCategory2SportsGreaterThanFantasySports                 GetSearchCategory2 = "sports > fantasy_sports"
-	GetSearchCategory2SportsGreaterThanFootball                      GetSearchCategory2 = "sports > football"
-	GetSearchCategory2SportsGreaterThanGolf                          GetSearchCategory2 = "sports > golf"
-	GetSearchCategory2SportsGreaterThanHockey                        GetSearchCategory2 = "sports > hockey"
-	GetSearchCategory2SportsGreaterThanRugby                         GetSearchCategory2 = "sports > rugby"
-	GetSearchCategory2SportsGreaterThanRunning                       GetSearchCategory2 = "sports > running"
-	GetSearchCategory2SportsGreaterThanSoccer                        GetSearchCategory2 = "sports > soccer"
-	GetSearchCategory2SportsGreaterThanSwimming                      GetSearchCategory2 = "sports > swimming"
-	GetSearchCategory2SportsGreaterThanTennis                        GetSearchCategory2 = "sports > tennis"
-	GetSearchCategory2SportsGreaterThanVolleyball                    GetSearchCategory2 = "sports > volleyball"
-	GetSearchCategory2SportsGreaterThanWilderness                    GetSearchCategory2 = "sports > wilderness"
-	GetSearchCategory2SportsGreaterThanWrestling                     GetSearchCategory2 = "sports > wrestling"
-	GetSearchCategory2Technology                                     GetSearchCategory2 = "technology"
-	GetSearchCategory2TrueCrime                                      GetSearchCategory2 = "true_crime"
-	GetSearchCategory2TvAndFilm                                      GetSearchCategory2 = "tv_and_film"
-	GetSearchCategory2TvAndFilmGreaterThanAfterShows                 GetSearchCategory2 = "tv_and_film > after_shows"
-	GetSearchCategory2TvAndFilmGreaterThanFilmHistory                GetSearchCategory2 = "tv_and_film > film_history"
-	GetSearchCategory2TvAndFilmGreaterThanFilmInterviews             GetSearchCategory2 = "tv_and_film > film_interviews"
-	GetSearchCategory2TvAndFilmGreaterThanFilmReviews                GetSearchCategory2 = "tv_and_film > film_reviews"
-	GetSearchCategory2TvAndFilmGreaterThanTvReviews                  GetSearchCategory2 = "tv_and_film > tv_reviews"
-)
-
-func (e GetSearchCategory2) ToPointer() *GetSearchCategory2 {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *GetSearchCategory2) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "arts", "arts > books", "arts > design", "arts > fashion_and_beauty", "arts > food", "arts > performing_arts", "arts > visual_arts", "business", "business > careers", "business > entrepreneurship", "business > investing", "business > management", "business > marketing", "business > non_profit", "comedy", "comedy > comedy_interviews", "comedy > improv", "comedy > stand_up", "education", "education > courses", "education > how_to", "education > language_learning", "education > self_improvement", "fiction", "fiction > comedy_fiction", "fiction > drama", "fiction > science_fiction", "government", "health_and_fitness", "health_and_fitness > alternative_health", "health_and_fitness > fitness", "health_and_fitness > medicine", "health_and_fitness > mental_health", "health_and_fitness > nutrition", "health_and_fitness > sexuality", "history", "kids_and_family", "kids_and_family > education_for_kids", "kids_and_family > parenting", "kids_and_family > pets_and_animals", "kids_and_family > stories_for_kids", "leisure", "leisure > animation_and_manga", "leisure > automotive", "leisure > aviation", "leisure > crafts", "leisure > games", "leisure > hobbies", "leisure > home_and_garden", "leisure > video_games", "music", "music > music_commentary", "music > music_history", "music > music_interviews", "news", "news > business_news", "news > daily_news", "news > entertainment_news", "news > news_commentary", "news > politics", "news > sports_news", "news > tech_news", "religion_and_spirituality", "religion_and_spirituality > buddhism", "religion_and_spirituality > christianity", "religion_and_spirituality > hinduism", "religion_and_spirituality > islam", "religion_and_spirituality > judaism", "religion_and_spirituality > religion", "religion_and_spirituality > spirituality", "science", "science > astronomy", "science > chemistry", "science > earth_sciences", "science > life_sciences", "science > mathematics", "science > natural_sciences", "science > nature", "science > physics", "science > social_sciences", "society_and_culture", "society_and_culture > documentary", "society_and_culture > personal_journals", "society_and_culture > philosophy", "society_and_culture > places_and_travel", "society_and_culture > relationships", "sports", "sports > baseball", "sports > basketball", "sports > cricket", "sports > fantasy_sports", "sports > football", "sports > golf", "sports > hockey", "sports > rugby", "sports > running", "sports > soccer", "sports > swimming", "sports > tennis", "sports > volleyball", "sports > wilderness", "sports > wrestling", "technology", "true_crime", "tv_and_film", "tv_and_film > after_shows", "tv_and_film > film_history", "tv_and_film > film_interviews", "tv_and_film > film_reviews", "tv_and_film > tv_reviews":
-			return true
-		}
-	}
-	return false
-}
-
-type GetSearchCategory3 string
-
-const (
-	GetSearchCategory3Arts                                           GetSearchCategory3 = "arts"
-	GetSearchCategory3ArtsGreaterThanBooks                           GetSearchCategory3 = "arts > books"
-	GetSearchCategory3ArtsGreaterThanDesign                          GetSearchCategory3 = "arts > design"
-	GetSearchCategory3ArtsGreaterThanFashionAndBeauty                GetSearchCategory3 = "arts > fashion_and_beauty"
-	GetSearchCategory3ArtsGreaterThanFood                            GetSearchCategory3 = "arts > food"
-	GetSearchCategory3ArtsGreaterThanPerformingArts                  GetSearchCategory3 = "arts > performing_arts"
-	GetSearchCategory3ArtsGreaterThanVisualArts                      GetSearchCategory3 = "arts > visual_arts"
-	GetSearchCategory3Business                                       GetSearchCategory3 = "business"
-	GetSearchCategory3BusinessGreaterThanCareers                     GetSearchCategory3 = "business > careers"
-	GetSearchCategory3BusinessGreaterThanEntrepreneurship            GetSearchCategory3 = "business > entrepreneurship"
-	GetSearchCategory3BusinessGreaterThanInvesting                   GetSearchCategory3 = "business > investing"
-	GetSearchCategory3BusinessGreaterThanManagement                  GetSearchCategory3 = "business > management"
-	GetSearchCategory3BusinessGreaterThanMarketing                   GetSearchCategory3 = "business > marketing"
-	GetSearchCategory3BusinessGreaterThanNonProfit                   GetSearchCategory3 = "business > non_profit"
-	GetSearchCategory3Comedy                                         GetSearchCategory3 = "comedy"
-	GetSearchCategory3ComedyGreaterThanComedyInterviews              GetSearchCategory3 = "comedy > comedy_interviews"
-	GetSearchCategory3ComedyGreaterThanImprov                        GetSearchCategory3 = "comedy > improv"
-	GetSearchCategory3ComedyGreaterThanStandUp                       GetSearchCategory3 = "comedy > stand_up"
-	GetSearchCategory3Education                                      GetSearchCategory3 = "education"
-	GetSearchCategory3EducationGreaterThanCourses                    GetSearchCategory3 = "education > courses"
-	GetSearchCategory3EducationGreaterThanHowTo                      GetSearchCategory3 = "education > how_to"
-	GetSearchCategory3EducationGreaterThanLanguageLearning           GetSearchCategory3 = "education > language_learning"
-	GetSearchCategory3EducationGreaterThanSelfImprovement            GetSearchCategory3 = "education > self_improvement"
-	GetSearchCategory3Fiction                                        GetSearchCategory3 = "fiction"
-	GetSearchCategory3FictionGreaterThanComedyFiction                GetSearchCategory3 = "fiction > comedy_fiction"
-	GetSearchCategory3FictionGreaterThanDrama                        GetSearchCategory3 = "fiction > drama"
-	GetSearchCategory3FictionGreaterThanScienceFiction               GetSearchCategory3 = "fiction > science_fiction"
-	GetSearchCategory3Government                                     GetSearchCategory3 = "government"
-	GetSearchCategory3HealthAndFitness                               GetSearchCategory3 = "health_and_fitness"
-	GetSearchCategory3HealthAndFitnessGreaterThanAlternativeHealth   GetSearchCategory3 = "health_and_fitness > alternative_health"
-	GetSearchCategory3HealthAndFitnessGreaterThanFitness             GetSearchCategory3 = "health_and_fitness > fitness"
-	GetSearchCategory3HealthAndFitnessGreaterThanMedicine            GetSearchCategory3 = "health_and_fitness > medicine"
-	GetSearchCategory3HealthAndFitnessGreaterThanMentalHealth        GetSearchCategory3 = "health_and_fitness > mental_health"
-	GetSearchCategory3HealthAndFitnessGreaterThanNutrition           GetSearchCategory3 = "health_and_fitness > nutrition"
-	GetSearchCategory3HealthAndFitnessGreaterThanSexuality           GetSearchCategory3 = "health_and_fitness > sexuality"
-	GetSearchCategory3History                                        GetSearchCategory3 = "history"
-	GetSearchCategory3KidsAndFamily                                  GetSearchCategory3 = "kids_and_family"
-	GetSearchCategory3KidsAndFamilyGreaterThanEducationForKids       GetSearchCategory3 = "kids_and_family > education_for_kids"
-	GetSearchCategory3KidsAndFamilyGreaterThanParenting              GetSearchCategory3 = "kids_and_family > parenting"
-	GetSearchCategory3KidsAndFamilyGreaterThanPetsAndAnimals         GetSearchCategory3 = "kids_and_family > pets_and_animals"
-	GetSearchCategory3KidsAndFamilyGreaterThanStoriesForKids         GetSearchCategory3 = "kids_and_family > stories_for_kids"
-	GetSearchCategory3Leisure                                        GetSearchCategory3 = "leisure"
-	GetSearchCategory3LeisureGreaterThanAnimationAndManga            GetSearchCategory3 = "leisure > animation_and_manga"
-	GetSearchCategory3LeisureGreaterThanAutomotive                   GetSearchCategory3 = "leisure > automotive"
-	GetSearchCategory3LeisureGreaterThanAviation                     GetSearchCategory3 = "leisure > aviation"
-	GetSearchCategory3LeisureGreaterThanCrafts                       GetSearchCategory3 = "leisure > crafts"
-	GetSearchCategory3LeisureGreaterThanGames                        GetSearchCategory3 = "leisure > games"
-	GetSearchCategory3LeisureGreaterThanHobbies                      GetSearchCategory3 = "leisure > hobbies"
-	GetSearchCategory3LeisureGreaterThanHomeAndGarden                GetSearchCategory3 = "leisure > home_and_garden"
-	GetSearchCategory3LeisureGreaterThanVideoGames                   GetSearchCategory3 = "leisure > video_games"
-	GetSearchCategory3Music                                          GetSearchCategory3 = "music"
-	GetSearchCategory3MusicGreaterThanMusicCommentary                GetSearchCategory3 = "music > music_commentary"
-	GetSearchCategory3MusicGreaterThanMusicHistory                   GetSearchCategory3 = "music > music_history"
-	GetSearchCategory3MusicGreaterThanMusicInterviews                GetSearchCategory3 = "music > music_interviews"
-	GetSearchCategory3News                                           GetSearchCategory3 = "news"
-	GetSearchCategory3NewsGreaterThanBusinessNews                    GetSearchCategory3 = "news > business_news"
-	GetSearchCategory3NewsGreaterThanDailyNews                       GetSearchCategory3 = "news > daily_news"
-	GetSearchCategory3NewsGreaterThanEntertainmentNews               GetSearchCategory3 = "news > entertainment_news"
-	GetSearchCategory3NewsGreaterThanNewsCommentary                  GetSearchCategory3 = "news > news_commentary"
-	GetSearchCategory3NewsGreaterThanPolitics                        GetSearchCategory3 = "news > politics"
-	GetSearchCategory3NewsGreaterThanSportsNews                      GetSearchCategory3 = "news > sports_news"
-	GetSearchCategory3NewsGreaterThanTechNews                        GetSearchCategory3 = "news > tech_news"
-	GetSearchCategory3ReligionAndSpirituality                        GetSearchCategory3 = "religion_and_spirituality"
-	GetSearchCategory3ReligionAndSpiritualityGreaterThanBuddhism     GetSearchCategory3 = "religion_and_spirituality > buddhism"
-	GetSearchCategory3ReligionAndSpiritualityGreaterThanChristianity GetSearchCategory3 = "religion_and_spirituality > christianity"
-	GetSearchCategory3ReligionAndSpiritualityGreaterThanHinduism     GetSearchCategory3 = "religion_and_spirituality > hinduism"
-	GetSearchCategory3ReligionAndSpiritualityGreaterThanIslam        GetSearchCategory3 = "religion_and_spirituality > islam"
-	GetSearchCategory3ReligionAndSpiritualityGreaterThanJudaism      GetSearchCategory3 = "religion_and_spirituality > judaism"
-	GetSearchCategory3ReligionAndSpiritualityGreaterThanReligion     GetSearchCategory3 = "religion_and_spirituality > religion"
-	GetSearchCategory3ReligionAndSpiritualityGreaterThanSpirituality GetSearchCategory3 = "religion_and_spirituality > spirituality"
-	GetSearchCategory3Science                                        GetSearchCategory3 = "science"
-	GetSearchCategory3ScienceGreaterThanAstronomy                    GetSearchCategory3 = "science > astronomy"
-	GetSearchCategory3ScienceGreaterThanChemistry                    GetSearchCategory3 = "science > chemistry"
-	GetSearchCategory3ScienceGreaterThanEarthSciences                GetSearchCategory3 = "science > earth_sciences"
-	GetSearchCategory3ScienceGreaterThanLifeSciences                 GetSearchCategory3 = "science > life_sciences"
-	GetSearchCategory3ScienceGreaterThanMathematics                  GetSearchCategory3 = "science > mathematics"
-	GetSearchCategory3ScienceGreaterThanNaturalSciences              GetSearchCategory3 = "science > natural_sciences"
-	GetSearchCategory3ScienceGreaterThanNature                       GetSearchCategory3 = "science > nature"
-	GetSearchCategory3ScienceGreaterThanPhysics                      GetSearchCategory3 = "science > physics"
-	GetSearchCategory3ScienceGreaterThanSocialSciences               GetSearchCategory3 = "science > social_sciences"
-	GetSearchCategory3SocietyAndCulture                              GetSearchCategory3 = "society_and_culture"
-	GetSearchCategory3SocietyAndCultureGreaterThanDocumentary        GetSearchCategory3 = "society_and_culture > documentary"
-	GetSearchCategory3SocietyAndCultureGreaterThanPersonalJournals   GetSearchCategory3 = "society_and_culture > personal_journals"
-	GetSearchCategory3SocietyAndCultureGreaterThanPhilosophy         GetSearchCategory3 = "society_and_culture > philosophy"
-	GetSearchCategory3SocietyAndCultureGreaterThanPlacesAndTravel    GetSearchCategory3 = "society_and_culture > places_and_travel"
-	GetSearchCategory3SocietyAndCultureGreaterThanRelationships      GetSearchCategory3 = "society_and_culture > relationships"
-	GetSearchCategory3Sports                                         GetSearchCategory3 = "sports"
-	GetSearchCategory3SportsGreaterThanBaseball                      GetSearchCategory3 = "sports > baseball"
-	GetSearchCategory3SportsGreaterThanBasketball                    GetSearchCategory3 = "sports > basketball"
-	GetSearchCategory3SportsGreaterThanCricket                       GetSearchCategory3 = "sports > cricket"
-	GetSearchCategory3SportsGreaterThanFantasySports                 GetSearchCategory3 = "sports > fantasy_sports"
-	GetSearchCategory3SportsGreaterThanFootball                      GetSearchCategory3 = "sports > football"
-	GetSearchCategory3SportsGreaterThanGolf                          GetSearchCategory3 = "sports > golf"
-	GetSearchCategory3SportsGreaterThanHockey                        GetSearchCategory3 = "sports > hockey"
-	GetSearchCategory3SportsGreaterThanRugby                         GetSearchCategory3 = "sports > rugby"
-	GetSearchCategory3SportsGreaterThanRunning                       GetSearchCategory3 = "sports > running"
-	GetSearchCategory3SportsGreaterThanSoccer                        GetSearchCategory3 = "sports > soccer"
-	GetSearchCategory3SportsGreaterThanSwimming                      GetSearchCategory3 = "sports > swimming"
-	GetSearchCategory3SportsGreaterThanTennis                        GetSearchCategory3 = "sports > tennis"
-	GetSearchCategory3SportsGreaterThanVolleyball                    GetSearchCategory3 = "sports > volleyball"
-	GetSearchCategory3SportsGreaterThanWilderness                    GetSearchCategory3 = "sports > wilderness"
-	GetSearchCategory3SportsGreaterThanWrestling                     GetSearchCategory3 = "sports > wrestling"
-	GetSearchCategory3Technology                                     GetSearchCategory3 = "technology"
-	GetSearchCategory3TrueCrime                                      GetSearchCategory3 = "true_crime"
-	GetSearchCategory3TvAndFilm                                      GetSearchCategory3 = "tv_and_film"
-	GetSearchCategory3TvAndFilmGreaterThanAfterShows                 GetSearchCategory3 = "tv_and_film > after_shows"
-	GetSearchCategory3TvAndFilmGreaterThanFilmHistory                GetSearchCategory3 = "tv_and_film > film_history"
-	GetSearchCategory3TvAndFilmGreaterThanFilmInterviews             GetSearchCategory3 = "tv_and_film > film_interviews"
-	GetSearchCategory3TvAndFilmGreaterThanFilmReviews                GetSearchCategory3 = "tv_and_film > film_reviews"
-	GetSearchCategory3TvAndFilmGreaterThanTvReviews                  GetSearchCategory3 = "tv_and_film > tv_reviews"
-)
-
-func (e GetSearchCategory3) ToPointer() *GetSearchCategory3 {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *GetSearchCategory3) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "arts", "arts > books", "arts > design", "arts > fashion_and_beauty", "arts > food", "arts > performing_arts", "arts > visual_arts", "business", "business > careers", "business > entrepreneurship", "business > investing", "business > management", "business > marketing", "business > non_profit", "comedy", "comedy > comedy_interviews", "comedy > improv", "comedy > stand_up", "education", "education > courses", "education > how_to", "education > language_learning", "education > self_improvement", "fiction", "fiction > comedy_fiction", "fiction > drama", "fiction > science_fiction", "government", "health_and_fitness", "health_and_fitness > alternative_health", "health_and_fitness > fitness", "health_and_fitness > medicine", "health_and_fitness > mental_health", "health_and_fitness > nutrition", "health_and_fitness > sexuality", "history", "kids_and_family", "kids_and_family > education_for_kids", "kids_and_family > parenting", "kids_and_family > pets_and_animals", "kids_and_family > stories_for_kids", "leisure", "leisure > animation_and_manga", "leisure > automotive", "leisure > aviation", "leisure > crafts", "leisure > games", "leisure > hobbies", "leisure > home_and_garden", "leisure > video_games", "music", "music > music_commentary", "music > music_history", "music > music_interviews", "news", "news > business_news", "news > daily_news", "news > entertainment_news", "news > news_commentary", "news > politics", "news > sports_news", "news > tech_news", "religion_and_spirituality", "religion_and_spirituality > buddhism", "religion_and_spirituality > christianity", "religion_and_spirituality > hinduism", "religion_and_spirituality > islam", "religion_and_spirituality > judaism", "religion_and_spirituality > religion", "religion_and_spirituality > spirituality", "science", "science > astronomy", "science > chemistry", "science > earth_sciences", "science > life_sciences", "science > mathematics", "science > natural_sciences", "science > nature", "science > physics", "science > social_sciences", "society_and_culture", "society_and_culture > documentary", "society_and_culture > personal_journals", "society_and_culture > philosophy", "society_and_culture > places_and_travel", "society_and_culture > relationships", "sports", "sports > baseball", "sports > basketball", "sports > cricket", "sports > fantasy_sports", "sports > football", "sports > golf", "sports > hockey", "sports > rugby", "sports > running", "sports > soccer", "sports > swimming", "sports > tennis", "sports > volleyball", "sports > wilderness", "sports > wrestling", "technology", "true_crime", "tv_and_film", "tv_and_film > after_shows", "tv_and_film > film_history", "tv_and_film > film_interviews", "tv_and_film > film_reviews", "tv_and_film > tv_reviews":
-			return true
-		}
-	}
-	return false
-}
-
-// GetSearchLanguage - The ISO 639-1 language code for the channel, published in the RSS feed as `<language>`.
-type GetSearchLanguage string
-
-const (
-	GetSearchLanguageAf   GetSearchLanguage = "af"
-	GetSearchLanguageBe   GetSearchLanguage = "be"
-	GetSearchLanguageBg   GetSearchLanguage = "bg"
-	GetSearchLanguageCa   GetSearchLanguage = "ca"
-	GetSearchLanguageCs   GetSearchLanguage = "cs"
-	GetSearchLanguageDa   GetSearchLanguage = "da"
-	GetSearchLanguageDeAt GetSearchLanguage = "de-at"
-	GetSearchLanguageDeCh GetSearchLanguage = "de-ch"
-	GetSearchLanguageDeDe GetSearchLanguage = "de-de"
-	GetSearchLanguageDeLi GetSearchLanguage = "de-li"
-	GetSearchLanguageDeLu GetSearchLanguage = "de-lu"
-	GetSearchLanguageDe   GetSearchLanguage = "de"
-	GetSearchLanguageEl   GetSearchLanguage = "el"
-	GetSearchLanguageEnAu GetSearchLanguage = "en-au"
-	GetSearchLanguageEnBz GetSearchLanguage = "en-bz"
-	GetSearchLanguageEnCa GetSearchLanguage = "en-ca"
-	GetSearchLanguageEnGb GetSearchLanguage = "en-gb"
-	GetSearchLanguageEnIe GetSearchLanguage = "en-ie"
-	GetSearchLanguageEnJm GetSearchLanguage = "en-jm"
-	GetSearchLanguageEnNz GetSearchLanguage = "en-nz"
-	GetSearchLanguageEnPh GetSearchLanguage = "en-ph"
-	GetSearchLanguageEnTt GetSearchLanguage = "en-tt"
-	GetSearchLanguageEnUs GetSearchLanguage = "en-us"
-	GetSearchLanguageEnZa GetSearchLanguage = "en-za"
-	GetSearchLanguageEnZw GetSearchLanguage = "en-zw"
-	GetSearchLanguageEn   GetSearchLanguage = "en"
-	GetSearchLanguageEsAr GetSearchLanguage = "es-ar"
-	GetSearchLanguageEsBo GetSearchLanguage = "es-bo"
-	GetSearchLanguageEsCl GetSearchLanguage = "es-cl"
-	GetSearchLanguageEsCo GetSearchLanguage = "es-co"
-	GetSearchLanguageEsCr GetSearchLanguage = "es-cr"
-	GetSearchLanguageEsDo GetSearchLanguage = "es-do"
-	GetSearchLanguageEsEc GetSearchLanguage = "es-ec"
-	GetSearchLanguageEsEs GetSearchLanguage = "es-es"
-	GetSearchLanguageEsGt GetSearchLanguage = "es-gt"
-	GetSearchLanguageEsHn GetSearchLanguage = "es-hn"
-	GetSearchLanguageEsMx GetSearchLanguage = "es-mx"
-	GetSearchLanguageEsNi GetSearchLanguage = "es-ni"
-	GetSearchLanguageEsPa GetSearchLanguage = "es-pa"
-	GetSearchLanguageEsPe GetSearchLanguage = "es-pe"
-	GetSearchLanguageEsPr GetSearchLanguage = "es-pr"
-	GetSearchLanguageEsPy GetSearchLanguage = "es-py"
-	GetSearchLanguageEsSv GetSearchLanguage = "es-sv"
-	GetSearchLanguageEsUy GetSearchLanguage = "es-uy"
-	GetSearchLanguageEsVe GetSearchLanguage = "es-ve"
-	GetSearchLanguageEs   GetSearchLanguage = "es"
-	GetSearchLanguageEt   GetSearchLanguage = "et"
-	GetSearchLanguageEu   GetSearchLanguage = "eu"
-	GetSearchLanguageFi   GetSearchLanguage = "fi"
-	GetSearchLanguageFo   GetSearchLanguage = "fo"
-	GetSearchLanguageFrBe GetSearchLanguage = "fr-be"
-	GetSearchLanguageFrCa GetSearchLanguage = "fr-ca"
-	GetSearchLanguageFrCh GetSearchLanguage = "fr-ch"
-	GetSearchLanguageFrFr GetSearchLanguage = "fr-fr"
-	GetSearchLanguageFrLu GetSearchLanguage = "fr-lu"
-	GetSearchLanguageFrMc GetSearchLanguage = "fr-mc"
-	GetSearchLanguageFr   GetSearchLanguage = "fr"
-	GetSearchLanguageGa   GetSearchLanguage = "ga"
-	GetSearchLanguageGd   GetSearchLanguage = "gd"
-	GetSearchLanguageGl   GetSearchLanguage = "gl"
-	GetSearchLanguageHaw  GetSearchLanguage = "haw"
-	GetSearchLanguageHr   GetSearchLanguage = "hr"
-	GetSearchLanguageHu   GetSearchLanguage = "hu"
-	GetSearchLanguageIn   GetSearchLanguage = "in"
-	GetSearchLanguageIs   GetSearchLanguage = "is"
-	GetSearchLanguageItCh GetSearchLanguage = "it-ch"
-	GetSearchLanguageItIt GetSearchLanguage = "it-it"
-	GetSearchLanguageIt   GetSearchLanguage = "it"
-	GetSearchLanguageJa   GetSearchLanguage = "ja"
-	GetSearchLanguageKo   GetSearchLanguage = "ko"
-	GetSearchLanguageMk   GetSearchLanguage = "mk"
-	GetSearchLanguageNlBe GetSearchLanguage = "nl-be"
-	GetSearchLanguageNlNl GetSearchLanguage = "nl-nl"
-	GetSearchLanguageNl   GetSearchLanguage = "nl"
-	GetSearchLanguageNo   GetSearchLanguage = "no"
-	GetSearchLanguagePl   GetSearchLanguage = "pl"
-	GetSearchLanguagePtBr GetSearchLanguage = "pt-br"
-	GetSearchLanguagePtPt GetSearchLanguage = "pt-pt"
-	GetSearchLanguagePt   GetSearchLanguage = "pt"
-	GetSearchLanguageRoMo GetSearchLanguage = "ro-mo"
-	GetSearchLanguageRoRo GetSearchLanguage = "ro-ro"
-	GetSearchLanguageRo   GetSearchLanguage = "ro"
-	GetSearchLanguageRuMo GetSearchLanguage = "ru-mo"
-	GetSearchLanguageRuRu GetSearchLanguage = "ru-ru"
-	GetSearchLanguageRu   GetSearchLanguage = "ru"
-	GetSearchLanguageSk   GetSearchLanguage = "sk"
-	GetSearchLanguageSl   GetSearchLanguage = "sl"
-	GetSearchLanguageSq   GetSearchLanguage = "sq"
-	GetSearchLanguageSr   GetSearchLanguage = "sr"
-	GetSearchLanguageSvFi GetSearchLanguage = "sv-fi"
-	GetSearchLanguageSvSe GetSearchLanguage = "sv-se"
-	GetSearchLanguageSv   GetSearchLanguage = "sv"
-	GetSearchLanguageTr   GetSearchLanguage = "tr"
-	GetSearchLanguageUk   GetSearchLanguage = "uk"
-	GetSearchLanguageZhCn GetSearchLanguage = "zh-cn"
-	GetSearchLanguageZhTw GetSearchLanguage = "zh-tw"
-)
-
-func (e GetSearchLanguage) ToPointer() *GetSearchLanguage {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *GetSearchLanguage) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "af", "be", "bg", "ca", "cs", "da", "de-at", "de-ch", "de-de", "de-li", "de-lu", "de", "el", "en-au", "en-bz", "en-ca", "en-gb", "en-ie", "en-jm", "en-nz", "en-ph", "en-tt", "en-us", "en-za", "en-zw", "en", "es-ar", "es-bo", "es-cl", "es-co", "es-cr", "es-do", "es-ec", "es-es", "es-gt", "es-hn", "es-mx", "es-ni", "es-pa", "es-pe", "es-pr", "es-py", "es-sv", "es-uy", "es-ve", "es", "et", "eu", "fi", "fo", "fr-be", "fr-ca", "fr-ch", "fr-fr", "fr-lu", "fr-mc", "fr", "ga", "gd", "gl", "haw", "hr", "hu", "in", "is", "it-ch", "it-it", "it", "ja", "ko", "mk", "nl-be", "nl-nl", "nl", "no", "pl", "pt-br", "pt-pt", "pt", "ro-mo", "ro-ro", "ro", "ru-mo", "ru-ru", "ru", "sk", "sl", "sq", "sr", "sv-fi", "sv-se", "sv", "tr", "uk", "zh-cn", "zh-tw":
-			return true
-		}
-	}
-	return false
-}
-
-// ChannelPodcastSettings - Podcast specific settings for the channel. Only present when podcasting
-// is enabled for the channel.
-type ChannelPodcastSettings struct {
-	// The channel's copyright information, published in the RSS feed as `<copyright>`.
-	Copyright optionalnullable.OptionalNullable[string] `json:"copyright,omitzero"`
-	// The format for episodes for the podcast channel, published in the RSS feed as `<itunes:type>`. `episodic_with_seasons` is published as `episodic`.
-	EpisodeFormat optionalnullable.OptionalNullable[GetSearchEpisodeFormat] `json:"episode_format,omitzero"`
-	// The name of the author(s) for the channel, published in the RSS feed as `<itunes:author>`.
-	AuthorName optionalnullable.OptionalNullable[string] `json:"author_name,omitzero"`
-	// Whether the channel contains explicit content, published in the RSS feed as `<itunes:explicit>`.
-	Explicit optionalnullable.OptionalNullable[bool] `json:"explicit,omitzero"`
-	// The podcast owner's name, published in the channel's public RSS feed as `<itunes:owner>`. Podcast directories use this as the show's administrative contact.
-	OwnerName optionalnullable.OptionalNullable[string] `json:"owner_name,omitzero"`
-	// The podcast owner's email address, published in the channel's public RSS feed as `<itunes:owner>`. Podcast directories such as Apple Podcasts require it for ownership verification.
-	OwnerEmail optionalnullable.OptionalNullable[string] `json:"owner_email,omitzero"`
-	// The primary category for the channel, published in the RSS feed as `<itunes:category>`.
-	Category1 optionalnullable.OptionalNullable[GetSearchCategory1] `json:"category1,omitzero"`
-	// The secondary category for the channel, published in the RSS feed as `<itunes:category>`.
-	Category2 optionalnullable.OptionalNullable[GetSearchCategory2] `json:"category2,omitzero"`
-	// The third category for the channel, published in the RSS feed as `<itunes:category>`.
-	Category3 optionalnullable.OptionalNullable[GetSearchCategory3] `json:"category3,omitzero"`
-	// The ISO 639-1 language code for the channel, published in the RSS feed as `<language>`.
-	Language optionalnullable.OptionalNullable[GetSearchLanguage] `json:"language,omitzero"`
-}
-
-func (c *ChannelPodcastSettings) GetCopyright() optionalnullable.OptionalNullable[string] {
-	if c == nil {
-		return nil
-	}
-	return c.Copyright
-}
-
-func (c *ChannelPodcastSettings) GetEpisodeFormat() optionalnullable.OptionalNullable[GetSearchEpisodeFormat] {
-	if c == nil {
-		return nil
-	}
-	return c.EpisodeFormat
-}
-
-func (c *ChannelPodcastSettings) GetAuthorName() optionalnullable.OptionalNullable[string] {
-	if c == nil {
-		return nil
-	}
-	return c.AuthorName
-}
-
-func (c *ChannelPodcastSettings) GetExplicit() optionalnullable.OptionalNullable[bool] {
-	if c == nil {
-		return nil
-	}
-	return c.Explicit
-}
-
-func (c *ChannelPodcastSettings) GetOwnerName() optionalnullable.OptionalNullable[string] {
-	if c == nil {
-		return nil
-	}
-	return c.OwnerName
-}
-
-func (c *ChannelPodcastSettings) GetOwnerEmail() optionalnullable.OptionalNullable[string] {
-	if c == nil {
-		return nil
-	}
-	return c.OwnerEmail
-}
-
-func (c *ChannelPodcastSettings) GetCategory1() optionalnullable.OptionalNullable[GetSearchCategory1] {
-	if c == nil {
-		return nil
-	}
-	return c.Category1
-}
-
-func (c *ChannelPodcastSettings) GetCategory2() optionalnullable.OptionalNullable[GetSearchCategory2] {
-	if c == nil {
-		return nil
-	}
-	return c.Category2
-}
-
-func (c *ChannelPodcastSettings) GetCategory3() optionalnullable.OptionalNullable[GetSearchCategory3] {
-	if c == nil {
-		return nil
-	}
-	return c.Category3
-}
-
-func (c *ChannelPodcastSettings) GetLanguage() optionalnullable.OptionalNullable[GetSearchLanguage] {
-	if c == nil {
-		return nil
-	}
-	return c.Language
-}
-
-type GetSearchChannel struct {
-	// A unique numeric identifier for the channel within the system.
-	ID int64 `json:"id"`
-	// A unique alphanumeric identifier for this channel.
-	HashedID string `json:"hashed_id"`
-	// The display name for the channel.
-	Name string `json:"name"`
-	// The channel's description.
-	Description string `json:"description"`
-	// The number of medias in the channel.
-	MediaCount int64 `json:"media_count"`
-	// The date when the channel was originally created.
-	Created time.Time `json:"created"`
-	// The date when the channel was last updated.
-	Updated time.Time `json:"updated"`
-	// The number of live stream events in the channel.
-	LiveStreamEventCount *int64 `json:"live_stream_event_count,omitzero"`
-	// Whether episodes are automatically published when added to the channel.
-	AutoPublishEnabled optionalnullable.OptionalNullable[bool] `json:"auto_publish_enabled,omitzero"`
-	// Whether podcasting is enabled for the channel.
-	PodcastEnabled optionalnullable.OptionalNullable[bool] `json:"podcast_enabled,omitzero"`
-	// The custom URL used when embedding the channel on your own site. Null if no custom URL is set.
-	CustomURL optionalnullable.OptionalNullable[string] `json:"custom_url,omitzero"`
-	// Podcast specific settings for the channel. Only present when podcasting
-	// is enabled for the channel.
-	//
-	PodcastSettings *ChannelPodcastSettings `json:"podcast_settings,omitzero"`
-}
-
-func (g GetSearchChannel) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(g, "", false)
-}
-
-func (g *GetSearchChannel) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &g, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (g *GetSearchChannel) GetID() int64 {
-	if g == nil {
-		return 0
-	}
-	return g.ID
-}
-
-func (g *GetSearchChannel) GetHashedID() string {
-	if g == nil {
-		return ""
-	}
-	return g.HashedID
-}
-
-func (g *GetSearchChannel) GetName() string {
-	if g == nil {
-		return ""
-	}
-	return g.Name
-}
-
-func (g *GetSearchChannel) GetDescription() string {
-	if g == nil {
-		return ""
-	}
-	return g.Description
-}
-
-func (g *GetSearchChannel) GetMediaCount() int64 {
-	if g == nil {
-		return 0
-	}
-	return g.MediaCount
-}
-
-func (g *GetSearchChannel) GetCreated() time.Time {
-	if g == nil {
-		return time.Time{}
-	}
-	return g.Created
-}
-
-func (g *GetSearchChannel) GetUpdated() time.Time {
-	if g == nil {
-		return time.Time{}
-	}
-	return g.Updated
-}
-
-func (g *GetSearchChannel) GetLiveStreamEventCount() *int64 {
-	if g == nil {
-		return nil
-	}
-	return g.LiveStreamEventCount
-}
-
-func (g *GetSearchChannel) GetAutoPublishEnabled() optionalnullable.OptionalNullable[bool] {
-	if g == nil {
-		return nil
-	}
-	return g.AutoPublishEnabled
-}
-
-func (g *GetSearchChannel) GetPodcastEnabled() optionalnullable.OptionalNullable[bool] {
-	if g == nil {
-		return nil
-	}
-	return g.PodcastEnabled
-}
-
-func (g *GetSearchChannel) GetCustomURL() optionalnullable.OptionalNullable[string] {
-	if g == nil {
-		return nil
-	}
-	return g.CustomURL
-}
-
-func (g *GetSearchChannel) GetPodcastSettings() *ChannelPodcastSettings {
-	if g == nil {
-		return nil
-	}
-	return g.PodcastSettings
-}
-
-type GetSearchEpisodeType string
-
-const (
-	GetSearchEpisodeTypeFull    GetSearchEpisodeType = "full"
-	GetSearchEpisodeTypeTrailer GetSearchEpisodeType = "trailer"
-	GetSearchEpisodeTypeBonus   GetSearchEpisodeType = "bonus"
-)
-
-func (e GetSearchEpisodeType) ToPointer() *GetSearchEpisodeType {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *GetSearchEpisodeType) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "full", "trailer", "bonus":
-			return true
-		}
-	}
-	return false
-}
-
-// ChannelEpisodePodcastSettings - Podcast specific settings for the episode. Only present when podcasting
-// is enabled for the channel.
-type ChannelEpisodePodcastSettings struct {
-	// The type of episode.
-	EpisodeType optionalnullable.OptionalNullable[GetSearchEpisodeType] `json:"episode_type,omitzero"`
-	// The number of the episode.
-	EpisodeNumber optionalnullable.OptionalNullable[int64] `json:"episode_number,omitzero"`
-	// The season number of the episode.
-	SeasonNumber optionalnullable.OptionalNullable[int64] `json:"season_number,omitzero"`
-	// Whether the episode contains explicit content.
-	ExplicitContent *bool `json:"explicit_content,omitzero"`
-	// Whether to hide the episode from the podcast feed.
-	HideFromFeed *bool `json:"hide_from_feed,omitzero"`
-}
-
-func (c *ChannelEpisodePodcastSettings) GetEpisodeType() optionalnullable.OptionalNullable[GetSearchEpisodeType] {
-	if c == nil {
-		return nil
-	}
-	return c.EpisodeType
-}
-
-func (c *ChannelEpisodePodcastSettings) GetEpisodeNumber() optionalnullable.OptionalNullable[int64] {
-	if c == nil {
-		return nil
-	}
-	return c.EpisodeNumber
-}
-
-func (c *ChannelEpisodePodcastSettings) GetSeasonNumber() optionalnullable.OptionalNullable[int64] {
-	if c == nil {
-		return nil
-	}
-	return c.SeasonNumber
-}
-
-func (c *ChannelEpisodePodcastSettings) GetExplicitContent() *bool {
-	if c == nil {
-		return nil
-	}
-	return c.ExplicitContent
-}
-
-func (c *ChannelEpisodePodcastSettings) GetHideFromFeed() *bool {
-	if c == nil {
-		return nil
-	}
-	return c.HideFromFeed
-}
-
-type ChannelEpisode struct {
-	// A unique numeric identifier for the channel episode within the system.
-	ID int64 `json:"id"`
-	// A unique alphanumeric identifier for this channel episode.
-	HashedID string `json:"hashed_id"`
-	// The title of the channel episode.
-	Title optionalnullable.OptionalNullable[string] `json:"title,omitzero"`
-	// The episode notes for the channel episode.
-	Description string `json:"description"`
-	// The description of the channel episode.
-	Summary string `json:"summary"`
-	// The hashed ID of the channel this episode belongs to.
-	ChannelHashedID *string `json:"channel_hashed_id"`
-	// The hashed ID of the media associated with this channel episode.
-	MediaHashedID *string `json:"media_hashed_id"`
-	// The hashed ID of the live stream event associated with this channel episode, if any.
-	LiveStreamEventHashedID optionalnullable.OptionalNullable[string] `json:"live_stream_event_hashed_id,omitzero"`
-	// Whether the channel episode is published.
-	Published bool `json:"published"`
-	// The date when the channel episode was originally created.
-	Created time.Time `json:"created"`
-	// The date when the channel episode was last updated.
-	Updated time.Time `json:"updated"`
-	// The scheduled publish date (only present if scheduled).
-	PublishAt optionalnullable.OptionalNullable[time.Time] `json:"publish_at,omitzero"`
-	// Podcast specific settings for the episode. Only present when podcasting
-	// is enabled for the channel.
-	//
-	PodcastSettings *ChannelEpisodePodcastSettings `json:"podcast_settings,omitzero"`
-}
-
-func (c ChannelEpisode) MarshalJSON() ([]byte, error) {
+func (c Content) MarshalJSON() ([]byte, error) {
 	return utils.MarshalJSON(c, "", false)
 }
 
-func (c *ChannelEpisode) UnmarshalJSON(data []byte) error {
+func (c *Content) UnmarshalJSON(data []byte) error {
 	if err := utils.UnmarshalJSON(data, &c, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (c *ChannelEpisode) GetID() int64 {
+func (c *Content) GetType() *GetSearchType {
 	if c == nil {
-		return 0
+		return nil
 	}
-	return c.ID
+	return c.Type
 }
 
-func (c *ChannelEpisode) GetHashedID() string {
+func (c *Content) GetMediaType() *string {
 	if c == nil {
-		return ""
+		return nil
+	}
+	return c.MediaType
+}
+
+func (c *Content) GetHashedID() *string {
+	if c == nil {
+		return nil
 	}
 	return c.HashedID
 }
 
-func (c *ChannelEpisode) GetTitle() optionalnullable.OptionalNullable[string] {
+func (c *Content) GetName() *string {
 	if c == nil {
 		return nil
 	}
-	return c.Title
+	return c.Name
 }
 
-func (c *ChannelEpisode) GetDescription() string {
+func (c *Content) GetDescription() *string {
 	if c == nil {
-		return ""
+		return nil
 	}
 	return c.Description
 }
 
-func (c *ChannelEpisode) GetSummary() string {
-	if c == nil {
-		return ""
-	}
-	return c.Summary
-}
-
-func (c *ChannelEpisode) GetChannelHashedID() *string {
+func (c *Content) GetURL() *string {
 	if c == nil {
 		return nil
 	}
-	return c.ChannelHashedID
+	return c.URL
 }
 
-func (c *ChannelEpisode) GetMediaHashedID() *string {
+func (c *Content) GetCreatedAt() *string {
+	if c == nil {
+		return nil
+	}
+	return c.CreatedAt
+}
+
+func (c *Content) GetUpdatedAt() *string {
+	if c == nil {
+		return nil
+	}
+	return c.UpdatedAt
+}
+
+func (c *Content) GetArchived() *bool {
+	if c == nil {
+		return nil
+	}
+	return c.Archived
+}
+
+func (c *Content) GetDuration() *float64 {
+	if c == nil {
+		return nil
+	}
+	return c.Duration
+}
+
+func (c *Content) GetPlayCount() *int64 {
+	if c == nil {
+		return nil
+	}
+	return c.PlayCount
+}
+
+func (c *Content) GetOrigin() *string {
+	if c == nil {
+		return nil
+	}
+	return c.Origin
+}
+
+func (c *Content) GetTags() []string {
+	if c == nil {
+		return nil
+	}
+	return c.Tags
+}
+
+func (c *Content) GetSpeakers() []string {
+	if c == nil {
+		return nil
+	}
+	return c.Speakers
+}
+
+func (c *Content) GetThumbnailUrls() []string {
+	if c == nil {
+		return nil
+	}
+	return c.ThumbnailUrls
+}
+
+func (c *Content) GetUploadedBy() *string {
+	if c == nil {
+		return nil
+	}
+	return c.UploadedBy
+}
+
+func (c *Content) GetContainerName() *string {
+	if c == nil {
+		return nil
+	}
+	return c.ContainerName
+}
+
+func (c *Content) GetContainerHashedID() *string {
+	if c == nil {
+		return nil
+	}
+	return c.ContainerHashedID
+}
+
+func (c *Content) GetFolderHashedID() *string {
+	if c == nil {
+		return nil
+	}
+	return c.FolderHashedID
+}
+
+func (c *Content) GetMediaCount() *int64 {
+	if c == nil {
+		return nil
+	}
+	return c.MediaCount
+}
+
+func (c *Content) GetLifecycleStatus() *string {
+	if c == nil {
+		return nil
+	}
+	return c.LifecycleStatus
+}
+
+func (c *Content) GetScheduledFor() *string {
+	if c == nil {
+		return nil
+	}
+	return c.ScheduledFor
+}
+
+func (c *Content) GetEventDuration() *float64 {
+	if c == nil {
+		return nil
+	}
+	return c.EventDuration
+}
+
+func (c *Content) GetMediaHashedID() *string {
 	if c == nil {
 		return nil
 	}
 	return c.MediaHashedID
 }
 
-func (c *ChannelEpisode) GetLiveStreamEventHashedID() optionalnullable.OptionalNullable[string] {
+func (c *Content) GetIsPublished() *bool {
 	if c == nil {
 		return nil
 	}
-	return c.LiveStreamEventHashedID
+	return c.IsPublished
 }
 
-func (c *ChannelEpisode) GetPublished() bool {
-	if c == nil {
-		return false
-	}
-	return c.Published
-}
-
-func (c *ChannelEpisode) GetCreated() time.Time {
-	if c == nil {
-		return time.Time{}
-	}
-	return c.Created
-}
-
-func (c *ChannelEpisode) GetUpdated() time.Time {
-	if c == nil {
-		return time.Time{}
-	}
-	return c.Updated
-}
-
-func (c *ChannelEpisode) GetPublishAt() optionalnullable.OptionalNullable[time.Time] {
+func (c *Content) GetCustomMetadataFieldValues() []CustomMetadataFieldValue {
 	if c == nil {
 		return nil
 	}
-	return c.PublishAt
+	return c.CustomMetadataFieldValues
 }
 
-func (c *ChannelEpisode) GetPodcastSettings() *ChannelEpisodePodcastSettings {
+func (c *Content) GetTranscriptMatches() []TranscriptMatch {
 	if c == nil {
 		return nil
 	}
-	return c.PodcastSettings
+	return c.TranscriptMatches
 }
 
-// GetSearchLifecycleStatus - The current lifecycle status of the webinar. This is a read-only, system-managed field that Wistia updates as the event moves through its lifecycle; it cannot be set or changed via the API.
-type GetSearchLifecycleStatus string
-
-const (
-	GetSearchLifecycleStatusPending  GetSearchLifecycleStatus = "pending"
-	GetSearchLifecycleStatusReady    GetSearchLifecycleStatus = "ready"
-	GetSearchLifecycleStatusStarting GetSearchLifecycleStatus = "starting"
-	GetSearchLifecycleStatusStarted  GetSearchLifecycleStatus = "started"
-	GetSearchLifecycleStatusEnded    GetSearchLifecycleStatus = "ended"
-	GetSearchLifecycleStatusVodReady GetSearchLifecycleStatus = "vod_ready"
-	GetSearchLifecycleStatusFailed   GetSearchLifecycleStatus = "failed"
-)
-
-func (e GetSearchLifecycleStatus) ToPointer() *GetSearchLifecycleStatus {
-	return &e
+type TranscriptLanguageCounts struct {
+	Label *string `json:"label,omitzero"`
+	Count *int64  `json:"count,omitzero"`
 }
 
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *GetSearchLifecycleStatus) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "pending", "ready", "starting", "started", "ended", "vod_ready", "failed":
-			return true
-		}
+func (t *TranscriptLanguageCounts) GetLabel() *string {
+	if t == nil {
+		return nil
 	}
-	return false
+	return t.Label
 }
 
-type WebinarFolder struct {
-	// A unique alphanumeric identifier for the record.
-	ID string `json:"id"`
-	// A URL for fetching all the records of the given record type. You can pass hashed_ids as a param with multiple values
-	// to do a batch fetch for this records type.
-	//
-	IndexURL string `json:"index_url"`
-	// A URL that can be used to fetch this record.
-	URL string `json:"url"`
-}
-
-func (w *WebinarFolder) GetID() string {
-	if w == nil {
-		return ""
+func (t *TranscriptLanguageCounts) GetCount() *int64 {
+	if t == nil {
+		return nil
 	}
-	return w.ID
+	return t.Count
 }
 
-func (w *WebinarFolder) GetIndexURL() string {
-	if w == nil {
-		return ""
+type DubbedLanguageCounts struct {
+	Label *string `json:"label,omitzero"`
+	Count *int64  `json:"count,omitzero"`
+}
+
+func (d *DubbedLanguageCounts) GetLabel() *string {
+	if d == nil {
+		return nil
 	}
-	return w.IndexURL
+	return d.Label
 }
 
-func (w *WebinarFolder) GetURL() string {
-	if w == nil {
-		return ""
+func (d *DubbedLanguageCounts) GetCount() *int64 {
+	if d == nil {
+		return nil
 	}
-	return w.URL
+	return d.Count
 }
 
-// GetSearchWebinar - A webinar is an event which allows you to stream a video
-// to multiple participants. See our [Webinars Guide](https://support.wistia.com/en/articles/8288501-getting-started-with-webinars)
-// for more info.
-type GetSearchWebinar struct {
-	// The hashed ID of the webinar
-	ID string `json:"id"`
-	// The hashed ID of the webinar. Identical to `id`, named to match every other Wistia resource.
-	HashedID string `json:"hashed_id"`
-	// The title of the webinar
-	Title string `json:"title"`
-	// The description of the webinar
-	Description optionalnullable.OptionalNullable[string] `json:"description,omitzero"`
-	// The scheduled start time in W3C format with timezone
-	ScheduledFor optionalnullable.OptionalNullable[time.Time] `json:"scheduled_for,omitzero"`
-	// Duration of the webinar in minutes
-	EventDuration optionalnullable.OptionalNullable[int64] `json:"event_duration,omitzero"`
-	// The IANA time zone identifier the webinar is scheduled in
-	TimeZone string `json:"time_zone"`
-	// The current lifecycle status of the webinar. This is a read-only, system-managed field that Wistia updates as the event moves through its lifecycle; it cannot be set or changed via the API.
-	LifecycleStatus GetSearchLifecycleStatus `json:"lifecycle_status"`
-	// Registration status of the event
-	RegistrationStatus string `json:"registration_status"`
-	// When the event was created (UTC)
-	CreatedAt time.Time `json:"created_at"`
-	// When the event was last updated (UTC)
-	UpdatedAt time.Time `json:"updated_at"`
-	// Link for the audience to join the event
-	AudienceLink string `json:"audience_link"`
-	// Link for the host to manage the event
-	HostLink string `json:"host_link"`
-	// Link for panelists to join the event
-	PanelistLink string `json:"panelist_link"`
-	// URL of the webinar's custom thumbnail image, or null if no custom thumbnail has been set
-	ThumbnailURL optionalnullable.OptionalNullable[string] `json:"thumbnail_url,omitzero"`
-	// The folder (project) this webinar belongs to
-	Folder optionalnullable.OptionalNullable[WebinarFolder] `json:"folder,omitzero"`
-	// A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
-	Cursor optionalnullable.OptionalNullable[string] `json:"cursor,omitzero"`
+// GetSearchResponseBody - Matching content
+type GetSearchResponseBody struct {
+	// Matching records, best match first unless `sort` was passed. Empty when `per_page` is 0.
+	Content []Content `json:"content"`
+	// The number of records in `content`.
+	ReturnedCount int64 `json:"returned_count"`
+	// Every record matching the search, beyond this page.
+	TotalCount int64 `json:"total_count"`
+	// `total_count` split by content type, keyed by the `content_types` names.
+	CountsByType map[string]int64 `json:"counts_by_type"`
+	// The page returned.
+	RequestedPage *int64 `json:"requested_page,omitzero"`
+	// The page size applied, after the default and the maximum of 100.
+	RequestedPerPage *int64 `json:"requested_per_page,omitzero"`
+	// Whether more matching records follow this page. On the last page inside the first 10,000 matches this stays true when more matches exist, even though the next page returns a 400.
+	MayHaveMore *bool `json:"may_have_more,omitzero"`
+	// The Wistia search page with these filters applied. Omitted with a negated language filter.
+	DeeplinkURL *string `json:"deeplink_url,omitzero"`
+	// Whether `deeplink_url` shows exactly these results; false when the page can't express a filter or the sort.
+	DeeplinkExact *bool `json:"deeplink_exact,omitzero"`
+	// How to widen a search that found nothing.
+	Hint *string `json:"hint,omitzero"`
+	// With `include_language_counts`, media per transcript language code.
+	TranscriptLanguageCounts map[string]TranscriptLanguageCounts `json:"transcript_language_counts,omitzero"`
+	// With `include_language_counts`, media per dubbed language code.
+	DubbedLanguageCounts map[string]DubbedLanguageCounts `json:"dubbed_language_counts,omitzero"`
 }
 
-func (g GetSearchWebinar) MarshalJSON() ([]byte, error) {
+func (g GetSearchResponseBody) MarshalJSON() ([]byte, error) {
 	return utils.MarshalJSON(g, "", false)
 }
 
-func (g *GetSearchWebinar) UnmarshalJSON(data []byte) error {
+func (g *GetSearchResponseBody) UnmarshalJSON(data []byte) error {
 	if err := utils.UnmarshalJSON(data, &g, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (g *GetSearchWebinar) GetID() string {
+func (g *GetSearchResponseBody) GetContent() []Content {
 	if g == nil {
-		return ""
+		return []Content{}
 	}
-	return g.ID
+	return g.Content
 }
 
-func (g *GetSearchWebinar) GetHashedID() string {
+func (g *GetSearchResponseBody) GetReturnedCount() int64 {
 	if g == nil {
-		return ""
+		return 0
 	}
-	return g.HashedID
+	return g.ReturnedCount
 }
 
-func (g *GetSearchWebinar) GetTitle() string {
+func (g *GetSearchResponseBody) GetTotalCount() int64 {
 	if g == nil {
-		return ""
+		return 0
 	}
-	return g.Title
+	return g.TotalCount
 }
 
-func (g *GetSearchWebinar) GetDescription() optionalnullable.OptionalNullable[string] {
+func (g *GetSearchResponseBody) GetCountsByType() map[string]int64 {
 	if g == nil {
-		return nil
+		return map[string]int64{}
 	}
-	return g.Description
+	return g.CountsByType
 }
 
-func (g *GetSearchWebinar) GetScheduledFor() optionalnullable.OptionalNullable[time.Time] {
-	if g == nil {
-		return nil
-	}
-	return g.ScheduledFor
-}
-
-func (g *GetSearchWebinar) GetEventDuration() optionalnullable.OptionalNullable[int64] {
+func (g *GetSearchResponseBody) GetRequestedPage() *int64 {
 	if g == nil {
 		return nil
 	}
-	return g.EventDuration
+	return g.RequestedPage
 }
 
-func (g *GetSearchWebinar) GetTimeZone() string {
-	if g == nil {
-		return ""
-	}
-	return g.TimeZone
-}
-
-func (g *GetSearchWebinar) GetLifecycleStatus() GetSearchLifecycleStatus {
-	if g == nil {
-		return GetSearchLifecycleStatus("")
-	}
-	return g.LifecycleStatus
-}
-
-func (g *GetSearchWebinar) GetRegistrationStatus() string {
-	if g == nil {
-		return ""
-	}
-	return g.RegistrationStatus
-}
-
-func (g *GetSearchWebinar) GetCreatedAt() time.Time {
-	if g == nil {
-		return time.Time{}
-	}
-	return g.CreatedAt
-}
-
-func (g *GetSearchWebinar) GetUpdatedAt() time.Time {
-	if g == nil {
-		return time.Time{}
-	}
-	return g.UpdatedAt
-}
-
-func (g *GetSearchWebinar) GetAudienceLink() string {
-	if g == nil {
-		return ""
-	}
-	return g.AudienceLink
-}
-
-func (g *GetSearchWebinar) GetHostLink() string {
-	if g == nil {
-		return ""
-	}
-	return g.HostLink
-}
-
-func (g *GetSearchWebinar) GetPanelistLink() string {
-	if g == nil {
-		return ""
-	}
-	return g.PanelistLink
-}
-
-func (g *GetSearchWebinar) GetThumbnailURL() optionalnullable.OptionalNullable[string] {
+func (g *GetSearchResponseBody) GetRequestedPerPage() *int64 {
 	if g == nil {
 		return nil
 	}
-	return g.ThumbnailURL
+	return g.RequestedPerPage
 }
 
-func (g *GetSearchWebinar) GetFolder() optionalnullable.OptionalNullable[WebinarFolder] {
+func (g *GetSearchResponseBody) GetMayHaveMore() *bool {
 	if g == nil {
 		return nil
 	}
-	return g.Folder
+	return g.MayHaveMore
 }
 
-func (g *GetSearchWebinar) GetCursor() optionalnullable.OptionalNullable[string] {
+func (g *GetSearchResponseBody) GetDeeplinkURL() *string {
 	if g == nil {
 		return nil
 	}
-	return g.Cursor
+	return g.DeeplinkURL
 }
 
-type GetSearchData struct {
-	Folders         []GetSearchFolder    `json:"folders"`
-	Subfolders      []GetSearchSubfolder `json:"subfolders"`
-	Medias          []GetSearchMedia     `json:"medias"`
-	Channels        []GetSearchChannel   `json:"channels"`
-	ChannelEpisodes []ChannelEpisode     `json:"channel_episodes"`
-	Webinars        []GetSearchWebinar   `json:"webinars"`
-}
-
-func (g *GetSearchData) GetFolders() []GetSearchFolder {
+func (g *GetSearchResponseBody) GetDeeplinkExact() *bool {
 	if g == nil {
-		return []GetSearchFolder{}
+		return nil
 	}
-	return g.Folders
+	return g.DeeplinkExact
 }
 
-func (g *GetSearchData) GetSubfolders() []GetSearchSubfolder {
+func (g *GetSearchResponseBody) GetHint() *string {
 	if g == nil {
-		return []GetSearchSubfolder{}
+		return nil
 	}
-	return g.Subfolders
+	return g.Hint
 }
 
-func (g *GetSearchData) GetMedias() []GetSearchMedia {
+func (g *GetSearchResponseBody) GetTranscriptLanguageCounts() map[string]TranscriptLanguageCounts {
 	if g == nil {
-		return []GetSearchMedia{}
+		return nil
 	}
-	return g.Medias
+	return g.TranscriptLanguageCounts
 }
 
-func (g *GetSearchData) GetChannels() []GetSearchChannel {
+func (g *GetSearchResponseBody) GetDubbedLanguageCounts() map[string]DubbedLanguageCounts {
 	if g == nil {
-		return []GetSearchChannel{}
+		return nil
 	}
-	return g.Channels
-}
-
-func (g *GetSearchData) GetChannelEpisodes() []ChannelEpisode {
-	if g == nil {
-		return []ChannelEpisode{}
-	}
-	return g.ChannelEpisodes
-}
-
-func (g *GetSearchData) GetWebinars() []GetSearchWebinar {
-	if g == nil {
-		return []GetSearchWebinar{}
-	}
-	return g.Webinars
-}
-
-// GetSearchResponseBody - Search results
-type GetSearchResponseBody struct {
-	Data GetSearchData `json:"data"`
-}
-
-func (g *GetSearchResponseBody) GetData() GetSearchData {
-	if g == nil {
-		return GetSearchData{}
-	}
-	return g.Data
+	return g.DubbedLanguageCounts
 }
 
 type GetSearchResponse struct {
 	HTTPMeta components.HTTPMetadata `json:"-"`
-	// Search results
+	// Matching content
 	Object *GetSearchResponseBody
 }
 
