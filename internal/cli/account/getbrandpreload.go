@@ -17,7 +17,7 @@ func initGetBrandPreloadCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "get-brand-preload",
 		Short:   "Get Brand Preload",
-		Long:    "Retrieves Brandfetch-derived brand info for the current account's contact\ndomain, plus a boolean indicating whether the account already has any brand\nkits configured. Used by Glass onboarding to preload the brand kit for new\nsignups on business-email domains.\n\nReturns `brandfetch_brand` with nil `primary_color`/`logo`/`domain` for\nfree-mail domains, Wistia's own domain, when the Brandfetch feature\nflag is off, or when Brandfetch has no data — the caller silently\nskips the preload in every such case. The object itself is always\npresent; only its fields go nil.\n\n## Requires api token with one of the following permissions\n```\n(any scope allowed)\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
+		Long:    "Retrieves Brandfetch-derived brand info for the current account's contact\ndomain, plus a boolean indicating whether the account already has any brand\nkits configured. Used by Glass onboarding to preload the brand kit for new\nsignups on business-email domains.\n\nReturns `brandfetch_brand` with nil `primary_color`/`logo`/`domain` for\nfree-mail domains, Wistia's own domain, when the Brandfetch feature\nflag is off, or when Brandfetch has no data — the caller silently\nskips the preload in every such case. The object itself is always\npresent; only its fields go nil.\n\n## Requires api token with one of the following permissions\n```\n(any scope allowed)\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope can also be\nused, whatever its authorizations name; the preload belongs to the token's\nown account.",
 		Example: "  wistia account get-brand-preload",
 		Args:    cobra.NoArgs,
 		RunE:    runGetBrandPreloadCmd,
@@ -54,7 +54,10 @@ func runGetBrandPreloadCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.Account.GetBrandPreload(cmd.Context(), sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

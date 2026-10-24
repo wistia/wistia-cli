@@ -286,9 +286,9 @@ func (p *PostBrandsPageLogoDimensionsRequest) GetHeight() *int64 {
 	return p.Height
 }
 
-// PostBrandsPageLogoRequest - The brand logo used for pages. `url` must be a Wistia delivery URL — see the note on uploading below. On accounts without custom branding the player logo is ignored, but the page logo is always applied.
+// PostBrandsPageLogoRequest - The brand logo used for pages. On accounts without custom branding the player logo is ignored, but the page logo is always applied.
 type PostBrandsPageLogoRequest struct {
-	// The Wistia delivery URL of the logo image, e.g. `https://embed-ssl.wistia.com/deliveries/abc123def456.png`. When writing, this must reference an image already in the account; the API cannot upload one.
+	// The Wistia delivery URL of the logo image, e.g. `https://embed-ssl.wistia.com/deliveries/abc123def456.png`. When writing, this must reference an image already in the account: the `asset.url` returned by uploading a file to the Upload API with `asset_type=brand_image`, or a URL read back from a brand.
 	URL        *string                                                                `json:"url,omitzero"`
 	Dimensions optionalnullable.OptionalNullable[PostBrandsPageLogoDimensionsRequest] `json:"dimensions,omitzero"`
 	// The size multiplier of the logo.
@@ -346,9 +346,9 @@ func (p *PostBrandsPlayerLogoDimensionsRequest) GetHeight() *int64 {
 	return p.Height
 }
 
-// PostBrandsPlayerLogoRequest - The brand logo used for the player. `url` must be a Wistia delivery URL — see the note on uploading below. Ignored on accounts whose plan doesn't include custom branding.
+// PostBrandsPlayerLogoRequest - The brand logo used for the player. Ignored on accounts whose plan doesn't include custom branding.
 type PostBrandsPlayerLogoRequest struct {
-	// The Wistia delivery URL of the logo image, e.g. `https://embed-ssl.wistia.com/deliveries/abc123def456.png`. When writing, this must reference an image already in the account; the API cannot upload one.
+	// The Wistia delivery URL of the logo image, e.g. `https://embed-ssl.wistia.com/deliveries/abc123def456.png`. When writing, this must reference an image already in the account: the `asset.url` returned by uploading a file to the Upload API with `asset_type=brand_image`, or a URL read back from a brand.
 	URL        *string                                                                  `json:"url,omitzero"`
 	Dimensions optionalnullable.OptionalNullable[PostBrandsPlayerLogoDimensionsRequest] `json:"dimensions,omitzero"`
 	// The size multiplier of the logo.
@@ -399,13 +399,10 @@ func (p *PostBrandsPlayerLogoRequest) GetSize() optionalnullable.OptionalNullabl
 // Colors accept three-character hex shorthand and store the expanded
 // six-character form, so `#abc` is read back as `#aabbcc`.
 //
-// **Logos cannot be uploaded through the API.** `page_logo.url` and
-// `player_logo.url` must be Wistia delivery URLs
-// (`https://embed-ssl.wistia.com/deliveries/<id>.png`) for images already in
-// the account — for example a URL returned by a previous request to this
-// endpoint. Any other URL is rejected, because the brand is applied by
-// resolving that image out of Wistia's own storage. To add a new logo image,
-// upload it in the Wistia app first.
+// **To use a new logo image, upload it first:** `POST` it to
+// `https://upload.wistia.com/` as `multipart/form-data` with
+// `asset_type=brand_image`, then send the response's `asset.url` as
+// `page_logo.url` or `player_logo.url`.
 type PostBrandsRequest struct {
 	// The brand's display name. Renaming the account-level default brand is ignored; its name is managed by Wistia.
 	Name *string `json:"name,omitzero"`
@@ -425,9 +422,9 @@ type PostBrandsRequest struct {
 	ContrastIcons optionalnullable.OptionalNullable[PostBrandsContrastIconsRequest] `json:"contrast_icons,omitzero"`
 	// Controls the opacity of the video player control bar and big play button.
 	OpaqueControls optionalnullable.OptionalNullable[PostBrandsOpaqueControlsRequest] `json:"opaque_controls,omitzero"`
-	// The brand logo used for pages. `url` must be a Wistia delivery URL — see the note on uploading below. On accounts without custom branding the player logo is ignored, but the page logo is always applied.
+	// The brand logo used for pages. On accounts without custom branding the player logo is ignored, but the page logo is always applied.
 	PageLogo optionalnullable.OptionalNullable[PostBrandsPageLogoRequest] `json:"page_logo,omitzero"`
-	// The brand logo used for the player. `url` must be a Wistia delivery URL — see the note on uploading below. Ignored on accounts whose plan doesn't include custom branding.
+	// The brand logo used for the player. Ignored on accounts whose plan doesn't include custom branding.
 	PlayerLogo optionalnullable.OptionalNullable[PostBrandsPlayerLogoRequest] `json:"player_logo,omitzero"`
 }
 
@@ -617,6 +614,9 @@ func (u *PostBrandsPrimaryColorResponse) UnmarshalJSON(data []byte) error {
 	}
 
 	if len(candidates) == 0 {
+		if !json.Valid(data) {
+			return fmt.Errorf("could not unmarshal `%s` into any supported union types for PostBrandsPrimaryColorResponse", string(data))
+		}
 		u.UnknownRaw = json.RawMessage(data)
 		u.Type = PostBrandsPrimaryColorResponseTypeUnknown
 		return nil
@@ -641,6 +641,9 @@ func (u *PostBrandsPrimaryColorResponse) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 
+	if !json.Valid(data) {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for PostBrandsPrimaryColorResponse", string(data))
+	}
 	u.UnknownRaw = json.RawMessage(data)
 	u.Type = PostBrandsPrimaryColorResponseTypeUnknown
 	return nil
@@ -734,6 +737,9 @@ func (u *PostBrandsPageBackgroundColorResponse) UnmarshalJSON(data []byte) error
 	}
 
 	if len(candidates) == 0 {
+		if !json.Valid(data) {
+			return fmt.Errorf("could not unmarshal `%s` into any supported union types for PostBrandsPageBackgroundColorResponse", string(data))
+		}
 		u.UnknownRaw = json.RawMessage(data)
 		u.Type = PostBrandsPageBackgroundColorResponseTypeUnknown
 		return nil
@@ -758,6 +764,9 @@ func (u *PostBrandsPageBackgroundColorResponse) UnmarshalJSON(data []byte) error
 		return nil
 	}
 
+	if !json.Valid(data) {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for PostBrandsPageBackgroundColorResponse", string(data))
+	}
 	u.UnknownRaw = json.RawMessage(data)
 	u.Type = PostBrandsPageBackgroundColorResponseTypeUnknown
 	return nil
@@ -847,7 +856,7 @@ func (p *PostBrandsPageLogoDimensionsResponse) GetHeight() *int64 {
 
 // PostBrandsPageLogoResponse - The brand logo used for pages. Null when unset.
 type PostBrandsPageLogoResponse struct {
-	// The Wistia delivery URL of the logo image, e.g. `https://embed-ssl.wistia.com/deliveries/abc123def456.png`. When writing, this must reference an image already in the account; the API cannot upload one.
+	// The Wistia delivery URL of the logo image, e.g. `https://embed-ssl.wistia.com/deliveries/abc123def456.png`. When writing, this must reference an image already in the account: the `asset.url` returned by uploading a file to the Upload API with `asset_type=brand_image`, or a URL read back from a brand.
 	URL        *string                                                                 `json:"url,omitzero"`
 	Dimensions optionalnullable.OptionalNullable[PostBrandsPageLogoDimensionsResponse] `json:"dimensions,omitzero"`
 	// The size multiplier of the logo.
@@ -907,7 +916,7 @@ func (p *PostBrandsPlayerLogoDimensionsResponse) GetHeight() *int64 {
 
 // PostBrandsPlayerLogoResponse - The brand logo used for the player. Null when unset.
 type PostBrandsPlayerLogoResponse struct {
-	// The Wistia delivery URL of the logo image, e.g. `https://embed-ssl.wistia.com/deliveries/abc123def456.png`. When writing, this must reference an image already in the account; the API cannot upload one.
+	// The Wistia delivery URL of the logo image, e.g. `https://embed-ssl.wistia.com/deliveries/abc123def456.png`. When writing, this must reference an image already in the account: the `asset.url` returned by uploading a file to the Upload API with `asset_type=brand_image`, or a URL read back from a brand.
 	URL        *string                                                                   `json:"url,omitzero"`
 	Dimensions optionalnullable.OptionalNullable[PostBrandsPlayerLogoDimensionsResponse] `json:"dimensions,omitzero"`
 	// The size multiplier of the logo.
