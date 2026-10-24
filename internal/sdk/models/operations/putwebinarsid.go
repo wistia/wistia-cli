@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-type PutWebinarsIDWebinar struct {
+type Webinar struct {
 	// The title of the webinar
 	Title *string `json:"title,omitzero"`
 	// The description of the webinar
@@ -25,61 +25,61 @@ type PutWebinarsIDWebinar struct {
 	FolderID *string `json:"folder_id,omitzero"`
 }
 
-func (p PutWebinarsIDWebinar) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(p, "", false)
+func (w Webinar) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(w, "", false)
 }
 
-func (p *PutWebinarsIDWebinar) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &p, "", false, nil); err != nil {
+func (w *Webinar) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &w, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (p *PutWebinarsIDWebinar) GetTitle() *string {
-	if p == nil {
+func (w *Webinar) GetTitle() *string {
+	if w == nil {
 		return nil
 	}
-	return p.Title
+	return w.Title
 }
 
-func (p *PutWebinarsIDWebinar) GetDescription() *string {
-	if p == nil {
+func (w *Webinar) GetDescription() *string {
+	if w == nil {
 		return nil
 	}
-	return p.Description
+	return w.Description
 }
 
-func (p *PutWebinarsIDWebinar) GetScheduledFor() *time.Time {
-	if p == nil {
+func (w *Webinar) GetScheduledFor() *time.Time {
+	if w == nil {
 		return nil
 	}
-	return p.ScheduledFor
+	return w.ScheduledFor
 }
 
-func (p *PutWebinarsIDWebinar) GetEventDuration() *int64 {
-	if p == nil {
+func (w *Webinar) GetEventDuration() *int64 {
+	if w == nil {
 		return nil
 	}
-	return p.EventDuration
+	return w.EventDuration
 }
 
-func (p *PutWebinarsIDWebinar) GetTimeZone() *string {
-	if p == nil {
+func (w *Webinar) GetTimeZone() *string {
+	if w == nil {
 		return nil
 	}
-	return p.TimeZone
+	return w.TimeZone
 }
 
-func (p *PutWebinarsIDWebinar) GetFolderID() *string {
-	if p == nil {
+func (w *Webinar) GetFolderID() *string {
+	if w == nil {
 		return nil
 	}
-	return p.FolderID
+	return w.FolderID
 }
 
 type PutWebinarsIDRequestBody struct {
-	Webinar *PutWebinarsIDWebinar `json:"webinar,omitzero"`
+	Webinar *Webinar `json:"webinar,omitzero"`
 }
 
 func (p PutWebinarsIDRequestBody) MarshalJSON() ([]byte, error) {
@@ -93,7 +93,7 @@ func (p *PutWebinarsIDRequestBody) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (p *PutWebinarsIDRequestBody) GetWebinar() *PutWebinarsIDWebinar {
+func (p *PutWebinarsIDRequestBody) GetWebinar() *Webinar {
 	if p == nil {
 		return nil
 	}

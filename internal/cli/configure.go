@@ -6,16 +6,15 @@ package cli
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/charmbracelet/huh"
-	"github.com/charmbracelet/lipgloss"
 	"github.com/spf13/cobra"
 	"github.com/wistia/wistia-cli/internal/client"
 	"github.com/wistia/wistia-cli/internal/config"
 	"github.com/wistia/wistia-cli/internal/flagutil"
+	"github.com/wistia/wistia-cli/internal/forms"
 	"github.com/wistia/wistia-cli/internal/interactive"
+	"github.com/wistia/wistia-cli/internal/output"
 	"github.com/wistia/wistia-cli/internal/usage"
-	"golang.org/x/term"
-	"os"
+	"strings"
 )
 
 // initConfigureCmd initializes the configure command.
@@ -34,6 +33,8 @@ Priority: CLI flags > environment variables > OS keychain > config file`,
 		Args: cobra.NoArgs,
 		RunE: runConfigureCmd,
 	}
+	cmd.Annotations = map[string]string{"speakeasy_settings_command": "true"}
+	cmd.Flags().String("default-output-format", "", "Store the default output format without opening the form. Options: "+strings.Join(output.Formats, ", ")+". Pass an empty value to clear it.")
 	parent.AddCommand(cmd)
 	return nil
 }
@@ -53,9 +54,23 @@ func runConfigureCmd(cmd *cobra.Command, args []string) error {
 
 	keychainStored := false
 
-	formMode := interactive.Resolve(cmd).FormMode()
+	formMode := interactive.Resolve(cmd).SetupFormMode(flagutil.AnyFlagChanged(cmd, "bearer-auth", "default-output-format"))
+	if cmd.Flags().Changed("default-output-format") {
+		formMode = interactive.FormOff
+	}
 	if formMode == interactive.FormOff {
 		changed := false
+		if f := cmd.Flags().Lookup("default-output-format"); f != nil && f.Changed {
+			switch v := f.Value.String(); v {
+			case "":
+				cfg.OutputFormat = ""
+			case "pretty", "json", "yaml", "table", "toon":
+				cfg.OutputFormat = v
+			default:
+				return flagutil.WithCLIValidation(fmt.Errorf("invalid --default-output-format %q; options: pretty, json, yaml, table, toon", v))
+			}
+			changed = true
+		}
 		if f := cmd.Flags().Lookup("bearer-auth"); f != nil && f.Changed {
 			v, _ := cmd.Flags().GetString("bearer-auth")
 			if config.StoreSecret("bearer-auth", v, &cfg.Security.BearerAuth) == nil {
@@ -71,44 +86,37 @@ func runConfigureCmd(cmd *cobra.Command, args []string) error {
 		var authBearerAuth string
 		accessible := formMode == interactive.FormAccessible
 
-		var groups []*huh.Group
-		securityFields := []huh.Field{
-			huh.NewInput().
+		var pages []*forms.Page
+		securityFields := []*forms.Field{
+			forms.NewInput(&authBearerAuth).
 				Title("HTTP Bearer").
 				Description("--bearer-auth").
-				EchoMode(huh.EchoModePassword).
-				Placeholder(maskSecret(config.GetStoredSecret("bearer-auth", cfg.Security.BearerAuth))).
-				Value(&authBearerAuth),
+				Password().
+				Placeholder(maskSecret(config.GetStoredSecret("bearer-auth", cfg.Security.BearerAuth))),
 		}
-		groups = append(groups, huh.NewGroup(securityFields...).Title("Authentication"))
+		pages = append(pages, forms.NewPage("Authentication", securityFields...))
 
-		// Preference fields use huh.Select which loops forever on EOF in
-		// accessible mode (non-TTY). Only show them when truly interactive.
+		// Preferences are only offered in the interactive form; line prompts
+		// cover credentials and global parameters.
 		var cfgOutputFormat string
 		if !accessible {
-			preferenceFields := []huh.Field{
-				huh.NewSelect[string]().
+			preferenceFields := []*forms.Field{
+				forms.NewSelect(&cfgOutputFormat,
+					forms.NewOption("Keep current", ""),
+					forms.NewOption("Clear (use built-in default: pretty)", "__CLEAR__"),
+					forms.NewOption("pretty", "pretty"),
+					forms.NewOption("json", "json"),
+					forms.NewOption("yaml", "yaml"),
+					forms.NewOption("table", "table"),
+					forms.NewOption("toon", "toon"),
+				).
 					Title("Default output format").
-					Description("Choose the default response rendering format for this CLI").
-					Options(
-						huh.NewOption("Keep current", ""),
-						huh.NewOption("Clear (use built-in default: pretty)", "__CLEAR__"),
-						huh.NewOption("pretty", "pretty"),
-						huh.NewOption("json", "json"),
-						huh.NewOption("yaml", "yaml"),
-						huh.NewOption("table", "table"),
-						huh.NewOption("toon", "toon"),
-					).
-					Value(&cfgOutputFormat),
+					Description("Choose the default response rendering format for this CLI"),
 			}
-			groups = append(groups, huh.NewGroup(preferenceFields...).Title("Preferences"))
+			pages = append(pages, forms.NewPage("Preferences", preferenceFields...))
 		}
 
-		form := huh.NewForm(groups...).
-			WithAccessible(accessible).
-			WithTheme(configureFormTheme()).
-			WithWidth(configureFormWidth()).
-			WithShowHelp(false)
+		form := forms.New(pages...).Accessible(accessible).IO(cmd.InOrStdin(), cmd.OutOrStdout())
 
 		if err := form.Run(); err != nil {
 			return fmt.Errorf("configure: %w", err)
@@ -161,61 +169,4 @@ func dryRunLocalNoop(cmd *cobra.Command, message string) bool {
 		fmt.Fprintln(cmd.ErrOrStderr(), "[DRY-RUN] "+message)
 	}
 	return true
-}
-
-// configureFormTheme builds the form theme for the configure command.
-func configureFormTheme() *huh.Theme {
-	t := *huh.ThemeBase()
-
-	accent := lipgloss.Color("#38BDF8")
-	dimmed := lipgloss.Color("#64748B")
-	subtle := lipgloss.Color("#475569")
-	errColor := lipgloss.Color("#F87171")
-	greenColor := lipgloss.Color("#4ADE80")
-
-	t.Focused.Base = t.Focused.Base.
-		BorderLeft(true).
-		BorderStyle(lipgloss.ThickBorder()).
-		BorderForeground(accent).
-		PaddingLeft(1)
-	t.Focused.Title = t.Focused.Title.Foreground(accent).Bold(true)
-	t.Focused.Description = t.Focused.Description.Foreground(dimmed).Italic(true)
-	t.Focused.ErrorIndicator = t.Focused.ErrorIndicator.Foreground(errColor)
-	t.Focused.ErrorMessage = t.Focused.ErrorMessage.Foreground(errColor)
-	t.Focused.SelectSelector = t.Focused.SelectSelector.Foreground(accent).SetString("> ")
-	t.Focused.SelectedOption = t.Focused.SelectedOption.Foreground(accent).Bold(true)
-	t.Focused.SelectedPrefix = lipgloss.NewStyle().Foreground(greenColor).SetString("✓ ").Bold(true)
-	t.Focused.UnselectedPrefix = lipgloss.NewStyle().SetString("  ")
-	t.Focused.FocusedButton = t.Focused.FocusedButton.Background(accent).Foreground(lipgloss.Color("#FFFFFF"))
-	t.Focused.BlurredButton = t.Focused.BlurredButton.Background(subtle)
-	t.Focused.Next = t.Focused.FocusedButton
-
-	t.Focused.TextInput.Cursor = t.Focused.TextInput.Cursor.Foreground(accent)
-	t.Focused.TextInput.Placeholder = t.Focused.TextInput.Placeholder.Foreground(subtle).Italic(true)
-	t.Focused.TextInput.Prompt = t.Focused.TextInput.Prompt.Foreground(accent)
-
-	t.Blurred.Base = t.Blurred.Base.
-		BorderLeft(true).
-		BorderStyle(lipgloss.ThickBorder()).
-		BorderForeground(subtle).
-		PaddingLeft(1)
-	t.Blurred.Title = t.Blurred.Title.Foreground(dimmed)
-	t.Blurred.Description = t.Blurred.Description.Foreground(subtle).Italic(true)
-	t.Blurred.TextInput.Text = t.Blurred.TextInput.Text.Foreground(dimmed)
-	t.Blurred.TextInput.Placeholder = t.Blurred.TextInput.Placeholder.Foreground(subtle).Italic(true)
-	t.Blurred.SelectedOption = t.Blurred.SelectedOption.Foreground(dimmed)
-	t.Blurred.SelectSelector = t.Blurred.SelectSelector.Foreground(dimmed)
-	t.Blurred.SelectedPrefix = lipgloss.NewStyle().Foreground(dimmed).SetString("✓ ")
-	t.Blurred.UnselectedPrefix = lipgloss.NewStyle().SetString("  ")
-
-	return &t
-}
-
-// configureFormWidth returns the terminal width for sizing huh forms.
-func configureFormWidth() int {
-	width, _, err := term.GetSize(int(os.Stdout.Fd()))
-	if err != nil || width <= 0 {
-		width = 80
-	}
-	return width
 }

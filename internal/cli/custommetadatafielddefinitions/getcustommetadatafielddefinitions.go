@@ -25,7 +25,7 @@ func initGetCustomMetadataFieldDefinitionsCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "get",
 		Short:   "List Custom Metadata Field Definitions",
-		Long:    "Use this endpoint to request a list of custom metadata field definitions in your Wistia account, ordered by position. This request supports paging.\n\nRequires the custom metadata feature to be available on your account.\n\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\nRead all data\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
+		Long:    "Use this endpoint to request a list of custom metadata field definitions in your Wistia account, ordered by position. This request supports paging.\n\nRequires the custom metadata feature to be available on your account.\n\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\nRead all data\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\n`account` authorization granting the `access-custom-metadata` or\n`manage-custom-metadata` permission can also be used.",
 		Example: "  wistia custom-metadata-field-definitions get",
 		Args:    cobra.NoArgs,
 		RunE:    runGetCustomMetadataFieldDefinitionsCmd,
@@ -69,7 +69,10 @@ func runGetCustomMetadataFieldDefinitionsCmd(cmd *cobra.Command, args []string) 
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.CustomMetadataFieldDefinitions.GetCustomMetadataFieldDefinitions(cmd.Context(), req, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}
