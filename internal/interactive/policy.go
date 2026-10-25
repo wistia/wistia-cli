@@ -11,6 +11,7 @@ import (
 	"github.com/spf13/cobra"
 	"golang.org/x/term"
 
+	"github.com/wistia/wistia-cli/internal/flagutil"
 	"github.com/wistia/wistia-cli/internal/output"
 )
 
@@ -28,6 +29,7 @@ type Decision struct {
 	hasInjectedPrompter      bool
 	explicitNoInteractive    bool
 	explicitInteractiveFalse bool
+	suppressed               bool
 }
 
 var promptFromContext = func(*cobra.Command) bool { return false }
@@ -50,6 +52,10 @@ func Resolve(cmd *cobra.Command) Decision {
 	}
 	if noInteractive || output.IsAgentMode() {
 		d.requested = false
+		d.suppressed = true
+	}
+	if d.explicitInteractiveFalse {
+		d.suppressed = true
 	}
 	return d
 }
@@ -72,13 +78,23 @@ func (d Decision) FormMode() FormMode {
 	return FormAccessible
 }
 
+func (d Decision) SetupFormMode(flagValuesProvided bool) FormMode {
+	if mode := d.FormMode(); mode != FormOff {
+		return mode
+	}
+	if !flagValuesProvided && !d.suppressed && d.terminalPair {
+		return FormTUI
+	}
+	return FormOff
+}
+
 func (d Decision) AutoExplore() bool {
 	return d.requested && d.terminalPair
 }
 
 func (d Decision) ValidateDirectExplore() error {
 	if d.explicitNoInteractive || d.explicitInteractiveFalse {
-		return fmt.Errorf("explore conflicts with --no-interactive/--interactive=false")
+		return flagutil.WithCLIValidation(fmt.Errorf("explore conflicts with --no-interactive/--interactive=false"))
 	}
 	if !d.terminalPair {
 		return fmt.Errorf("explore requires an interactive terminal (stdin and stdout must be a TTY)")

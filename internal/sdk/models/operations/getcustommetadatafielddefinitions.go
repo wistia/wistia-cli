@@ -316,6 +316,9 @@ func (u *GetCustomMetadataFieldDefinitionsConfigUnion) UnmarshalJSON(data []byte
 	}
 
 	if len(candidates) == 0 {
+		if !json.Valid(data) {
+			return fmt.Errorf("could not unmarshal `%s` into any supported union types for GetCustomMetadataFieldDefinitionsConfigUnion", string(data))
+		}
 		u.UnknownRaw = json.RawMessage(data)
 		u.Type = GetCustomMetadataFieldDefinitionsConfigUnionTypeUnknown
 		return nil
@@ -343,6 +346,9 @@ func (u *GetCustomMetadataFieldDefinitionsConfigUnion) UnmarshalJSON(data []byte
 		return nil
 	}
 
+	if !json.Valid(data) {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for GetCustomMetadataFieldDefinitionsConfigUnion", string(data))
+	}
 	u.UnknownRaw = json.RawMessage(data)
 	u.Type = GetCustomMetadataFieldDefinitionsConfigUnionTypeUnknown
 	return nil

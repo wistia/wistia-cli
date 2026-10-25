@@ -15,7 +15,7 @@ import (
 )
 
 var createCmdMeta = []flagutil.FlagMeta{
-	{FlagName: "name", Shorthand: "n", FieldPath: "Name", Kind: flagutil.FlagKindString, Required: true, MinLength: 1, Description: "The speaker's display name. Leading and trailing whitespace is removed. [required]"},
+	{FlagName: "name", Shorthand: "n", FieldPath: "Name", Kind: flagutil.FlagKindString, Required: true, MinLength: 1, HasMaxLength: true, MaxLength: 255, Description: "The speaker's display name. Leading and trailing whitespace is removed. [required]"},
 	{FlagName: "title", Shorthand: "t", FieldPath: "Title", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"title,omitempty"`, Description: "The speaker's title. Leading and trailing whitespace is removed. Omit it, or send null or an empty string, to leave it unset."},
 }
 
@@ -24,7 +24,7 @@ func initCreateCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "create",
 		Short:   "Create Speaker",
-		Long:    "Adds a reusable speaker profile to the account's speaker library. The\nreturned `speaker_profile_id` identifies the profile in speaker filters and\nassignments.\n\nSpeaker names are not unique, because two different people can share one.\nA request whose name matches an existing profile creates a second profile;\nuse the List Speakers endpoint to look for the person first.\n\nA new profile isn't assigned to any media.\n\n\n## Requires api token with one of the following permissions\n```\nAll data\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token. Only account owners and managers can\ncreate speaker profiles.",
+		Long:    "Adds a reusable speaker profile to the account's speaker library. The\nreturned `speaker_profile_id` identifies the profile in speaker filters and\nassignments.\n\nSpeaker names are not unique, because two different people can share one.\nA request whose name matches an existing profile creates a second profile;\nuse the List Speakers endpoint to look for the person first.\n\nA new profile isn't assigned to any media.\n\n\n## Requires api token with one of the following permissions\n```\nAll data\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token. Only account owners and managers can\ncreate speaker profiles.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\n`account` authorization granting the `manage-speakers` permission can also\nbe used.",
 		Example: "  wistia speakers create --name 'Alice Example'",
 		Args:    cobra.NoArgs,
 		RunE:    runCreateCmd,
@@ -37,7 +37,7 @@ func initCreateCmd(parent *cobra.Command) error {
 		return fmt.Errorf("invalid metadata for create: %w", err)
 	}
 	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
-	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Required: false, Kind: "json", BodyFlag: true})
 	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
 	if err := flagutil.AnnotateBodyFields(cmd, createCmdMeta, "", "body"); err != nil {
 		return fmt.Errorf("annotate body fields for create: %w", err)
@@ -74,7 +74,10 @@ func runCreateCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.Speakers.Create(cmd.Context(), *request, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

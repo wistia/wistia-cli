@@ -27,7 +27,7 @@ func initListCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "list",
 		Short:   "List Brands",
-		Long:    "Lists the brands belonging to the account. A brand is a saved set of\nbranding options (colors, fonts, logos, and layout) that can be applied to\nmedia, folders, and channels. The account-level default brand is flagged\nwith `is_default`, and styles everything that has no brand of its own.\n\n## Requires api token with one of the following permissions\n```\nRead all data\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
+		Long:    "Lists the brands belonging to the account. A brand is a saved set of\nbranding options (colors, fonts, logos, and layout) that can be applied to\nmedia, folders, and channels. The account-level default brand is flagged\nwith `is_default`, and styles everything that has no brand of its own.\n\n## Requires api token with one of the following permissions\n```\nRead all data\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\nauthorization naming a brand (any permission) can also be used; it lists\nthe brands the token names.",
 		Example: "  wistia brands list",
 		Args:    cobra.NoArgs,
 		RunE:    runListCmd,
@@ -71,7 +71,10 @@ func runListCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.Brands.List(cmd.Context(), req, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}
