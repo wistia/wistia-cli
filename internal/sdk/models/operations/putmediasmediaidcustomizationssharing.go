@@ -10,21 +10,21 @@ import (
 	"github.com/wistia/wistia-cli/internal/sdk/sdkinternal/utils"
 )
 
-type PutMediasMediaIDCustomizationsSharingChannel string
+type Channel string
 
 const (
-	PutMediasMediaIDCustomizationsSharingChannelEmbed    PutMediasMediaIDCustomizationsSharingChannel = "embed"
-	PutMediasMediaIDCustomizationsSharingChannelEmail    PutMediasMediaIDCustomizationsSharingChannel = "email"
-	PutMediasMediaIDCustomizationsSharingChannelDownload PutMediasMediaIDCustomizationsSharingChannel = "download"
-	PutMediasMediaIDCustomizationsSharingChannelFacebook PutMediasMediaIDCustomizationsSharingChannel = "facebook"
-	PutMediasMediaIDCustomizationsSharingChannelTwitter  PutMediasMediaIDCustomizationsSharingChannel = "twitter"
-	PutMediasMediaIDCustomizationsSharingChannelLinkedIn PutMediasMediaIDCustomizationsSharingChannel = "linkedIn"
+	ChannelEmbed    Channel = "embed"
+	ChannelEmail    Channel = "email"
+	ChannelDownload Channel = "download"
+	ChannelFacebook Channel = "facebook"
+	ChannelTwitter  Channel = "twitter"
+	ChannelLinkedIn Channel = "linkedIn"
 )
 
-func (e PutMediasMediaIDCustomizationsSharingChannel) ToPointer() *PutMediasMediaIDCustomizationsSharingChannel {
+func (e Channel) ToPointer() *Channel {
 	return &e
 }
-func (e *PutMediasMediaIDCustomizationsSharingChannel) UnmarshalJSON(data []byte) error {
+func (e *Channel) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
 		return err
@@ -41,10 +41,10 @@ func (e *PutMediasMediaIDCustomizationsSharingChannel) UnmarshalJSON(data []byte
 	case "twitter":
 		fallthrough
 	case "linkedIn":
-		*e = PutMediasMediaIDCustomizationsSharingChannel(v)
+		*e = Channel(v)
 		return nil
 	default:
-		return fmt.Errorf("invalid value for PutMediasMediaIDCustomizationsSharingChannel: %v", v)
+		return fmt.Errorf("invalid value for Channel: %v", v)
 	}
 }
 
@@ -86,7 +86,7 @@ type ShareRequest struct {
 	// Whether the share bar is enabled.
 	On *bool `json:"on,omitzero"`
 	// Complete ordered list of share channels to enable on the share bar. This replaces the entire list — include every channel you want active. To enable downloads, include "download" here AND set downloadType.
-	Channels []PutMediasMediaIDCustomizationsSharingChannel `json:"channels,omitzero"`
+	Channels []Channel `json:"channels,omitzero"`
 	// Default text used when sharing the video to X/Twitter.
 	TweetText *string `json:"tweetText,omitzero"`
 	// Which download quality is offered to viewers. Only takes effect when "download" is included in the channels array.
@@ -119,7 +119,7 @@ func (s *ShareRequest) GetOn() *bool {
 	return s.On
 }
 
-func (s *ShareRequest) GetChannels() []PutMediasMediaIDCustomizationsSharingChannel {
+func (s *ShareRequest) GetChannels() []Channel {
 	if s == nil {
 		return nil
 	}
@@ -192,8 +192,9 @@ func (p *PutMediasMediaIDCustomizationsSharingPluginRequest) GetShare() *ShareRe
 }
 
 // PutMediasMediaIDCustomizationsSharingRequestBody - Social/embed/download share bar for a video. Every field is optional; only
-// the fields you send are changed (partial update). Send a field as null to
-// reset it to its default.
+// the fields you send are changed (partial update), except plugin.share.channels,
+// which replaces the whole list. Send a field as null to reset it to its
+// default. Only fields declared nullable support this reset.
 type PutMediasMediaIDCustomizationsSharingRequestBody struct {
 	Plugin *PutMediasMediaIDCustomizationsSharingPluginRequest `json:"plugin,omitzero"`
 }

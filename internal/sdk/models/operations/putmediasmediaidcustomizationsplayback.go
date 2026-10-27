@@ -697,6 +697,9 @@ func (u *PutMediasMediaIDCustomizationsPlaybackVideoFoamResponseUnion) Unmarshal
 	}
 
 	if len(candidates) == 0 {
+		if !json.Valid(data) {
+			return fmt.Errorf("could not unmarshal `%s` into any supported union types for PutMediasMediaIDCustomizationsPlaybackVideoFoamResponseUnion", string(data))
+		}
 		u.UnknownRaw = json.RawMessage(data)
 		u.Type = PutMediasMediaIDCustomizationsPlaybackVideoFoamResponseUnionTypeUnknown
 		return nil
@@ -721,6 +724,9 @@ func (u *PutMediasMediaIDCustomizationsPlaybackVideoFoamResponseUnion) Unmarshal
 		return nil
 	}
 
+	if !json.Valid(data) {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for PutMediasMediaIDCustomizationsPlaybackVideoFoamResponseUnion", string(data))
+	}
 	u.UnknownRaw = json.RawMessage(data)
 	u.Type = PutMediasMediaIDCustomizationsPlaybackVideoFoamResponseUnionTypeUnknown
 	return nil
@@ -827,6 +833,9 @@ func (u *PutMediasMediaIDCustomizationsPlaybackClickForSoundUnion) UnmarshalJSON
 	}
 
 	if len(candidates) == 0 {
+		if !json.Valid(data) {
+			return fmt.Errorf("could not unmarshal `%s` into any supported union types for PutMediasMediaIDCustomizationsPlaybackClickForSoundUnion", string(data))
+		}
 		u.UnknownRaw = json.RawMessage(data)
 		u.Type = PutMediasMediaIDCustomizationsPlaybackClickForSoundUnionTypeUnknown
 		return nil
@@ -851,6 +860,9 @@ func (u *PutMediasMediaIDCustomizationsPlaybackClickForSoundUnion) UnmarshalJSON
 		return nil
 	}
 
+	if !json.Valid(data) {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for PutMediasMediaIDCustomizationsPlaybackClickForSoundUnion", string(data))
+	}
 	u.UnknownRaw = json.RawMessage(data)
 	u.Type = PutMediasMediaIDCustomizationsPlaybackClickForSoundUnionTypeUnknown
 	return nil

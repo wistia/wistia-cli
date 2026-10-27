@@ -35,6 +35,19 @@ func (e *DeleteChannelsChannelHashedIDCollaboratorsIDNotFoundError) Error() stri
 	return string(data)
 }
 
+// DeleteChannelsChannelHashedIDCollaboratorsIDForbiddenError - Forbidden, token is valid but account does not have access to feature
+type DeleteChannelsChannelHashedIDCollaboratorsIDForbiddenError struct {
+	Error_   *string                 `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata `json:"-"`
+}
+
+var _ error = &DeleteChannelsChannelHashedIDCollaboratorsIDForbiddenError{}
+
+func (e *DeleteChannelsChannelHashedIDCollaboratorsIDForbiddenError) Error() string {
+	data, _ := json.Marshal(e)
+	return string(data)
+}
+
 // DeleteChannelsChannelHashedIDCollaboratorsIDUnauthorizedError - Unauthorized, invalid or missing token
 type DeleteChannelsChannelHashedIDCollaboratorsIDUnauthorizedError struct {
 	// A machine-readable identifier for the specific authorization failure.
