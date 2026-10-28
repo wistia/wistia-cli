@@ -16,9 +16,9 @@ import (
 
 var findMatchesCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "media-ids", Shorthand: "m", FieldPath: "MediaIds", Kind: flagutil.FlagKindStringArray, Required: true, Description: "Explicit hashed IDs of the media whose captions should be searched. [required]"},
-	{FlagName: "target-text", Shorthand: "t", FieldPath: "TargetText", Kind: flagutil.FlagKindString, Required: true, MinLength: 1, Description: "Exact caption wording to locate. [required]"},
+	{FlagName: "target-text", Shorthand: "t", FieldPath: "TargetText", Kind: flagutil.FlagKindString, Required: true, MinLength: 1, HasMaxLength: true, MaxLength: 500, Description: "Exact caption wording to locate. [required]"},
 	{FlagName: "language-code", Shorthand: "l", FieldPath: "LanguageCode", Kind: flagutil.FlagKindString, Optional: true, MinLength: 1, Description: "Exact IETF language tag. Omit when each media has only one caption track."},
-	{FlagName: "occurrence", FieldPath: "Occurrence", Kind: flagutil.FlagKindInt64, Optional: true, HasMinimum: true, Minimum: 1, Description: "One-based exact occurrence to return, including occurrences after the first 10."},
+	{FlagName: "occurrence", FieldPath: "Occurrence", Kind: flagutil.FlagKindInt64, Optional: true, HasMinimum: true, Minimum: 1, Description: "One-based exact occurrence to start the page of matches at, including occurrences after the first 10."},
 	{FlagName: "start-ms", Shorthand: "s", FieldPath: "StartMs", Kind: flagutil.FlagKindInt64, Optional: true, HasMinimum: true, Minimum: 0, Description: "Optional start of a time range used to disambiguate the match."},
 	{FlagName: "end-ms", Shorthand: "e", FieldPath: "EndMs", Kind: flagutil.FlagKindInt64, Optional: true, HasMinimum: true, Minimum: 0, Description: "Optional end of a time range used to disambiguate the match."},
 }
@@ -28,7 +28,7 @@ func initFindMatchesCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "find-matches",
 		Short:   "Find Caption Matches",
-		Long:    "Finds exact text in caption tracks without modifying them. Matching uses the\nsame normalization, composite-media boundaries, and time coordinates as the\ntargeted caption edit endpoint. Fuzzy alternatives are returned separately\nas suggestions and are never reported as exact matches. A resolved match\nmeans the wording was located; a later write can still fail authorization,\nversion, or edit-boundary checks.\n\nWhen more than 10 exact matches exist, use the one-based `occurrence`\nparameter to retrieve a specific later match.\n\nAuthentication and request validation failures apply to the whole request.\nMissing, inaccessible, or otherwise unreadable media are reported as\nper-media statuses without exposing whether an inaccessible ID exists.\n\n## Requires api token with one of the following permissions\n```\nRead all folder and media data\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used.",
+		Long:    "Finds exact text in caption tracks without modifying them. Matching uses the\nsame normalization, composite-media boundaries, and time coordinates as the\ntargeted caption edit endpoint. Fuzzy alternatives are returned separately\nas suggestions and are never reported as exact matches. A resolved match\nmeans the wording was located; a later write can still fail authorization,\nversion, or edit-boundary checks.\n\nExact matches are returned in pages of up to 10. Set the one-based\n`occurrence` parameter to start a page at that occurrence; the requested\noccurrence is always the first match returned. When more matches remain,\nrequest the next page with `occurrence` set to `next_occurrence`.\n\nAuthentication and request validation failures apply to the whole request.\nMissing, inaccessible, or otherwise unreadable media are reported as\nper-media statuses without exposing whether an inaccessible ID exists.\n\n## Requires api token with one of the following permissions\n```\nRead all folder and media data\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used.",
 		Example: "  wistia captions find-matches --media-ids <value> --target-text <value>",
 		Args:    cobra.NoArgs,
 		RunE:    runFindMatchesCmd,
@@ -42,7 +42,7 @@ func initFindMatchesCmd(parent *cobra.Command) error {
 		return fmt.Errorf("invalid metadata for find-matches: %w", err)
 	}
 	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
-	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Required: false, Kind: "json", BodyFlag: true})
 	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
 	if err := flagutil.AnnotateBodyFields(cmd, findMatchesCmdMeta, "", "body"); err != nil {
 		return fmt.Errorf("annotate body fields for find-matches: %w", err)
@@ -79,7 +79,10 @@ func runFindMatchesCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.Captions.FindMatches(cmd.Context(), *request, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

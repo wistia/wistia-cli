@@ -4,15 +4,14 @@
 package cli
 
 import (
+	"errors"
 	"fmt"
-	"github.com/charmbracelet/huh"
-	"github.com/charmbracelet/lipgloss"
 	"github.com/spf13/cobra"
 	"github.com/wistia/wistia-cli/internal/config"
 	"github.com/wistia/wistia-cli/internal/flagutil"
+	"github.com/wistia/wistia-cli/internal/forms"
 	"github.com/wistia/wistia-cli/internal/interactive"
-	"golang.org/x/term"
-	"os"
+	"github.com/wistia/wistia-cli/internal/output"
 )
 
 // initAuthCmd registers the auth command group with login, whoami, and logout subcommands.
@@ -56,6 +55,9 @@ with a config file fallback.
 
 All fields are optional — press Enter to skip any field you don't need.
 Use the configure command for both authentication and global parameters.`,
+		Annotations: map[string]string{
+			"speakeasy_settings_command": "true",
+		},
 		Args: cobra.NoArgs,
 		RunE: runAuthLoginCmd,
 	})
@@ -68,13 +70,14 @@ Use the configure command for both authentication and global parameters.`,
 Sources are shown as:
   [flag]    - Set via command line flag
   [env]     - Set via environment variable (WISTIA_CLI_*)
-  [keyring] - Set via OS keychain (stored by login/configure command)
+  [keyring] - Set via OS credential store: macOS Keychain, Windows Credential Manager or Secret Service (stored by login/configure command)
   [config]  - Set via config file (~/.config/wistia/config.yaml)
   [unset]   - Not configured
 
 Credential values are masked for security.`,
-		Args: cobra.NoArgs,
-		RunE: runWhoamiCmd,
+		Annotations: map[string]string{"speakeasy_settings_command": "true"},
+		Args:        cobra.NoArgs,
+		RunE:        runWhoamiCmd,
 	})
 
 	addAuthSubcommand(&cobra.Command{
@@ -83,14 +86,15 @@ Credential values are masked for security.`,
 		Long: `Clear all stored authentication credentials from both the OS keychain and config file.
 
 This removes all credentials previously set via auth login or configure.`,
-		Args: cobra.NoArgs,
-		RunE: runAuthLogoutCmd,
+		Annotations: map[string]string{"speakeasy_settings_command": "true"},
+		Args:        cobra.NoArgs,
+		RunE:        runAuthLogoutCmd,
 	})
 
 	return nil
 }
 
-// runAuthLoginCmd executes the auth login command using huh forms.
+// runAuthLoginCmd executes the auth login command using guided forms.
 func runAuthLoginCmd(cmd *cobra.Command, args []string) error {
 	if dryRunLocalNoop(cmd, "auth login changes local credentials only (no API request); nothing was changed.") {
 		return nil
@@ -101,7 +105,7 @@ func runAuthLoginCmd(cmd *cobra.Command, args []string) error {
 	}
 
 	keychainStored := false
-	formMode := interactive.Resolve(cmd).FormMode()
+	formMode := interactive.Resolve(cmd).SetupFormMode(flagutil.AnyFlagChanged(cmd, "bearer-auth"))
 
 	if formMode == interactive.FormOff {
 		// Non-interactive: store any explicitly-set flags without prompting
@@ -123,20 +127,15 @@ func runAuthLoginCmd(cmd *cobra.Command, args []string) error {
 
 		accessible := formMode == interactive.FormAccessible
 
-		fields := []huh.Field{
-			huh.NewInput().
+		fields := []*forms.Field{
+			forms.NewInput(&authBearerAuth).
 				Title("HTTP Bearer").
 				Description("--bearer-auth").
-				EchoMode(huh.EchoModePassword).
-				Placeholder(maskSecret(config.GetStoredSecret("bearer-auth", cfg.Security.BearerAuth))).
-				Value(&authBearerAuth),
+				Password().
+				Placeholder(maskSecret(config.GetStoredSecret("bearer-auth", cfg.Security.BearerAuth))),
 		}
 
-		form := huh.NewForm(huh.NewGroup(fields...)).
-			WithAccessible(accessible).
-			WithTheme(authFormTheme()).
-			WithWidth(authFormWidth()).
-			WithShowHelp(false)
+		form := forms.New(forms.NewPage("", fields...)).Accessible(accessible).IO(cmd.InOrStdin(), cmd.OutOrStdout())
 
 		if err := form.Run(); err != nil {
 			return fmt.Errorf("auth login: %w", err)
@@ -154,6 +153,12 @@ func runAuthLoginCmd(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("failed to save configuration: %w", err)
 	}
 
+	if output.IsMachineMode(cmd) {
+		return output.LocalResult(cmd, map[string]any{
+			"config_file":     config.GetConfigPath(),
+			"keychain_stored": keychainStored,
+		})
+	}
 	out := cmd.OutOrStdout()
 	if keychainStored {
 		fmt.Fprintln(out, "Secret credentials stored in OS keychain")
@@ -172,74 +177,32 @@ func runAuthLogoutCmd(cmd *cobra.Command, args []string) error {
 		cfg = &config.Config{}
 	}
 
-	if config.KeyringAvailable() {
-		_ = config.DeleteKeyringValue("bearer-auth")
+	var keychainErrs []error
+	if err := config.DeleteStoredSecret("bearer-auth"); err != nil {
+		keychainErrs = append(keychainErrs, fmt.Errorf("--bearer-auth: %w", err))
 	}
 	cfg.Security.BearerAuth = ""
 
 	if err := config.SaveConfig(cfg); err != nil {
 		return fmt.Errorf("failed to save configuration: %w", err)
 	}
+	if err := errors.Join(keychainErrs...); err != nil {
+		return fmt.Errorf("credentials were cleared from the config file, but removing them from the OS keychain failed: %w", err)
+	}
 
+	if output.IsMachineMode(cmd) {
+		return output.LocalResult(cmd, map[string]any{
+			"config_file":      config.GetConfigPath(),
+			"cleared":          true,
+			"keychain_cleared": config.KeyringAvailable(),
+		})
+	}
 	out := cmd.OutOrStdout()
-	fmt.Fprintln(out, "All authentication credentials have been cleared.")
+	if !config.KeyringAvailable() {
+		fmt.Fprintln(out, "Authentication credentials have been cleared from the config file; the OS keychain was skipped, so credentials stored there (if any) were kept.")
+	} else {
+		fmt.Fprintln(out, "All authentication credentials have been cleared.")
+	}
 	fmt.Fprintf(out, "Configuration saved to %s\n", config.GetConfigPath())
 	return nil
-}
-
-// authFormTheme builds the form theme for auth login.
-func authFormTheme() *huh.Theme {
-	t := *huh.ThemeBase()
-
-	accent := lipgloss.Color("#38BDF8")
-	dimmed := lipgloss.Color("#64748B")
-	subtle := lipgloss.Color("#475569")
-	errColor := lipgloss.Color("#F87171")
-	greenColor := lipgloss.Color("#4ADE80")
-
-	t.Focused.Base = t.Focused.Base.
-		BorderLeft(true).
-		BorderStyle(lipgloss.ThickBorder()).
-		BorderForeground(accent).
-		PaddingLeft(1)
-	t.Focused.Title = t.Focused.Title.Foreground(accent).Bold(true)
-	t.Focused.Description = t.Focused.Description.Foreground(dimmed).Italic(true)
-	t.Focused.ErrorIndicator = t.Focused.ErrorIndicator.Foreground(errColor)
-	t.Focused.ErrorMessage = t.Focused.ErrorMessage.Foreground(errColor)
-	t.Focused.SelectSelector = t.Focused.SelectSelector.Foreground(accent).SetString("> ")
-	t.Focused.SelectedOption = t.Focused.SelectedOption.Foreground(accent).Bold(true)
-	t.Focused.SelectedPrefix = lipgloss.NewStyle().Foreground(greenColor).SetString("✓ ").Bold(true)
-	t.Focused.UnselectedPrefix = lipgloss.NewStyle().SetString("  ")
-	t.Focused.FocusedButton = t.Focused.FocusedButton.Background(accent).Foreground(lipgloss.Color("#FFFFFF"))
-	t.Focused.BlurredButton = t.Focused.BlurredButton.Background(subtle)
-	t.Focused.Next = t.Focused.FocusedButton
-
-	t.Focused.TextInput.Cursor = t.Focused.TextInput.Cursor.Foreground(accent)
-	t.Focused.TextInput.Placeholder = t.Focused.TextInput.Placeholder.Foreground(subtle).Italic(true)
-	t.Focused.TextInput.Prompt = t.Focused.TextInput.Prompt.Foreground(accent)
-
-	t.Blurred.Base = t.Blurred.Base.
-		BorderLeft(true).
-		BorderStyle(lipgloss.ThickBorder()).
-		BorderForeground(subtle).
-		PaddingLeft(1)
-	t.Blurred.Title = t.Blurred.Title.Foreground(dimmed)
-	t.Blurred.Description = t.Blurred.Description.Foreground(subtle).Italic(true)
-	t.Blurred.TextInput.Text = t.Blurred.TextInput.Text.Foreground(dimmed)
-	t.Blurred.TextInput.Placeholder = t.Blurred.TextInput.Placeholder.Foreground(subtle).Italic(true)
-	t.Blurred.SelectedOption = t.Blurred.SelectedOption.Foreground(dimmed)
-	t.Blurred.SelectSelector = t.Blurred.SelectSelector.Foreground(dimmed)
-	t.Blurred.SelectedPrefix = lipgloss.NewStyle().Foreground(dimmed).SetString("✓ ")
-	t.Blurred.UnselectedPrefix = lipgloss.NewStyle().SetString("  ")
-
-	return &t
-}
-
-// authFormWidth returns the terminal width for sizing huh forms.
-func authFormWidth() int {
-	width, _, err := term.GetSize(int(os.Stdout.Fd()))
-	if err != nil || width <= 0 {
-		width = 80
-	}
-	return width
 }
