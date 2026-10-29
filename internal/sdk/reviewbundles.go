@@ -45,6 +45,11 @@ func newReviewBundles(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks 
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization naming a review bundle (any permission) can also be used; it
+// lists the review bundles the token names.
 func (s *ReviewBundles) List(ctx context.Context, request *operations.GetReviewBundlesRequest, opts ...operations.Option) (*operations.GetReviewBundlesResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -229,31 +234,6 @@ func (s *ReviewBundles) List(ctx context.Context, request *operations.GetReviewB
 			}
 			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
-	case httpRes.StatusCode == 403:
-		switch {
-		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			rawBody, err := utils.ConsumeRawBody(httpRes)
-			if err != nil {
-				return nil, err
-			}
-
-			var out sdkerrors.GetReviewBundlesForbiddenError
-			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
-			}
-
-			out.HTTPMeta = components.HTTPMetadata{
-				Request:  req,
-				Response: httpRes,
-			}
-			return nil, &out
-		default:
-			rawBody, err := utils.ConsumeRawBody(httpRes)
-			if err != nil {
-				return nil, err
-			}
-			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
-		}
 	case httpRes.StatusCode == 500:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
@@ -318,6 +298,13 @@ func (s *ReviewBundles) List(ctx context.Context, request *operations.GetReviewB
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and
+// authorizations granting the `share` permission on every listed media can
+// also be used. The new review bundle is not covered by the token that
+// created it, so follow-up requests need a token whose authorizations name
+// the returned hashed id.
 func (s *ReviewBundles) Create(ctx context.Context, request *operations.PostReviewBundlesRequest, opts ...operations.Option) (*operations.PostReviewBundlesResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -593,6 +580,11 @@ func (s *ReviewBundles) Create(ctx context.Context, request *operations.PostRevi
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `destroy` permission on this review bundle can
+// also be used.
 func (s *ReviewBundles) Delete(ctx context.Context, request operations.DeleteReviewBundlesReviewBundleHashedIDRequest, opts ...operations.Option) (*operations.DeleteReviewBundlesReviewBundleHashedIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

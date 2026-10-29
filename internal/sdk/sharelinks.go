@@ -47,6 +47,11 @@ func newShareLinks(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks *ho
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization naming the share link's media (any permission) can also be
+// used. The share link of a media the token does not name is not found.
 func (s *ShareLinks) Resolve(ctx context.Context, request operations.GetShareLinksIdentifierRequest, opts ...operations.Option) (*operations.GetShareLinksIdentifierResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -202,31 +207,6 @@ func (s *ShareLinks) Resolve(ctx context.Context, request operations.GetShareLin
 			}
 			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
-	case httpRes.StatusCode == 403:
-		switch {
-		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			rawBody, err := utils.ConsumeRawBody(httpRes)
-			if err != nil {
-				return nil, err
-			}
-
-			var out sdkerrors.GetShareLinksIdentifierForbiddenError
-			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
-			}
-
-			out.HTTPMeta = components.HTTPMetadata{
-				Request:  req,
-				Response: httpRes,
-			}
-			return nil, &out
-		default:
-			rawBody, err := utils.ConsumeRawBody(httpRes)
-			if err != nil {
-				return nil, err
-			}
-			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
-		}
 	case httpRes.StatusCode == 404:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
@@ -315,6 +295,10 @@ func (s *ShareLinks) Resolve(ctx context.Context, request operations.GetShareLin
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `share` permission on this media can also be used.
 func (s *ShareLinks) Get(ctx context.Context, request operations.GetMediasMediaIDShareLinkRequest, opts ...operations.Option) (*operations.GetMediasMediaIDShareLinkResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -582,6 +566,10 @@ func (s *ShareLinks) Get(ctx context.Context, request operations.GetMediasMediaI
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `update` permission on this media can also be used.
 func (s *ShareLinks) Update(ctx context.Context, request operations.PutMediasMediaIDShareLinkRequest, opts ...operations.Option) (*operations.PutMediasMediaIDShareLinkResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -882,6 +870,10 @@ func (s *ShareLinks) Update(ctx context.Context, request operations.PutMediasMed
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `update` permission on this media can also be used.
 func (s *ShareLinks) Delete(ctx context.Context, request operations.DeleteMediasMediaIDShareLinkRequest, opts ...operations.Option) (*operations.DeleteMediasMediaIDShareLinkResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -982,6 +974,8 @@ func (s *ShareLinks) Delete(ctx context.Context, request operations.DeleteMedias
 	case httpRes.StatusCode == 200:
 		if o.SkipDeserialization == nil || !*o.SkipDeserialization {
 			utils.DrainBody(httpRes)
+		} else if _, err := utils.ConsumeRawBody(httpRes); err != nil {
+			return nil, err
 		}
 	case httpRes.StatusCode == 401:
 		switch {
