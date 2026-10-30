@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"net"
 	"net/url"
 	"strings"
@@ -67,12 +68,18 @@ type Classification struct {
 	// only the recorded occurrence was surfaced. Empty when the carrier has
 	// no wildcard hops.
 	reasonCarrierPath []int
+	// credentialsMissing is set when a 403 was re-typed to authentication
+	// because the request carried no credential; hints declared for the
+	// permission reason do not apply to that caller.
+	credentialsMissing bool
 }
 
 type errorRule struct {
 	Type  ErrorType
 	Hints []string
 }
+
+const dryRunValidationHint = "Use --dry-run to preview the request and check parameters"
 
 var builtinTypeHints = map[ErrorType][]string{
 	ErrorTypeAuthentication: {
@@ -87,7 +94,7 @@ var builtinTypeHints = map[ErrorType][]string{
 		"Verify the resource identifier is correct",
 	},
 	ErrorTypeValidation: {
-		"Use --dry-run to preview the request and check parameters",
+		dryRunValidationHint,
 		"Run the command with --help for runnable examples, or --usage for the machine-readable surface",
 	},
 	ErrorTypeRateLimit: {
@@ -220,6 +227,15 @@ func Classify(cmd *cobra.Command, err error) Classification {
 		}
 		if c.Type == "" {
 			c.Type = classifyStatuslessError(err, c.Origin)
+		}
+		if c.Type == ErrorTypeAuthorization && c.StatusCode == 403 && flagutil.CredentialsMissing(cmd) {
+			c.Type = ErrorTypeAuthentication
+			c.credentialsMissing = true
+			ruleHints = nil
+			if hint := flagutil.CredentialsMissingHint(cmd); hint != "" {
+				ruleHints = []string{hint}
+				useReasonRule = true
+			}
 		}
 		if c.Reason == "" && c.StatusCode == 0 {
 			c.Reason = syntheticCLIReason(c.Type)
@@ -406,6 +422,10 @@ func classifyStatuslessError(err error, origin ErrorOrigin) ErrorType {
 	if errors.As(err, &streamErr) {
 		return ErrorTypeAPI
 	}
+	var refused interface{ CLIRedirectRefused() bool }
+	if errors.As(err, &refused) && refused.CLIRedirectRefused() {
+		return ErrorTypeProtocol
+	}
 	if origin == ErrorOriginCLI {
 		if isConnectionError(err) {
 			return ErrorTypeConnection
@@ -464,11 +484,11 @@ func assembleHints(cmd *cobra.Command, err error, c Classification, bodyMap, err
 		hints = append(hints, ruleHints...)
 	} else if declared, ok := declaredTypeHints[c.Type]; ok {
 		hints = append(hints, declared...)
-	} else {
-		hints = append(hints, builtinTypeHints[c.Type]...)
+	} else if !omitsTypeHints(err) {
+		hints = append(hints, builtinHints(c)...)
 	}
 	hints = append(hints, errorCLIHints(err)...)
-	if declared := declaredCommandHints(cmd); declared != nil && c.Reason != "" {
+	if declared := declaredCommandHints(cmd); declared != nil && c.Reason != "" && !c.credentialsMissing {
 		hints = append(hints, declared[c.Reason]...)
 	}
 	seen := make(map[string]bool, len(hints))
@@ -481,6 +501,20 @@ func assembleHints(cmd *cobra.Command, err error, c Classification, bodyMap, err
 		deduped = append(deduped, hint)
 	}
 	return deduped
+}
+
+func builtinHints(c Classification) []string {
+	hints := builtinTypeHints[c.Type]
+	if c.Type != ErrorTypeValidation || c.Origin != ErrorOriginCLI {
+		return hints
+	}
+	kept := make([]string, 0, len(hints))
+	for _, hint := range hints {
+		if hint != dryRunValidationHint {
+			kept = append(kept, hint)
+		}
+	}
+	return kept
 }
 
 func serverHints(bodyMap, errorObject map[string]any) []string {
@@ -529,6 +563,11 @@ func errorCLIHints(err error) []string {
 		return typed.CLIHints()
 	}
 	return nil
+}
+
+func omitsTypeHints(err error) bool {
+	var typed interface{ CLIOmitTypeHints() bool }
+	return errors.As(err, &typed) && typed.CLIOmitTypeHints()
 }
 
 func leadingHints(cmd *cobra.Command, err error, reason string) []string {
@@ -588,7 +627,7 @@ func isConnectionError(err error) bool {
 	if errors.As(err, &dnsErr) {
 		return true
 	}
-	if errors.Is(err, context.DeadlineExceeded) {
+	if errors.Is(err, context.DeadlineExceeded) || errors.Is(err, io.ErrUnexpectedEOF) {
 		return true
 	}
 	return strings.HasPrefix(err.Error(), sdkSendErrorMarker)
@@ -671,11 +710,13 @@ func cliReasonErrorType(reason string) ErrorType {
 
 type cliHintsError struct {
 	error
-	hints []string
+	hints         []string
+	omitTypeHints bool
 }
 
-func (e cliHintsError) CLIHints() []string { return e.hints }
-func (e cliHintsError) Unwrap() error      { return e.error }
+func (e cliHintsError) CLIHints() []string     { return e.hints }
+func (e cliHintsError) CLIOmitTypeHints() bool { return e.omitTypeHints }
+func (e cliHintsError) Unwrap() error          { return e.error }
 
 type cliLeadingHintsError struct {
 	error
@@ -690,4 +731,11 @@ func withCLIHints(err error, hints []string) error {
 		return err
 	}
 	return cliHintsError{error: err, hints: hints}
+}
+
+func withCLILeadingHints(err error, hints []string) error {
+	if err == nil || len(hints) == 0 {
+		return err
+	}
+	return cliLeadingHintsError{error: err, hints: hints}
 }

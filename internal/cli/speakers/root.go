@@ -39,6 +39,14 @@ func InitSpeakersRoot(parent *cobra.Command) error {
 		return err
 	}
 
+	if err := initUpdateCmd(SpeakersCmd); err != nil {
+		return err
+	}
+
+	if err := initDeleteCmd(SpeakersCmd); err != nil {
+		return err
+	}
+
 	parent.AddCommand(SpeakersCmd)
 	return nil
 }

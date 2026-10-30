@@ -22,6 +22,19 @@ func (e *PostContactDismissDesktopInstallPromptInternalServerError) Error() stri
 	return string(data)
 }
 
+// PostContactDismissDesktopInstallPromptForbiddenError - Forbidden, token is valid but account does not have access to feature
+type PostContactDismissDesktopInstallPromptForbiddenError struct {
+	Error_   *string                 `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata `json:"-"`
+}
+
+var _ error = &PostContactDismissDesktopInstallPromptForbiddenError{}
+
+func (e *PostContactDismissDesktopInstallPromptForbiddenError) Error() string {
+	data, _ := json.Marshal(e)
+	return string(data)
+}
+
 // PostContactDismissDesktopInstallPromptUnauthorizedError - Unauthorized, invalid or missing token
 type PostContactDismissDesktopInstallPromptUnauthorizedError struct {
 	// A machine-readable identifier for the specific authorization failure.

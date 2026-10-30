@@ -17,7 +17,7 @@ func initGetTokenDetailsCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "get-token-details",
 		Short:   "Get Current Token",
-		Long:    "Retrieves a summary of the token used to make the API request. This endpoint can primarily be used to\ndebug permission issues with the API.",
+		Long:    "Retrieves a summary of the token used to make the API request. This endpoint can primarily be used to\ndebug permission issues with the API.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncan also be used. The response then describes the expiring token itself,\nits scopes and expiry, not the API token or contact that created it.",
 		Example: "  wistia account get-token-details",
 		Args:    cobra.NoArgs,
 		RunE:    runGetTokenDetailsCmd,
@@ -54,7 +54,10 @@ func runGetTokenDetailsCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.Account.GetTokenDetails(cmd.Context(), sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

@@ -6,6 +6,7 @@ package operations
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
 	"github.com/wistia/wistia-cli/internal/sdk/optionalnullable"
 	"github.com/wistia/wistia-cli/internal/sdk/sdkinternal/utils"
@@ -122,6 +123,9 @@ func (u *GetBrandsBrandIDPrimaryColor) UnmarshalJSON(data []byte) error {
 	}
 
 	if len(candidates) == 0 {
+		if !json.Valid(data) {
+			return fmt.Errorf("could not unmarshal `%s` into any supported union types for GetBrandsBrandIDPrimaryColor", string(data))
+		}
 		u.UnknownRaw = json.RawMessage(data)
 		u.Type = GetBrandsBrandIDPrimaryColorTypeUnknown
 		return nil
@@ -146,6 +150,9 @@ func (u *GetBrandsBrandIDPrimaryColor) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 
+	if !json.Valid(data) {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for GetBrandsBrandIDPrimaryColor", string(data))
+	}
 	u.UnknownRaw = json.RawMessage(data)
 	u.Type = GetBrandsBrandIDPrimaryColorTypeUnknown
 	return nil
@@ -239,6 +246,9 @@ func (u *GetBrandsBrandIDPageBackgroundColor) UnmarshalJSON(data []byte) error {
 	}
 
 	if len(candidates) == 0 {
+		if !json.Valid(data) {
+			return fmt.Errorf("could not unmarshal `%s` into any supported union types for GetBrandsBrandIDPageBackgroundColor", string(data))
+		}
 		u.UnknownRaw = json.RawMessage(data)
 		u.Type = GetBrandsBrandIDPageBackgroundColorTypeUnknown
 		return nil
@@ -263,6 +273,9 @@ func (u *GetBrandsBrandIDPageBackgroundColor) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 
+	if !json.Valid(data) {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for GetBrandsBrandIDPageBackgroundColor", string(data))
+	}
 	u.UnknownRaw = json.RawMessage(data)
 	u.Type = GetBrandsBrandIDPageBackgroundColorTypeUnknown
 	return nil
@@ -352,7 +365,7 @@ func (g *GetBrandsBrandIDPageLogoDimensions) GetHeight() *int64 {
 
 // GetBrandsBrandIDPageLogo - The brand logo used for pages. Null when unset.
 type GetBrandsBrandIDPageLogo struct {
-	// The Wistia delivery URL of the logo image, e.g. `https://embed-ssl.wistia.com/deliveries/abc123def456.png`. When writing, this must reference an image already in the account; the API cannot upload one.
+	// The Wistia delivery URL of the logo image, e.g. `https://embed-ssl.wistia.com/deliveries/abc123def456.png`. When writing, this must reference an image already in the account: the `asset.url` returned by uploading a file to the Upload API with `asset_type=brand_image`, or a URL read back from a brand.
 	URL        *string                                                               `json:"url,omitzero"`
 	Dimensions optionalnullable.OptionalNullable[GetBrandsBrandIDPageLogoDimensions] `json:"dimensions,omitzero"`
 	// The size multiplier of the logo.
@@ -412,7 +425,7 @@ func (g *GetBrandsBrandIDPlayerLogoDimensions) GetHeight() *int64 {
 
 // GetBrandsBrandIDPlayerLogo - The brand logo used for the player. Null when unset.
 type GetBrandsBrandIDPlayerLogo struct {
-	// The Wistia delivery URL of the logo image, e.g. `https://embed-ssl.wistia.com/deliveries/abc123def456.png`. When writing, this must reference an image already in the account; the API cannot upload one.
+	// The Wistia delivery URL of the logo image, e.g. `https://embed-ssl.wistia.com/deliveries/abc123def456.png`. When writing, this must reference an image already in the account: the `asset.url` returned by uploading a file to the Upload API with `asset_type=brand_image`, or a URL read back from a brand.
 	URL        *string                                                                 `json:"url,omitzero"`
 	Dimensions optionalnullable.OptionalNullable[GetBrandsBrandIDPlayerLogoDimensions] `json:"dimensions,omitzero"`
 	// The size multiplier of the logo.

@@ -689,6 +689,13 @@ type GetChannelsChannelHashedIDResponseBody struct {
 	LiveStreamEventCount *int64 `json:"live_stream_event_count,omitzero"`
 	// The display name for the channel
 	Name string `json:"name"`
+	// The link viewers use to watch the channel: the channel's active custom
+	// domain when one is attached, otherwise the Wistia-hosted channel page.
+	// This is the link to share with an audience.
+	//
+	PublicURL string `json:"public_url"`
+	// Whether the channel is locked. Only invited users logged into Wistia will be able to view this channel.
+	Locked bool `json:"locked"`
 	// The date when the channel was last updated.
 	Updated time.Time `json:"updated"`
 	// Whether episodes are automatically published when added to the channel.
@@ -763,6 +770,20 @@ func (g *GetChannelsChannelHashedIDResponseBody) GetName() string {
 		return ""
 	}
 	return g.Name
+}
+
+func (g *GetChannelsChannelHashedIDResponseBody) GetPublicURL() string {
+	if g == nil {
+		return ""
+	}
+	return g.PublicURL
+}
+
+func (g *GetChannelsChannelHashedIDResponseBody) GetLocked() bool {
+	if g == nil {
+		return false
+	}
+	return g.Locked
 }
 
 func (g *GetChannelsChannelHashedIDResponseBody) GetUpdated() time.Time {

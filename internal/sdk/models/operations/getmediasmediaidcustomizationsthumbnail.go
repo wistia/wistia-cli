@@ -6,6 +6,7 @@ package operations
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
 	"github.com/wistia/wistia-cli/internal/sdk/sdkinternal/utils"
 )
@@ -48,6 +49,9 @@ func (e *GetMediasMediaIDCustomizationsThumbnailCode) IsExact() bool {
 }
 
 type GetMediasMediaIDCustomizationsThumbnailUnalteredStillImageAsset struct {
+	URL    *string `json:"url,omitzero"`
+	Width  *string `json:"width,omitzero"`
+	Height *string `json:"height,omitzero"`
 }
 
 func (g GetMediasMediaIDCustomizationsThumbnailUnalteredStillImageAsset) MarshalJSON() ([]byte, error) {
@@ -59,6 +63,27 @@ func (g *GetMediasMediaIDCustomizationsThumbnailUnalteredStillImageAsset) Unmars
 		return err
 	}
 	return nil
+}
+
+func (g *GetMediasMediaIDCustomizationsThumbnailUnalteredStillImageAsset) GetURL() *string {
+	if g == nil {
+		return nil
+	}
+	return g.URL
+}
+
+func (g *GetMediasMediaIDCustomizationsThumbnailUnalteredStillImageAsset) GetWidth() *string {
+	if g == nil {
+		return nil
+	}
+	return g.Width
+}
+
+func (g *GetMediasMediaIDCustomizationsThumbnailUnalteredStillImageAsset) GetHeight() *string {
+	if g == nil {
+		return nil
+	}
+	return g.Height
 }
 
 type GetMediasMediaIDCustomizationsThumbnailUnalteredStillImageAssetUnionType string
@@ -133,6 +158,9 @@ func (u *GetMediasMediaIDCustomizationsThumbnailUnalteredStillImageAssetUnion) U
 	}
 
 	if len(candidates) == 0 {
+		if !json.Valid(data) {
+			return fmt.Errorf("could not unmarshal `%s` into any supported union types for GetMediasMediaIDCustomizationsThumbnailUnalteredStillImageAssetUnion", string(data))
+		}
 		u.UnknownRaw = json.RawMessage(data)
 		u.Type = GetMediasMediaIDCustomizationsThumbnailUnalteredStillImageAssetUnionTypeUnknown
 		return nil
@@ -157,6 +185,9 @@ func (u *GetMediasMediaIDCustomizationsThumbnailUnalteredStillImageAssetUnion) U
 		return nil
 	}
 
+	if !json.Valid(data) {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for GetMediasMediaIDCustomizationsThumbnailUnalteredStillImageAssetUnion", string(data))
+	}
 	u.UnknownRaw = json.RawMessage(data)
 	u.Type = GetMediasMediaIDCustomizationsThumbnailUnalteredStillImageAssetUnionTypeUnknown
 	return nil
@@ -177,13 +208,165 @@ func (u GetMediasMediaIDCustomizationsThumbnailUnalteredStillImageAssetUnion) Ma
 	return nil, errors.New("could not marshal union type GetMediasMediaIDCustomizationsThumbnailUnalteredStillImageAssetUnion: all fields are null")
 }
 
+type GetMediasMediaIDCustomizationsThumbnailClickForSound struct {
+	On       *string `json:"on,omitzero"`
+	ShowText *string `json:"showText,omitzero"`
+}
+
+func (g GetMediasMediaIDCustomizationsThumbnailClickForSound) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(g, "", false)
+}
+
+func (g *GetMediasMediaIDCustomizationsThumbnailClickForSound) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &g, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (g *GetMediasMediaIDCustomizationsThumbnailClickForSound) GetOn() *string {
+	if g == nil {
+		return nil
+	}
+	return g.On
+}
+
+func (g *GetMediasMediaIDCustomizationsThumbnailClickForSound) GetShowText() *string {
+	if g == nil {
+		return nil
+	}
+	return g.ShowText
+}
+
+type GetMediasMediaIDCustomizationsThumbnailClickForSoundUnionType string
+
+const (
+	GetMediasMediaIDCustomizationsThumbnailClickForSoundUnionTypeStr                                                  GetMediasMediaIDCustomizationsThumbnailClickForSoundUnionType = "str"
+	GetMediasMediaIDCustomizationsThumbnailClickForSoundUnionTypeGetMediasMediaIDCustomizationsThumbnailClickForSound GetMediasMediaIDCustomizationsThumbnailClickForSoundUnionType = "get_medias_mediaId_customizations_thumbnail_clickForSound"
+	GetMediasMediaIDCustomizationsThumbnailClickForSoundUnionTypeUnknown                                              GetMediasMediaIDCustomizationsThumbnailClickForSoundUnionType = "Unknown"
+)
+
+type GetMediasMediaIDCustomizationsThumbnailClickForSoundUnion struct {
+	Str                                                  *string                                               `queryParam:"inline" union:"member"`
+	GetMediasMediaIDCustomizationsThumbnailClickForSound *GetMediasMediaIDCustomizationsThumbnailClickForSound `queryParam:"inline" union:"member"`
+	UnknownRaw                                           json.RawMessage                                       `json:"-" union:"unknown"`
+
+	Type GetMediasMediaIDCustomizationsThumbnailClickForSoundUnionType
+}
+
+func CreateGetMediasMediaIDCustomizationsThumbnailClickForSoundUnionStr(str string) GetMediasMediaIDCustomizationsThumbnailClickForSoundUnion {
+	typ := GetMediasMediaIDCustomizationsThumbnailClickForSoundUnionTypeStr
+
+	return GetMediasMediaIDCustomizationsThumbnailClickForSoundUnion{
+		Str:  &str,
+		Type: typ,
+	}
+}
+
+func CreateGetMediasMediaIDCustomizationsThumbnailClickForSoundUnionGetMediasMediaIDCustomizationsThumbnailClickForSound(getMediasMediaIDCustomizationsThumbnailClickForSound GetMediasMediaIDCustomizationsThumbnailClickForSound) GetMediasMediaIDCustomizationsThumbnailClickForSoundUnion {
+	typ := GetMediasMediaIDCustomizationsThumbnailClickForSoundUnionTypeGetMediasMediaIDCustomizationsThumbnailClickForSound
+
+	return GetMediasMediaIDCustomizationsThumbnailClickForSoundUnion{
+		GetMediasMediaIDCustomizationsThumbnailClickForSound: &getMediasMediaIDCustomizationsThumbnailClickForSound,
+		Type: typ,
+	}
+}
+
+func CreateGetMediasMediaIDCustomizationsThumbnailClickForSoundUnionUnknown(raw json.RawMessage) GetMediasMediaIDCustomizationsThumbnailClickForSoundUnion {
+	return GetMediasMediaIDCustomizationsThumbnailClickForSoundUnion{
+		UnknownRaw: raw,
+		Type:       GetMediasMediaIDCustomizationsThumbnailClickForSoundUnionTypeUnknown,
+	}
+}
+
+func (u GetMediasMediaIDCustomizationsThumbnailClickForSoundUnion) GetUnknownRaw() json.RawMessage {
+	return u.UnknownRaw
+}
+
+func (u GetMediasMediaIDCustomizationsThumbnailClickForSoundUnion) IsUnknown() bool {
+	return u.Type == GetMediasMediaIDCustomizationsThumbnailClickForSoundUnionTypeUnknown
+}
+
+func (u *GetMediasMediaIDCustomizationsThumbnailClickForSoundUnion) UnmarshalJSON(data []byte) error {
+	*u = GetMediasMediaIDCustomizationsThumbnailClickForSoundUnion{}
+
+	var candidates []utils.UnionCandidate
+
+	// Collect all valid candidates
+	var str string = ""
+	if err := utils.UnmarshalJSON(data, &str, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  GetMediasMediaIDCustomizationsThumbnailClickForSoundUnionTypeStr,
+			Value: &str,
+		})
+	}
+
+	var getMediasMediaIDCustomizationsThumbnailClickForSound GetMediasMediaIDCustomizationsThumbnailClickForSound = GetMediasMediaIDCustomizationsThumbnailClickForSound{}
+	if err := utils.UnmarshalJSON(data, &getMediasMediaIDCustomizationsThumbnailClickForSound, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  GetMediasMediaIDCustomizationsThumbnailClickForSoundUnionTypeGetMediasMediaIDCustomizationsThumbnailClickForSound,
+			Value: &getMediasMediaIDCustomizationsThumbnailClickForSound,
+		})
+	}
+
+	if len(candidates) == 0 {
+		if !json.Valid(data) {
+			return fmt.Errorf("could not unmarshal `%s` into any supported union types for GetMediasMediaIDCustomizationsThumbnailClickForSoundUnion", string(data))
+		}
+		u.UnknownRaw = json.RawMessage(data)
+		u.Type = GetMediasMediaIDCustomizationsThumbnailClickForSoundUnionTypeUnknown
+		return nil
+	}
+
+	// Pick the best candidate using multi-stage filtering
+	best := utils.PickBestUnionCandidate(candidates, data)
+	if best == nil {
+		u.UnknownRaw = json.RawMessage(data)
+		u.Type = GetMediasMediaIDCustomizationsThumbnailClickForSoundUnionTypeUnknown
+		return nil
+	}
+
+	// Set the union type and value based on the best candidate
+	u.Type = best.Type.(GetMediasMediaIDCustomizationsThumbnailClickForSoundUnionType)
+	switch best.Type {
+	case GetMediasMediaIDCustomizationsThumbnailClickForSoundUnionTypeStr:
+		u.Str = best.Value.(*string)
+		return nil
+	case GetMediasMediaIDCustomizationsThumbnailClickForSoundUnionTypeGetMediasMediaIDCustomizationsThumbnailClickForSound:
+		u.GetMediasMediaIDCustomizationsThumbnailClickForSound = best.Value.(*GetMediasMediaIDCustomizationsThumbnailClickForSound)
+		return nil
+	}
+
+	if !json.Valid(data) {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for GetMediasMediaIDCustomizationsThumbnailClickForSoundUnion", string(data))
+	}
+	u.UnknownRaw = json.RawMessage(data)
+	u.Type = GetMediasMediaIDCustomizationsThumbnailClickForSoundUnionTypeUnknown
+	return nil
+}
+
+func (u GetMediasMediaIDCustomizationsThumbnailClickForSoundUnion) MarshalJSON() ([]byte, error) {
+	if u.Str != nil {
+		return utils.MarshalJSON(u.Str, "", true)
+	}
+
+	if u.GetMediasMediaIDCustomizationsThumbnailClickForSound != nil {
+		return utils.MarshalJSON(u.GetMediasMediaIDCustomizationsThumbnailClickForSound, "", true)
+	}
+
+	if u.UnknownRaw != nil {
+		return json.RawMessage(u.UnknownRaw), nil
+	}
+	return nil, errors.New("could not marshal union type GetMediasMediaIDCustomizationsThumbnailClickForSoundUnion: all fields are null")
+}
+
 type GetMediasMediaIDCustomizationsThumbnailVideoThumbnail struct {
-	ClickToPlayButton *string `json:"clickToPlayButton,omitzero"`
-	ClickForSound     *string `json:"clickForSound,omitzero"`
-	HashedID          *string `json:"hashedId,omitzero"`
-	TrimStart         *string `json:"trimStart,omitzero"`
-	TrimEnd           *string `json:"trimEnd,omitzero"`
-	PriorityMode      *string `json:"priorityMode,omitzero"`
+	ClickToPlayButton *string                                                    `json:"clickToPlayButton,omitzero"`
+	ClickForSound     *GetMediasMediaIDCustomizationsThumbnailClickForSoundUnion `json:"clickForSound,omitzero"`
+	HashedID          *string                                                    `json:"hashedId,omitzero"`
+	TrimStart         *string                                                    `json:"trimStart,omitzero"`
+	TrimEnd           *string                                                    `json:"trimEnd,omitzero"`
+	PriorityMode      *string                                                    `json:"priorityMode,omitzero"`
 }
 
 func (g *GetMediasMediaIDCustomizationsThumbnailVideoThumbnail) GetClickToPlayButton() *string {
@@ -193,7 +376,7 @@ func (g *GetMediasMediaIDCustomizationsThumbnailVideoThumbnail) GetClickToPlayBu
 	return g.ClickToPlayButton
 }
 
-func (g *GetMediasMediaIDCustomizationsThumbnailVideoThumbnail) GetClickForSound() *string {
+func (g *GetMediasMediaIDCustomizationsThumbnailVideoThumbnail) GetClickForSound() *GetMediasMediaIDCustomizationsThumbnailClickForSoundUnion {
 	if g == nil {
 		return nil
 	}
@@ -280,7 +463,7 @@ func (g *GetMediasMediaIDCustomizationsThumbnailPlugin) GetThumbnailTextOverlayV
 	return g.ThumbnailTextOverlayV2
 }
 
-// GetMediasMediaIDCustomizationsThumbnailResponseBody - Explicitly-set thumbnail customizations for the video. Values are returned
+// GetMediasMediaIDCustomizationsThumbnailResponseBody - Explicitly-set thumbnail customizations for the video. Leaf values are returned
 // as strings (e.g. "true"); fields that have never been set are omitted.
 type GetMediasMediaIDCustomizationsThumbnailResponseBody struct {
 	StillURL                 *string                                                               `json:"stillUrl,omitzero"`
