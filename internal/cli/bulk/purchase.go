@@ -24,7 +24,7 @@ func initPurchaseCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "purchase",
 		Short:   "Create Bulk Purchase",
-		Long:    "Submits either an `actions` array of up to 1000 orders or one `job` that can\nresolve to up to 5000 media. Orders are placed asynchronously. Returns a\nbackground job status whose Show endpoint reports aggregate progress and\nper-order results.\n\nOrders in the batch can incur charges, so a saved credit card is required.\nSupported resource types are `captions` (Wistia-generated English captions),\n`localization` (a dubbed, language-specific version of a media),\n`extended_audio_description`, and `text_translation` (the media's transcript\ntranslated into another language, audio untouched). Each order's `id` is the\nhashed ID of the media to order for.\n\nWhat an order costs depends on the account, not on this endpoint. Automated\ncaptions are included at no cost on plans that provide them and billed at\nthe account's configured per-minute rate otherwise; human-reviewed captions\nbill per minute at the account's standard or rush rate; localizations bill\nper minute once the account's free-dub allowance is used up; text\ntranslations bill as an overage once the account's included translation\nminutes are used up. Check the account's plan and billing settings for its\nactual rates.\n\nOrders are priced and placed individually: failures -- an ineligible media,\na language that already has a localization, an account not entitled to buy\n-- are reported per order and do not stop the rest of the batch. Pricing and\neligibility match the equivalent single-media endpoints exactly.\n\nUse the Create Bulk Actions endpoint for create, update, and delete work; it\ndoes not accept `purchase`, and this endpoint accepts nothing else.\n\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
+		Long:    "Submits either an `actions` array of up to 1000 orders or one `job` that can\nresolve to up to 5000 media. Orders are placed asynchronously. Returns a\nbackground job status whose Show endpoint reports aggregate progress and\nper-order results.\n\nOrders in the batch can incur charges, so a saved credit card is required.\nSupported resource types are `captions` (Wistia-generated English captions),\n`localization` (a dubbed, language-specific version of a media),\n`extended_audio_description`, and `text_translation` (the media's transcript\ntranslated into another language, audio untouched). Each order's `id` is the\nhashed ID of the media to order for.\n\nWhat an order costs depends on the account, not on this endpoint. Automated\ncaptions are included at no cost on plans that provide them and billed at\nthe account's configured per-minute rate otherwise; human-reviewed captions\nbill per minute at the account's standard or rush rate; localizations bill\nper minute once the account's free-dub allowance is used up; text\ntranslations bill as an overage once the account's included translation\nminutes are used up. Check the account's plan and billing settings for its\nactual rates.\n\nOrders are priced and placed individually: failures -- an ineligible media,\na language that already has a localization, an account not entitled to buy\n-- are reported per order and do not stop the rest of the batch. Pricing and\neligibility match the equivalent single-media endpoints exactly.\n\nUse the Create Bulk Actions endpoint for create, update, and delete work; it\ndoes not accept `purchase`, and this endpoint accepts nothing else.\n\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\n[Expiring access tokens](https://docs.wistia.com/reference/post_expiring-token)\nwith authorizations cannot use this endpoint: each action is authorized\nlater, in a background job, as the persisted contact that submitted it,\nand a token's authorizations are not carried into that job. Such requests\nare forbidden.",
 		Example: "  wistia bulk purchase",
 		Args:    cobra.NoArgs,
 		RunE:    runPurchaseCmd,
@@ -37,7 +37,7 @@ func initPurchaseCmd(parent *cobra.Command) error {
 		return fmt.Errorf("invalid metadata for purchase: %w", err)
 	}
 	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
-	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Required: false, Kind: "json", BodyFlag: true})
 	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
 	if err := flagutil.AnnotateBodyFields(cmd, purchaseCmdMeta, "", "body"); err != nil {
 		return fmt.Errorf("annotate body fields for purchase: %w", err)
@@ -74,7 +74,10 @@ func runPurchaseCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.Bulk.Purchase(cmd.Context(), *request, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

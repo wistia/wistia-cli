@@ -7,6 +7,10 @@ Get Current Token
 Retrieves a summary of the token used to make the API request. This endpoint can primarily be used to
 debug permission issues with the API.
 
+An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+can also be used. The response then describes the expiring token itself,
+its scopes and expiry, not the API token or contact that created it.
+
 ```
 wistia account get-token-details [flags]
 ```
@@ -36,6 +40,7 @@ wistia account get-token-details [flags]
       --interactive            Prompt for missing inputs and open guided configure/auth forms (forms fall back to line prompts on stdin off-TTY) (default true)
   -q, --jq string              Filter and transform output using a jq expression (e.g., '.name', '.items[] | .id')
       --no-interactive         Disable all interactive features (auto-prompting, explorer auto-launch, TUI forms)
+      --no-keyring             Never read or write the OS keychain; store secrets in the config file instead (env: WISTIA_CLI_NO_KEYRING)
   -o, --output-format string   Specify the output format. Options: pretty, json, yaml, table, toon. (default "pretty")
       --raw-output             Write --jq string results as raw text instead of JSON strings (like jq -r); non-string results stay JSON
       --server string          Select a server by index (for indexed servers) or name (for named servers)

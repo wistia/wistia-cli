@@ -13,8 +13,7 @@ import (
 	"time"
 )
 
-// GetBrandsEnabled - If `cursor[enabled]` is set to 1, the first result set will be fetched with cursor pagination enabled. This
-// values is ignored if `cursor[before]` or `cursor[after]` are set.
+// GetBrandsEnabled - Set to 1 to fetch the first page with cursor pagination. Ignored when `cursor[before]` or `cursor[after]` is set.
 type GetBrandsEnabled int64
 
 const (
@@ -41,30 +40,24 @@ func (e *GetBrandsEnabled) UnmarshalJSON(data []byte) error {
 	}
 }
 
-// GetBrandsCursor - If `cursor[enabled]` is set to 1 then cursor pagination is enabled and the
-// first set of records are fetched up to the `per_page`. Cursor
-// pagination will also be turned on if `cursor[before]` or `cursor[after]`
-// are set. Records returned will have a `cursor` property set which can be used to fetch more records in the same `sort_by` ordering.
-// The cursor value of the last record can be used to fetch records after the current result set and
-// the cursor of the first record can be used to fetch records before the result set.
+// GetBrandsCursor - Cursor pagination. When cursor pagination is enabled, each record returned
+// has a `cursor`: pass the last one as `cursor[after]` for the next page, or
+// the first one as `cursor[before]` for the previous page. A cursor only works with the `sort_by` it was fetched with.
+// For example, you cannot fetch using `sort_by` id and then pass that cursor
+// value to a `sort_by` name.
 //
-// NOTE: a cursor value is only valid if the `sort_by` value hasn't changed from the
-// last fetch. For example, you cannot fetch using `sort_by` id and then pass that
-// cursor value to a `sort_by` name.
+// Setting `cursor[enabled]` to 1 fetches the first page with cursor pagination
+// on, up to `per_page` records. Setting `cursor[before]` or `cursor[after]` turns
+// it on too.
 type GetBrandsCursor struct {
-	// If `cursor[enabled]` is set to 1, the first result set will be fetched with cursor pagination enabled. This
-	// values is ignored if `cursor[before]` or `cursor[after]` are set.
-	//
+	// Set to 1 to fetch the first page with cursor pagination. Ignored when `cursor[before]` or `cursor[after]` is set.
 	Enabled *GetBrandsEnabled `queryParam:"name=enabled"`
-	// If `cursor[before]` is set then cursor pagination is enabled and all records
-	// before the cursor up to the `per_page` are returned. This feature is useful for
-	// fetching "new records", for example, in a "pull to refersh" feature when showing records in a descending
-	// order.
+	// Returns up to `per_page` records before this cursor. This is useful for
+	// fetching new records, for example in a "pull to refresh" feature that shows records in
+	// descending order.
 	//
 	Before *string `queryParam:"name=before"`
-	// If `cursor[after]` is set then cursor pagination is enabled and all records
-	// after the cursor up to the `per_page` are returned.
-	//
+	// Returns up to `per_page` records after this cursor.
 	After *string `queryParam:"name=after"`
 }
 
@@ -158,16 +151,15 @@ type GetBrandsRequest struct {
 	Page *int64 `queryParam:"style=form,explode=true,name=page"`
 	// The number of medias per page. Use this for both offset pagination and cursor pagination.
 	PerPage *int64 `queryParam:"style=form,explode=true,name=per_page"`
-	// If `cursor[enabled]` is set to 1 then cursor pagination is enabled and the
-	// first set of records are fetched up to the `per_page`. Cursor
-	// pagination will also be turned on if `cursor[before]` or `cursor[after]`
-	// are set. Records returned will have a `cursor` property set which can be used to fetch more records in the same `sort_by` ordering.
-	// The cursor value of the last record can be used to fetch records after the current result set and
-	// the cursor of the first record can be used to fetch records before the result set.
+	// Cursor pagination. When cursor pagination is enabled, each record returned
+	// has a `cursor`: pass the last one as `cursor[after]` for the next page, or
+	// the first one as `cursor[before]` for the previous page. A cursor only works with the `sort_by` it was fetched with.
+	// For example, you cannot fetch using `sort_by` id and then pass that cursor
+	// value to a `sort_by` name.
 	//
-	// NOTE: a cursor value is only valid if the `sort_by` value hasn't changed from the
-	// last fetch. For example, you cannot fetch using `sort_by` id and then pass that
-	// cursor value to a `sort_by` name.
+	// Setting `cursor[enabled]` to 1 fetches the first page with cursor pagination
+	// on, up to `per_page` records. Setting `cursor[before]` or `cursor[after]` turns
+	// it on too.
 	//
 	Cursor *GetBrandsCursor `queryParam:"style=deepObject,explode=true,name=cursor"`
 	// Ordering. When using cursor pagination (see cursor param),
@@ -323,6 +315,9 @@ func (u *GetBrandsPrimaryColor) UnmarshalJSON(data []byte) error {
 	}
 
 	if len(candidates) == 0 {
+		if !json.Valid(data) {
+			return fmt.Errorf("could not unmarshal `%s` into any supported union types for GetBrandsPrimaryColor", string(data))
+		}
 		u.UnknownRaw = json.RawMessage(data)
 		u.Type = GetBrandsPrimaryColorTypeUnknown
 		return nil
@@ -347,6 +342,9 @@ func (u *GetBrandsPrimaryColor) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 
+	if !json.Valid(data) {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for GetBrandsPrimaryColor", string(data))
+	}
 	u.UnknownRaw = json.RawMessage(data)
 	u.Type = GetBrandsPrimaryColorTypeUnknown
 	return nil
@@ -440,6 +438,9 @@ func (u *GetBrandsPageBackgroundColor) UnmarshalJSON(data []byte) error {
 	}
 
 	if len(candidates) == 0 {
+		if !json.Valid(data) {
+			return fmt.Errorf("could not unmarshal `%s` into any supported union types for GetBrandsPageBackgroundColor", string(data))
+		}
 		u.UnknownRaw = json.RawMessage(data)
 		u.Type = GetBrandsPageBackgroundColorTypeUnknown
 		return nil
@@ -464,6 +465,9 @@ func (u *GetBrandsPageBackgroundColor) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 
+	if !json.Valid(data) {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for GetBrandsPageBackgroundColor", string(data))
+	}
 	u.UnknownRaw = json.RawMessage(data)
 	u.Type = GetBrandsPageBackgroundColorTypeUnknown
 	return nil
@@ -553,7 +557,7 @@ func (g *GetBrandsPageLogoDimensions) GetHeight() *int64 {
 
 // GetBrandsPageLogo - The brand logo used for pages. Null when unset.
 type GetBrandsPageLogo struct {
-	// The Wistia delivery URL of the logo image, e.g. `https://embed-ssl.wistia.com/deliveries/abc123def456.png`. When writing, this must reference an image already in the account; the API cannot upload one.
+	// The Wistia delivery URL of the logo image, e.g. `https://embed-ssl.wistia.com/deliveries/abc123def456.png`. When writing, this must reference an image already in the account: the `asset.url` returned by uploading a file to the Upload API with `asset_type=brand_image`, or a URL read back from a brand.
 	URL        *string                                                        `json:"url,omitzero"`
 	Dimensions optionalnullable.OptionalNullable[GetBrandsPageLogoDimensions] `json:"dimensions,omitzero"`
 	// The size multiplier of the logo.
@@ -613,7 +617,7 @@ func (g *GetBrandsPlayerLogoDimensions) GetHeight() *int64 {
 
 // GetBrandsPlayerLogo - The brand logo used for the player. Null when unset.
 type GetBrandsPlayerLogo struct {
-	// The Wistia delivery URL of the logo image, e.g. `https://embed-ssl.wistia.com/deliveries/abc123def456.png`. When writing, this must reference an image already in the account; the API cannot upload one.
+	// The Wistia delivery URL of the logo image, e.g. `https://embed-ssl.wistia.com/deliveries/abc123def456.png`. When writing, this must reference an image already in the account: the `asset.url` returned by uploading a file to the Upload API with `asset_type=brand_image`, or a URL read back from a brand.
 	URL        *string                                                          `json:"url,omitzero"`
 	Dimensions optionalnullable.OptionalNullable[GetBrandsPlayerLogoDimensions] `json:"dimensions,omitzero"`
 	// The size multiplier of the logo.

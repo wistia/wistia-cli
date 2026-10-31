@@ -18,6 +18,9 @@ Tokens with the "Act with a team member's permissions" permission
 made with such a token are authorized using the permissions of the
 contact assigned to the token.
 
+Expiring access tokens created with authorizations cannot be used; such
+requests fail with a 403.
+
 ```
 wistia taggings bulk-create [flags]
 ```
@@ -34,7 +37,7 @@ wistia taggings bulk-create [flags]
       --body string              Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.
       --hashed-ids stringArray   An array of the media hashed IDs to be tagged. [required]
   -h, --help                     help for bulk-create
-  -t, --tag-names stringArray    An array of tag names to add to each media. [required]
+  -t, --tag-names stringArray    An array of tag names to add to each media. Names are lowercased and their whitespace collapsed. Each name must be non-blank and at most 50 characters, and a request can include at most 100 names. [required]
 ```
 
 ### Options inherited from parent commands
@@ -50,6 +53,7 @@ wistia taggings bulk-create [flags]
       --interactive            Prompt for missing inputs and open guided configure/auth forms (forms fall back to line prompts on stdin off-TTY) (default true)
   -q, --jq string              Filter and transform output using a jq expression (e.g., '.name', '.items[] | .id')
       --no-interactive         Disable all interactive features (auto-prompting, explorer auto-launch, TUI forms)
+      --no-keyring             Never read or write the OS keychain; store secrets in the config file instead (env: WISTIA_CLI_NO_KEYRING)
   -o, --output-format string   Specify the output format. Options: pretty, json, yaml, table, toon. (default "pretty")
       --raw-output             Write --jq string results as raw text instead of JSON strings (like jq -r); non-string results stay JSON
       --server string          Select a server by index (for indexed servers) or name (for named servers)

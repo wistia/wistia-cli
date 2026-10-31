@@ -13,6 +13,11 @@ Requires the OAuth contact to be an owner or manager of the account
 (or a Wistia admin) — mirrors the auth check on the underlying
 `updateWtwBrandKitAccountSettings` GraphQL mutation.
 
+An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+created with the `all:delegate_to_contact_permissions` scope and an
+`account` authorization granting the `manage-brand-preload` permission can
+also be used.
+
 Deliberately narrower than the mutation: this endpoint does not
 create/update BrandKits or set body font family. Glass's onboarding
 customize step writes only these two fields; broader brand-kit
@@ -64,6 +69,7 @@ wistia account update-brand-preload [flags]
       --interactive            Prompt for missing inputs and open guided configure/auth forms (forms fall back to line prompts on stdin off-TTY) (default true)
   -q, --jq string              Filter and transform output using a jq expression (e.g., '.name', '.items[] | .id')
       --no-interactive         Disable all interactive features (auto-prompting, explorer auto-launch, TUI forms)
+      --no-keyring             Never read or write the OS keychain; store secrets in the config file instead (env: WISTIA_CLI_NO_KEYRING)
   -o, --output-format string   Specify the output format. Options: pretty, json, yaml, table, toon. (default "pretty")
       --raw-output             Write --jq string results as raw text instead of JSON strings (like jq -r); non-string results stay JSON
       --server string          Select a server by index (for indexed servers) or name (for named servers)

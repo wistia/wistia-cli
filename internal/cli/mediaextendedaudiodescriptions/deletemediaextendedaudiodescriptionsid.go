@@ -24,7 +24,7 @@ func initDeleteMediaExtendedAudioDescriptionsIdCmd(parent *cobra.Command) error 
 	var cmd = &cobra.Command{
 		Use:     "delete-media-extended-audio-descriptions-id [id]",
 		Short:   "Delete Media Extended Audio Description",
-		Long:    "Deletes an extended audio description by its hashed id.",
+		Long:    "Deletes an extended audio description by its hashed id.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\nauthorization granting the `update` permission on the extended audio\ndescription's media can also be used.",
 		Example: "  wistia media-extended-audio-descriptions delete-media-extended-audio-descriptions-id --id <id>",
 		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runDeleteMediaExtendedAudioDescriptionsIdCmd,
@@ -80,7 +80,10 @@ func runDeleteMediaExtendedAudioDescriptionsIdCmd(cmd *cobra.Command, args []str
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.MediaExtendedAudioDescriptions.DeleteMediaExtendedAudioDescriptionsID(cmd.Context(), *req, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}
