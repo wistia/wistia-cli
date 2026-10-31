@@ -17,10 +17,11 @@ import (
 var listCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "page", FieldPath: "Page", Kind: flagutil.FlagKindInt64, Optional: true, Description: "The page number to retrieve. This cannot be combined with 'cursor',\npagination."},
 	{FlagName: "per-page", FieldPath: "PerPage", Kind: flagutil.FlagKindInt64, Optional: true, Description: "The number of medias per page. Use this for both offset pagination and cursor pagination."},
-	{FlagName: "cursor", Shorthand: "c", FieldPath: "Cursor", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `queryParam:"style=deepObject,explode=true,name=cursor"`, Description: "If 'cursor[enabled]' is set to 1 then cursor pagination is enabled and the\nfirst set of records are fetched up to the 'per_page'. Cursor\npagination will also be turned on if 'cursor[before]' or 'cursor[after]'\nare set. Records returned will have a 'cursor' property set which can be used to fetch more records in the same 'sort_by' ordering.\nThe cursor value of the last record can be used to fetch records after the current result set and\nthe cursor of the first record can be used to fetch records before the result set.\n\nNOTE: a cursor value is only valid if the 'sort_by' value hasn't changed from the\nlast fetch. For example, you cannot fetch using 'sort_by' id and then pass that\ncursor value to a 'sort_by' name."},
+	{FlagName: "cursor", Shorthand: "c", FieldPath: "Cursor", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `queryParam:"style=deepObject,explode=true,name=cursor"`, Description: "Cursor pagination. When cursor pagination is enabled, each record returned\nhas a 'cursor': pass the last one as 'cursor[after]' for the next page, or\nthe first one as 'cursor[before]' for the previous page. A cursor only works with the 'sort_by' it was fetched with.\nFor example, you cannot fetch using 'sort_by' id and then pass that cursor\nvalue to a 'sort_by' name.\n\nSetting 'cursor[enabled]' to 1 fetches the first page with cursor pagination\non, up to 'per_page' records. Setting 'cursor[before]' or 'cursor[after]' turns\nit on too."},
 	{FlagName: "sort-by", FieldPath: "SortBy", Kind: flagutil.FlagKindEnum, Optional: true, EnumValues: []string{"name", "created", "updated", "mediaCount", "id"}, Description: "Ordering. When using cursor pagination (see cursor param),\nonly 'id', 'updated' and 'created' are supported. All other sort_by options\nrequire offset pagination.\n(options: name, created, updated, mediaCount, id)"},
 	{FlagName: "sort-direction", FieldPath: "SortDirection", Kind: flagutil.FlagKindIntEnum, Optional: true, EnumValues: []string{"0", "1"}, Description: "Ordering Sort Direction (0 = desc, 1 = asc; default is 1) (options: 0, 1)"},
 	{FlagName: "hashed-ids", FieldPath: "HashedIds", Kind: flagutil.FlagKindStringArray, Optional: true, Description: "A collection of hashed ids belonging to folders to fetch"},
+	{FlagName: "personal-library", FieldPath: "PersonalLibrary", Kind: flagutil.FlagKindBool, Optional: true, Description: "When true, list only the token user's own My Library folders, instead\nof the content library folders. Account tokens act as the account\nowner, so they list the owner's My Library folders."},
 }
 
 // initListCmd initializes the list command.
@@ -28,7 +29,7 @@ func initListCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "list",
 		Short:   "List Folders",
-		Long:    "Lists folders (previously called projects) belonging to the account.\nMy Library folders are not included.\n\nFor tokens scoped to a specific user (`all:delegate_to_contact_permissions`),\nresults are limited to folders that user can see in their content library:\nfolders shared with them directly, through a contact group, or with the\nwhole account (owners and managers see every folder). Public (unlocked)\nfolders the user has no sharing on remain viewable by link but are not\nlisted.\n\n## Requires api token with one of the following permissions\n```\nRead all folder and media data\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope can also be\nused. Results are limited to the folders its authorizations name (any\npermission granted on a folder qualifies it), filtered as they would be\nfor the contact the token was created for.",
+		Long:    "Lists folders (previously called projects) belonging to the account.\nMy Library folders are not included unless `personal_library` is true.\n\nFor tokens scoped to a specific user (`all:delegate_to_contact_permissions`),\nresults are limited to folders that user can see in their content library:\nfolders shared with them directly, through a contact group, or with the\nwhole account (owners and managers see every folder). Public (unlocked)\nfolders the user has no sharing on remain viewable by link but are not\nlisted.\n\n## Requires api token with one of the following permissions\n```\nRead all folder and media data\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope can also be\nused. Results are limited to the folders its authorizations name (any\npermission granted on a folder qualifies it), filtered as they would be\nfor the contact the token was created for.",
 		Example: "  wistia folders list",
 		Args:    cobra.NoArgs,
 		RunE:    runListCmd,
@@ -72,7 +73,10 @@ func runListCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.Folders.List(cmd.Context(), req, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

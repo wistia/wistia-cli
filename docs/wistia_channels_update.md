@@ -6,6 +6,12 @@ Update Channel
 
 Updates a channel.
 
+An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+created with the `all:delegate_to_contact_permissions` scope and an
+authorization granting the `update` permission on this channel can also
+be used. The `update` permission also allows managing the channel's
+episodes and collaborators.
+
 ```
 wistia channels update [channel-hashed-id] [flags]
 ```
@@ -22,7 +28,7 @@ wistia channels update [channel-hashed-id] [flags]
   -a, --auto-publish-enabled       Whether the episodes are automatically published when added to the channel. Cannot be enabled if podcasting is on.
       --body string                Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.
   -c, --channel-hashed-id string   The hashed id of the Channel (or pass it as the [channel-hashed-id] argument)
-      --custom-url string          Use if embedding the channel on your own site. The custom URL ensures links always direct to your page and not Wistia's.
+      --custom-url string          The page on your own website where you embedded this channel.
       --description string         The channel's description.
   -h, --help                       help for update
   -n, --name string                The display name for the channel
@@ -45,6 +51,7 @@ wistia channels update [channel-hashed-id] [flags]
       --interactive            Prompt for missing inputs and open guided configure/auth forms (forms fall back to line prompts on stdin off-TTY) (default true)
   -q, --jq string              Filter and transform output using a jq expression (e.g., '.name', '.items[] | .id')
       --no-interactive         Disable all interactive features (auto-prompting, explorer auto-launch, TUI forms)
+      --no-keyring             Never read or write the OS keychain; store secrets in the config file instead (env: WISTIA_CLI_NO_KEYRING)
   -o, --output-format string   Specify the output format. Options: pretty, json, yaml, table, toon. (default "pretty")
       --raw-output             Write --jq string results as raw text instead of JSON strings (like jq -r); non-string results stay JSON
       --server string          Select a server by index (for indexed servers) or name (for named servers)

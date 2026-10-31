@@ -10,6 +10,10 @@ its name is managed by Wistia.
 
 Changes propagate to everything the brand is applied to.
 
+Logos (`page_logo`, `player_logo`) reference images already in the account
+by delivery URL. To add a new logo image, upload it to the Upload API with
+`asset_type=brand_image` first and pass the returned `asset.url`.
+
 ## Requires api token with one of the following permissions
 ```
 All data
@@ -19,6 +23,11 @@ Tokens with the "Act with a team member's permissions" permission
 (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 made with such a token are authorized using the permissions of the
 contact assigned to the token.
+
+An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+created with the `all:delegate_to_contact_permissions` scope and an
+authorization granting the `update` permission on this brand can also be
+used.
 
 ```
 wistia brands update [brand-id] [flags]
@@ -44,8 +53,8 @@ wistia brands update [brand-id] [flags]
   -n, --name string                    The brand's display name. Renaming the account-level default brand is ignored; its name is managed by Wistia.
       --opaque-controls string         Controls the opacity of the video player control bar and big play button. (options: enabled, disabled, unset)
       --page-background-color string   JSON value (one of: string | array of array of any)
-      --page-logo string               The brand logo used for pages. 'url' must be a Wistia delivery URL — see the note on uploading below. On accounts without custom branding the player logo is ignored, but the page logo is always applied.
-      --player-logo string             The brand logo used for the player. 'url' must be a Wistia delivery URL — see the note on uploading below. Ignored on accounts whose plan doesn't include custom branding.
+      --page-logo string               The brand logo used for pages. On accounts without custom branding the player logo is ignored, but the page logo is always applied.
+      --player-logo string             The brand logo used for the player. Ignored on accounts whose plan doesn't include custom branding.
       --primary-color string           JSON value (one of: string | array of array of any)
 ```
 
@@ -62,6 +71,7 @@ wistia brands update [brand-id] [flags]
       --interactive            Prompt for missing inputs and open guided configure/auth forms (forms fall back to line prompts on stdin off-TTY) (default true)
   -q, --jq string              Filter and transform output using a jq expression (e.g., '.name', '.items[] | .id')
       --no-interactive         Disable all interactive features (auto-prompting, explorer auto-launch, TUI forms)
+      --no-keyring             Never read or write the OS keychain; store secrets in the config file instead (env: WISTIA_CLI_NO_KEYRING)
   -o, --output-format string   Specify the output format. Options: pretty, json, yaml, table, toon. (default "pretty")
       --raw-output             Write --jq string results as raw text instead of JSON strings (like jq -r); non-string results stay JSON
       --server string          Select a server by index (for indexed servers) or name (for named servers)

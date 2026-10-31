@@ -1,16 +1,17 @@
-## wistia bulk-actions post-bulk
+## wistia bulk-actions create
 
 Create Bulk Actions
 
 ### Synopsis
 
-Submits a batch of up to 1000 create, update, delete, and move actions to be
-processed asynchronously. Returns a background job status whose Show
+Submits a batch of up to 1000 create, update, delete, move, and add_tags
+actions to be processed asynchronously. Returns a background job status whose Show
 endpoint reports aggregate progress and per-action results, including the
 hashed IDs of created records.
 
 Supported resource types are `media`, `folder`, `subfolder`, `channel`,
-`channel_episode`, `captions`, and the ten `customization_*` concerns. A
+`channel_episode`, `captions`, `media_speaker`, and the ten
+`customization_*` concerns. A
 `folder` is a top-level folder (previously called a project); a `subfolder`
 is nested inside one and requires `folder_id` and `name` when created. A
 `captions` action operates on one caption track -- one media in one
@@ -23,6 +24,19 @@ Purchasing captions is not available here -- it has its own endpoint.
 A `move` action targets one media and accepts a destination `folder_id` and
 optional `subfolder_id`. Bulk moves can use different destinations and are
 not subject to the Move Media endpoint's 100-item limit or separate throttle.
+
+An `add_tags` action targets one media and takes `tag_names`; it keeps the
+media's existing tags, where a `media` update carrying `tags` replaces them.
+
+A `media_speaker` action labels speakers on one media. A `create` takes the
+media's hashed ID as its `id` and the Assign Speaker body, or, to assign
+several people on that media, a `speakers` list of up to 20 objects each
+with a `speaker_profile_id` and an optional `detected_speaker_id`, plus the
+media's `expected_version`. A media's speakers are assigned together, so a
+failure leaves that media unchanged; put all of one media's speakers in one
+action, since each named speaker changes the media's version. A `delete` takes a `media_speaker_id`
+as its `id` and an optional `expected_version`. Neither can be used in a
+`job`.
 
 Player customizations are addressed one concern at a time
 (`customization_appearance`, `customization_playback`, and so on), matching
@@ -60,14 +74,20 @@ Tokens with the "Act with a team member's permissions" permission
 made with such a token are authorized using the permissions of the
 contact assigned to the token.
 
+[Expiring access tokens](https://docs.wistia.com/reference/post_expiring-token)
+with authorizations cannot use this endpoint: each action is authorized
+later, in a background job, as the persisted contact that submitted it,
+and a token's authorizations are not carried into that job. Such requests
+are forbidden.
+
 ```
-wistia bulk-actions post-bulk [flags]
+wistia bulk-actions create [flags]
 ```
 
 ### Examples
 
 ```
-  wistia bulk-actions post-bulk
+  wistia bulk-actions create
 ```
 
 ### Options
@@ -77,15 +97,20 @@ wistia bulk-actions post-bulk [flags]
                          request, and the request body must stay under 2 MB -- whichever limit is
                          reached first. An oversized body is rejected with a '413' and no action
                          in it runs. Each action specifies an operation (create, update, delete,
-                         or move), a resource type, and the relevant payload or record ID.
+                         move, or add_tags), a resource type, and the relevant payload or record
+                         ID. Actions run independently, so one request can mix operations and
+                         resource types, but no action can depend on another's result.
                          
-                         Use 'job' instead when every record takes the same payload.
+                         Provide exactly one of 'actions' or 'job'; a request carrying both is
+                         rejected. Use 'job' instead when every record takes the same payload.
                          (JSON array)
       --body string      Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.
-  -h, --help             help for post-bulk
+  -h, --help             help for create
   -j, --job string       One change applied to many records, named by a parent ('scope') or listed
                          explicitly ('ids'). The server resolves the target and runs one action per
                          record, so a folder of 400 media takes one job rather than 400 actions.
+                         Provide exactly one of 'job' or 'actions'; a request carrying both is
+                         rejected.
                          
                          A 'scope' resolves to exactly what the matching list endpoint returns for
                          that parent, including its defaults -- so a 'folder' scope on 'media' reaches
@@ -112,6 +137,7 @@ wistia bulk-actions post-bulk [flags]
       --interactive            Prompt for missing inputs and open guided configure/auth forms (forms fall back to line prompts on stdin off-TTY) (default true)
   -q, --jq string              Filter and transform output using a jq expression (e.g., '.name', '.items[] | .id')
       --no-interactive         Disable all interactive features (auto-prompting, explorer auto-launch, TUI forms)
+      --no-keyring             Never read or write the OS keychain; store secrets in the config file instead (env: WISTIA_CLI_NO_KEYRING)
   -o, --output-format string   Specify the output format. Options: pretty, json, yaml, table, toon. (default "pretty")
       --raw-output             Write --jq string results as raw text instead of JSON strings (like jq -r); non-string results stay JSON
       --server string          Select a server by index (for indexed servers) or name (for named servers)
@@ -126,8 +152,8 @@ wistia bulk-actions post-bulk [flags]
 
 ### Machine interface
 
-* `wistia bulk-actions post-bulk --usage` — this command's flags, defaults and env vars as machine-readable KDL
-* `wistia bulk-actions post-bulk --dry-run` — preview the request without OS-keychain access or a network call (human preview on stderr)
+* `wistia bulk-actions create --usage` — this command's flags, defaults and env vars as machine-readable KDL
+* `wistia bulk-actions create --dry-run` — preview the request without OS-keychain access or a network call (human preview on stderr)
 * `--dry-run --output-format json` (or a caller-explicit `--jq`) writes one preview object per request as NDJSON on stdout; jq is not applied to previews
 * `--output-format json` or `--jq <expr>` for machine-readable live output; in agent mode errors are a JSON envelope on stderr
 

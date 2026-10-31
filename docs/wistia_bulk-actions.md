@@ -29,6 +29,7 @@ wistia bulk-actions [flags]
       --interactive            Prompt for missing inputs and open guided configure/auth forms (forms fall back to line prompts on stdin off-TTY) (default true)
   -q, --jq string              Filter and transform output using a jq expression (e.g., '.name', '.items[] | .id')
       --no-interactive         Disable all interactive features (auto-prompting, explorer auto-launch, TUI forms)
+      --no-keyring             Never read or write the OS keychain; store secrets in the config file instead (env: WISTIA_CLI_NO_KEYRING)
   -o, --output-format string   Specify the output format. Options: pretty, json, yaml, table, toon. (default "pretty")
       --raw-output             Write --jq string results as raw text instead of JSON strings (like jq -r); non-string results stay JSON
       --server string          Select a server by index (for indexed servers) or name (for named servers)
@@ -40,6 +41,6 @@ wistia bulk-actions [flags]
 ### SEE ALSO
 
 * [wistia](wistia.md)	 - Data API: Wistia Data API
-* [wistia bulk-actions post-bulk](wistia_bulk-actions_post-bulk.md)	 - Create Bulk Actions
+* [wistia bulk-actions create](wistia_bulk-actions_create.md)	 - Create Bulk Actions
 
 Exit codes: 0 ok · 1 runtime · 2 usage · 3 authentication/authorization

@@ -21,13 +21,15 @@ func initWhoamiCmd(parent *cobra.Command) error {
 Sources are shown as:
   [flag]    - Set via command line flag
   [env]     - Set via environment variable (WISTIA_CLI_*)
-  [keyring] - Set via OS keychain (stored by configure command)
+  [keyring] - Set via OS credential store: macOS Keychain, Windows Credential Manager or Secret Service (stored by configure command)
   [config]  - Set via config file (~/.config/wistia/config.yaml)
+  [default] - Built-in default
   [unset]   - Not configured
 
 Credential values are masked for security.`,
-		Args: cobra.NoArgs,
-		RunE: runWhoamiCmd,
+		Annotations: map[string]string{"speakeasy_settings_command": "true"},
+		Args:        cobra.NoArgs,
+		RunE:        runWhoamiCmd,
 	}
 	parent.AddCommand(cmd)
 	return nil
@@ -46,11 +48,15 @@ func runWhoamiCmd(cmd *cobra.Command, args []string) error {
 		}
 		credentials := map[string]any{}
 		{
-			value, source := config.ResolveSecurityCredential(cmd, "bearer-auth")
+			value, source := config.ResolveRequestSecurityCredential(cmd, "bearer-auth")
 			credentials["bearer-auth"] = map[string]any{"source": source, "value": maskSecret(value)}
 		}
 		info["credentials"] = credentials
 
+		outputFormat, outputFormatSource := whoamiOutputFormat(cmd)
+		info["preferences"] = map[string]any{
+			"output-format": map[string]any{"source": outputFormatSource, "value": outputFormat},
+		}
 		return output.LocalResult(cmd, info)
 	}
 
@@ -65,9 +71,24 @@ func runWhoamiCmd(cmd *cobra.Command, args []string) error {
 
 	// HTTP Bearer
 	{
-		value, source := config.ResolveSecurityCredential(cmd, "bearer-auth")
+		value, source := config.ResolveRequestSecurityCredential(cmd, "bearer-auth")
 		fmt.Fprintf(out, "  --%-25s [%-7s] %s\n", "bearer-auth", source, maskSecret(value))
 	}
 
+	fmt.Fprintln(out)
+	fmt.Fprintln(out, "Preferences:")
+	outputFormat, outputFormatSource := whoamiOutputFormat(cmd)
+	fmt.Fprintf(out, "  --%-25s [%-7s] %s\n", "output-format", outputFormatSource, outputFormat)
+
 	return nil
+}
+
+func whoamiOutputFormat(cmd *cobra.Command) (value, source string) {
+	if value, source := config.ResolveCredential(cmd, "output-format", false); source != "unset" {
+		return value, source
+	}
+	if output.IsAgentMode() {
+		return "toon", "default"
+	}
+	return "pretty", "default"
 }

@@ -10,6 +10,7 @@ import (
 
 	"github.com/wistia/wistia-cli/internal/cli"
 	"github.com/wistia/wistia-cli/internal/clierrors"
+	"github.com/wistia/wistia-cli/internal/config"
 )
 
 // version and buildTime can be set at build time using Go linker flags:
@@ -29,7 +30,7 @@ func main() {
 	if err := cli.Execute(); err != nil {
 		var rendered interface{ Rendered() bool }
 		if !errors.As(err, &rendered) || !rendered.Rendered() {
-			fmt.Fprintln(os.Stderr, err)
+			fmt.Fprintln(os.Stderr, config.ScrubSecrets(err.Error()))
 		}
 		os.Exit(clierrors.ExitCode(err))
 	}

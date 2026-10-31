@@ -245,6 +245,8 @@ Secret credentials (tokens, API keys, passwords) are automatically stored in:
 
 If no keychain is available (e.g., in CI environments), credentials fall back to the config file.
 
+Where the keychain cannot be unlocked (e.g., headless Linux or SSH sessions with a locked GNOME Keyring), skip it entirely with `--no-keyring`, `WISTIA_CLI_NO_KEYRING=true`, or `no_keyring: true` in the config file. The keychain is then never read or written, and secrets are stored in the config file instead; flags and environment variables still take precedence.
+
 ### 4. Configuration file
 
 Run the interactive `configure` command to store non-secret settings:
@@ -280,8 +282,8 @@ Configuration is stored in `~/.config/wistia/config.yaml`.
   * [`delete-custom-metadata-field-definitions-key`](docs/wistia_custom-metadata-field-definitions_delete-custom-metadata-field-definitions-key.md) - Archive Custom Metadata Field Definition
   * [`post-custom-metadata-field-definitions-key-restore`](docs/wistia_custom-metadata-field-definitions_post-custom-metadata-field-definitions-key-restore.md) - Restore Custom Metadata Field Definition
 * [`deleted-media`](docs/wistia_deleted-media.md) - Operations for deleted-media
-  * [`get`](docs/wistia_deleted-media_get.md) - List Deleted Media
-  * [`post-deleted-media-restore`](docs/wistia_deleted-media_post-deleted-media-restore.md) - Restore Deleted Media
+  * [`list`](docs/wistia_deleted-media_list.md) - List Deleted Media
+  * [`restore`](docs/wistia_deleted-media_restore.md) - Restore Deleted Media
 * [`media`](docs/wistia_media.md) - Operations for media
   * [`list`](docs/wistia_media_list.md) - List Media
   * [`get`](docs/wistia_media_get.md) - Show Media
@@ -343,6 +345,8 @@ Configuration is stored in `~/.config/wistia/config.yaml`.
   * [`remove`](docs/wistia_speakers_remove.md) - Remove Speaker from Media
   * [`list`](docs/wistia_speakers_list.md) - List Speakers
   * [`create`](docs/wistia_speakers_create.md) - Create Speaker
+  * [`update`](docs/wistia_speakers_update.md) - Update Speaker
+  * [`delete`](docs/wistia_speakers_delete.md) - Delete Speaker
 * [`localizations`](docs/wistia_localizations.md) - Operations for localizations
   * [`list`](docs/wistia_localizations_list.md) - List Localizations
   * [`create`](docs/wistia_localizations_create.md) - Create Localization
@@ -373,7 +377,7 @@ Configuration is stored in `~/.config/wistia/config.yaml`.
   * [`create`](docs/wistia_tags_create.md) - Create Tags
   * [`delete`](docs/wistia_tags_delete.md) - Delete Tag
 * [`bulk-actions`](docs/wistia_bulk-actions.md) - Operations for bulk-actions
-  * [`post-bulk`](docs/wistia_bulk-actions_post-bulk.md) - Create Bulk Actions
+  * [`create`](docs/wistia_bulk-actions_create.md) - Create Bulk Actions
 * [`bulk`](docs/wistia_bulk.md) - Operations for bulk
   * [`purchase`](docs/wistia_bulk_purchase.md) - Create Bulk Purchase
 * [`taggings`](docs/wistia_taggings.md) - Operations for taggings
@@ -688,7 +692,7 @@ In human output modes, stdout is empty and the `[DRY-RUN]` block goes to stderr.
 - Request headers (sensitive values redacted)
 - Request body preview (sensitive fields redacted)
 
-With `--output-format json`, or with a caller-explicit `--jq`, stderr is silent and stdout is NDJSON: one compact preview object per would-be request. The jq filter is not applied, and command-declared jq presets do not select the JSON protocol.
+In machine modes (`--agent-mode`, `--output-format json`, `yaml` or `toon`, or a caller-explicit `--jq`), stderr is silent and stdout is NDJSON: one compact preview object per would-be request, whatever the output format. The jq filter is not applied, and command-declared jq presets do not select the JSON protocol.
 
 ```json
 {"dry_run":true,"request":{"method":"POST","url":"https://…","headers":{"Accept":["application/json"],…},"body":<JSON value | string | null>}}
@@ -721,7 +725,7 @@ If both `--dry-run` and `--debug` are set, `--dry-run` takes precedence and no n
 
 Sensitive information is automatically redacted in diagnostic output:
 - **Headers**: `Authorization`, `Cookie`, `Set-Cookie`, `X-API-Key`, and other security headers show `[REDACTED]`
-- **Body**: JSON fields named `password`, `secret`, `token`, `api_key`, `client_secret`, etc. show `[REDACTED]`
+- **Body**: JSON fields named `password`, `secret`, `token`, `api_key`, `client_secret`, etc., and fields named like sensitive headers (such as `Authorization`, `Cookie` or `X-Auth-Token`), show `[REDACTED]`. A JSON Schema stored under such a name keeps its structure, with `default`, `const`, `enum`, `example` and `examples` masked at every level
 - **Binary data**: binary media and canonical base64 strings are replaced with `<bytes:N>`
 - **URL query**: credential-like query parameters are replaced with `[REDACTED]`
 

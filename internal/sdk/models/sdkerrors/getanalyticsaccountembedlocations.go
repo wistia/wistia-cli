@@ -35,6 +35,20 @@ func (e *GetAnalyticsAccountEmbedLocationsInternalServerError) Error() string {
 	return string(data)
 }
 
+// GetAnalyticsAccountEmbedLocationsUnprocessableEntityError - Unprocessable entity
+type GetAnalyticsAccountEmbedLocationsUnprocessableEntityError struct {
+	// Error message detailing why the request could not be processed.
+	Error_   *string                 `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata `json:"-"`
+}
+
+var _ error = &GetAnalyticsAccountEmbedLocationsUnprocessableEntityError{}
+
+func (e *GetAnalyticsAccountEmbedLocationsUnprocessableEntityError) Error() string {
+	data, _ := json.Marshal(e)
+	return string(data)
+}
+
 // GetAnalyticsAccountEmbedLocationsForbiddenError - Forbidden, token is valid but account does not have access to feature
 type GetAnalyticsAccountEmbedLocationsForbiddenError struct {
 	Error_   *string                 `json:"error,omitzero"`

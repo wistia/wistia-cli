@@ -9,7 +9,7 @@ Display the currently configured settings and their sources.
 Sources are shown as:
   [flag]    - Set via command line flag
   [env]     - Set via environment variable (WISTIA_CLI_*)
-  [keyring] - Set via OS keychain (stored by login/configure command)
+  [keyring] - Set via OS credential store: macOS Keychain, Windows Credential Manager or Secret Service (stored by login/configure command)
   [config]  - Set via config file (~/.config/wistia/config.yaml)
   [unset]   - Not configured
 
@@ -38,6 +38,7 @@ wistia auth whoami [flags]
       --interactive            Prompt for missing inputs and open guided configure/auth forms (forms fall back to line prompts on stdin off-TTY) (default true)
   -q, --jq string              Filter and transform output using a jq expression (e.g., '.name', '.items[] | .id')
       --no-interactive         Disable all interactive features (auto-prompting, explorer auto-launch, TUI forms)
+      --no-keyring             Never read or write the OS keychain; store secrets in the config file instead (env: WISTIA_CLI_NO_KEYRING)
   -o, --output-format string   Specify the output format. Options: pretty, json, yaml, table, toon. (default "pretty")
       --raw-output             Write --jq string results as raw text instead of JSON strings (like jq -r); non-string results stay JSON
       --server string          Select a server by index (for indexed servers) or name (for named servers)

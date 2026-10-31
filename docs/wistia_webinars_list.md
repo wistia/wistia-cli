@@ -17,6 +17,11 @@ Tokens with the "Act with a team member's permissions" permission
 made with such a token are authorized using the permissions of the
 contact assigned to the token.
 
+An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+created with the `all:delegate_to_contact_permissions` scope and an
+authorization naming a webinar (any permission) can also be used; it
+lists the webinars the token names.
+
 ```
 wistia webinars list [flags]
 ```
@@ -30,16 +35,15 @@ wistia webinars list [flags]
 ### Options
 
 ```
-  -c, --cursor string            If 'cursor[enabled]' is set to 1 then cursor pagination is enabled and the
-                                 first set of records are fetched up to the 'per_page'. Cursor
-                                 pagination will also be turned on if 'cursor[before]' or 'cursor[after]'
-                                 are set. Records returned will have a 'cursor' property set which can be used to fetch more records in the same 'sort_by' ordering.
-                                 The cursor value of the last record can be used to fetch records after the current result set and
-                                 the cursor of the first record can be used to fetch records before the result set.
+  -c, --cursor string            Cursor pagination. When cursor pagination is enabled, each record returned
+                                 has a 'cursor': pass the last one as 'cursor[after]' for the next page, or
+                                 the first one as 'cursor[before]' for the previous page. A cursor only works with the 'sort_by' it was fetched with.
+                                 For example, you cannot fetch using 'sort_by' id and then pass that cursor
+                                 value to a 'sort_by' name.
                                  
-                                 NOTE: a cursor value is only valid if the 'sort_by' value hasn't changed from the
-                                 last fetch. For example, you cannot fetch using 'sort_by' id and then pass that
-                                 cursor value to a 'sort_by' name.
+                                 Setting 'cursor[enabled]' to 1 fetches the first page with cursor pagination
+                                 on, up to 'per_page' records. Setting 'cursor[before]' or 'cursor[after]' turns
+                                 it on too.
       --hashed-ids stringArray   Filter by specific webinars IDs
   -h, --help                     help for list
       --page int                 The page number to retrieve. This cannot be combined with 'cursor',
@@ -66,6 +70,7 @@ wistia webinars list [flags]
       --interactive            Prompt for missing inputs and open guided configure/auth forms (forms fall back to line prompts on stdin off-TTY) (default true)
   -q, --jq string              Filter and transform output using a jq expression (e.g., '.name', '.items[] | .id')
       --no-interactive         Disable all interactive features (auto-prompting, explorer auto-launch, TUI forms)
+      --no-keyring             Never read or write the OS keychain; store secrets in the config file instead (env: WISTIA_CLI_NO_KEYRING)
   -o, --output-format string   Specify the output format. Options: pretty, json, yaml, table, toon. (default "pretty")
       --raw-output             Write --jq string results as raw text instead of JSON strings (like jq -r); non-string results stay JSON
       --server string          Select a server by index (for indexed servers) or name (for named servers)

@@ -15,9 +15,10 @@ exactly by default, or as a prefix with `path_match=prefix` (e.g.
 `/pricing` also matching `/pricing/plans`). A path that is empty or `/`
 is ignored, returning media across all paths on the domain.
 
-Embed location data is retained for 6 months; a `start_date` older than
-that returns a 422 error. When `start_date` and `end_date` are omitted,
-the full 6-month queryable window is used.
+Embed location data is retained for 6 months. A `start_date` older than
+that is moved forward to 6 months ago (UTC); a range that ends before then
+returns a 422 error. When `start_date` and `end_date` are omitted, the full
+6-month queryable window is used.
 
 
 ## Requires api token with one of the following permissions
@@ -29,6 +30,11 @@ Tokens with the "Act with a team member's permissions" permission
 (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 made with such a token are authorized using the permissions of the
 contact assigned to the token.
+
+An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+created with the `all:delegate_to_contact_permissions` scope and an
+`account` authorization granting the `view-stats` permission can also
+be used.
 
 ```
 wistia analytics-account find-media-by-embed-location [flags]
@@ -48,7 +54,7 @@ wistia analytics-account find-media-by-embed-location [flags]
   -h, --help                help for find-media-by-embed-location
       --path-match string   How to match the path of 'embed_url' against embed locations. 'exact' requires the path to match exactly; 'prefix' matches any embed path starting with it. (options: exact, prefix) (default "exact")
       --per-page int        Number of media hashed IDs to return (max 1000). (default 100)
-  -s, --start-date string   Start date for the analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date. Must be within the last 6 months. Defaults to 6 months ago, the start of the queryable window.
+  -s, --start-date string   Start date for the analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date. An older date is moved forward to 6 months ago. Defaults to 6 months ago, the start of the queryable window.
 ```
 
 ### Options inherited from parent commands
@@ -64,6 +70,7 @@ wistia analytics-account find-media-by-embed-location [flags]
       --interactive            Prompt for missing inputs and open guided configure/auth forms (forms fall back to line prompts on stdin off-TTY) (default true)
   -q, --jq string              Filter and transform output using a jq expression (e.g., '.name', '.items[] | .id')
       --no-interactive         Disable all interactive features (auto-prompting, explorer auto-launch, TUI forms)
+      --no-keyring             Never read or write the OS keychain; store secrets in the config file instead (env: WISTIA_CLI_NO_KEYRING)
   -o, --output-format string   Specify the output format. Options: pretty, json, yaml, table, toon. (default "pretty")
       --raw-output             Write --jq string results as raw text instead of JSON strings (like jq -r); non-string results stay JSON
       --server string          Select a server by index (for indexed servers) or name (for named servers)
