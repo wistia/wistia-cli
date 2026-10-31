@@ -16,7 +16,7 @@ import (
 
 var postMultipartCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "project-id", Shorthand: "p", FieldPath: "ProjectID", Kind: flagutil.FlagKindString, Optional: true, Description: "The hashed id of the project to upload media into."},
-	{FlagName: "name", Shorthand: "n", FieldPath: "Name", Kind: flagutil.FlagKindString, Optional: true, Description: "A display name to use for the media in Wistia."},
+	{FlagName: "name", Shorthand: "n", FieldPath: "Name", Kind: flagutil.FlagKindString, Optional: true, HasMaxLength: true, MaxLength: 255, Description: "A display name to use for the media in Wistia."},
 	{FlagName: "description", FieldPath: "Description", Kind: flagutil.FlagKindString, Optional: true, Description: "A description to use for the media in Wistia."},
 	{FlagName: "contact-id", Shorthand: "c", FieldPath: "ContactID", Kind: flagutil.FlagKindInt64, Optional: true, Description: "A Wistia contact id."},
 	{FlagName: "access-token", Shorthand: "a", FieldPath: "AccessToken", Kind: flagutil.FlagKindString, Optional: true, Description: "A 64 character hex string. This parameter can be found on your API access page OR can be the token you received from authenticating via Oauth2. Note this approach is legacy and discouraged. We recommend using Bearer Token authentication."},
@@ -83,7 +83,10 @@ func runPostMultipartCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.UploadOrImportMedia.PostMultipart(cmd.Context(), request, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

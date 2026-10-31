@@ -22,6 +22,19 @@ func (e *PostBulkPurchaseInternalServerError) Error() string {
 	return string(data)
 }
 
+// PostBulkPurchaseForbiddenError - Forbidden, token is valid but account does not have access to feature
+type PostBulkPurchaseForbiddenError struct {
+	Error_   *string                 `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata `json:"-"`
+}
+
+var _ error = &PostBulkPurchaseForbiddenError{}
+
+func (e *PostBulkPurchaseForbiddenError) Error() string {
+	data, _ := json.Marshal(e)
+	return string(data)
+}
+
 // PostBulkPurchaseUnauthorizedError - Unauthorized, invalid or missing token
 type PostBulkPurchaseUnauthorizedError struct {
 	// A machine-readable identifier for the specific authorization failure.
