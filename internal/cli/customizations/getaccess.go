@@ -24,7 +24,7 @@ func initGetAccessCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "get-access [media-id]",
 		Short:   "Show Access Customizations",
-		Long:    "Fetches the explicitly-set password-protection settings for the video,\nincluding the stored password.\n\n## Requires api token with one of the following permissions\n```\nRead all folder and media data\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
+		Long:    "Fetches the explicitly-set password-protection settings for the video,\nincluding the stored password.\n\n## Requires api token with one of the following permissions\n```\nRead all folder and media data\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\nauthorization for this media can also be used; any permission granted on\nthe media allows reading its customizations.",
 		Example: "  wistia customizations get-access --media-id <id>",
 		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runGetAccessCmd,
@@ -80,7 +80,10 @@ func runGetAccessCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.Customizations.GetAccess(cmd.Context(), *req, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

@@ -22,6 +22,19 @@ func (e *PostBulkInternalServerError) Error() string {
 	return string(data)
 }
 
+// PostBulkForbiddenError - Forbidden, token is valid but account does not have access to feature
+type PostBulkForbiddenError struct {
+	Error_   *string                 `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata `json:"-"`
+}
+
+var _ error = &PostBulkForbiddenError{}
+
+func (e *PostBulkForbiddenError) Error() string {
+	data, _ := json.Marshal(e)
+	return string(data)
+}
+
 // PostBulkUnauthorizedError - Unauthorized, invalid or missing token
 type PostBulkUnauthorizedError struct {
 	// A machine-readable identifier for the specific authorization failure.

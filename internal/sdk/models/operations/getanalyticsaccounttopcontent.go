@@ -456,6 +456,12 @@ type GetAnalyticsAccountTopContentResponseBody1 struct {
 	UniquePlays optionalnullable.OptionalNullable[int64] `json:"unique_plays,omitzero"`
 	// The number of form submissions.
 	FormConversions optionalnullable.OptionalNullable[int64] `json:"form_conversions,omitzero"`
+	// The number of times a call-to-action was shown.
+	CtaImpressions optionalnullable.OptionalNullable[int64] `json:"cta_impressions,omitzero"`
+	// The number of times a call-to-action was clicked.
+	CtaConversions optionalnullable.OptionalNullable[int64] `json:"cta_conversions,omitzero"`
+	// The rate of CTA clicks over impressions (between 0 and 1).
+	CtaConversionRate optionalnullable.OptionalNullable[float32] `json:"cta_conversion_rate,omitzero"`
 }
 
 func (g GetAnalyticsAccountTopContentResponseBody1) MarshalJSON() ([]byte, error) {
@@ -574,6 +580,27 @@ func (g *GetAnalyticsAccountTopContentResponseBody1) GetFormConversions() option
 	return g.FormConversions
 }
 
+func (g *GetAnalyticsAccountTopContentResponseBody1) GetCtaImpressions() optionalnullable.OptionalNullable[int64] {
+	if g == nil {
+		return nil
+	}
+	return g.CtaImpressions
+}
+
+func (g *GetAnalyticsAccountTopContentResponseBody1) GetCtaConversions() optionalnullable.OptionalNullable[int64] {
+	if g == nil {
+		return nil
+	}
+	return g.CtaConversions
+}
+
+func (g *GetAnalyticsAccountTopContentResponseBody1) GetCtaConversionRate() optionalnullable.OptionalNullable[float32] {
+	if g == nil {
+		return nil
+	}
+	return g.CtaConversionRate
+}
+
 // #region class-body-getanalyticsaccounttopcontentresponsebody1
 // #endregion class-body-getanalyticsaccounttopcontentresponsebody1
 
@@ -668,6 +695,9 @@ func (u *ResponseBody) UnmarshalJSON(data []byte) error {
 	}
 
 	if len(candidates) == 0 {
+		if !json.Valid(data) {
+			return fmt.Errorf("could not unmarshal `%s` into any supported union types for ResponseBody", string(data))
+		}
 		u.UnknownRaw = json.RawMessage(data)
 		u.Type = ResponseBodyTypeUnknown
 		return nil
@@ -695,6 +725,9 @@ func (u *ResponseBody) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 
+	if !json.Valid(data) {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for ResponseBody", string(data))
+	}
 	u.UnknownRaw = json.RawMessage(data)
 	u.Type = ResponseBodyTypeUnknown
 	return nil

@@ -42,6 +42,13 @@ func newBackgroundJobStatus(rootSDK *Wistia, sdkConfig config.SDKConfiguration, 
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope can also be
+// used when its authorizations cover the record the job acts on: any
+// permission on that media, folder, channel or webinar suffices, and a job
+// on the account itself is covered by every token for that account. Jobs on
+// other records, including bulk operations, are not found.
 func (s *BackgroundJobStatus) Get(ctx context.Context, request operations.GetBackgroundJobStatusBackgroundJobStatusIDRequest, opts ...operations.Option) (*operations.GetBackgroundJobStatusBackgroundJobStatusIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

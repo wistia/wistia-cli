@@ -16,7 +16,7 @@ import (
 
 var findMediaByEmbedLocationCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "embed-url", FieldPath: "EmbedURL", Kind: flagutil.FlagKindString, Required: true, Description: "The URL of the page to look up, e.g. 'https://example.com/pricing'. The protocol is optional (https is assumed), so 'example.com/pricing' also works. [required]"},
-	{FlagName: "start-date", Shorthand: "s", FieldPath: "StartDate", Kind: flagutil.FlagKindDate, Optional: true, Description: "Start date for the analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date. Must be within the last 6 months. Defaults to 6 months ago, the start of the queryable window."},
+	{FlagName: "start-date", Shorthand: "s", FieldPath: "StartDate", Kind: flagutil.FlagKindDate, Optional: true, Description: "Start date for the analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date. An older date is moved forward to 6 months ago. Defaults to 6 months ago, the start of the queryable window."},
 	{FlagName: "end-date", FieldPath: "EndDate", Kind: flagutil.FlagKindDate, Optional: true, Description: "End date for the analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date. Defaults to tomorrow, so today's activity is included."},
 	{FlagName: "path-match", FieldPath: "PathMatch", Kind: flagutil.FlagKindEnum, Optional: true, HasDefault: true, DefaultStr: "exact", EnumValues: []string{"exact", "prefix"}, Description: "How to match the path of 'embed_url' against embed locations. 'exact' requires the path to match exactly; 'prefix' matches any embed path starting with it. (options: exact, prefix)"},
 	{FlagName: "per-page", FieldPath: "PerPage", Kind: flagutil.FlagKindInt64, Optional: true, HasDefault: true, DefaultInt: 100, HasMinimum: true, Minimum: 1, HasMaximum: true, Maximum: 1000, Description: "Number of media hashed IDs to return (max 1000)."},
@@ -27,7 +27,7 @@ func initFindMediaByEmbedLocationCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "find-media-by-embed-location",
 		Short:   "Find Media By Embed Location",
-		Long:    "Find the media embedded at a given URL. Returns the hashed IDs of the\naccount's media that recorded activity at that embed location during the\ndate range, ranked by plays. The resulting hashed IDs can be passed to\nother endpoints, such as Show Account Top Content's `hashed_ids[]` filter,\nto fetch analytics for those media.\n\nThe domain of `embed_url` is always matched exactly. Its path is matched\nexactly by default, or as a prefix with `path_match=prefix` (e.g.\n`/pricing` also matching `/pricing/plans`). A path that is empty or `/`\nis ignored, returning media across all paths on the domain.\n\nEmbed location data is retained for 6 months; a `start_date` older than\nthat returns a 422 error. When `start_date` and `end_date` are omitted,\nthe full 6-month queryable window is used.\n\n\n## Requires api token with one of the following permissions\n```\nRead detailed stats\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
+		Long:    "Find the media embedded at a given URL. Returns the hashed IDs of the\naccount's media that recorded activity at that embed location during the\ndate range, ranked by plays. The resulting hashed IDs can be passed to\nother endpoints, such as Show Account Top Content's `hashed_ids[]` filter,\nto fetch analytics for those media.\n\nThe domain of `embed_url` is always matched exactly. Its path is matched\nexactly by default, or as a prefix with `path_match=prefix` (e.g.\n`/pricing` also matching `/pricing/plans`). A path that is empty or `/`\nis ignored, returning media across all paths on the domain.\n\nEmbed location data is retained for 6 months. A `start_date` older than\nthat is moved forward to 6 months ago (UTC); a range that ends before then\nreturns a 422 error. When `start_date` and `end_date` are omitted, the full\n6-month queryable window is used.\n\n\n## Requires api token with one of the following permissions\n```\nRead detailed stats\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\n`account` authorization granting the `view-stats` permission can also\nbe used.",
 		Example: "  wistia analytics-account find-media-by-embed-location --embed-url https://milky-jury.com/",
 		Args:    cobra.NoArgs,
 		RunE:    runFindMediaByEmbedLocationCmd,
@@ -72,7 +72,10 @@ func runFindMediaByEmbedLocationCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.AnalyticsAccount.FindMediaByEmbedLocation(cmd.Context(), *req, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

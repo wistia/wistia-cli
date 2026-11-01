@@ -24,7 +24,7 @@ func initGetEngagementCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "get-engagement [media-id]",
 		Short:   "Show Media Engagement",
-		Long:    "Retrieve engagement data for a video. This endpoint provides engagement data for a specific video identified by its media-id.\n\n\n## Requires api token with one of the following permissions\n```\nRead detailed stats\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
+		Long:    "Retrieve engagement data for a video. This endpoint provides engagement data for a specific video identified by its media-id.\n\n\n## Requires api token with one of the following permissions\n```\nRead detailed stats\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\nauthorization granting the `view-stats` permission on this media can also\nbe used.",
 		Example: "  wistia stats-media get-engagement --media-id <id>",
 		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runGetEngagementCmd,
@@ -80,7 +80,10 @@ func runGetEngagementCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.StatsMedia.GetEngagement(cmd.Context(), *req, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

@@ -22,19 +22,6 @@ func (e *GetReviewBundlesInternalServerError) Error() string {
 	return string(data)
 }
 
-// GetReviewBundlesForbiddenError - Forbidden, token is valid but account does not have access to feature
-type GetReviewBundlesForbiddenError struct {
-	Error_   *string                 `json:"error,omitzero"`
-	HTTPMeta components.HTTPMetadata `json:"-"`
-}
-
-var _ error = &GetReviewBundlesForbiddenError{}
-
-func (e *GetReviewBundlesForbiddenError) Error() string {
-	data, _ := json.Marshal(e)
-	return string(data)
-}
-
 // GetReviewBundlesUnauthorizedError - Unauthorized, invalid or missing token
 type GetReviewBundlesUnauthorizedError struct {
 	// A machine-readable identifier for the specific authorization failure.

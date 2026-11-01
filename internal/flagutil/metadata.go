@@ -13,6 +13,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"regexp"
 	"slices"
 	"strconv"
 	"strings"
@@ -188,12 +189,16 @@ type FlagMeta struct {
 	HasDefault bool // true if optional+has-default (apply cobra default when flag unchanged and no body/stdin)
 
 	// Validation
-	EnumValues []string // valid values for enum validation; nil if not enum
-	MinLength  int64    // schema minLength for string flags (0 = unconstrained)
-	HasMinimum bool     // schema minimum declared for numeric flags
-	Minimum    float64  // schema minimum (valid when HasMinimum)
-	HasMaximum bool     // schema maximum declared for numeric flags
-	Maximum    float64  // schema maximum (valid when HasMaximum)
+	EnumValues          []string // valid values for enum validation; nil if not enum
+	MinLength           int64    // schema minLength for string flags (0 = unconstrained)
+	HasMaxLength        bool     // schema maxLength declared for string flags
+	MaxLength           int64    // schema maxLength (valid when HasMaxLength)
+	Pattern             string   // schema pattern for string flags ("" = unconstrained)
+	PatternErrorMessage string   // custom message used when Pattern doesn't match ("" = default message)
+	HasMinimum          bool     // schema minimum declared for numeric flags
+	Minimum             float64  // schema minimum (valid when HasMinimum)
+	HasMaximum          bool     // schema maximum declared for numeric flags
+	Maximum             float64  // schema maximum (valid when HasMaximum)
 
 	// JSON unmarshal
 	Annotations string // struct tag for JSON unmarshal, e.g. `request:"mediaType=application/json"`
@@ -577,6 +582,7 @@ func RegisterFlags(cmd *cobra.Command, meta []FlagMeta) {
 		}
 
 		if cmd.Flags().Lookup(m.FlagName) != nil {
+			MarkRequestInput(cmd, m.FlagName)
 			_ = AnnotatePromptFlag(cmd, m.FlagName, PromptFlagSpec{
 				Required:        promptMetaRequired(m),
 				PromptOptional:  true,
@@ -660,8 +666,16 @@ func BuildRequest[T any](cmd *cobra.Command, meta []FlagMeta, bodyFieldPath stri
 	v := reflect.ValueOf(&req).Elem()
 	bodyPrePopulated := false
 	hasRequestBody := bodyFieldPath != "" || bodyFlagName != "" || !isJSONSerialized(v.Type())
+	bodyRequired := false
+	if flag := cmd.Flags().Lookup(bodyFlagName); flag != nil {
+		values := flag.Annotations[AnnotationRequired]
+		bodyRequired = len(values) > 0 && values[0] == "true"
+	}
 
 	decodeBody := func(data []byte, source string) error {
+		if bodyRequired && bytes.Equal(bytes.TrimSpace(data), []byte("null")) {
+			return WithCLIValidation(fmt.Errorf("invalid value for --%s: null; the body is required", bodyFlagName))
+		}
 		u := bodyUnionMeta(meta, bodyFieldPath)
 		if bodyFieldPath != "" {
 			bodyField, err := navigateToField(v, bodyFieldPath)
@@ -670,13 +684,13 @@ func BuildRequest[T any](cmd *cobra.Command, meta []FlagMeta, bodyFieldPath stri
 			}
 			withDefaults := applyNestedUnionDefaults(applyUnionDefaults(data, u), meta, bodyFieldPath, bodyField.Type())
 			if err := unmarshalIntoField(bodyField, withDefaults); err != nil {
-				return fmt.Errorf("failed to parse %s as JSON: %w", source, err)
+				return newDecodeError("failed to parse "+source+" as JSON", err)
 			}
 			return enforceStrictOrWarn(cmd, verifyBodyKeys(source, data, bodyField, u))
 		}
 		withDefaults := applyNestedUnionDefaults(data, meta, "", reflect.TypeOf(req))
 		if err := json.Unmarshal(withDefaults, &req); err != nil {
-			return fmt.Errorf("failed to parse %s as JSON: %w", source, err)
+			return newDecodeError("failed to parse "+source+" as JSON", err)
 		}
 		v = reflect.ValueOf(&req).Elem() // refresh after unmarshal
 		return enforceStrictOrWarn(cmd, verifyBodyKeys(source, data, v, nil))
@@ -719,6 +733,10 @@ func BuildRequest[T any](cmd *cobra.Command, meta []FlagMeta, bodyFieldPath stri
 			}
 			bodyPrePopulated = true
 		}
+	}
+
+	if bodyRequired && !bodyPrePopulated {
+		return nil, &MissingRequiredFlagError{FlagName: bodyFlagName, Detail: "(or provide via stdin)"}
 	}
 
 	// When body provided via --body flag or stdin, relax Required checks for body fields
@@ -813,7 +831,7 @@ func BuildRequestBody[T any](cmd *cobra.Command, flagName string, annotations st
 		return &req, nil
 	}
 	if err := utils.UnmarshalJsonFromString(requestData, &req, annotations); err != nil {
-		return nil, fmt.Errorf("invalid %s: %w", flagName, err)
+		return nil, newDecodeError("invalid "+flagName, err)
 	}
 	source := "stdin"
 	if FlagChanged(cmd, flagName) {
@@ -1111,6 +1129,48 @@ func bodyTypeIsUnion(t reflect.Type) bool {
 	return false
 }
 
+const unionDecodePrefix = "could not unmarshal `"
+
+var unionDecodeSuffixes = []string{"` into expected (", "` into any supported union types for "}
+
+// decodeError keeps the decode failure in the error chain but replaces its
+// text, because SDK union decoders embed the raw input, which can carry
+// credentials.
+type decodeError struct {
+	msg string
+	err error
+}
+
+func newDecodeError(context string, err error) error {
+	return &decodeError{msg: context + ": " + decodeErrorMessage(err), err: err}
+}
+
+func (e *decodeError) Error() string { return e.msg }
+func (e *decodeError) Unwrap() error { return e.err }
+
+// decodeErrorMessage drops everything from the first "could not unmarshal `"
+// to the last closing phrase: the input may itself contain a closing phrase,
+// and nested union errors repeat the pattern. Without a closing phrase the
+// rest of the message is dropped.
+func decodeErrorMessage(err error) string {
+	msg := err.Error()
+	start := strings.Index(msg, unionDecodePrefix)
+	if start < 0 {
+		return msg
+	}
+	rest := msg[start+len(unionDecodePrefix):]
+	end := -1
+	for _, suffix := range unionDecodeSuffixes {
+		if i := strings.LastIndex(rest, suffix); i > end {
+			end = i
+		}
+	}
+	if end < 0 {
+		return msg[:start] + "could not unmarshal value"
+	}
+	return msg[:start] + "could not unmarshal value" + rest[end+1:]
+}
+
 func verifyBodyKeys(source string, input []byte, target reflect.Value, u *UnionMeta) error {
 	var in map[string]json.RawMessage
 	if err := json.Unmarshal(input, &in); err != nil || len(in) == 0 {
@@ -1247,13 +1307,43 @@ func closestKey(lost string, known []string) string {
 	if len([]rune(target)) >= 4 {
 		limit = 2
 	}
-	best, bestDist := "", limit+1
+	folded := make([]string, len(known))
+	for i, k := range known {
+		folded[i] = fold(k)
+	}
+	matches := nearest(target, folded, limit)
+	if len(matches) == 0 {
+		return ""
+	}
 	for _, k := range known {
-		if d := editDistance(target, fold(k)); d < bestDist {
-			best, bestDist = k, d
+		if fold(k) == matches[0] {
+			return k
 		}
 	}
-	return best
+	return ""
+}
+
+// nearest returns the candidates at the smallest edit distance from target,
+// comparing case-insensitively and keeping candidate order. A negative limit
+// accepts any distance.
+func nearest(target string, candidates []string, limit int) []string {
+	target = strings.ToLower(target)
+	best := -1
+	var matches []string
+	for _, c := range candidates {
+		d := editDistance(target, strings.ToLower(c))
+		if limit >= 0 && d > limit {
+			continue
+		}
+		switch {
+		case best < 0 || d < best:
+			best = d
+			matches = []string{c}
+		case d == best:
+			matches = append(matches, c)
+		}
+	}
+	return matches
 }
 
 func editDistance(a, b string) int {
@@ -1519,6 +1609,43 @@ func validateStringLength(m FlagMeta, val string, changed bool) error {
 	return nil
 }
 
+// maxEchoedValueLength bounds how much of a rejected value an error repeats.
+const maxEchoedValueLength = 64
+
+func quoteFlagValue(val string) string {
+	runes := []rune(val)
+	if len(runes) <= maxEchoedValueLength {
+		return strconv.Quote(val)
+	}
+	return strconv.Quote(string(runes[:maxEchoedValueLength])) + "…"
+}
+
+// validateStringConstraints rejects a supplied value outside the schema's
+// maxLength or pattern. These are never downgraded to warnings: a value that
+// fails them cannot be a valid input for the field.
+func validateStringConstraints(m FlagMeta, val string, changed bool) error {
+	if !changed {
+		return nil
+	}
+	if m.HasMaxLength && int64(utf8.RuneCountInString(val)) > m.MaxLength {
+		return WithCLIValidation(fmt.Errorf("invalid value for --%s: %s is longer than the maximum length %d", m.FlagName, quoteFlagValue(val), m.MaxLength))
+	}
+	if m.Pattern == "" {
+		return nil
+	}
+	re, err := regexp.Compile(m.Pattern)
+	if err != nil {
+		return fmt.Errorf("flag --%s declares an invalid pattern %q: %w", m.FlagName, m.Pattern, err)
+	}
+	if !re.MatchString(val) {
+		if m.PatternErrorMessage != "" {
+			return WithCLIValidation(fmt.Errorf("invalid value for --%s: %s: %s", m.FlagName, quoteFlagValue(val), m.PatternErrorMessage))
+		}
+		return WithCLIValidation(fmt.Errorf("invalid value for --%s: %s does not match the pattern %s", m.FlagName, quoteFlagValue(val), m.Pattern))
+	}
+	return nil
+}
+
 // pflag's float64 parser accepts NaN and Inf, which are not valid JSON numbers.
 func validateFiniteNumber(m FlagMeta, val float64, changed bool) error {
 	if changed && (math.IsNaN(val) || math.IsInf(val, 0)) {
@@ -1675,6 +1802,9 @@ func validateEnumValue(m FlagMeta, val string, changed bool) error {
 
 func buildStringField(cmd *cobra.Command, v reflect.Value, m FlagMeta) error {
 	val, changed := GetStringFlag(cmd, m.FlagName)
+	if err := validateStringConstraints(m, val, changed); err != nil {
+		return err
+	}
 	if err := enforceStrictOrWarn(cmd, validateStringLength(m, val, changed)); err != nil {
 		return err
 	}
@@ -2003,13 +2133,13 @@ func buildJSONField(cmd *cobra.Command, v reflect.Value, m FlagMeta) error {
 		holder := reflect.New(reflect.PtrTo(fieldType))
 		holder.Elem().Set(reflect.New(fieldType))
 		if err := utils.UnmarshalJsonFromString(val, holder.Interface(), m.Annotations); err != nil {
-			return fmt.Errorf("invalid value for --%s: %w", m.FlagName, err)
+			return newDecodeError("invalid value for --"+m.FlagName, err)
 		}
 		field.Set(holder.Elem())
 	} else {
 		target := reflect.New(fieldType)
 		if err := utils.UnmarshalJsonFromString(val, target.Interface(), m.Annotations); err != nil {
-			return fmt.Errorf("invalid value for --%s: %w", m.FlagName, err)
+			return newDecodeError("invalid value for --"+m.FlagName, err)
 		}
 		field.Set(target.Elem())
 	}
@@ -2235,6 +2365,7 @@ func registerUnionFlags(cmd *cobra.Command, m FlagMeta) {
 		// Variant-level JSON flag (skip if inherited persistent flag exists)
 		if cmd.InheritedFlags().Lookup(v.FlagName) == nil {
 			cmd.Flags().String(v.FlagName, "", v.Description)
+			MarkRequestInput(cmd, v.FlagName)
 		}
 		annotateUnionMember(cmd, v.FlagName, m.FlagName)
 
@@ -2333,7 +2464,7 @@ func buildUnionField(cmd *cobra.Command, root reflect.Value, m FlagMeta) error {
 		jsonStr, _ := GetStringFlag(cmd, m.FlagName)
 		target := reflect.New(unionType)
 		if err := utils.UnmarshalJsonFromString(string(applyUnionDefaults([]byte(jsonStr), u)), target.Interface(), ""); err != nil {
-			return fmt.Errorf("invalid value for --%s: %w", m.FlagName, err)
+			return newDecodeError("invalid value for --"+m.FlagName, err)
 		}
 		if err := enforceStrictOrWarn(cmd, verifyBodyKeys("--"+m.FlagName, []byte(jsonStr), target, u)); err != nil {
 			return err
@@ -2361,7 +2492,7 @@ func buildUnionField(cmd *cobra.Command, root reflect.Value, m FlagMeta) error {
 			jsonStr, _ := GetStringFlag(cmd, v.FlagName)
 			variantPtr := reflect.New(variantType)
 			if err := utils.UnmarshalJsonFromString(jsonStr, variantPtr.Interface(), ""); err != nil {
-				return fmt.Errorf("invalid value for --%s: %w", v.FlagName, err)
+				return newDecodeError("invalid value for --"+v.FlagName, err)
 			}
 			injectDiscriminator(variantPtr.Elem(), u.DiscriminatorKey, v.DiscriminatorValue)
 			unionVal := assembleUnionValue(unionType, v.FieldName, variantPtr)

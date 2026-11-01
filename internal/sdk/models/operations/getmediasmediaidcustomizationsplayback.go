@@ -6,6 +6,7 @@ package operations
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
 	"github.com/wistia/wistia-cli/internal/sdk/sdkinternal/utils"
 )
@@ -167,6 +168,9 @@ func (u *GetMediasMediaIDCustomizationsPlaybackVideoFoamUnion) UnmarshalJSON(dat
 	}
 
 	if len(candidates) == 0 {
+		if !json.Valid(data) {
+			return fmt.Errorf("could not unmarshal `%s` into any supported union types for GetMediasMediaIDCustomizationsPlaybackVideoFoamUnion", string(data))
+		}
 		u.UnknownRaw = json.RawMessage(data)
 		u.Type = GetMediasMediaIDCustomizationsPlaybackVideoFoamUnionTypeUnknown
 		return nil
@@ -191,6 +195,9 @@ func (u *GetMediasMediaIDCustomizationsPlaybackVideoFoamUnion) UnmarshalJSON(dat
 		return nil
 	}
 
+	if !json.Valid(data) {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for GetMediasMediaIDCustomizationsPlaybackVideoFoamUnion", string(data))
+	}
 	u.UnknownRaw = json.RawMessage(data)
 	u.Type = GetMediasMediaIDCustomizationsPlaybackVideoFoamUnionTypeUnknown
 	return nil
@@ -212,6 +219,7 @@ func (u GetMediasMediaIDCustomizationsPlaybackVideoFoamUnion) MarshalJSON() ([]b
 }
 
 type GetMediasMediaIDCustomizationsPlaybackClickForSound struct {
+	ShowText *string `json:"showText,omitzero"`
 }
 
 func (g GetMediasMediaIDCustomizationsPlaybackClickForSound) MarshalJSON() ([]byte, error) {
@@ -223,6 +231,13 @@ func (g *GetMediasMediaIDCustomizationsPlaybackClickForSound) UnmarshalJSON(data
 		return err
 	}
 	return nil
+}
+
+func (g *GetMediasMediaIDCustomizationsPlaybackClickForSound) GetShowText() *string {
+	if g == nil {
+		return nil
+	}
+	return g.ShowText
 }
 
 type GetMediasMediaIDCustomizationsPlaybackClickForSoundUnionType string
@@ -297,6 +312,9 @@ func (u *GetMediasMediaIDCustomizationsPlaybackClickForSoundUnion) UnmarshalJSON
 	}
 
 	if len(candidates) == 0 {
+		if !json.Valid(data) {
+			return fmt.Errorf("could not unmarshal `%s` into any supported union types for GetMediasMediaIDCustomizationsPlaybackClickForSoundUnion", string(data))
+		}
 		u.UnknownRaw = json.RawMessage(data)
 		u.Type = GetMediasMediaIDCustomizationsPlaybackClickForSoundUnionTypeUnknown
 		return nil
@@ -321,6 +339,9 @@ func (u *GetMediasMediaIDCustomizationsPlaybackClickForSoundUnion) UnmarshalJSON
 		return nil
 	}
 
+	if !json.Valid(data) {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for GetMediasMediaIDCustomizationsPlaybackClickForSoundUnion", string(data))
+	}
 	u.UnknownRaw = json.RawMessage(data)
 	u.Type = GetMediasMediaIDCustomizationsPlaybackClickForSoundUnionTypeUnknown
 	return nil
