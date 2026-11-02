@@ -70,6 +70,12 @@ func newBulk(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks *hooks.Ho
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// [Expiring access tokens](https://docs.wistia.com/reference/post_expiring-token)
+// with authorizations cannot use this endpoint: each action is authorized
+// later, in a background job, as the persisted contact that submitted it,
+// and a token's authorizations are not carried into that job. Such requests
+// are forbidden.
 func (s *Bulk) Purchase(ctx context.Context, request operations.PostBulkPurchaseRequest, opts ...operations.Option) (*operations.PostBulkPurchaseResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -241,6 +247,31 @@ func (s *Bulk) Purchase(ctx context.Context, request operations.PostBulkPurchase
 			}
 
 			var out sdkerrors.PostBulkPurchaseUnauthorizedError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
+			}
+
+			out.HTTPMeta = components.HTTPMetadata{
+				Request:  req,
+				Response: httpRes,
+			}
+			return nil, &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
+	case httpRes.StatusCode == 403:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out sdkerrors.PostBulkPurchaseForbiddenError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}

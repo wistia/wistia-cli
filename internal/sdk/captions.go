@@ -43,6 +43,12 @@ func newCaptions(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks *hook
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `edit-transcripts` permission on this media can
+// also be used. A token granted any other permission on the media lists no
+// captions.
 func (s *Captions) List(ctx context.Context, request operations.GetMediasMediaHashedIDCaptionsRequest, opts ...operations.Option) (*operations.GetMediasMediaHashedIDCaptionsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -261,6 +267,11 @@ func (s *Captions) List(ctx context.Context, request operations.GetMediasMediaHa
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `create-transcripts` permission on this media can
+// also be used.
 func (s *Captions) Create(ctx context.Context, request operations.PostMediasMediaHashedIDCaptionsRequest, opts ...operations.Option) (*operations.PostMediasMediaHashedIDCaptionsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -368,6 +379,8 @@ func (s *Captions) Create(ctx context.Context, request operations.PostMediasMedi
 	case httpRes.StatusCode == 200:
 		if o.SkipDeserialization == nil || !*o.SkipDeserialization {
 			utils.DrainBody(httpRes)
+		} else if _, err := utils.ConsumeRawBody(httpRes); err != nil {
+			return nil, err
 		}
 	case httpRes.StatusCode == 401:
 		switch {
@@ -484,6 +497,11 @@ func (s *Captions) Create(ctx context.Context, request operations.PostMediasMedi
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `create-transcripts` permission on this media can
+// also be used.
 func (s *Captions) CreateMultipart(ctx context.Context, request operations.PostMediasMediaHashedIDCaptionsMultipartRequest, opts ...operations.Option) (*operations.PostMediasMediaHashedIDCaptionsMultipartResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -591,6 +609,8 @@ func (s *Captions) CreateMultipart(ctx context.Context, request operations.PostM
 	case httpRes.StatusCode == 200:
 		if o.SkipDeserialization == nil || !*o.SkipDeserialization {
 			utils.DrainBody(httpRes)
+		} else if _, err := utils.ConsumeRawBody(httpRes); err != nil {
+			return nil, err
 		}
 	case httpRes.StatusCode == 401:
 		switch {
@@ -712,6 +732,11 @@ func (s *Captions) CreateMultipart(ctx context.Context, request operations.PostM
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope can also be
+// used. It lists only the captions of media it grants the `edit-transcripts`
+// permission on; no other permission reaches a media's captions.
 func (s *Captions) ListAll(ctx context.Context, request *operations.GetCaptionsRequest, opts ...operations.Option) (*operations.GetCaptionsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -955,8 +980,10 @@ func (s *Captions) ListAll(ctx context.Context, request *operations.GetCaptionsR
 // means the wording was located; a later write can still fail authorization,
 // version, or edit-boundary checks.
 //
-// When more than 10 exact matches exist, use the one-based `occurrence`
-// parameter to retrieve a specific later match.
+// Exact matches are returned in pages of up to 10. Set the one-based
+// `occurrence` parameter to start a page at that occurrence; the requested
+// occurrence is always the first match returned. When more matches remain,
+// request the next page with `occurrence` set to `next_occurrence`.
 //
 // Authentication and request validation failures apply to the whole request.
 // Missing, inaccessible, or otherwise unreadable media are reported as
@@ -1217,6 +1244,11 @@ func (s *Captions) FindMatches(ctx context.Context, request operations.PostCapti
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `create-transcripts` permission on this media can
+// also be used.
 func (s *Captions) Purchase(ctx context.Context, request operations.PostMediasMediaHashedIDCaptionsPurchaseRequest, opts ...operations.Option) (*operations.PostMediasMediaHashedIDCaptionsPurchaseResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1379,6 +1411,31 @@ func (s *Captions) Purchase(ctx context.Context, request operations.PostMediasMe
 			}
 			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
+	case httpRes.StatusCode == 403:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out sdkerrors.PostMediasMediaHashedIDCaptionsPurchaseForbiddenError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
+			}
+
+			out.HTTPMeta = components.HTTPMetadata{
+				Request:  req,
+				Response: httpRes,
+			}
+			return nil, &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
 	case httpRes.StatusCode == 422:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
@@ -1471,6 +1528,12 @@ func (s *Captions) Purchase(ctx context.Context, request operations.PostMediasMe
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `edit-transcripts` permission on this media can
+// also be used. For a token granted any other permission on the media the
+// captions are not found.
 func (s *Captions) Get(ctx context.Context, request operations.GetMediasMediaHashedIDCaptionsLanguageCodeRequest, opts ...operations.Option) (*operations.GetMediasMediaHashedIDCaptionsLanguageCodeResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1715,6 +1778,11 @@ func (s *Captions) Get(ctx context.Context, request operations.GetMediasMediaHas
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `edit-transcripts` permission on this media can
+// also be used.
 func (s *Captions) Update(ctx context.Context, request operations.PutMediasMediaHashedIDCaptionsLanguageCodeRequest, opts ...operations.Option) (*operations.PutMediasMediaHashedIDCaptionsLanguageCodeResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1822,6 +1890,8 @@ func (s *Captions) Update(ctx context.Context, request operations.PutMediasMedia
 	case httpRes.StatusCode == 200:
 		if o.SkipDeserialization == nil || !*o.SkipDeserialization {
 			utils.DrainBody(httpRes)
+		} else if _, err := utils.ConsumeRawBody(httpRes); err != nil {
+			return nil, err
 		}
 	case httpRes.StatusCode == 401:
 		switch {
@@ -1911,6 +1981,11 @@ func (s *Captions) Update(ctx context.Context, request operations.PutMediasMedia
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `edit-transcripts` permission on this media can
+// also be used.
 func (s *Captions) UpdateMultipart(ctx context.Context, request operations.PutMediasMediaHashedIDCaptionsLanguageCodeMultipartRequest, opts ...operations.Option) (*operations.PutMediasMediaHashedIDCaptionsLanguageCodeMultipartResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -2018,6 +2093,8 @@ func (s *Captions) UpdateMultipart(ctx context.Context, request operations.PutMe
 	case httpRes.StatusCode == 200:
 		if o.SkipDeserialization == nil || !*o.SkipDeserialization {
 			utils.DrainBody(httpRes)
+		} else if _, err := utils.ConsumeRawBody(httpRes); err != nil {
+			return nil, err
 		}
 	case httpRes.StatusCode == 401:
 		switch {
@@ -2107,6 +2184,11 @@ func (s *Captions) UpdateMultipart(ctx context.Context, request operations.PutMe
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `edit-transcripts` permission on this media can
+// also be used.
 func (s *Captions) Delete(ctx context.Context, request operations.DeleteMediasMediaHashedIDCaptionsLanguageCodeRequest, opts ...operations.Option) (*operations.DeleteMediasMediaHashedIDCaptionsLanguageCodeResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -2207,6 +2289,8 @@ func (s *Captions) Delete(ctx context.Context, request operations.DeleteMediasMe
 	case httpRes.StatusCode == 200:
 		if o.SkipDeserialization == nil || !*o.SkipDeserialization {
 			utils.DrainBody(httpRes)
+		} else if _, err := utils.ConsumeRawBody(httpRes); err != nil {
+			return nil, err
 		}
 	case httpRes.StatusCode == 401:
 		switch {
@@ -2298,6 +2382,12 @@ func (s *Captions) Delete(ctx context.Context, request operations.DeleteMediasMe
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `edit-transcripts` permission on this media can
+// also be used. When the media is a composite whose captions belong to
+// another media, the token also needs `edit-transcripts` on that media.
 func (s *Captions) Edit(ctx context.Context, request operations.PostMediasMediaHashedIDCaptionsLanguageCodeEditsRequest, opts ...operations.Option) (*operations.PostMediasMediaHashedIDCaptionsLanguageCodeEditsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

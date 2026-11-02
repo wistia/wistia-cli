@@ -35,6 +35,19 @@ func (e *PutFoldersFolderIDSharingsSharingIDNotFoundError) Error() string {
 	return string(data)
 }
 
+// PutFoldersFolderIDSharingsSharingIDForbiddenError - Forbidden, token is valid but account does not have access to feature
+type PutFoldersFolderIDSharingsSharingIDForbiddenError struct {
+	Error_   *string                 `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata `json:"-"`
+}
+
+var _ error = &PutFoldersFolderIDSharingsSharingIDForbiddenError{}
+
+func (e *PutFoldersFolderIDSharingsSharingIDForbiddenError) Error() string {
+	data, _ := json.Marshal(e)
+	return string(data)
+}
+
 // PutFoldersFolderIDSharingsSharingIDUnauthorizedError - Unauthorized, invalid or missing token
 type PutFoldersFolderIDSharingsSharingIDUnauthorizedError struct {
 	// A machine-readable identifier for the specific authorization failure.

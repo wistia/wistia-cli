@@ -47,6 +47,11 @@ func newChannels(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks *hook
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization naming a channel (any permission) can also be used; it
+// lists the channels the token names.
 func (s *Channels) List(ctx context.Context, request *operations.GetChannelsRequest, opts ...operations.Option) (*operations.GetChannelsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -282,6 +287,11 @@ func (s *Channels) List(ctx context.Context, request *operations.GetChannelsRequ
 
 // Create Channel
 // Creates a channel.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `create-channels` permission on the account
+// can also be used.
 func (s *Channels) Create(ctx context.Context, request *operations.PostChannelsRequest, opts ...operations.Option) (*operations.PostChannelsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -530,6 +540,10 @@ func (s *Channels) Create(ctx context.Context, request *operations.PostChannelsR
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization naming this channel (any permission) can also be used.
 func (s *Channels) Get(ctx context.Context, request operations.GetChannelsChannelHashedIDRequest, opts ...operations.Option) (*operations.GetChannelsChannelHashedIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -761,6 +775,12 @@ func (s *Channels) Get(ctx context.Context, request operations.GetChannelsChanne
 
 // Update Channel
 // Updates a channel.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `update` permission on this channel can also
+// be used. The `update` permission also allows managing the channel's
+// episodes and collaborators.
 func (s *Channels) Update(ctx context.Context, request operations.PutChannelsChannelHashedIDRequest, opts ...operations.Option) (*operations.PutChannelsChannelHashedIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -999,6 +1019,11 @@ func (s *Channels) Update(ctx context.Context, request operations.PutChannelsCha
 
 // Delete Channel
 // Deletes a channel.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `destroy` permission on this channel can also
+// be used.
 func (s *Channels) Delete(ctx context.Context, request operations.DeleteChannelsChannelHashedIDRequest, opts ...operations.Option) (*operations.DeleteChannelsChannelHashedIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

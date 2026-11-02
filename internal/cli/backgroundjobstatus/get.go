@@ -24,7 +24,7 @@ func initGetCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "get [background-job-status-id]",
 		Short:   "Show Background Job Status",
-		Long:    "Retrieves the status of a background job.\n\n## Requires api token with one of the following permissions\n```\nRead all data\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
+		Long:    "Retrieves the status of a background job.\n\n## Requires api token with one of the following permissions\n```\nRead all data\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope can also be\nused when its authorizations cover the record the job acts on: any\npermission on that media, folder, channel or webinar suffices, and a job\non the account itself is covered by every token for that account. Jobs on\nother records, including bulk operations, are not found.",
 		Example: "  wistia background-job-status get --background-job-status-id 108030",
 		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runGetCmd,
@@ -79,7 +79,10 @@ func runGetCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.BackgroundJobStatus.Get(cmd.Context(), *req, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}
