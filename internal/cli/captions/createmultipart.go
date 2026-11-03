@@ -26,7 +26,7 @@ func initCreateMultipartCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "create-multipart [media-hashed-id]",
 		Short:   "Create Captions",
-		Long:    "Adds captions to a specified media by providing an SRT file or its contents directly.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
+		Long:    "Adds captions to a specified media by providing an SRT file or its contents directly.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\nauthorization granting the `create-transcripts` permission on this media can\nalso be used.",
 		Example: "  wistia captions create-multipart --media-hashed-id <id> --caption-file ./path/to/file",
 		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runCreateMultipartCmd,
@@ -82,7 +82,10 @@ func runCreateMultipartCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.Captions.CreateMultipart(cmd.Context(), *req, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

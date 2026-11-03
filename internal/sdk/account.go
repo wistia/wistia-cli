@@ -43,6 +43,10 @@ func newAccount(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks *hooks
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// [Expiring access tokens](https://docs.wistia.com/reference/post_expiring-token)
+// created with authorizations cannot be used: this endpoint responds with a
+// 403, whatever the authorizations grant.
 func (s *Account) Get(ctx context.Context, opts ...operations.Option) (*operations.GetAccountDetailsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -198,6 +202,31 @@ func (s *Account) Get(ctx context.Context, opts ...operations.Option) (*operatio
 			}
 			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
+	case httpRes.StatusCode == 403:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out sdkerrors.GetAccountDetailsForbiddenError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
+			}
+
+			out.HTTPMeta = components.HTTPMetadata{
+				Request:  req,
+				Response: httpRes,
+			}
+			return nil, &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
 	case httpRes.StatusCode == 500:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
@@ -263,6 +292,10 @@ func (s *Account) Get(ctx context.Context, opts ...operations.Option) (*operatio
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// [Expiring access tokens](https://docs.wistia.com/reference/post_expiring-token)
+// created with authorizations cannot be used: this endpoint responds with a
+// 403, whatever the authorizations grant.
 func (s *Account) GetUsage(ctx context.Context, opts ...operations.Option) (*operations.GetAccountUsageResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -418,6 +451,31 @@ func (s *Account) GetUsage(ctx context.Context, opts ...operations.Option) (*ope
 			}
 			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
+	case httpRes.StatusCode == 403:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out sdkerrors.GetAccountUsageForbiddenError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
+			}
+
+			out.HTTPMeta = components.HTTPMetadata{
+				Request:  req,
+				Response: httpRes,
+			}
+			return nil, &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
 	case httpRes.StatusCode == 500:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
@@ -486,6 +544,10 @@ func (s *Account) GetUsage(ctx context.Context, opts ...operations.Option) (*ope
 // Tokens with the "Act with a team member's permissions" permission
 // (`all:delegate_to_contact_permissions` scope) can also be used. The account is always derived
 // from the authenticated token; this endpoint does not accept an account identifier.
+//
+// [Expiring access tokens](https://docs.wistia.com/reference/post_expiring-token)
+// created with authorizations cannot be used: this endpoint responds with a
+// 403, whatever the authorizations grant.
 func (s *Account) GetCreditBalance(ctx context.Context, opts ...operations.Option) (*operations.GetCreditBalanceResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -641,6 +703,31 @@ func (s *Account) GetCreditBalance(ctx context.Context, opts ...operations.Optio
 			}
 			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
+	case httpRes.StatusCode == 403:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out sdkerrors.GetCreditBalanceForbiddenError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
+			}
+
+			out.HTTPMeta = components.HTTPMetadata{
+				Request:  req,
+				Response: httpRes,
+			}
+			return nil, &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
 	case httpRes.StatusCode == 404:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
@@ -736,6 +823,11 @@ func (s *Account) GetCreditBalance(ctx context.Context, opts ...operations.Optio
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope can also be
+// used, whatever its authorizations name; the preload belongs to the token's
+// own account.
 func (s *Account) GetBrandPreload(ctx context.Context, opts ...operations.Option) (*operations.GetBrandPreloadResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -949,6 +1041,11 @@ func (s *Account) GetBrandPreload(ctx context.Context, opts ...operations.Option
 // Requires the OAuth contact to be an owner or manager of the account
 // (or a Wistia admin) — mirrors the auth check on the underlying
 // `updateWtwBrandKitAccountSettings` GraphQL mutation.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// `account` authorization granting the `manage-brand-preload` permission can
+// also be used.
 //
 // Deliberately narrower than the mutation: this endpoint does not
 // create/update BrandKits or set body font family. Glass's onboarding
@@ -1271,6 +1368,11 @@ func (s *Account) UpdateBrandPreload(ctx context.Context, request *operations.Up
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope can also be
+// used, whatever its authorizations name; the colors belong to the token's
+// own account.
 func (s *Account) GetBrandKitColors(ctx context.Context, opts ...operations.Option) (*operations.GetBrandKitColorsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1478,6 +1580,10 @@ func (s *Account) GetBrandKitColors(ctx context.Context, opts ...operations.Opti
 // GetTokenDetails - Get Current Token
 // Retrieves a summary of the token used to make the API request. This endpoint can primarily be used to
 // debug permission issues with the API.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// can also be used. The response then describes the expiring token itself,
+// its scopes and expiry, not the API token or contact that created it.
 func (s *Account) GetTokenDetails(ctx context.Context, opts ...operations.Option) (*operations.GetTokenDetailsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

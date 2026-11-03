@@ -17,7 +17,7 @@ func initGetUsageCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "get-usage",
 		Short:   "Get Account Usage",
-		Long:    "Retrieves plan, usage, and limit information for the current account.\n\nThe response includes plan tier, upload eligibility, and links to billing pages.\nUsage and limit details (media counts, storage, seats, bandwidth) are only visible\nto account owners and managers — other contacts receive `null` for the `limits` field.\n\n## Requires api token with one of the following permissions\n```\n(any scope allowed)\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
+		Long:    "Retrieves plan, usage, and limit information for the current account.\n\nThe response includes plan tier, upload eligibility, and links to billing pages.\nUsage and limit details (media counts, storage, seats, bandwidth) are only visible\nto account owners and managers — other contacts receive `null` for the `limits` field.\n\n## Requires api token with one of the following permissions\n```\n(any scope allowed)\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\n[Expiring access tokens](https://docs.wistia.com/reference/post_expiring-token)\ncreated with authorizations cannot be used: this endpoint responds with a\n403, whatever the authorizations grant.",
 		Example: "  wistia account get-usage",
 		Args:    cobra.NoArgs,
 		RunE:    runGetUsageCmd,
@@ -54,7 +54,10 @@ func runGetUsageCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.Account.GetUsage(cmd.Context(), sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}
