@@ -25,7 +25,7 @@ func initMoveCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "move",
 		Short:   "Move Media",
-		Long:    "Moves up to 100 media to a folder and optional subfolder. The subfolder must\nbelong to the specified folder.\n\nThis endpoint allows 10 requests per 5 minutes, separate from the general\nAPI rate limit. Returns a Background Job because the move is asynchronous.\n\nFor more than 100 media, multiple destinations, or mixed actions, use the\nCreate Bulk Actions endpoint with `move` actions.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and\nauthorizations granting the `update` permission on every media being moved\nand on the destination folder can also be used. `subfolder_id` is not\navailable to expiring access tokens.",
+		Long:    "Moves up to 100 media to a folder and optional subfolder. The subfolder must\nbelong to the specified folder.\n\nThis endpoint allows 10 requests per 5 minutes, separate from the general\nAPI rate limit. Returns a Background Job because the move is asynchronous.\n\nFor more than 100 media, multiple destinations, or mixed actions, use the\nCreate Bulk Actions endpoint with `move` actions.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and\nauthorizations granting the `update` permission on every media being moved\nand on the destination folder can also be used.",
 		Example: "  wistia media move --hashed-ids <value 1> --hashed-ids <value 2> --folder-id <id>",
 		Args:    cobra.NoArgs,
 		RunE:    runMoveCmd,
@@ -38,7 +38,7 @@ func initMoveCmd(parent *cobra.Command) error {
 		return fmt.Errorf("invalid metadata for move: %w", err)
 	}
 	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
-	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Required: false, Kind: "json", BodyFlag: true})
 	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
 	if err := flagutil.AnnotateBodyFields(cmd, moveCmdMeta, "", "body"); err != nil {
 		return fmt.Errorf("annotate body fields for move: %w", err)
@@ -75,7 +75,10 @@ func runMoveCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.Media.Move(cmd.Context(), *request, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

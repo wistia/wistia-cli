@@ -25,7 +25,7 @@ func initBulkDeleteCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "bulk-delete [folder-id]",
 		Short:   "Bulk Delete Subfolders",
-		Long:    "Deletes multiple subfolders asynchronously. Their media is also soft-deleted and can be restored from the trash by an account owner or manager until it is purged. To keep the media, use the Delete Subfolder endpoint, which moves it to the folder's root level.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\nauthorization granting the `update` permission on the folder can also be\nused.",
+		Long:    "Deletes multiple subfolders asynchronously. Their media is also soft-deleted and can be restored from the trash by an account owner or manager until it is purged. To keep the media, use the Delete Subfolder endpoint, which moves it to the folder's root level.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\nauthorization granting the `update` permission on this folder can also\nbe used.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\nauthorization granting the `update` permission on the folder can also be\nused.",
 		Example: "  wistia subfolders bulk-delete --folder-id abc123def4 --hashed-ids <value 1> --hashed-ids <value 2>",
 		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runBulkDeleteCmd,
@@ -39,7 +39,7 @@ func initBulkDeleteCmd(parent *cobra.Command) error {
 		return fmt.Errorf("invalid metadata for bulk-delete: %w", err)
 	}
 	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
-	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Required: false, Kind: "json", BodyFlag: true})
 	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
 	if err := flagutil.AnnotateBodyFields(cmd, bulkDeleteCmdMeta, "Body", "body"); err != nil {
 		return fmt.Errorf("annotate body fields for bulk-delete: %w", err)
@@ -87,7 +87,10 @@ func runBulkDeleteCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.Subfolders.BulkDelete(cmd.Context(), *req, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

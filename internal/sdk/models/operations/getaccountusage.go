@@ -401,6 +401,24 @@ type GetAccountUsageResponseBody struct {
 	// the account has a verified business domain.
 	//
 	CanInviteTeammates bool `json:"can_invite_teammates"`
+	// Feature flags the Wistia desktop app may read, evaluated for this
+	// account and keyed by flag name. A flag missing from the map is off.
+	// Omitted when the flags could not be evaluated; servers that predate
+	// the field omit it too. Only the flags the desktop app is registered
+	// to read are included, never every flag.
+	//
+	DesktopFlags map[string]bool `json:"desktop_flags,omitzero"`
+}
+
+func (g GetAccountUsageResponseBody) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(g, "", false)
+}
+
+func (g *GetAccountUsageResponseBody) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &g, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (g *GetAccountUsageResponseBody) GetPlan() Plan {
@@ -457,6 +475,13 @@ func (g *GetAccountUsageResponseBody) GetCanInviteTeammates() bool {
 		return false
 	}
 	return g.CanInviteTeammates
+}
+
+func (g *GetAccountUsageResponseBody) GetDesktopFlags() map[string]bool {
+	if g == nil {
+		return nil
+	}
+	return g.DesktopFlags
 }
 
 type GetAccountUsageResponse struct {

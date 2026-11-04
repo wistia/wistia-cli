@@ -6,6 +6,7 @@ package operations
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
 	"github.com/wistia/wistia-cli/internal/sdk/optionalnullable"
 	"github.com/wistia/wistia-cli/internal/sdk/sdkinternal/utils"
@@ -173,6 +174,9 @@ func (u *GetStatsEventsEventKeyConversionType) UnmarshalJSON(data []byte) error 
 	}
 
 	if len(candidates) == 0 {
+		if !json.Valid(data) {
+			return fmt.Errorf("could not unmarshal `%s` into any supported union types for GetStatsEventsEventKeyConversionType", string(data))
+		}
 		u.UnknownRaw = json.RawMessage(data)
 		u.Type = GetStatsEventsEventKeyConversionTypeTypeUnknown
 		return nil
@@ -197,6 +201,9 @@ func (u *GetStatsEventsEventKeyConversionType) UnmarshalJSON(data []byte) error 
 		return nil
 	}
 
+	if !json.Valid(data) {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for GetStatsEventsEventKeyConversionType", string(data))
+	}
 	u.UnknownRaw = json.RawMessage(data)
 	u.Type = GetStatsEventsEventKeyConversionTypeTypeUnknown
 	return nil
