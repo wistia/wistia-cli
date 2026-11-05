@@ -35,6 +35,19 @@ func (e *PostChannelsChannelHashedIDCollaboratorsNotFoundError) Error() string {
 	return string(data)
 }
 
+// PostChannelsChannelHashedIDCollaboratorsForbiddenError - Forbidden, token is valid but account does not have access to feature
+type PostChannelsChannelHashedIDCollaboratorsForbiddenError struct {
+	Error_   *string                 `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata `json:"-"`
+}
+
+var _ error = &PostChannelsChannelHashedIDCollaboratorsForbiddenError{}
+
+func (e *PostChannelsChannelHashedIDCollaboratorsForbiddenError) Error() string {
+	data, _ := json.Marshal(e)
+	return string(data)
+}
+
 // PostChannelsChannelHashedIDCollaboratorsUnauthorizedError - Unauthorized, invalid or missing token
 type PostChannelsChannelHashedIDCollaboratorsUnauthorizedError struct {
 	// A machine-readable identifier for the specific authorization failure.

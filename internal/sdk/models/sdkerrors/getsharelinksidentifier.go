@@ -35,19 +35,6 @@ func (e *GetShareLinksIdentifierNotFoundError) Error() string {
 	return string(data)
 }
 
-// GetShareLinksIdentifierForbiddenError - Forbidden, token is valid but account does not have access to feature
-type GetShareLinksIdentifierForbiddenError struct {
-	Error_   *string                 `json:"error,omitzero"`
-	HTTPMeta components.HTTPMetadata `json:"-"`
-}
-
-var _ error = &GetShareLinksIdentifierForbiddenError{}
-
-func (e *GetShareLinksIdentifierForbiddenError) Error() string {
-	data, _ := json.Marshal(e)
-	return string(data)
-}
-
 // GetShareLinksIdentifierUnauthorizedError - Unauthorized, invalid or missing token
 type GetShareLinksIdentifierUnauthorizedError struct {
 	// A machine-readable identifier for the specific authorization failure.

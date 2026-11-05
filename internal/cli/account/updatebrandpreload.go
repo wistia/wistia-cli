@@ -15,7 +15,7 @@ import (
 )
 
 var updateBrandPreloadCmdMeta = []flagutil.FlagMeta{
-	{FlagName: "selected-player-color", FieldPath: "SelectedPlayerColor", Kind: flagutil.FlagKindString, Optional: true, Description: "Hex color string (e.g. \"#3366FF\") for the account's default player\ncolor — 6 hex digits, with or without the leading '#'. Omit or send\nan empty string to leave the current color untouched (there is no\nclear operation — color always has a value). Malformed values are\nrejected at the API boundary; without this check, the model's\nsanitize step would return nil and silently reset the account color\nto the global default."},
+	{FlagName: "selected-player-color", FieldPath: "SelectedPlayerColor", Kind: flagutil.FlagKindString, Optional: true, Pattern: "^(#?[0-9a-fA-F]{6})?$", Description: "Hex color string (e.g. \"#3366FF\") for the account's default player\ncolor — 6 hex digits, with or without the leading '#'. Omit or send\nan empty string to leave the current color untouched (there is no\nclear operation — color always has a value). Malformed values are\nrejected at the API boundary; without this check, the model's\nsanitize step would return nil and silently reset the account color\nto the global default."},
 	{FlagName: "selected-logo-hashed-id", FieldPath: "SelectedLogoHashedID", Kind: flagutil.FlagKindString, Optional: true, Description: "Bakery hashed_id of an uploaded logo image, which will become the\naccount's default page logo. Omit to leave the current logo\nuntouched. Pass an empty string to clear the logo."},
 }
 
@@ -24,7 +24,7 @@ func initUpdateBrandPreloadCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "update-brand-preload",
 		Short:   "Update Brand Preload",
-		Long:    "Persists the account's default page logo (by Bakery hashed_id) and\ndefault player color. Both fields are optional independently — omit a\nfield to leave that account setting untouched. Passing an empty string\nfor `selected_logo_hashed_id` clears the logo.\n\nRequires the OAuth contact to be an owner or manager of the account\n(or a Wistia admin) — mirrors the auth check on the underlying\n`updateWtwBrandKitAccountSettings` GraphQL mutation.\n\nDeliberately narrower than the mutation: this endpoint does not\ncreate/update BrandKits or set body font family. Glass's onboarding\ncustomize step writes only these two fields; broader brand-kit\nediting continues to happen through the WTW web UI + GraphQL.\n\n## Requires api token with one of the following permissions\n```\n(any scope allowed)\n```",
+		Long:    "Persists the account's default page logo (by Bakery hashed_id) and\ndefault player color. Both fields are optional independently — omit a\nfield to leave that account setting untouched. Passing an empty string\nfor `selected_logo_hashed_id` clears the logo.\n\nRequires the OAuth contact to be an owner or manager of the account\n(or a Wistia admin) — mirrors the auth check on the underlying\n`updateWtwBrandKitAccountSettings` GraphQL mutation.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\n`account` authorization granting the `manage-brand-preload` permission can\nalso be used.\n\nDeliberately narrower than the mutation: this endpoint does not\ncreate/update BrandKits or set body font family. Glass's onboarding\ncustomize step writes only these two fields; broader brand-kit\nediting continues to happen through the WTW web UI + GraphQL.\n\n## Requires api token with one of the following permissions\n```\n(any scope allowed)\n```",
 		Example: "  wistia account update-brand-preload",
 		Args:    cobra.NoArgs,
 		RunE:    runUpdateBrandPreloadCmd,
@@ -38,7 +38,7 @@ func initUpdateBrandPreloadCmd(parent *cobra.Command) error {
 		return fmt.Errorf("invalid metadata for update-brand-preload: %w", err)
 	}
 	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF. Use --schema to print the exact JSON Schema.")
-	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Required: false, Kind: "json", BodyFlag: true})
 	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
 	if err := flagutil.AnnotateBodyFields(cmd, updateBrandPreloadCmdMeta, "", "body"); err != nil {
 		return fmt.Errorf("annotate body fields for update-brand-preload: %w", err)
@@ -80,7 +80,10 @@ func runUpdateBrandPreloadCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.Account.UpdateBrandPreload(cmd.Context(), request, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}
