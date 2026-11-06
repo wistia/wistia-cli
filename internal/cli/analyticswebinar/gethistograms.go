@@ -24,7 +24,7 @@ func initGetHistogramsCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "get-histograms [webinar-id]",
 		Short:   "Show Webinar Histograms",
-		Long:    "Retrieve engagement histogram data for a webinar. Returns arrays of\nper-time-bucket counts for attendees, chat activity, and visual focus,\nuseful for rendering engagement visualizations.\n\n\n## Requires api token with one of the following permissions\n```\nRead detailed stats\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
+		Long:    "Retrieve engagement histogram data for a webinar. Returns arrays of\nper-time-bucket counts for attendees, chat activity, and visual focus,\nuseful for rendering engagement visualizations.\n\n\n## Requires api token with one of the following permissions\n```\nRead detailed stats\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\nauthorization granting the `view-stats` permission on this webinar can also\nbe used.",
 		Example: "  wistia analytics-webinar get-histograms --webinar-id <id>",
 		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runGetHistogramsCmd,
@@ -80,7 +80,10 @@ func runGetHistogramsCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.AnalyticsWebinar.GetHistograms(cmd.Context(), *req, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

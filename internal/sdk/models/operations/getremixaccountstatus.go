@@ -34,7 +34,7 @@ func (e *GetRemixAccountStatusCode) IsExact() bool {
 	return false
 }
 
-// GetRemixAccountStatusBillingMode - Whether Remix uses Credits or the legacy monthly allowance.
+// GetRemixAccountStatusBillingMode - Whether Mochine uses Credits or the legacy monthly allowance.
 type GetRemixAccountStatusBillingMode string
 
 const (
@@ -59,20 +59,22 @@ func (e *GetRemixAccountStatusBillingMode) IsExact() bool {
 
 // GetRemixAccountStatusResponseBody - Remix account status.
 type GetRemixAccountStatusResponseBody struct {
-	// Whether Remix uses Credits or the legacy monthly allowance.
+	// Whether Mochine uses Credits or the legacy monthly allowance.
 	BillingMode *GetRemixAccountStatusBillingMode `json:"billing_mode,omitzero"`
-	// Legacy monthly Remix allowance. Does not determine affordability in Credits mode.
+	// Legacy monthly AI edit allowance. Does not determine affordability in Credits mode.
 	MonthlyLimit *int64 `json:"monthly_limit,omitzero"`
-	// Number of Remixes counted toward the legacy monthly allowance.
+	// Number of AI edits counted toward the legacy monthly allowance.
 	MonthlyUsage *int64 `json:"monthly_usage,omitzero"`
 	// Remaining legacy monthly allowance. Does not determine affordability in Credits mode.
 	Remaining *int64 `json:"remaining,omitzero"`
-	// Whether the account has enough Credits or legacy monthly allowance to create or continue a Remix.
+	// Whether the account has enough Credits or legacy monthly allowance to create or revise a Mochine video.
 	CanCreateRemix *bool `json:"can_create_remix,omitzero"`
 	// Available Credit balance, present in Credits mode.
 	CreditBalance *float64 `json:"credit_balance,omitzero"`
-	// Account-specific Credit cost of one Remix creation or iteration, present in Credits mode.
+	// Account-specific Credit cost of creating or revising one Mochine video, present in Credits mode.
 	RemixCreditCost *float64 `json:"remix_credit_cost,omitzero"`
+	// The remaining balance in user-facing units, e.g. "17 AI edits left this month" or "1,250 Credits available".
+	Summary *string `json:"summary,omitzero"`
 	// Next scheduled plan Credit grant (ISO 8601), when available in Credits mode.
 	CreditsRenewAt *time.Time `json:"credits_renew_at,omitzero"`
 }
@@ -135,6 +137,13 @@ func (g *GetRemixAccountStatusResponseBody) GetRemixCreditCost() *float64 {
 		return nil
 	}
 	return g.RemixCreditCost
+}
+
+func (g *GetRemixAccountStatusResponseBody) GetSummary() *string {
+	if g == nil {
+		return nil
+	}
+	return g.Summary
 }
 
 func (g *GetRemixAccountStatusResponseBody) GetCreditsRenewAt() *time.Time {

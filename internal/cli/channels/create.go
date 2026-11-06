@@ -19,7 +19,7 @@ var createCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "description", FieldPath: "Description", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"description,omitempty"`, Description: "The channel's description."},
 	{FlagName: "auto-publish-enabled", Shorthand: "a", FieldPath: "AutoPublishEnabled", Kind: flagutil.FlagKindBool, Optional: true, Description: "Whether the episodes are automatically published when added to the channel. Cannot be enabled if podcasting is on."},
 	{FlagName: "podcast-enabled", FieldPath: "PodcastEnabled", Kind: flagutil.FlagKindBool, Optional: true, Description: "Whether podcasting is enabled for this channel."},
-	{FlagName: "custom-url", Shorthand: "c", FieldPath: "CustomURL", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"custom_url,omitempty"`, Description: "Use if embedding the channel on your own site. The custom URL ensures links always direct to your page and not Wistia's."},
+	{FlagName: "custom-url", Shorthand: "c", FieldPath: "CustomURL", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"custom_url,omitempty"`, Description: "The page on your own website where you embedded this channel."},
 	{FlagName: "podcast-settings", FieldPath: "PodcastSettings", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"podcast_settings,omitempty"`, Description: "Podcast specific settings for a channel. These settings only take effect if\npodcasting is enabled for the channel. These values appear in the channel's\npublicly accessible podcast RSS feed."},
 }
 
@@ -28,7 +28,7 @@ func initCreateCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "create",
 		Short:   "Create Channel",
-		Long:    "Creates a channel.",
+		Long:    "Creates a channel.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\nauthorization granting the `create-channels` permission on the account\ncan also be used.",
 		Example: "  wistia channels create",
 		Args:    cobra.NoArgs,
 		RunE:    runCreateCmd,
@@ -41,7 +41,7 @@ func initCreateCmd(parent *cobra.Command) error {
 		return fmt.Errorf("invalid metadata for create: %w", err)
 	}
 	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
-	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Required: false, Kind: "json", BodyFlag: true})
 	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
 	if err := flagutil.AnnotateBodyFields(cmd, createCmdMeta, "", "body"); err != nil {
 		return fmt.Errorf("annotate body fields for create: %w", err)
@@ -78,7 +78,10 @@ func runCreateCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.Channels.Create(cmd.Context(), request, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

@@ -35,6 +35,19 @@ func (e *DeleteMediasMediaIDCustomizationsNotFoundError) Error() string {
 	return string(data)
 }
 
+// DeleteMediasMediaIDCustomizationsForbiddenError - Forbidden, token is valid but account does not have access to feature
+type DeleteMediasMediaIDCustomizationsForbiddenError struct {
+	Error_   *string                 `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata `json:"-"`
+}
+
+var _ error = &DeleteMediasMediaIDCustomizationsForbiddenError{}
+
+func (e *DeleteMediasMediaIDCustomizationsForbiddenError) Error() string {
+	data, _ := json.Marshal(e)
+	return string(data)
+}
+
 // DeleteMediasMediaIDCustomizationsUnauthorizedError - Unauthorized, invalid or missing token
 type DeleteMediasMediaIDCustomizationsUnauthorizedError struct {
 	// A machine-readable identifier for the specific authorization failure.

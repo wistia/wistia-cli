@@ -29,7 +29,7 @@ func initGetTopContentCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "get-top-content",
 		Short:   "Show Account Top Content",
-		Long:    "Rank the account's content by a chosen metric over a date range. Returns the top\nmedia, channels, or folders (controlled by `group_by`) with their analytics,\nanswering questions like \"what were my most-played videos last month?\".\n\nOptionally pass `hashed_ids` to scope the ranking to a specific set of media\ninstead of the whole account — useful for fetching analytics for a known list\nof videos, still sorted by `sort_by`.\n\nThe date range between `start_date` and `end_date` must not exceed 2 years.\n\n\n## Requires api token with one of the following permissions\n```\nRead detailed stats\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
+		Long:    "Rank the account's content by a chosen metric over a date range. Returns the top\nmedia, channels, or folders (controlled by `group_by`) with their analytics,\nanswering questions like \"what were my most-played videos last month?\".\n\nOptionally pass `hashed_ids` to scope the ranking to a specific set of media\ninstead of the whole account — useful for fetching analytics for a known list\nof videos, still sorted by `sort_by`.\n\nThe date range between `start_date` and `end_date` must not exceed 2 years.\n\n\n## Requires api token with one of the following permissions\n```\nRead detailed stats\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\n`account` authorization granting the `view-stats` permission can also\nbe used.",
 		Example: "  wistia analytics-account get-top-content --start-date 2025-12-19 --end-date 2024-11-20",
 		Args:    cobra.NoArgs,
 		RunE:    runGetTopContentCmd,
@@ -74,7 +74,10 @@ func runGetTopContentCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.AnalyticsAccount.GetTopContent(cmd.Context(), *req, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

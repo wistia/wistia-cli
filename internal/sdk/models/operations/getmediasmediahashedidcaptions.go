@@ -162,7 +162,10 @@ func (g *GetMediasMediaHashedIDCaptionsDiarizedSegment) GetSpeaker() GetMediasMe
 	return g.Speaker
 }
 
-// GetMediasMediaHashedIDCaptionsDiarizationStatus - Speaker-data availability when `include=diarized_segments`.
+// GetMediasMediaHashedIDCaptionsDiarizationStatus - Speaker-data availability when `include=diarized_segments`. Reading a derivable media
+// with no speaker data starts generating it and reports `processing`; read again shortly
+// for `ready`. `disabled` means the account has speaker identification turned off; an
+// account owner or manager can turn it on in Account Settings.
 type GetMediasMediaHashedIDCaptionsDiarizationStatus string
 
 const (
@@ -207,9 +210,13 @@ type GetMediasMediaHashedIDCaptionsResponseBody struct {
 	Segments []GetMediasMediaHashedIDCaptionsSegment `json:"segments"`
 	// Transcript text split at speaker-turn boundaries when `include=diarized_segments`. The media-level speaker timeline is shared across language tracks.
 	DiarizedSegments []GetMediasMediaHashedIDCaptionsDiarizedSegment `json:"diarized_segments,omitzero"`
-	// Speaker-data availability when `include=diarized_segments`.
+	// Speaker-data availability when `include=diarized_segments`. Reading a derivable media
+	// with no speaker data starts generating it and reports `processing`; read again shortly
+	// for `ready`. `disabled` means the account has speaker identification turned off; an
+	// account owner or manager can turn it on in Account Settings.
+	//
 	DiarizationStatus *GetMediasMediaHashedIDCaptionsDiarizationStatus `json:"diarization_status,omitzero"`
-	// Whether speaker data can be derived from the active default transcript when `include=diarized_segments`.
+	// Whether speaker data can be generated from the active default transcript when `include=diarized_segments`. When false, the media stays `unavailable`.
 	DiarizationDerivable *bool `json:"diarization_derivable,omitzero"`
 	// The concurrency version for speaker assignments when `include=diarized_segments`, or null when speaker data is unavailable.
 	SpeakerDataVersion optionalnullable.OptionalNullable[int64] `json:"speaker_data_version,omitzero"`
