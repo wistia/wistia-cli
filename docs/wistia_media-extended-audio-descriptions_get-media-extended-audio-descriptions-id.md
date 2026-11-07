@@ -6,6 +6,11 @@ Show Media Extended Audio Description
 
 Retrieves a single extended audio description by its hashed id, including download links.
 
+An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+created with the `all:delegate_to_contact_permissions` scope and an
+authorization naming the extended audio description's media (any
+permission) can also be used.
+
 ```
 wistia media-extended-audio-descriptions get-media-extended-audio-descriptions-id [id] [flags]
 ```
@@ -36,6 +41,7 @@ wistia media-extended-audio-descriptions get-media-extended-audio-descriptions-i
       --interactive            Prompt for missing inputs and open guided configure/auth forms (forms fall back to line prompts on stdin off-TTY) (default true)
   -q, --jq string              Filter and transform output using a jq expression (e.g., '.name', '.items[] | .id')
       --no-interactive         Disable all interactive features (auto-prompting, explorer auto-launch, TUI forms)
+      --no-keyring             Never read or write the OS keychain; store secrets in the config file instead (env: WISTIA_CLI_NO_KEYRING)
   -o, --output-format string   Specify the output format. Options: pretty, json, yaml, table, toon. (default "pretty")
       --raw-output             Write --jq string results as raw text instead of JSON strings (like jq -r); non-string results stay JSON
       --server string          Select a server by index (for indexed servers) or name (for named servers)

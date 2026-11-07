@@ -15,8 +15,8 @@ import (
 )
 
 var getEmbedLocationsCmdMeta = []flagutil.FlagMeta{
-	{FlagName: "start-date", FieldPath: "StartDate", Kind: flagutil.FlagKindDate, Required: true, Description: "Start date for the analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date. [required]"},
-	{FlagName: "end-date", Shorthand: "e", FieldPath: "EndDate", Kind: flagutil.FlagKindDate, Required: true, Description: "End date for the analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date. [required]"},
+	{FlagName: "start-date", FieldPath: "StartDate", Kind: flagutil.FlagKindDate, Required: true, Description: "Start date for the analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date. Must be no more than 730 days before 'end_date'. [required]"},
+	{FlagName: "end-date", Shorthand: "e", FieldPath: "EndDate", Kind: flagutil.FlagKindDate, Required: true, Description: "End date for the analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date. Must be on or after 'start_date' and no more than 730 days after it. [required]"},
 	{FlagName: "sort-by", FieldPath: "SortBy", Kind: flagutil.FlagKindEnum, Optional: true, HasDefault: true, DefaultStr: "plays", EnumValues: []string{"plays", "loads", "engagement_rate", "play_rate", "played_time", "unique_visitors"}, Description: "The metric to sort embed locations by. (options: plays, loads, engagement_rate, play_rate, played_time, unique_visitors)"},
 	{FlagName: "sort-direction", FieldPath: "SortDirection", Kind: flagutil.FlagKindEnum, Optional: true, HasDefault: true, DefaultStr: "desc", EnumValues: []string{"asc", "desc"}, Description: "The sort direction. (options: asc, desc)"},
 	{FlagName: "per-page", Shorthand: "p", FieldPath: "PerPage", Kind: flagutil.FlagKindInt64, Optional: true, HasDefault: true, DefaultInt: 10, HasMinimum: true, Minimum: 1, HasMaximum: true, Maximum: 100, Description: "Number of results to return (max 100)."},
@@ -27,7 +27,7 @@ func initGetEmbedLocationsCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "get-embed-locations",
 		Short:   "Show Account Embed Locations",
-		Long:    "Retrieve embed location analytics for the entire account. Returns a list of domains\nwhere the account's media are embedded, ranked by the chosen metric.\n\nThe date range between `start_date` and `end_date` must not exceed 2 years.\n\n\n## Requires api token with one of the following permissions\n```\nRead detailed stats\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
+		Long:    "Retrieve embed location analytics for the entire account. Returns a list of domains\nwhere the account's media are embedded, ranked by the chosen metric.\n\nEmbed location data is retained for 6 months. A `start_date` older than that is\nmoved forward to 6 months ago (UTC), so only the retained portion of the\nrange is returned; a range that ends before then returns a 422 error.\n\nThe date range between `start_date` and `end_date` must not exceed 2 years.\n\n\n## Requires api token with one of the following permissions\n```\nRead detailed stats\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\n`account` authorization granting the `view-stats` permission can also\nbe used.",
 		Example: "  wistia analytics-account get-embed-locations --start-date 2024-04-04 --end-date 2026-04-14",
 		Args:    cobra.NoArgs,
 		RunE:    runGetEmbedLocationsCmd,
@@ -72,7 +72,10 @@ func runGetEmbedLocationsCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.AnalyticsAccount.GetEmbedLocations(cmd.Context(), *req, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

@@ -14,9 +14,9 @@ import (
 type GetAnalyticsMediasMediaIDConversionsRequest struct {
 	// The hashed ID of the video.
 	MediaID string `pathParam:"style=simple,explode=false,name=mediaId"`
-	// Start date for the analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date.
+	// Start date for the analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date. Must be no more than 730 days before `end_date`.
 	StartDate types.Date `queryParam:"style=form,explode=true,name=start_date"`
-	// End date for the analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date.
+	// End date for the analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date. Must be on or after `start_date` and no more than 730 days after it.
 	EndDate types.Date `queryParam:"style=form,explode=true,name=end_date"`
 	// Number of results to return (max 100).
 	PerPage *int64 `default:"25" queryParam:"style=form,explode=true,name=per_page"`

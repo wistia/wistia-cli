@@ -25,7 +25,7 @@ func initRemoveCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "remove",
 		Short:   "Remove Speaker from Media",
-		Long:    "Removes a speaker assignment from a media. Every turn attributed to the\nspeaker returns to an anonymous detected speaker, which can be named again\nby assigning it. The speaker's profile stays in the account's speaker\nlibrary.\n\nPass the media's current `speaker_data_version` as `expected_version` to\nreject the removal if the speaker data changed since you read it.\n\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token, who must be able to edit the media's\ntranscript and view the account's speaker profiles.",
+		Long:    "Removes a speaker assignment from a media. Every turn attributed to the\nspeaker returns to an anonymous detected speaker, which can be named again\nby assigning it. The speaker's profile stays in the account's speaker\nlibrary.\n\nPass the media's current `speaker_data_version` as `expected_version` to\nreject the removal if the speaker data changed since you read it.\n\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token, who must be able to edit the media's\ntranscript and view the account's speaker profiles.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\nauthorization granting the `edit-transcripts` permission on this media can\nalso be used.",
 		Example: "  wistia speakers remove --media-hashed-id <id> --media-speaker-id <id>",
 		Args:    cobra.NoArgs,
 		RunE:    runRemoveCmd,
@@ -69,7 +69,10 @@ func runRemoveCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.Speakers.Remove(cmd.Context(), *req, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

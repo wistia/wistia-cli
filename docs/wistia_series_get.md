@@ -1,19 +1,14 @@
-## wistia deleted-media post-deleted-media-restore
+## wistia series get
 
-Restore Deleted Media
+Show Series
 
 ### Synopsis
 
-Restores one or more soft-deleted media. By default each media returns to the
-folder it was deleted from; pass folder_id to restore them into a specific
-folder instead. Only media still inside the restore window can be recovered.
-The restore runs asynchronously and the response includes a background job
-status.
-
+Returns the webinar series associated with the hashed id.
 
 ## Requires api token with one of the following permissions
 ```
-Upload and view media
+Read all data
 ```
 
 Tokens with the "Act with a team member's permissions" permission
@@ -22,22 +17,20 @@ made with such a token are authorized using the permissions of the
 contact assigned to the token.
 
 ```
-wistia deleted-media post-deleted-media-restore [flags]
+wistia series get [id] [flags]
 ```
 
 ### Examples
 
 ```
-  wistia deleted-media post-deleted-media-restore --media-hashed-ids abc123
+  wistia series get --id <id>
 ```
 
 ### Options
 
 ```
-      --body string                    Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.
-  -f, --folder-id string               Optional hashed id of the folder to restore the media into. If omitted, each media returns to the folder it was deleted from.
-  -h, --help                           help for post-deleted-media-restore
-  -m, --media-hashed-ids stringArray   The hashed ids of the soft-deleted media to restore. Up to 1000 at a time. [required]
+  -h, --help        help for get
+  -i, --id string   The hashed ID of the series (or pass it as the [id] argument)
 ```
 
 ### Options inherited from parent commands
@@ -53,6 +46,7 @@ wistia deleted-media post-deleted-media-restore [flags]
       --interactive            Prompt for missing inputs and open guided configure/auth forms (forms fall back to line prompts on stdin off-TTY) (default true)
   -q, --jq string              Filter and transform output using a jq expression (e.g., '.name', '.items[] | .id')
       --no-interactive         Disable all interactive features (auto-prompting, explorer auto-launch, TUI forms)
+      --no-keyring             Never read or write the OS keychain; store secrets in the config file instead (env: WISTIA_CLI_NO_KEYRING)
   -o, --output-format string   Specify the output format. Options: pretty, json, yaml, table, toon. (default "pretty")
       --raw-output             Write --jq string results as raw text instead of JSON strings (like jq -r); non-string results stay JSON
       --server string          Select a server by index (for indexed servers) or name (for named servers)
@@ -63,12 +57,12 @@ wistia deleted-media post-deleted-media-restore [flags]
 
 ### SEE ALSO
 
-* [wistia deleted-media](wistia_deleted-media.md)	 - Operations for deleted-media
+* [wistia series](wistia_series.md)	 - Operations for series
 
 ### Machine interface
 
-* `wistia deleted-media post-deleted-media-restore --usage` — this command's flags, defaults and env vars as machine-readable KDL
-* `wistia deleted-media post-deleted-media-restore --dry-run` — preview the request without OS-keychain access or a network call (human preview on stderr)
+* `wistia series get --usage` — this command's flags, defaults and env vars as machine-readable KDL
+* `wistia series get --dry-run` — preview the request without OS-keychain access or a network call (human preview on stderr)
 * `--dry-run --output-format json` (or a caller-explicit `--jq`) writes one preview object per request as NDJSON on stdout; jq is not applied to previews
 * `--output-format json` or `--jq <expr>` for machine-readable live output; in agent mode errors are a JSON envelope on stderr
 

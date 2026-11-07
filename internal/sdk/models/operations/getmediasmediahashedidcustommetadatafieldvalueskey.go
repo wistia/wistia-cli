@@ -283,6 +283,9 @@ func (u *GetMediasMediaHashedIDCustomMetadataFieldValuesKeyValueUnion) Unmarshal
 	}
 
 	if len(candidates) == 0 {
+		if !json.Valid(data) {
+			return fmt.Errorf("could not unmarshal `%s` into any supported union types for GetMediasMediaHashedIDCustomMetadataFieldValuesKeyValueUnion", string(data))
+		}
 		u.UnknownRaw = json.RawMessage(data)
 		u.Type = GetMediasMediaHashedIDCustomMetadataFieldValuesKeyValueUnionTypeUnknown
 		return nil
@@ -316,6 +319,9 @@ func (u *GetMediasMediaHashedIDCustomMetadataFieldValuesKeyValueUnion) Unmarshal
 		return nil
 	}
 
+	if !json.Valid(data) {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for GetMediasMediaHashedIDCustomMetadataFieldValuesKeyValueUnion", string(data))
+	}
 	u.UnknownRaw = json.RawMessage(data)
 	u.Type = GetMediasMediaHashedIDCustomMetadataFieldValuesKeyValueUnionTypeUnknown
 	return nil

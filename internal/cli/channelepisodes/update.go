@@ -17,15 +17,10 @@ import (
 
 var updateCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "channel-episode-hashed-id", Shorthand: "c", FieldPath: "ChannelEpisodeHashedID", Kind: flagutil.FlagKindString, Required: true, Description: "The hashed id of the Channel Episode [required]"},
-	{FlagName: "description", FieldPath: "Body.Description", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"description,omitempty"`, Description: "The episode's description or episode notes."},
 	{FlagName: "title", Shorthand: "t", FieldPath: "Body.Title", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"title,omitempty"`, Description: "The episode's title. If not provided, the channel episode uses the title of the media used to create it."},
-	{FlagName: "media-hashed-id", Shorthand: "m", FieldPath: "Body.MediaHashedID", Kind: flagutil.FlagKindString, Optional: true, Description: "The unique alphanumeric identifier for the media associated with this channel episode."},
-	{FlagName: "live-stream-event-hashed-id", Shorthand: "l", FieldPath: "Body.LiveStreamEventHashedID", Kind: flagutil.FlagKindString, Optional: true, Description: "The unique alphanumeric identifier for the live stream event associated with this channel episode."},
-	{FlagName: "summary", Shorthand: "s", FieldPath: "Body.Summary", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"summary,omitempty"`, Description: "A short summary of the episode that is displayed when space is limited."},
-	{FlagName: "publish-status", FieldPath: "Body.PublishStatus", Kind: flagutil.FlagKindEnum, Optional: true, EnumValues: []string{"draft", "published", "scheduled"}, Description: "The status of whether or not the episode has been published to your channel. (options: draft, published, scheduled)"},
-	{FlagName: "publish-at", FieldPath: "Body.PublishAt", Kind: flagutil.FlagKindDateTime, Optional: true, Description: "The date and time when the episode is scheduled to be published in UTC timezone."},
-	{FlagName: "episode-notes", Shorthand: "e", FieldPath: "Body.EpisodeNotes", Kind: flagutil.FlagKindString, Optional: true, Description: "Additional notes for the episode."},
-	{FlagName: "podcast-settings", FieldPath: "Body.PodcastSettings", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"podcast_settings,omitempty"`, Description: "Podcast specific settings for a channel episode. These settings only take effect\nif podcasting is enabled for the channel."},
+	{FlagName: "description", FieldPath: "Body.Description", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"description,omitempty"`, Description: "A short summary of the episode that is displayed when space is limited. Returned as the episode's summary."},
+	{FlagName: "episode-notes", Shorthand: "e", FieldPath: "Body.EpisodeNotes", Kind: flagutil.FlagKindString, Optional: true, Description: "Additional notes for the episode. Returned as the episode's description."},
+	{FlagName: "podcast-settings", Shorthand: "p", FieldPath: "Body.PodcastSettings", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"podcast_settings,omitempty"`, Description: "Podcast specific settings for a channel episode. These settings only take effect\nif podcasting is enabled for the channel."},
 }
 
 // initUpdateCmd initializes the update command.
@@ -33,7 +28,7 @@ func initUpdateCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "update [channel-episode-hashed-id]",
 		Short:   "Update Channel Episode",
-		Long:    "Updates an existing channel episode in a channel.\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
+		Long:    "Updates an existing channel episode in a channel.\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\nauthorization granting the `update` permission on the episode's channel\ncan also be used.",
 		Example: "  wistia channel-episodes update --channel-episode-hashed-id <id>",
 		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runUpdateCmd,
@@ -46,7 +41,7 @@ func initUpdateCmd(parent *cobra.Command) error {
 		return fmt.Errorf("invalid metadata for update: %w", err)
 	}
 	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
-	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Required: false, Kind: "json", BodyFlag: true})
 	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
 	if err := flagutil.AnnotateBodyFields(cmd, updateCmdMeta, "Body", "body"); err != nil {
 		return fmt.Errorf("annotate body fields for update: %w", err)
@@ -94,7 +89,10 @@ func runUpdateCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.ChannelEpisodes.Update(cmd.Context(), *req, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

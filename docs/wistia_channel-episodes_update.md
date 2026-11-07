@@ -15,6 +15,11 @@ Tokens with the "Act with a team member's permissions" permission
 made with such a token are authorized using the permissions of the
 contact assigned to the token.
 
+An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+created with the `all:delegate_to_contact_permissions` scope and an
+authorization granting the `update` permission on the episode's channel
+can also be used.
+
 ```
 wistia channel-episodes update [channel-episode-hashed-id] [flags]
 ```
@@ -28,19 +33,14 @@ wistia channel-episodes update [channel-episode-hashed-id] [flags]
 ### Options
 
 ```
-      --body string                          Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.
-  -c, --channel-episode-hashed-id string     The hashed id of the Channel Episode (or pass it as the [channel-episode-hashed-id] argument)
-      --description string                   The episode's description or episode notes.
-  -e, --episode-notes string                 Additional notes for the episode.
-  -h, --help                                 help for update
-  -l, --live-stream-event-hashed-id string   The unique alphanumeric identifier for the live stream event associated with this channel episode.
-  -m, --media-hashed-id string               The unique alphanumeric identifier for the media associated with this channel episode.
-      --podcast-settings string              Podcast specific settings for a channel episode. These settings only take effect
-                                             if podcasting is enabled for the channel.
-      --publish-at string                    The date and time when the episode is scheduled to be published in UTC timezone.
-      --publish-status string                The status of whether or not the episode has been published to your channel. (options: draft, published, scheduled)
-  -s, --summary string                       A short summary of the episode that is displayed when space is limited.
-  -t, --title string                         The episode's title. If not provided, the channel episode uses the title of the media used to create it.
+      --body string                        Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.
+  -c, --channel-episode-hashed-id string   The hashed id of the Channel Episode (or pass it as the [channel-episode-hashed-id] argument)
+      --description string                 A short summary of the episode that is displayed when space is limited. Returned as the episode's summary.
+  -e, --episode-notes string               Additional notes for the episode. Returned as the episode's description.
+  -h, --help                               help for update
+  -p, --podcast-settings string            Podcast specific settings for a channel episode. These settings only take effect
+                                           if podcasting is enabled for the channel.
+  -t, --title string                       The episode's title. If not provided, the channel episode uses the title of the media used to create it.
 ```
 
 ### Options inherited from parent commands
@@ -56,6 +56,7 @@ wistia channel-episodes update [channel-episode-hashed-id] [flags]
       --interactive            Prompt for missing inputs and open guided configure/auth forms (forms fall back to line prompts on stdin off-TTY) (default true)
   -q, --jq string              Filter and transform output using a jq expression (e.g., '.name', '.items[] | .id')
       --no-interactive         Disable all interactive features (auto-prompting, explorer auto-launch, TUI forms)
+      --no-keyring             Never read or write the OS keychain; store secrets in the config file instead (env: WISTIA_CLI_NO_KEYRING)
   -o, --output-format string   Specify the output format. Options: pretty, json, yaml, table, toon. (default "pretty")
       --raw-output             Write --jq string results as raw text instead of JSON strings (like jq -r); non-string results stay JSON
       --server string          Select a server by index (for indexed servers) or name (for named servers)

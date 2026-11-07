@@ -46,6 +46,11 @@ func newAnalyticsMedia(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `view-stats` permission on this media can also
+// be used.
 func (s *AnalyticsMedia) Get(ctx context.Context, request operations.GetAnalyticsMediasMediaIDRequest, opts ...operations.Option) (*operations.GetAnalyticsMediasMediaIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -346,6 +351,11 @@ func (s *AnalyticsMedia) Get(ctx context.Context, request operations.GetAnalytic
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `view-stats` permission on this media can also
+// be used.
 func (s *AnalyticsMedia) GetTimeseries(ctx context.Context, request operations.GetAnalyticsMediasMediaIDTimeseriesRequest, opts ...operations.Option) (*operations.GetAnalyticsMediasMediaIDTimeseriesResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -635,6 +645,10 @@ func (s *AnalyticsMedia) GetTimeseries(ctx context.Context, request operations.G
 // Retrieve embed location analytics for a video. Returns a list of pages where the
 // video is embedded, ranked by the chosen metric.
 //
+// Embed location data is retained for 6 months. A `start_date` older than that is
+// moved forward to 6 months ago (UTC), so only the retained portion of the
+// range is returned; a range that ends before then returns a 422 error.
+//
 // The date range between `start_date` and `end_date` must not exceed 2 years.
 //
 // ## Requires api token with one of the following permissions
@@ -646,6 +660,11 @@ func (s *AnalyticsMedia) GetTimeseries(ctx context.Context, request operations.G
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `view-stats` permission on this media can also
+// be used.
 func (s *AnalyticsMedia) GetEmbedLocations(ctx context.Context, request operations.GetAnalyticsMediasMediaIDEmbedLocationsRequest, opts ...operations.Option) (*operations.GetAnalyticsMediasMediaIDEmbedLocationsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -855,6 +874,31 @@ func (s *AnalyticsMedia) GetEmbedLocations(ctx context.Context, request operatio
 			}
 			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
+	case httpRes.StatusCode == 422:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out sdkerrors.GetAnalyticsMediasMediaIDEmbedLocationsUnprocessableEntityError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
+			}
+
+			out.HTTPMeta = components.HTTPMetadata{
+				Request:  req,
+				Response: httpRes,
+			}
+			return nil, &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
 	case httpRes.StatusCode == 500:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
@@ -937,6 +981,10 @@ func (s *AnalyticsMedia) GetEmbedLocations(ctx context.Context, request operatio
 // locations (ranked by the chosen metric) plus an "All other" entry aggregating
 // the remaining locations.
 //
+// Embed location data is retained for 6 months. A `start_date` older than
+// that is moved forward to 6 months ago (UTC), so buckets before then are
+// not returned.
+//
 // The date range between `start_date` and `end_date` must not exceed 2 years.
 //
 // ## Requires api token with one of the following permissions
@@ -948,6 +996,11 @@ func (s *AnalyticsMedia) GetEmbedLocations(ctx context.Context, request operatio
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `view-stats` permission on this media can also
+// be used.
 func (s *AnalyticsMedia) GetEmbedLocationsTimeseries(ctx context.Context, request operations.GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesRequest, opts ...operations.Option) (*operations.GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1237,6 +1290,10 @@ func (s *AnalyticsMedia) GetEmbedLocationsTimeseries(ctx context.Context, reques
 // Retrieve traffic breakdown analytics for a video, grouped by a specified dimension
 // such as UTM campaign, UTM source, UTM medium, referrer domain, or viewer screen size.
 //
+// Traffic breakdown data is retained for 6 months. A `start_date` older than that is
+// moved forward to 6 months ago (UTC), so only the retained portion of the
+// range is returned; a range that ends before then returns a 422 error.
+//
 // The date range between `start_date` and `end_date` must not exceed 2 years.
 //
 // ## Requires api token with one of the following permissions
@@ -1248,6 +1305,11 @@ func (s *AnalyticsMedia) GetEmbedLocationsTimeseries(ctx context.Context, reques
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `view-stats` permission on this media can also
+// be used.
 func (s *AnalyticsMedia) GetTraffic(ctx context.Context, request operations.GetAnalyticsMediasMediaIDTrafficRequest, opts ...operations.Option) (*operations.GetAnalyticsMediasMediaIDTrafficResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1457,6 +1519,31 @@ func (s *AnalyticsMedia) GetTraffic(ctx context.Context, request operations.GetA
 			}
 			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
+	case httpRes.StatusCode == 422:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out sdkerrors.GetAnalyticsMediasMediaIDTrafficUnprocessableEntityError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
+			}
+
+			out.HTTPMeta = components.HTTPMetadata{
+				Request:  req,
+				Response: httpRes,
+			}
+			return nil, &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
 	case httpRes.StatusCode == 500:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
@@ -1548,6 +1635,11 @@ func (s *AnalyticsMedia) GetTraffic(ctx context.Context, request operations.GetA
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `view-stats` permission on this media can also
+// be used.
 func (s *AnalyticsMedia) GetConversions(ctx context.Context, request operations.GetAnalyticsMediasMediaIDConversionsRequest, opts ...operations.Option) (*operations.GetAnalyticsMediasMediaIDConversionsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1848,6 +1940,11 @@ func (s *AnalyticsMedia) GetConversions(ctx context.Context, request operations.
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `view-stats` permission on this media can also
+// be used.
 func (s *AnalyticsMedia) GetLanguages(ctx context.Context, request operations.GetAnalyticsMediasMediaIDLanguagesRequest, opts ...operations.Option) (*operations.GetAnalyticsMediasMediaIDLanguagesResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

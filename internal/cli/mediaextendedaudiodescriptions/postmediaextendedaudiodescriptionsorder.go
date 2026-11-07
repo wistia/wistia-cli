@@ -27,7 +27,7 @@ func initPostMediaExtendedAudioDescriptionsOrderCmd(parent *cobra.Command) error
 	var cmd = &cobra.Command{
 		Use:     "post-media-extended-audio-descriptions-order",
 		Short:   "Order Extended Audio Description",
-		Long:    "Orders an extended audio description for a media. The request will charge the credit card on the account when the order is ready.\nOnly accounts on paid plans with the `order_audio_descriptions` feature can use this endpoint.",
+		Long:    "Orders an extended audio description for a media. The request will charge the credit card on the account when the order is ready.\nOnly accounts on paid plans with the `order_audio_descriptions` feature can use this endpoint.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\nauthorization granting the `order-audio-descriptions` permission on the\nmedia can also be used. The order is attributed to the contact the token\nwas created for.",
 		Example: "  wistia media-extended-audio-descriptions post-media-extended-audio-descriptions-order --media-id <id>",
 		Args:    cobra.NoArgs,
 		RunE:    runPostMediaExtendedAudioDescriptionsOrderCmd,
@@ -41,7 +41,7 @@ func initPostMediaExtendedAudioDescriptionsOrderCmd(parent *cobra.Command) error
 		return fmt.Errorf("invalid metadata for post-media-extended-audio-descriptions-order: %w", err)
 	}
 	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
-	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Required: false, Kind: "json", BodyFlag: true})
 	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
 	if err := flagutil.AnnotateBodyFields(cmd, postMediaExtendedAudioDescriptionsOrderCmdMeta, "", "body"); err != nil {
 		return fmt.Errorf("annotate body fields for post-media-extended-audio-descriptions-order: %w", err)
@@ -78,7 +78,10 @@ func runPostMediaExtendedAudioDescriptionsOrderCmd(cmd *cobra.Command, args []st
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.MediaExtendedAudioDescriptions.PostMediaExtendedAudioDescriptionsOrder(cmd.Context(), *request, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

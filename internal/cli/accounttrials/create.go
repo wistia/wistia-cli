@@ -17,7 +17,7 @@ func initCreateCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "create",
 		Short:   "Start Account Trial",
-		Long:    "Starts a business-tier trial on the current account. The plan tier is\nhardcoded — the only caller is the Wistia desktop app's \"Invite and\nstart trial\" onboarding CTA.\n\nRequires the current contact to be authorized to start the trial via\nthe account's AccountPolicy — otherwise returns 403.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
+		Long:    "Starts a business-tier trial on the current account. The plan tier is\nhardcoded — the only caller is the Wistia desktop app's \"Invite and\nstart trial\" onboarding CTA.\n\nRequires the current contact to be authorized to start the trial via\nthe account's AccountPolicy — otherwise returns 403.\n\n[Expiring access tokens](https://docs.wistia.com/reference/post_expiring-token)\nwith authorizations cannot use this endpoint: starting a trial is an\naccount-level action authorized as the persisted contact, not through a\ntoken's authorizations. Such requests are forbidden.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```",
 		Example: "  wistia account-trials create",
 		Args:    cobra.NoArgs,
 		RunE:    runCreateCmd,
@@ -53,7 +53,10 @@ func runCreateCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.AccountTrials.Create(cmd.Context(), sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

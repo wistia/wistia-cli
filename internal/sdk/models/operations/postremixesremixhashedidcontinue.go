@@ -13,7 +13,7 @@ import (
 type PostRemixesRemixHashedIDContinueRequestBody struct {
 	// Natural language instructions for the edit (e.g., "cut the first 10 seconds").
 	Instructions string `json:"instructions"`
-	// Hashed ID of the destination folder for the exported media. Defaults to the same folder as the previous remix version's output.
+	// Hashed ID of the destination folder for the exported media. Defaults to the same folder as the previous version's output.
 	FolderID *string `json:"folder_id,omitzero"`
 }
 
@@ -32,7 +32,7 @@ func (p *PostRemixesRemixHashedIDContinueRequestBody) GetFolderID() *string {
 }
 
 type PostRemixesRemixHashedIDContinueRequest struct {
-	// The hashed ID of the current remix version to edit from.
+	// The remix_id of the Mochine video version to edit from.
 	RemixHashedID string                                       `pathParam:"style=simple,explode=false,name=remixHashedId"`
 	Body          *PostRemixesRemixHashedIDContinueRequestBody `request:"mediaType=application/json"`
 }
@@ -134,7 +134,7 @@ func (e *PostRemixesRemixHashedIDContinueCode) IsExact() bool {
 	return false
 }
 
-// PostRemixesRemixHashedIDContinueStatus - Status of the new remix version.
+// PostRemixesRemixHashedIDContinueStatus - Status of the new version.
 type PostRemixesRemixHashedIDContinueStatus string
 
 const (
@@ -160,13 +160,13 @@ func (e *PostRemixesRemixHashedIDContinueStatus) UnmarshalJSON(data []byte) erro
 
 // PostRemixesRemixHashedIDContinueResponseBody - New remix version created.
 type PostRemixesRemixHashedIDContinueResponseBody struct {
-	// Hashed ID of the new remix version.
+	// Hashed ID of the new Mochine video version.
 	RemixID *string `json:"remix_id,omitzero"`
 	// Hashed ID of the conversation.
 	ConversationID *string `json:"conversation_id,omitzero"`
-	// Status of the new remix version.
+	// Status of the new version.
 	Status *PostRemixesRemixHashedIDContinueStatus `json:"status,omitzero"`
-	// Hashed ID of the remix version this edit is based on.
+	// Hashed ID of the version this edit is based on.
 	PreviousRemixID *string `json:"previous_remix_id,omitzero"`
 }
 

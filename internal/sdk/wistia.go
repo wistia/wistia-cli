@@ -3,7 +3,7 @@
 
 package sdk
 
-// Generated from OpenAPI doc version edge-version and generator version 2.943.0
+// Generated from OpenAPI doc version edge-version and generator version 2.956.1
 
 import (
 	"context"
@@ -66,6 +66,7 @@ type Wistia struct {
 	Trims                          *Trims
 	MediaExtendedAudioDescriptions *MediaExtendedAudioDescriptions
 	Brands                         *Brands
+	RecordingRooms                 *RecordingRooms
 	Tags                           *Tags
 	BulkActions                    *BulkActions
 	Bulk                           *Bulk
@@ -79,6 +80,7 @@ type Wistia struct {
 	Webinars                       *Webinars
 	WebinarRegistrations           *WebinarRegistrations
 	WebinarCollaborators           *WebinarCollaborators
+	Series                         *Series
 	Account                        *Account
 	Contacts                       *Contacts
 	Contact                        *Contact
@@ -172,11 +174,11 @@ func WithTimeout(timeout time.Duration) SDKOption {
 // New creates a new instance of the SDK with the provided options
 func New(opts ...SDKOption) *Wistia {
 	sdk := &Wistia{
-		SDKVersion: "0.2.0",
+		SDKVersion: "0.3.0",
 		sdkConfiguration: config.SDKConfiguration{
-			UserAgent:         "speakeasy-sdk/go 0.2.0 2.943.0 edge-version github.com/wistia/wistia-cli/internal/sdk",
-			SDKVersion:        "0.2.0",
-			GenVersion:        "2.943.0",
+			UserAgent:         "speakeasy-sdk/go 0.3.0 2.956.1 edge-version github.com/wistia/wistia-cli/internal/sdk",
+			SDKVersion:        "0.3.0",
+			GenVersion:        "2.956.1",
 			OpenAPIDocVersion: "edge-version",
 			ServerList:        ServerList,
 		},
@@ -208,6 +210,7 @@ func New(opts ...SDKOption) *Wistia {
 	sdk.Trims = newTrims(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.MediaExtendedAudioDescriptions = newMediaExtendedAudioDescriptions(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Brands = newBrands(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.RecordingRooms = newRecordingRooms(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Tags = newTags(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.BulkActions = newBulkActions(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Bulk = newBulk(sdk, sdk.sdkConfiguration, sdk.hooks)
@@ -221,6 +224,7 @@ func New(opts ...SDKOption) *Wistia {
 	sdk.Webinars = newWebinars(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.WebinarRegistrations = newWebinarRegistrations(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.WebinarCollaborators = newWebinarCollaborators(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.Series = newSeries(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Account = newAccount(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Contacts = newContacts(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Contact = newContact(sdk, sdk.sdkConfiguration, sdk.hooks)

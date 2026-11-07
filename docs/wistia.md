@@ -24,6 +24,7 @@ wistia [flags]
       --interactive            Prompt for missing inputs and open guided configure/auth forms (forms fall back to line prompts on stdin off-TTY) (default true)
   -q, --jq string              Filter and transform output using a jq expression (e.g., '.name', '.items[] | .id')
       --no-interactive         Disable all interactive features (auto-prompting, explorer auto-launch, TUI forms)
+      --no-keyring             Never read or write the OS keychain; store secrets in the config file instead (env: WISTIA_CLI_NO_KEYRING)
   -o, --output-format string   Specify the output format. Options: pretty, json, yaml, table, toon. (default "pretty")
       --raw-output             Write --jq string results as raw text instead of JSON strings (like jq -r); non-string results stay JSON
       --server string          Select a server by index (for indexed servers) or name (for named servers)
@@ -64,10 +65,12 @@ wistia [flags]
 * [wistia media](wistia_media.md)	 - Operations for media
 * [wistia media-extended-audio-descriptions](wistia_media-extended-audio-descriptions.md)	 - Operations for media-extended-audio-descriptions
 * [wistia push-devices](wistia_push-devices.md)	 - Operations for push-devices
+* [wistia recording-rooms](wistia_recording-rooms.md)	 - Operations for recording-rooms
 * [wistia remix](wistia_remix.md)	 - Operations for remix
 * [wistia resource-urls](wistia_resource-urls.md)	 - Operations for resource-urls
 * [wistia review-bundles](wistia_review-bundles.md)	 - Operations for review-bundles
 * [wistia search](wistia_search.md)	 - Operations for search
+* [wistia series](wistia_series.md)	 - Operations for series
 * [wistia share-links](wistia_share-links.md)	 - Operations for share-links
 * [wistia speakers](wistia_speakers.md)	 - Operations for speakers
 * [wistia stats-account](wistia_stats-account.md)	 - Operations for stats-account

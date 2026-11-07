@@ -44,6 +44,12 @@ func newChannelCollaborators(rootSDK *Wistia, sdkConfig config.SDKConfiguration,
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `update` permission on this channel can also
+// be used; a token granted only `show` on the channel lists no
+// collaborators.
 func (s *ChannelCollaborators) List(ctx context.Context, request operations.GetChannelsChannelHashedIDCollaboratorsRequest, opts ...operations.Option) (*operations.GetChannelsChannelHashedIDCollaboratorsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -314,6 +320,11 @@ func (s *ChannelCollaborators) List(ctx context.Context, request operations.GetC
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `update` permission on this channel can also
+// be used.
 func (s *ChannelCollaborators) Create(ctx context.Context, request operations.PostChannelsChannelHashedIDCollaboratorsRequest, opts ...operations.Option) (*operations.PostChannelsChannelHashedIDCollaboratorsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -501,6 +512,31 @@ func (s *ChannelCollaborators) Create(ctx context.Context, request operations.Po
 			}
 			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
+	case httpRes.StatusCode == 403:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out sdkerrors.PostChannelsChannelHashedIDCollaboratorsForbiddenError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
+			}
+
+			out.HTTPMeta = components.HTTPMetadata{
+				Request:  req,
+				Response: httpRes,
+			}
+			return nil, &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
 	case httpRes.StatusCode == 404:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
@@ -587,6 +623,11 @@ func (s *ChannelCollaborators) Create(ctx context.Context, request operations.Po
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `update` permission on this channel can also
+// be used.
 func (s *ChannelCollaborators) Delete(ctx context.Context, request operations.DeleteChannelsChannelHashedIDCollaboratorsIDRequest, opts ...operations.Option) (*operations.DeleteChannelsChannelHashedIDCollaboratorsIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -726,6 +767,31 @@ func (s *ChannelCollaborators) Delete(ctx context.Context, request operations.De
 			}
 
 			var out sdkerrors.DeleteChannelsChannelHashedIDCollaboratorsIDUnauthorizedError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
+			}
+
+			out.HTTPMeta = components.HTTPMetadata{
+				Request:  req,
+				Response: httpRes,
+			}
+			return nil, &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
+	case httpRes.StatusCode == 403:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out sdkerrors.DeleteChannelsChannelHashedIDCollaboratorsIDForbiddenError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}

@@ -19,13 +19,26 @@ import (
 // `move` applies to `media` only, one action per media. Each action
 // carries its own destination, so a single request can move media into
 // many different folders.
+//
+// `add_tags` applies to `media` only and adds tags without removing any
+// the media already has, whereas a `media` update carrying `tags` replaces
+// the whole list. Each action names its own tags, so a single request can
+// tag every media differently.
+//
+// `archive` applies to `media` only and takes no `payload`. Archiving an
+// already-archived media succeeds without effect. Livestreams, recordings,
+// Soapbox recordings, My Library media, and media that isn't in a folder
+// cannot be archived, so their actions fail with the reason. Once the
+// account reaches its archived media limit, further actions fail.
 type ActionOperation string
 
 const (
-	ActionOperationCreate ActionOperation = "create"
-	ActionOperationUpdate ActionOperation = "update"
-	ActionOperationDelete ActionOperation = "delete"
-	ActionOperationMove   ActionOperation = "move"
+	ActionOperationCreate  ActionOperation = "create"
+	ActionOperationUpdate  ActionOperation = "update"
+	ActionOperationDelete  ActionOperation = "delete"
+	ActionOperationMove    ActionOperation = "move"
+	ActionOperationAddTags ActionOperation = "add_tags"
+	ActionOperationArchive ActionOperation = "archive"
 )
 
 func (e ActionOperation) ToPointer() *ActionOperation {
@@ -44,6 +57,10 @@ func (e *ActionOperation) UnmarshalJSON(data []byte) error {
 	case "delete":
 		fallthrough
 	case "move":
+		fallthrough
+	case "add_tags":
+		fallthrough
+	case "archive":
 		*e = ActionOperation(v)
 		return nil
 	default:
@@ -54,7 +71,8 @@ func (e *ActionOperation) UnmarshalJSON(data []byte) error {
 // ActionResourceType - The type of resource to operate on. `folder` means a top-level folder
 // (previously called a project); use `subfolder` for a folder nested
 // inside one. `captions` operates on a single caption track -- one media
-// in one language.
+// in one language. `media_speaker` assigns speaker profiles to a media
+// (`create`) or removes one assignment (`delete`).
 //
 // The `customization_*` types each write one concern of a media's player
 // customizations and accept `update` only. Their `id` is the media's
@@ -72,6 +90,7 @@ const (
 	ActionResourceTypeChannel                    ActionResourceType = "channel"
 	ActionResourceTypeChannelEpisode             ActionResourceType = "channel_episode"
 	ActionResourceTypeCaptions                   ActionResourceType = "captions"
+	ActionResourceTypeMediaSpeaker               ActionResourceType = "media_speaker"
 	ActionResourceTypeCustomizationAccess        ActionResourceType = "customization_access"
 	ActionResourceTypeCustomizationAccessibility ActionResourceType = "customization_accessibility"
 	ActionResourceTypeCustomizationAppearance    ActionResourceType = "customization_appearance"
@@ -105,6 +124,8 @@ func (e *ActionResourceType) UnmarshalJSON(data []byte) error {
 		fallthrough
 	case "captions":
 		fallthrough
+	case "media_speaker":
+		fallthrough
 	case "customization_access":
 		fallthrough
 	case "customization_accessibility":
@@ -131,8 +152,8 @@ func (e *ActionResourceType) UnmarshalJSON(data []byte) error {
 	}
 }
 
-// ActionPayload - The data for the operation. Required for create, update, and move
-// operations.
+// ActionPayload - The data for the operation. Required for create, update, move, and
+// add_tags operations.
 // The accepted fields depend on the resource type and match the corresponding
 // create or update endpoint's request body (for example, a channel_episode
 // create takes the same fields as the Create Channel Episode endpoint,
@@ -153,6 +174,21 @@ func (e *ActionResourceType) UnmarshalJSON(data []byte) error {
 // and accepts an optional `subfolder_id`, which must belong to that
 // folder. Omit `subfolder_id` to move the media to the folder's root
 // level.
+//
+// Adding tags requires `tag_names`, an array of 1 to 100 tag names. Names
+// are lowercased and whitespace-collapsed, each must be at most 50
+// characters, and tags the media already has are left as they are. The
+// action fails if the media would end up with more than 100 tags, or if a
+// name matches an existing tag but is spelled differently (accents,
+// symbols); reuse the exact spelling from get-tags.
+//
+// A `media_speaker` create takes the Assign Speaker body, or, for several
+// people on one media, `speakers`, a list of 1 to 20 objects each with a
+// `speaker_profile_id` and an optional `detected_speaker_id`, plus
+// `expected_version` (the media's `speaker_data_version`), which is
+// required when any entry names a detected speaker. The list is assigned
+// in order as one change, so every speaker on a media goes in one action.
+// A `media_speaker` delete takes an optional `expected_version`.
 //
 // A `customization_*` payload is a partial update of that concern only:
 // just the fields you send are changed, and a field naming another
@@ -179,11 +215,23 @@ type PostBulkAction struct {
 	// carries its own destination, so a single request can move media into
 	// many different folders.
 	//
+	// `add_tags` applies to `media` only and adds tags without removing any
+	// the media already has, whereas a `media` update carrying `tags` replaces
+	// the whole list. Each action names its own tags, so a single request can
+	// tag every media differently.
+	//
+	// `archive` applies to `media` only and takes no `payload`. Archiving an
+	// already-archived media succeeds without effect. Livestreams, recordings,
+	// Soapbox recordings, My Library media, and media that isn't in a folder
+	// cannot be archived, so their actions fail with the reason. Once the
+	// account reaches its archived media limit, further actions fail.
+	//
 	Operation ActionOperation `json:"operation"`
 	// The type of resource to operate on. `folder` means a top-level folder
 	// (previously called a project); use `subfolder` for a folder nested
 	// inside one. `captions` operates on a single caption track -- one media
-	// in one language.
+	// in one language. `media_speaker` assigns speaker profiles to a media
+	// (`create`) or removes one assignment (`delete`).
 	//
 	// The `customization_*` types each write one concern of a media's player
 	// customizations and accept `update` only. Their `id` is the media's
@@ -194,16 +242,19 @@ type PostBulkAction struct {
 	// batch can never quietly overwrite unrelated player settings.
 	//
 	ResourceType ActionResourceType `json:"resource_type"`
-	// The hashed ID of the resource. Required for update, delete, and move
-	// operations.
+	// The hashed ID of the resource. Required for update, delete, move,
+	// add_tags, and archive operations.
 	//
 	// For `captions` this is the caption track's own ID (the `id` field
 	// returned by List Captions), not the media's -- a media can have a track
 	// per language.
 	//
+	// For `media_speaker`, a `create` takes the media's hashed ID and a
+	// `delete` takes the `media_speaker_id`; both require it.
+	//
 	ID *string `json:"id,omitzero"`
-	// The data for the operation. Required for create, update, and move
-	// operations.
+	// The data for the operation. Required for create, update, move, and
+	// add_tags operations.
 	// The accepted fields depend on the resource type and match the corresponding
 	// create or update endpoint's request body (for example, a channel_episode
 	// create takes the same fields as the Create Channel Episode endpoint,
@@ -224,6 +275,21 @@ type PostBulkAction struct {
 	// and accepts an optional `subfolder_id`, which must belong to that
 	// folder. Omit `subfolder_id` to move the media to the folder's root
 	// level.
+	//
+	// Adding tags requires `tag_names`, an array of 1 to 100 tag names. Names
+	// are lowercased and whitespace-collapsed, each must be at most 50
+	// characters, and tags the media already has are left as they are. The
+	// action fails if the media would end up with more than 100 tags, or if a
+	// name matches an existing tag but is spelled differently (accents,
+	// symbols); reuse the exact spelling from get-tags.
+	//
+	// A `media_speaker` create takes the Assign Speaker body, or, for several
+	// people on one media, `speakers`, a list of 1 to 20 objects each with a
+	// `speaker_profile_id` and an optional `detected_speaker_id`, plus
+	// `expected_version` (the media's `speaker_data_version`), which is
+	// required when any entry names a detected speaker. The list is assigned
+	// in order as one change, so every speaker on a media goes in one action.
+	// A `media_speaker` delete takes an optional `expected_version`.
 	//
 	// A `customization_*` payload is a partial update of that concern only:
 	// just the fields you send are changed, and a field naming another
@@ -283,9 +349,11 @@ func (p *PostBulkAction) GetPayload() *ActionPayload {
 type JobOperation string
 
 const (
-	JobOperationUpdate JobOperation = "update"
-	JobOperationDelete JobOperation = "delete"
-	JobOperationMove   JobOperation = "move"
+	JobOperationUpdate  JobOperation = "update"
+	JobOperationDelete  JobOperation = "delete"
+	JobOperationMove    JobOperation = "move"
+	JobOperationAddTags JobOperation = "add_tags"
+	JobOperationArchive JobOperation = "archive"
 )
 
 func (e JobOperation) ToPointer() *JobOperation {
@@ -302,6 +370,10 @@ func (e *JobOperation) UnmarshalJSON(data []byte) error {
 	case "delete":
 		fallthrough
 	case "move":
+		fallthrough
+	case "add_tags":
+		fallthrough
+	case "archive":
 		*e = JobOperation(v)
 		return nil
 	default:
@@ -457,18 +529,20 @@ func (p *PostBulkScope) GetID() *string {
 }
 
 // JobPayload - The data applied to every matching record, in the same shape a single
-// action's payload takes for this resource type. Required for `update` and
-// `move`.
+// action's payload takes for this resource type. Required for `update`,
+// `move`, and `add_tags`.
 type JobPayload struct {
 }
 
 // PostBulkJob - One change applied to many records, named by a parent (`scope`) or listed
 // explicitly (`ids`). The server resolves the target and runs one action per
 // record, so a folder of 400 media takes one job rather than 400 actions.
+// Provide exactly one of `job` or `actions`; a request carrying both is
+// rejected.
 //
 // A `scope` resolves to exactly what the matching list endpoint returns for
 // that parent, including its defaults -- so a `folder` scope on `media` reaches
-// media in that folder's subfolders, and includes **archived** media.
+// media in that folder's subfolders, but not media already archived out of it.
 //
 // A job resolves to at most 5000 records. Beyond that it is rejected rather
 // than truncated, so a job never silently acts on part of the set you named --
@@ -510,8 +584,8 @@ type PostBulkJob struct {
 	//
 	Ids []string `json:"ids,omitzero"`
 	// The data applied to every matching record, in the same shape a single
-	// action's payload takes for this resource type. Required for `update` and
-	// `move`.
+	// action's payload takes for this resource type. Required for `update`,
+	// `move`, and `add_tags`.
 	//
 	Payload *JobPayload `json:"payload,omitzero"`
 }
@@ -573,18 +647,23 @@ type PostBulkRequest struct {
 	// request, and the request body must stay under 2 MB -- whichever limit is
 	// reached first. An oversized body is rejected with a `413` and no action
 	// in it runs. Each action specifies an operation (create, update, delete,
-	// or move), a resource type, and the relevant payload or record ID.
+	// move, add_tags, or archive), a resource type, and the relevant payload
+	// or record ID. Actions run independently, so one request can mix operations and
+	// resource types, but no action can depend on another's result.
 	//
-	// Use `job` instead when every record takes the same payload.
+	// Provide exactly one of `actions` or `job`; a request carrying both is
+	// rejected. Use `job` instead when every record takes the same payload.
 	//
 	Actions []PostBulkAction `json:"actions,omitzero"`
 	// One change applied to many records, named by a parent (`scope`) or listed
 	// explicitly (`ids`). The server resolves the target and runs one action per
 	// record, so a folder of 400 media takes one job rather than 400 actions.
+	// Provide exactly one of `job` or `actions`; a request carrying both is
+	// rejected.
 	//
 	// A `scope` resolves to exactly what the matching list endpoint returns for
 	// that parent, including its defaults -- so a `folder` scope on `media` reaches
-	// media in that folder's subfolders, and includes **archived** media.
+	// media in that folder's subfolders, but not media already archived out of it.
 	//
 	// A job resolves to at most 5000 records. Beyond that it is rejected rather
 	// than truncated, so a job never silently acts on part of the set you named --

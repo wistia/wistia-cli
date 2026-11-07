@@ -11,8 +11,10 @@ as suggestions and are never reported as exact matches. A resolved match
 means the wording was located; a later write can still fail authorization,
 version, or edit-boundary checks.
 
-When more than 10 exact matches exist, use the one-based `occurrence`
-parameter to retrieve a specific later match.
+Exact matches are returned in pages of up to 10. Set the one-based
+`occurrence` parameter to start a page at that occurrence; the requested
+occurrence is always the first match returned. When more matches remain,
+request the next page with `occurrence` set to `next_occurrence`.
 
 Authentication and request validation failures apply to the whole request.
 Missing, inaccessible, or otherwise unreadable media are reported as
@@ -44,7 +46,7 @@ wistia captions find-matches [flags]
   -h, --help                    help for find-matches
   -l, --language-code string    Exact IETF language tag. Omit when each media has only one caption track.
   -m, --media-ids stringArray   Explicit hashed IDs of the media whose captions should be searched. [required]
-      --occurrence int          One-based exact occurrence to return, including occurrences after the first 10.
+      --occurrence int          One-based exact occurrence to start the page of matches at, including occurrences after the first 10.
   -s, --start-ms int            Optional start of a time range used to disambiguate the match.
   -t, --target-text string      Exact caption wording to locate. [required]
 ```
@@ -62,6 +64,7 @@ wistia captions find-matches [flags]
       --interactive            Prompt for missing inputs and open guided configure/auth forms (forms fall back to line prompts on stdin off-TTY) (default true)
   -q, --jq string              Filter and transform output using a jq expression (e.g., '.name', '.items[] | .id')
       --no-interactive         Disable all interactive features (auto-prompting, explorer auto-launch, TUI forms)
+      --no-keyring             Never read or write the OS keychain; store secrets in the config file instead (env: WISTIA_CLI_NO_KEYRING)
   -o, --output-format string   Specify the output format. Options: pretty, json, yaml, table, toon. (default "pretty")
       --raw-output             Write --jq string results as raw text instead of JSON strings (like jq -r); non-string results stay JSON
       --server string          Select a server by index (for indexed servers) or name (for named servers)

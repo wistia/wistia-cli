@@ -35,6 +35,19 @@ func (e *PostFoldersIDCopyNotFoundError) Error() string {
 	return string(data)
 }
 
+// PostFoldersIDCopyForbiddenError - Forbidden, token is valid but account does not have access to feature
+type PostFoldersIDCopyForbiddenError struct {
+	Error_   *string                 `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata `json:"-"`
+}
+
+var _ error = &PostFoldersIDCopyForbiddenError{}
+
+func (e *PostFoldersIDCopyForbiddenError) Error() string {
+	data, _ := json.Marshal(e)
+	return string(data)
+}
+
 // PostFoldersIDCopyUnauthorizedError - Unauthorized, invalid or missing token
 type PostFoldersIDCopyUnauthorizedError struct {
 	// A machine-readable identifier for the specific authorization failure.

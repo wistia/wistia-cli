@@ -24,7 +24,7 @@ func initDeleteCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "delete [review-bundle-hashed-id]",
 		Short:   "Delete Review Bundle",
-		Long:    "Permanently deletes a review bundle, identified by its hashed id. This removes\nthe bundle and its shared review link; the media it contained are not deleted.\nThis action cannot be undone.\n\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
+		Long:    "Permanently deletes a review bundle, identified by its hashed id. This removes\nthe bundle and its shared review link; the media it contained are not deleted.\nThis action cannot be undone.\n\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\nauthorization granting the `destroy` permission on this review bundle can\nalso be used.",
 		Example: "  wistia review-bundles delete --review-bundle-hashed-id <id>",
 		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runDeleteCmd,
@@ -79,7 +79,10 @@ func runDeleteCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.ReviewBundles.Delete(cmd.Context(), *req, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}
