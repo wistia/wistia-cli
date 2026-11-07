@@ -47,6 +47,11 @@ func newAnalyticsAccount(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hoo
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// `account` authorization granting the `view-stats` permission can also
+// be used.
 func (s *AnalyticsAccount) Get(ctx context.Context, request operations.GetAnalyticsAccountRequest, opts ...operations.Option) (*operations.GetAnalyticsAccountResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -346,6 +351,11 @@ func (s *AnalyticsAccount) Get(ctx context.Context, request operations.GetAnalyt
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// `account` authorization granting the `view-stats` permission can also
+// be used.
 func (s *AnalyticsAccount) GetTimeseries(ctx context.Context, request operations.GetAnalyticsAccountTimeseriesRequest, opts ...operations.Option) (*operations.GetAnalyticsAccountTimeseriesResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -649,6 +659,11 @@ func (s *AnalyticsAccount) GetTimeseries(ctx context.Context, request operations
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// `account` authorization granting the `view-stats` permission can also
+// be used.
 func (s *AnalyticsAccount) GetTopContent(ctx context.Context, request operations.GetAnalyticsAccountTopContentRequest, opts ...operations.Option) (*operations.GetAnalyticsAccountTopContentResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -938,6 +953,10 @@ func (s *AnalyticsAccount) GetTopContent(ctx context.Context, request operations
 // Retrieve embed location analytics for the entire account. Returns a list of domains
 // where the account's media are embedded, ranked by the chosen metric.
 //
+// Embed location data is retained for 6 months. A `start_date` older than that is
+// moved forward to 6 months ago (UTC), so only the retained portion of the
+// range is returned; a range that ends before then returns a 422 error.
+//
 // The date range between `start_date` and `end_date` must not exceed 2 years.
 //
 // ## Requires api token with one of the following permissions
@@ -949,6 +968,11 @@ func (s *AnalyticsAccount) GetTopContent(ctx context.Context, request operations
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// `account` authorization granting the `view-stats` permission can also
+// be used.
 func (s *AnalyticsAccount) GetEmbedLocations(ctx context.Context, request operations.GetAnalyticsAccountEmbedLocationsRequest, opts ...operations.Option) (*operations.GetAnalyticsAccountEmbedLocationsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1158,6 +1182,31 @@ func (s *AnalyticsAccount) GetEmbedLocations(ctx context.Context, request operat
 			}
 			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
+	case httpRes.StatusCode == 422:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out sdkerrors.GetAnalyticsAccountEmbedLocationsUnprocessableEntityError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
+			}
+
+			out.HTTPMeta = components.HTTPMetadata{
+				Request:  req,
+				Response: httpRes,
+			}
+			return nil, &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
 	case httpRes.StatusCode == 500:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
@@ -1244,9 +1293,10 @@ func (s *AnalyticsAccount) GetEmbedLocations(ctx context.Context, request operat
 // `/pricing` also matching `/pricing/plans`). A path that is empty or `/`
 // is ignored, returning media across all paths on the domain.
 //
-// Embed location data is retained for 6 months; a `start_date` older than
-// that returns a 422 error. When `start_date` and `end_date` are omitted,
-// the full 6-month queryable window is used.
+// Embed location data is retained for 6 months. A `start_date` older than
+// that is moved forward to 6 months ago (UTC); a range that ends before then
+// returns a 422 error. When `start_date` and `end_date` are omitted, the full
+// 6-month queryable window is used.
 //
 // ## Requires api token with one of the following permissions
 // ```
@@ -1257,6 +1307,11 @@ func (s *AnalyticsAccount) GetEmbedLocations(ctx context.Context, request operat
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// `account` authorization granting the `view-stats` permission can also
+// be used.
 func (s *AnalyticsAccount) FindMediaByEmbedLocation(ctx context.Context, request operations.GetAnalyticsAccountMediaByEmbedLocationRequest, opts ...operations.Option) (*operations.GetAnalyticsAccountMediaByEmbedLocationResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

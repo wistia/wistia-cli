@@ -19,6 +19,11 @@ Tokens with the "Act with a team member's permissions" permission
 made with such a token are authorized using the permissions of the
 contact assigned to the token.
 
+An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+created with the `all:delegate_to_contact_permissions` scope and an
+`account` authorization granting the `manage-custom-metadata` permission
+can also be used.
+
 ```
 wistia custom-metadata-field-definitions put-custom-metadata-field-definitions-key [key] [flags]
 ```
@@ -33,7 +38,7 @@ wistia custom-metadata-field-definitions put-custom-metadata-field-definitions-k
 
 ```
       --body string            Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.
-  -c, --config-param string    JSON value (one of: { "options": object[] } | { "allows_group_refs": boolean })
+  -c, --config-param string    Type-specific configuration changes. Only valid for field types that have any; currently option add, edit, or remove operations for a single_select or multi_select field.
       --default-value string   A default value for the field, matching the field_type's format.
   -h, --help                   help for put-custom-metadata-field-definitions-key
   -k, --key string             The field's immutable key (or pass it as the [key] argument)
@@ -54,6 +59,7 @@ wistia custom-metadata-field-definitions put-custom-metadata-field-definitions-k
       --interactive            Prompt for missing inputs and open guided configure/auth forms (forms fall back to line prompts on stdin off-TTY) (default true)
   -q, --jq string              Filter and transform output using a jq expression (e.g., '.name', '.items[] | .id')
       --no-interactive         Disable all interactive features (auto-prompting, explorer auto-launch, TUI forms)
+      --no-keyring             Never read or write the OS keychain; store secrets in the config file instead (env: WISTIA_CLI_NO_KEYRING)
   -o, --output-format string   Specify the output format. Options: pretty, json, yaml, table, toon. (default "pretty")
       --raw-output             Write --jq string results as raw text instead of JSON strings (like jq -r); non-string results stay JSON
       --server string          Select a server by index (for indexed servers) or name (for named servers)

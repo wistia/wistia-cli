@@ -35,6 +35,10 @@ func InitAccountRoot(parent *cobra.Command) error {
 		return err
 	}
 
+	if err := initGetTranscriptSettingsCmd(AccountCmd); err != nil {
+		return err
+	}
+
 	if err := initGetBrandPreloadCmd(AccountCmd); err != nil {
 		return err
 	}

@@ -689,14 +689,29 @@ type DeleteChannelsChannelHashedIDResponseBody struct {
 	LiveStreamEventCount *int64 `json:"live_stream_event_count,omitzero"`
 	// The display name for the channel
 	Name string `json:"name"`
+	// The link viewers use to watch the channel: the channel's active custom
+	// domain when one is attached, otherwise the Wistia-hosted channel page.
+	// This is the link to share with an audience.
+	//
+	PublicURL string `json:"public_url"`
+	// Whether the channel is locked. Only invited users logged into Wistia will be able to view this channel.
+	Locked bool `json:"locked"`
 	// The date when the channel was last updated.
 	Updated time.Time `json:"updated"`
 	// Whether episodes are automatically published when added to the channel.
 	AutoPublishEnabled optionalnullable.OptionalNullable[bool] `json:"auto_publish_enabled,omitzero"`
 	// Whether podcasting is enabled for the channel.
 	PodcastEnabled optionalnullable.OptionalNullable[bool] `json:"podcast_enabled,omitzero"`
-	// The custom URL used when embedding the channel on your own site. Null if no custom URL is set.
+	// The page on your own website where you embedded this channel, as entered
+	// under "Embedded URL" in channel settings. Null when nothing has been
+	// entered.
+	//
 	CustomURL optionalnullable.OptionalNullable[string] `json:"custom_url,omitzero"`
+	// The channel's destination URL: custom_url when one is entered, otherwise
+	// public_url (the active custom domain or Wistia-hosted channel page).
+	// Also used for the channel's podcast feed and episode links.
+	//
+	EmbeddedURL string `json:"embedded_url"`
 	// Podcast specific settings for the channel. Only present when podcasting
 	// is enabled for the channel.
 	//
@@ -765,6 +780,20 @@ func (d *DeleteChannelsChannelHashedIDResponseBody) GetName() string {
 	return d.Name
 }
 
+func (d *DeleteChannelsChannelHashedIDResponseBody) GetPublicURL() string {
+	if d == nil {
+		return ""
+	}
+	return d.PublicURL
+}
+
+func (d *DeleteChannelsChannelHashedIDResponseBody) GetLocked() bool {
+	if d == nil {
+		return false
+	}
+	return d.Locked
+}
+
 func (d *DeleteChannelsChannelHashedIDResponseBody) GetUpdated() time.Time {
 	if d == nil {
 		return time.Time{}
@@ -791,6 +820,13 @@ func (d *DeleteChannelsChannelHashedIDResponseBody) GetCustomURL() optionalnulla
 		return nil
 	}
 	return d.CustomURL
+}
+
+func (d *DeleteChannelsChannelHashedIDResponseBody) GetEmbeddedURL() string {
+	if d == nil {
+		return ""
+	}
+	return d.EmbeddedURL
 }
 
 func (d *DeleteChannelsChannelHashedIDResponseBody) GetPodcastSettings() *DeleteChannelsChannelHashedIDPodcastSettings {

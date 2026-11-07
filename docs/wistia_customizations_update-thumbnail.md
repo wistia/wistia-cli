@@ -18,6 +18,10 @@ Tokens with the "Act with a team member's permissions" permission
 made with such a token are authorized using the permissions of the
 contact assigned to the token.
 
+An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+created with the `all:delegate_to_contact_permissions` scope and an
+authorization granting the `edit` permission on this media can also be used.
+
 ```
 wistia customizations update-thumbnail [media-id] [flags]
 ```
@@ -36,9 +40,9 @@ wistia customizations update-thumbnail [media-id] [flags]
   -h, --help                                 help for update-thumbnail
   -m, --media-id string                      The hashed ID of the video to be customized. (or pass it as the [media-id] argument)
   -p, --plugin string                        Container for thumbnail-related player plugin configurations.
-  -s, --still-url string                     Overrides the thumbnail image that appears before the video plays.
+  -s, --still-url string                     Overrides the thumbnail image that appears before the video plays. When a text overlay is included, the text is drawn into this image. Send null to go back to the video's own thumbnail.
   -t, --thumbnail-alt-text string            Alt text for the thumbnail image, used for accessibility.
-  -u, --unaltered-still-image-asset string   Reference to the original, unaltered still image asset.
+  -u, --unaltered-still-image-asset string   The thumbnail image before any text overlay is drawn on it. Send null to clear it.
 ```
 
 ### Options inherited from parent commands
@@ -54,6 +58,7 @@ wistia customizations update-thumbnail [media-id] [flags]
       --interactive            Prompt for missing inputs and open guided configure/auth forms (forms fall back to line prompts on stdin off-TTY) (default true)
   -q, --jq string              Filter and transform output using a jq expression (e.g., '.name', '.items[] | .id')
       --no-interactive         Disable all interactive features (auto-prompting, explorer auto-launch, TUI forms)
+      --no-keyring             Never read or write the OS keychain; store secrets in the config file instead (env: WISTIA_CLI_NO_KEYRING)
   -o, --output-format string   Specify the output format. Options: pretty, json, yaml, table, toon. (default "pretty")
       --raw-output             Write --jq string results as raw text instead of JSON strings (like jq -r); non-string results stay JSON
       --server string          Select a server by index (for indexed servers) or name (for named servers)

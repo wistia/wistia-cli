@@ -11,7 +11,7 @@ import (
 )
 
 type GetRemixesRemixHashedIDRequest struct {
-	// The hashed ID of the remix.
+	// The remix_id of the Mochine video.
 	RemixHashedID string `pathParam:"style=simple,explode=false,name=remixHashedId"`
 }
 
@@ -109,11 +109,11 @@ func (p *Preview) GetInstantHlsReady() *bool {
 
 // GetRemixesRemixHashedIDResponseBody - Remix status and details.
 type GetRemixesRemixHashedIDResponseBody struct {
-	// Hashed ID of the remix.
+	// Hashed ID of the Mochine video.
 	RemixID *string `json:"remix_id,omitzero"`
 	// Hashed ID of the parent conversation.
 	ConversationID *string `json:"conversation_id,omitzero"`
-	// The ISO 8601 timestamp when the remix was created.
+	// The ISO 8601 timestamp when the Mochine video was created.
 	CreatedAt *time.Time `json:"created_at,omitzero"`
 	// Current processing status.
 	Status *GetRemixesRemixHashedIDStatus `json:"status,omitzero"`

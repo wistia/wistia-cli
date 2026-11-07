@@ -42,7 +42,7 @@ wistia remix post-remixes-remix-hashed-id-export [remix-hashed-id] [flags]
   -f, --folder-id string         Hashed ID of the destination folder. Defaults to the source media's folder.
   -h, --help                     help for post-remixes-remix-hashed-id-export
   -n, --name string              Custom name for the exported media.
-  -r, --remix-hashed-id string   The hashed ID of the remix to export. (or pass it as the [remix-hashed-id] argument)
+  -r, --remix-hashed-id string   The remix_id of the Mochine video to export. (or pass it as the [remix-hashed-id] argument)
 ```
 
 ### Options inherited from parent commands
@@ -58,6 +58,7 @@ wistia remix post-remixes-remix-hashed-id-export [remix-hashed-id] [flags]
       --interactive            Prompt for missing inputs and open guided configure/auth forms (forms fall back to line prompts on stdin off-TTY) (default true)
   -q, --jq string              Filter and transform output using a jq expression (e.g., '.name', '.items[] | .id')
       --no-interactive         Disable all interactive features (auto-prompting, explorer auto-launch, TUI forms)
+      --no-keyring             Never read or write the OS keychain; store secrets in the config file instead (env: WISTIA_CLI_NO_KEYRING)
   -o, --output-format string   Specify the output format. Options: pretty, json, yaml, table, toon. (default "pretty")
       --raw-output             Write --jq string results as raw text instead of JSON strings (like jq -r); non-string results stay JSON
       --server string          Select a server by index (for indexed servers) or name (for named servers)

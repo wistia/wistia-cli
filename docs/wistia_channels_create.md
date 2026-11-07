@@ -6,6 +6,11 @@ Create Channel
 
 Creates a channel.
 
+An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+created with the `all:delegate_to_contact_permissions` scope and an
+authorization granting the `create-channels` permission on the account
+can also be used.
+
 ```
 wistia channels create [flags]
 ```
@@ -21,7 +26,7 @@ wistia channels create [flags]
 ```
   -a, --auto-publish-enabled      Whether the episodes are automatically published when added to the channel. Cannot be enabled if podcasting is on.
       --body string               Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.
-  -c, --custom-url string         Use if embedding the channel on your own site. The custom URL ensures links always direct to your page and not Wistia's.
+  -c, --custom-url string         The page on your own website where you embedded this channel.
       --description string        The channel's description.
   -h, --help                      help for create
   -n, --name string               The display name for the channel
@@ -44,6 +49,7 @@ wistia channels create [flags]
       --interactive            Prompt for missing inputs and open guided configure/auth forms (forms fall back to line prompts on stdin off-TTY) (default true)
   -q, --jq string              Filter and transform output using a jq expression (e.g., '.name', '.items[] | .id')
       --no-interactive         Disable all interactive features (auto-prompting, explorer auto-launch, TUI forms)
+      --no-keyring             Never read or write the OS keychain; store secrets in the config file instead (env: WISTIA_CLI_NO_KEYRING)
   -o, --output-format string   Specify the output format. Options: pretty, json, yaml, table, toon. (default "pretty")
       --raw-output             Write --jq string results as raw text instead of JSON strings (like jq -r); non-string results stay JSON
       --server string          Select a server by index (for indexed servers) or name (for named servers)

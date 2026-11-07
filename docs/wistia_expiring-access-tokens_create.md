@@ -9,19 +9,14 @@ Create Expiring Access Token
 This API is still under development and can change at any time.
 ```
 
-This endpoint is for creating expiring access tokens which can be used for some iframe embeds
-and, when granted the `all:delegate_to_contact_permissions` scope, for REST API requests
-authorized by the token's authorizations.
+Creates a short-lived copy of the API token making the request. The copy has that
+token's scopes, or the subset named in `scopes`, and `authorizations` narrow it to the
+objects and permissions they name. Use it as a bearer token for API requests, or pass it
+to iframe embeds such as the transcript editor.
 
-## Requires api token with one of the following permissions
-```
-Read, update & delete anything
-```
-
-Tokens with the "Act with a team member's permissions" permission
-(`all:delegate_to_contact_permissions` scope) can also be used. Requests
-made with such a token are authorized using the permissions of the
-contact assigned to the token.
+Any API token can create one. A copy of a token with the "Act with a team member's
+permissions" permission (`all:delegate_to_contact_permissions` scope) acts with the
+permissions of the contact assigned to that token.
 
 ```
 wistia expiring-access-tokens create [flags]
@@ -54,6 +49,7 @@ wistia expiring-access-tokens create [flags]
       --interactive            Prompt for missing inputs and open guided configure/auth forms (forms fall back to line prompts on stdin off-TTY) (default true)
   -q, --jq string              Filter and transform output using a jq expression (e.g., '.name', '.items[] | .id')
       --no-interactive         Disable all interactive features (auto-prompting, explorer auto-launch, TUI forms)
+      --no-keyring             Never read or write the OS keychain; store secrets in the config file instead (env: WISTIA_CLI_NO_KEYRING)
   -o, --output-format string   Specify the output format. Options: pretty, json, yaml, table, toon. (default "pretty")
       --raw-output             Write --jq string results as raw text instead of JSON strings (like jq -r); non-string results stay JSON
       --server string          Select a server by index (for indexed servers) or name (for named servers)

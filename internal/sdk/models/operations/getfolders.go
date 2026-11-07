@@ -12,8 +12,7 @@ import (
 	"time"
 )
 
-// GetFoldersEnabled - If `cursor[enabled]` is set to 1, the first result set will be fetched with cursor pagination enabled. This
-// values is ignored if `cursor[before]` or `cursor[after]` are set.
+// GetFoldersEnabled - Set to 1 to fetch the first page with cursor pagination. Ignored when `cursor[before]` or `cursor[after]` is set.
 type GetFoldersEnabled int64
 
 const (
@@ -40,30 +39,24 @@ func (e *GetFoldersEnabled) UnmarshalJSON(data []byte) error {
 	}
 }
 
-// GetFoldersCursor - If `cursor[enabled]` is set to 1 then cursor pagination is enabled and the
-// first set of records are fetched up to the `per_page`. Cursor
-// pagination will also be turned on if `cursor[before]` or `cursor[after]`
-// are set. Records returned will have a `cursor` property set which can be used to fetch more records in the same `sort_by` ordering.
-// The cursor value of the last record can be used to fetch records after the current result set and
-// the cursor of the first record can be used to fetch records before the result set.
+// GetFoldersCursor - Cursor pagination. When cursor pagination is enabled, each record returned
+// has a `cursor`: pass the last one as `cursor[after]` for the next page, or
+// the first one as `cursor[before]` for the previous page. A cursor only works with the `sort_by` it was fetched with.
+// For example, you cannot fetch using `sort_by` id and then pass that cursor
+// value to a `sort_by` name.
 //
-// NOTE: a cursor value is only valid if the `sort_by` value hasn't changed from the
-// last fetch. For example, you cannot fetch using `sort_by` id and then pass that
-// cursor value to a `sort_by` name.
+// Setting `cursor[enabled]` to 1 fetches the first page with cursor pagination
+// on, up to `per_page` records. Setting `cursor[before]` or `cursor[after]` turns
+// it on too.
 type GetFoldersCursor struct {
-	// If `cursor[enabled]` is set to 1, the first result set will be fetched with cursor pagination enabled. This
-	// values is ignored if `cursor[before]` or `cursor[after]` are set.
-	//
+	// Set to 1 to fetch the first page with cursor pagination. Ignored when `cursor[before]` or `cursor[after]` is set.
 	Enabled *GetFoldersEnabled `queryParam:"name=enabled"`
-	// If `cursor[before]` is set then cursor pagination is enabled and all records
-	// before the cursor up to the `per_page` are returned. This feature is useful for
-	// fetching "new records", for example, in a "pull to refersh" feature when showing records in a descending
-	// order.
+	// Returns up to `per_page` records before this cursor. This is useful for
+	// fetching new records, for example in a "pull to refresh" feature that shows records in
+	// descending order.
 	//
 	Before *string `queryParam:"name=before"`
-	// If `cursor[after]` is set then cursor pagination is enabled and all records
-	// after the cursor up to the `per_page` are returned.
-	//
+	// Returns up to `per_page` records after this cursor.
 	After *string `queryParam:"name=after"`
 }
 
@@ -160,16 +153,15 @@ type GetFoldersRequest struct {
 	Page *int64 `queryParam:"style=form,explode=true,name=page"`
 	// The number of medias per page. Use this for both offset pagination and cursor pagination.
 	PerPage *int64 `queryParam:"style=form,explode=true,name=per_page"`
-	// If `cursor[enabled]` is set to 1 then cursor pagination is enabled and the
-	// first set of records are fetched up to the `per_page`. Cursor
-	// pagination will also be turned on if `cursor[before]` or `cursor[after]`
-	// are set. Records returned will have a `cursor` property set which can be used to fetch more records in the same `sort_by` ordering.
-	// The cursor value of the last record can be used to fetch records after the current result set and
-	// the cursor of the first record can be used to fetch records before the result set.
+	// Cursor pagination. When cursor pagination is enabled, each record returned
+	// has a `cursor`: pass the last one as `cursor[after]` for the next page, or
+	// the first one as `cursor[before]` for the previous page. A cursor only works with the `sort_by` it was fetched with.
+	// For example, you cannot fetch using `sort_by` id and then pass that cursor
+	// value to a `sort_by` name.
 	//
-	// NOTE: a cursor value is only valid if the `sort_by` value hasn't changed from the
-	// last fetch. For example, you cannot fetch using `sort_by` id and then pass that
-	// cursor value to a `sort_by` name.
+	// Setting `cursor[enabled]` to 1 fetches the first page with cursor pagination
+	// on, up to `per_page` records. Setting `cursor[before]` or `cursor[after]` turns
+	// it on too.
 	//
 	Cursor *GetFoldersCursor `queryParam:"style=deepObject,explode=true,name=cursor"`
 	// Ordering. When using cursor pagination (see cursor param),
@@ -181,6 +173,11 @@ type GetFoldersRequest struct {
 	SortDirection *GetFoldersSortDirection `queryParam:"style=form,explode=true,name=sort_direction"`
 	// A collection of hashed ids belonging to folders to fetch
 	HashedIds []string `queryParam:"style=form,explode=true,name=hashed_ids[]"`
+	// When true, list only the token user's own My Library folders, instead
+	// of the content library folders. Account tokens act as the account
+	// owner, so they list the owner's My Library folders.
+	//
+	PersonalLibrary *bool `queryParam:"style=form,explode=true,name=personal_library"`
 }
 
 func (g GetFoldersRequest) MarshalJSON() ([]byte, error) {
@@ -234,6 +231,13 @@ func (g *GetFoldersRequest) GetHashedIds() []string {
 		return nil
 	}
 	return g.HashedIds
+}
+
+func (g *GetFoldersRequest) GetPersonalLibrary() *bool {
+	if g == nil {
+		return nil
+	}
+	return g.PersonalLibrary
 }
 
 // GetFoldersCode - A machine-readable identifier for the specific authorization failure.

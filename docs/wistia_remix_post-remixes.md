@@ -42,8 +42,8 @@ wistia remix post-remixes [flags]
       --body string                    Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.
   -f, --folder-id string               Hashed ID of the destination folder for the exported media. Defaults to the source media's folder if not specified.
   -h, --help                           help for post-remixes
-  -i, --instructions string            Natural language instructions describing the desired remix (e.g., "create a 60-second highlight reel"). [required]
-  -m, --media-hashed-ids stringArray   Array of source media hashed IDs to remix from. [required]
+  -i, --instructions string            Natural language instructions describing the desired Mochine video (e.g., "create a 60-second highlight reel"). [required]
+  -m, --media-hashed-ids stringArray   Array of source media hashed IDs to make the Mochine video from. [required]
 ```
 
 ### Options inherited from parent commands
@@ -59,6 +59,7 @@ wistia remix post-remixes [flags]
       --interactive            Prompt for missing inputs and open guided configure/auth forms (forms fall back to line prompts on stdin off-TTY) (default true)
   -q, --jq string              Filter and transform output using a jq expression (e.g., '.name', '.items[] | .id')
       --no-interactive         Disable all interactive features (auto-prompting, explorer auto-launch, TUI forms)
+      --no-keyring             Never read or write the OS keychain; store secrets in the config file instead (env: WISTIA_CLI_NO_KEYRING)
   -o, --output-format string   Specify the output format. Options: pretty, json, yaml, table, toon. (default "pretty")
       --raw-output             Write --jq string results as raw text instead of JSON strings (like jq -r); non-string results stay JSON
       --server string          Select a server by index (for indexed servers) or name (for named servers)
