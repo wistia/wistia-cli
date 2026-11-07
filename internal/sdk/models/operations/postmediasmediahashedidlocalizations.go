@@ -6,6 +6,7 @@ package operations
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
 	"github.com/wistia/wistia-cli/internal/sdk/optionalnullable"
 	"github.com/wistia/wistia-cli/internal/sdk/sdkinternal/utils"
@@ -302,6 +303,9 @@ func (u *ExpectedBilledPricePerMinute) UnmarshalJSON(data []byte) error {
 	}
 
 	if len(candidates) == 0 {
+		if !json.Valid(data) {
+			return fmt.Errorf("could not unmarshal `%s` into any supported union types for ExpectedBilledPricePerMinute", string(data))
+		}
 		u.UnknownRaw = json.RawMessage(data)
 		u.Type = ExpectedBilledPricePerMinuteTypeUnknown
 		return nil
@@ -326,6 +330,9 @@ func (u *ExpectedBilledPricePerMinute) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 
+	if !json.Valid(data) {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for ExpectedBilledPricePerMinute", string(data))
+	}
 	u.UnknownRaw = json.RawMessage(data)
 	u.Type = ExpectedBilledPricePerMinuteTypeUnknown
 	return nil
@@ -419,6 +426,9 @@ func (u *ExpectedBilledPrice) UnmarshalJSON(data []byte) error {
 	}
 
 	if len(candidates) == 0 {
+		if !json.Valid(data) {
+			return fmt.Errorf("could not unmarshal `%s` into any supported union types for ExpectedBilledPrice", string(data))
+		}
 		u.UnknownRaw = json.RawMessage(data)
 		u.Type = ExpectedBilledPriceTypeUnknown
 		return nil
@@ -443,6 +453,9 @@ func (u *ExpectedBilledPrice) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 
+	if !json.Valid(data) {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for ExpectedBilledPrice", string(data))
+	}
 	u.UnknownRaw = json.RawMessage(data)
 	u.Type = ExpectedBilledPriceTypeUnknown
 	return nil

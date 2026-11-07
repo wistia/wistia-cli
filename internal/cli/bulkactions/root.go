@@ -24,7 +24,7 @@ func InitBulkActionsRoot(parent *cobra.Command) error {
 		Aliases: []string{"ba"},
 	}
 
-	if err := initPostBulkCmd(BulkActionsCmd); err != nil {
+	if err := initCreateCmd(BulkActionsCmd); err != nil {
 		return err
 	}
 

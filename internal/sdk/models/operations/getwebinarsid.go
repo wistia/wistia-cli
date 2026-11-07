@@ -107,6 +107,38 @@ func (g *GetWebinarsIDFolder) GetURL() string {
 	return g.URL
 }
 
+type GetWebinarsIDSeries struct {
+	// A unique alphanumeric identifier for the record.
+	ID string `json:"id"`
+	// A URL for fetching all the records of the given record type. You can pass hashed_ids as a param with multiple values
+	// to do a batch fetch for this records type.
+	//
+	IndexURL string `json:"index_url"`
+	// A URL that can be used to fetch this record.
+	URL string `json:"url"`
+}
+
+func (g *GetWebinarsIDSeries) GetID() string {
+	if g == nil {
+		return ""
+	}
+	return g.ID
+}
+
+func (g *GetWebinarsIDSeries) GetIndexURL() string {
+	if g == nil {
+		return ""
+	}
+	return g.IndexURL
+}
+
+func (g *GetWebinarsIDSeries) GetURL() string {
+	if g == nil {
+		return ""
+	}
+	return g.URL
+}
+
 // GetWebinarsIDResponseBody - A webinar is an event which allows you to stream a video
 // to multiple participants. See our [Webinars Guide](https://support.wistia.com/en/articles/8288501-getting-started-with-webinars)
 // for more info.
@@ -143,6 +175,8 @@ type GetWebinarsIDResponseBody struct {
 	ThumbnailURL optionalnullable.OptionalNullable[string] `json:"thumbnail_url,omitzero"`
 	// The folder (project) this webinar belongs to
 	Folder optionalnullable.OptionalNullable[GetWebinarsIDFolder] `json:"folder,omitzero"`
+	// The series this webinar belongs to, or null if it is not part of a series
+	Series optionalnullable.OptionalNullable[GetWebinarsIDSeries] `json:"series,omitzero"`
 	// A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
 	Cursor optionalnullable.OptionalNullable[string] `json:"cursor,omitzero"`
 }
@@ -268,6 +302,13 @@ func (g *GetWebinarsIDResponseBody) GetFolder() optionalnullable.OptionalNullabl
 		return nil
 	}
 	return g.Folder
+}
+
+func (g *GetWebinarsIDResponseBody) GetSeries() optionalnullable.OptionalNullable[GetWebinarsIDSeries] {
+	if g == nil {
+		return nil
+	}
+	return g.Series
 }
 
 func (g *GetWebinarsIDResponseBody) GetCursor() optionalnullable.OptionalNullable[string] {

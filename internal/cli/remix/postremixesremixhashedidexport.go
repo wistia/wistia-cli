@@ -16,7 +16,7 @@ import (
 )
 
 var postRemixesRemixHashedIDExportCmdMeta = []flagutil.FlagMeta{
-	{FlagName: "remix-hashed-id", Shorthand: "r", FieldPath: "RemixHashedID", Kind: flagutil.FlagKindString, Required: true, Description: "The hashed ID of the remix to export. [required]"},
+	{FlagName: "remix-hashed-id", Shorthand: "r", FieldPath: "RemixHashedID", Kind: flagutil.FlagKindString, Required: true, Description: "The remix_id of the Mochine video to export. [required]"},
 	{FlagName: "folder-id", Shorthand: "f", FieldPath: "Body.FolderID", Kind: flagutil.FlagKindString, Optional: true, Description: "Hashed ID of the destination folder. Defaults to the source media's folder."},
 	{FlagName: "name", Shorthand: "n", FieldPath: "Body.Name", Kind: flagutil.FlagKindString, Optional: true, Description: "Custom name for the exported media."},
 }
@@ -40,16 +40,16 @@ func initPostRemixesRemixHashedIdExportCmd(parent *cobra.Command) error {
 		return fmt.Errorf("invalid metadata for post-remixes-remix-hashed-id-export: %w", err)
 	}
 	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
-	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Required: false, Kind: "json", BodyFlag: true})
 	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
 	if err := flagutil.AnnotateBodyFields(cmd, postRemixesRemixHashedIDExportCmdMeta, "Body", "body"); err != nil {
 		return fmt.Errorf("annotate body fields for post-remixes-remix-hashed-id-export: %w", err)
 	}
-	if err := flagutil.DeclarePositionalFlag(cmd, "remix-hashed-id", "The hashed ID of the remix to export. (or pass it as the [remix-hashed-id] argument)", true); err != nil {
+	if err := flagutil.DeclarePositionalFlag(cmd, "remix-hashed-id", "The remix_id of the Mochine video to export. (or pass it as the [remix-hashed-id] argument)", true); err != nil {
 		return err
 	}
 	if err := interactive.Declare(cmd, interactive.CommandSpec{Args: []interactive.ArgSpec{
-		{Name: "remix-hashed-id", Summary: "The hashed ID of the remix to export.", Required: true, SatisfiedBy: []string{"remix-hashed-id"}},
+		{Name: "remix-hashed-id", Summary: "The remix_id of the Mochine video to export.", Required: true, SatisfiedBy: []string{"remix-hashed-id"}},
 	}}); err != nil {
 		return fmt.Errorf("declare interactive arguments for post-remixes-remix-hashed-id-export: %w", err)
 	}
@@ -88,7 +88,10 @@ func runPostRemixesRemixHashedIdExportCmd(cmd *cobra.Command, args []string) err
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.Remix.PostRemixesRemixHashedIDExport(cmd.Context(), *req, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

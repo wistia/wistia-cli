@@ -212,7 +212,7 @@ func (g *GetMediasMediaHashedIDFolder) GetHashedID() *string {
 }
 
 type GetMediasMediaHashedIDAsset struct {
-	// A direct-access URL to the content of the asset.
+	// A direct-access URL to the content of the asset. For protected media, the URLs of video, alternate audio and original assets are signed and expire 24 hours after the response was generated; fetch the media again for a fresh URL rather than storing it.
 	URL *string `json:"url,omitzero"`
 	// The width of this specific asset, if applicable.
 	Width optionalnullable.OptionalNullable[int64] `json:"width,omitzero"`
@@ -425,7 +425,7 @@ type GetMediasMediaHashedIDResponseBody struct {
 	// The title of the section in which the media appears. This attribute is omitted if the media is not in a section (default).
 	Section   optionalnullable.OptionalNullable[string] `json:"section,omitzero"`
 	Thumbnail *GetMediasMediaHashedIDThumbnail          `json:"thumbnail,omitzero"`
-	// Whether the media is protected (e.g. requires a password or other authentication to view). Null if the media is not protected.
+	// Whether the media is protected by Private Video, which keeps its video files off the public delivery path. Null if the media is not protected.
 	Protected optionalnullable.OptionalNullable[bool] `json:"protected,omitzero"`
 	Folder    *GetMediasMediaHashedIDFolder           `json:"folder"`
 	// An array of the assets available for this media.

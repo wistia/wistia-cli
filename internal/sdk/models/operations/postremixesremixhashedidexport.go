@@ -30,7 +30,7 @@ func (p *PostRemixesRemixHashedIDExportRequestBody) GetName() *string {
 }
 
 type PostRemixesRemixHashedIDExportRequest struct {
-	// The hashed ID of the remix to export.
+	// The remix_id of the Mochine video to export.
 	RemixHashedID string                                     `pathParam:"style=simple,explode=false,name=remixHashedId"`
 	Body          *PostRemixesRemixHashedIDExportRequestBody `request:"mediaType=application/json"`
 }

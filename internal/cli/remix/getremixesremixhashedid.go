@@ -16,7 +16,7 @@ import (
 )
 
 var getRemixesRemixHashedIDCmdMeta = []flagutil.FlagMeta{
-	{FlagName: "remix-hashed-id", Shorthand: "r", FieldPath: "RemixHashedID", Kind: flagutil.FlagKindString, Required: true, Description: "The hashed ID of the remix. [required]"},
+	{FlagName: "remix-hashed-id", Shorthand: "r", FieldPath: "RemixHashedID", Kind: flagutil.FlagKindString, Required: true, Description: "The remix_id of the Mochine video. [required]"},
 }
 
 // initGetRemixesRemixHashedIdCmd initializes the get-remixes-remix-hashed-id command.
@@ -37,11 +37,11 @@ func initGetRemixesRemixHashedIdCmd(parent *cobra.Command) error {
 	if err := flagutil.ValidateMeta[operations.GetRemixesRemixHashedIDRequest](getRemixesRemixHashedIDCmdMeta); err != nil {
 		return fmt.Errorf("invalid metadata for get-remixes-remix-hashed-id: %w", err)
 	}
-	if err := flagutil.DeclarePositionalFlag(cmd, "remix-hashed-id", "The hashed ID of the remix. (or pass it as the [remix-hashed-id] argument)", true); err != nil {
+	if err := flagutil.DeclarePositionalFlag(cmd, "remix-hashed-id", "The remix_id of the Mochine video. (or pass it as the [remix-hashed-id] argument)", true); err != nil {
 		return err
 	}
 	if err := interactive.Declare(cmd, interactive.CommandSpec{Args: []interactive.ArgSpec{
-		{Name: "remix-hashed-id", Summary: "The hashed ID of the remix.", Required: true, SatisfiedBy: []string{"remix-hashed-id"}},
+		{Name: "remix-hashed-id", Summary: "The remix_id of the Mochine video.", Required: true, SatisfiedBy: []string{"remix-hashed-id"}},
 	}}); err != nil {
 		return fmt.Errorf("declare interactive arguments for get-remixes-remix-hashed-id: %w", err)
 	}
@@ -80,7 +80,10 @@ func runGetRemixesRemixHashedIdCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.Remix.GetRemixesRemixHashedID(cmd.Context(), *req, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

@@ -17,7 +17,7 @@ import (
 
 var createCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "folder-id", Shorthand: "f", FieldPath: "FolderID", Kind: flagutil.FlagKindString, Required: true, Description: "The hashed ID of the folder [required]"},
-	{FlagName: "name", Shorthand: "n", FieldPath: "Body.Name", Kind: flagutil.FlagKindString, Required: true, Description: "The display name of the subfolder. [required]"},
+	{FlagName: "name", Shorthand: "n", FieldPath: "Body.Name", Kind: flagutil.FlagKindString, Required: true, HasMaxLength: true, MaxLength: 255, Description: "The display name of the subfolder. [required]"},
 	{FlagName: "description", FieldPath: "Body.Description", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"description,omitempty"`, Description: "A description for the subfolder."},
 }
 
@@ -26,7 +26,7 @@ func initCreateCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "create [folder-id]",
 		Short:   "Create Subfolder",
-		Long:    "Creates a new subfolder within a folder. The subfolder will be created with the next available position.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
+		Long:    "Creates a new subfolder within a folder. The subfolder will be created with the next available position.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\nauthorization granting the `update` permission on this folder can also\nbe used.",
 		Example: "  wistia subfolders create --folder-id abc123def4 --name 'Marketing Videos'",
 		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runCreateCmd,
@@ -39,7 +39,7 @@ func initCreateCmd(parent *cobra.Command) error {
 		return fmt.Errorf("invalid metadata for create: %w", err)
 	}
 	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
-	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Required: false, Kind: "json", BodyFlag: true})
 	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
 	if err := flagutil.AnnotateBodyFields(cmd, createCmdMeta, "Body", "body"); err != nil {
 		return fmt.Errorf("annotate body fields for create: %w", err)
@@ -87,7 +87,10 @@ func runCreateCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.Subfolders.Create(cmd.Context(), *req, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

@@ -42,6 +42,12 @@ func newLocalizations(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks 
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `edit-transcripts` permission on the source
+// media can also be used. Other media permissions do not reach a media's
+// localizations, so a token without `edit-transcripts` lists none.
 func (s *Localizations) List(ctx context.Context, request operations.GetMediasMediaHashedIDLocalizationsRequest, opts ...operations.Option) (*operations.GetMediasMediaHashedIDLocalizationsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -291,6 +297,13 @@ func (s *Localizations) List(ctx context.Context, request operations.GetMediasMe
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `translate` permission on this media can also
+// be used. The localization is ordered on behalf of the contact the token was
+// created for. Reading the localization afterwards needs the
+// `edit-transcripts` permission.
 func (s *Localizations) Create(ctx context.Context, request operations.PostMediasMediaHashedIDLocalizationsRequest, opts ...operations.Option) (*operations.PostMediasMediaHashedIDLocalizationsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -614,6 +627,12 @@ func (s *Localizations) Create(ctx context.Context, request operations.PostMedia
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `edit-transcripts` permission on the source
+// media can also be used. Other media permissions do not reach a media's
+// localizations, so a token without `edit-transcripts` gets a 404.
 func (s *Localizations) Get(ctx context.Context, request operations.GetMediasMediaHashedIDLocalizationsLocalizationHashedIDRequest, opts ...operations.Option) (*operations.GetMediasMediaHashedIDLocalizationsLocalizationHashedIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -859,6 +878,12 @@ func (s *Localizations) Get(ctx context.Context, request operations.GetMediasMed
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting both the `update` and the `edit-transcripts`
+// permissions on the source media can also be used: `edit-transcripts` finds
+// the localization and `update` allows deleting it.
 func (s *Localizations) Delete(ctx context.Context, request operations.DeleteMediasMediaHashedIDLocalizationsLocalizationHashedIDRequest, opts ...operations.Option) (*operations.DeleteMediasMediaHashedIDLocalizationsLocalizationHashedIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

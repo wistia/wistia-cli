@@ -44,9 +44,9 @@ func (e *GetAnalyticsAccountTimeseriesGranularity) UnmarshalJSON(data []byte) er
 }
 
 type GetAnalyticsAccountTimeseriesRequest struct {
-	// Start date for the analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date.
+	// Start date for the analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date. Must be no more than 730 days before `end_date`.
 	StartDate types.Date `queryParam:"style=form,explode=true,name=start_date"`
-	// End date for the analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date.
+	// End date for the analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date. Must be on or after `start_date` and no more than 730 days after it.
 	EndDate types.Date `queryParam:"style=form,explode=true,name=end_date"`
 	// The time granularity for the timeseries data.
 	Granularity GetAnalyticsAccountTimeseriesGranularity `queryParam:"style=form,explode=true,name=granularity"`
@@ -112,6 +112,8 @@ func (e *GetAnalyticsAccountTimeseriesCode) IsExact() bool {
 type GetAnalyticsAccountTimeseriesResponseBody struct {
 	// The start of the time bucket in ISO 8601 format.
 	Timestamp *time.Time `json:"timestamp,omitzero"`
+	// The total number of video loads.
+	Loads optionalnullable.OptionalNullable[int64] `json:"loads,omitzero"`
 	// The number of unique video loads.
 	UniqueLoads optionalnullable.OptionalNullable[int64] `json:"unique_loads,omitzero"`
 	// The number of unique video plays.
@@ -146,6 +148,13 @@ func (g *GetAnalyticsAccountTimeseriesResponseBody) GetTimestamp() *time.Time {
 		return nil
 	}
 	return g.Timestamp
+}
+
+func (g *GetAnalyticsAccountTimeseriesResponseBody) GetLoads() optionalnullable.OptionalNullable[int64] {
+	if g == nil {
+		return nil
+	}
+	return g.Loads
 }
 
 func (g *GetAnalyticsAccountTimeseriesResponseBody) GetUniqueLoads() optionalnullable.OptionalNullable[int64] {

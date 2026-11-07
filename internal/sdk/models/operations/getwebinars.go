@@ -12,8 +12,7 @@ import (
 	"time"
 )
 
-// GetWebinarsEnabled - If `cursor[enabled]` is set to 1, the first result set will be fetched with cursor pagination enabled. This
-// values is ignored if `cursor[before]` or `cursor[after]` are set.
+// GetWebinarsEnabled - Set to 1 to fetch the first page with cursor pagination. Ignored when `cursor[before]` or `cursor[after]` is set.
 type GetWebinarsEnabled int64
 
 const (
@@ -40,30 +39,24 @@ func (e *GetWebinarsEnabled) UnmarshalJSON(data []byte) error {
 	}
 }
 
-// GetWebinarsCursor - If `cursor[enabled]` is set to 1 then cursor pagination is enabled and the
-// first set of records are fetched up to the `per_page`. Cursor
-// pagination will also be turned on if `cursor[before]` or `cursor[after]`
-// are set. Records returned will have a `cursor` property set which can be used to fetch more records in the same `sort_by` ordering.
-// The cursor value of the last record can be used to fetch records after the current result set and
-// the cursor of the first record can be used to fetch records before the result set.
+// GetWebinarsCursor - Cursor pagination. When cursor pagination is enabled, each record returned
+// has a `cursor`: pass the last one as `cursor[after]` for the next page, or
+// the first one as `cursor[before]` for the previous page. A cursor only works with the `sort_by` it was fetched with.
+// For example, you cannot fetch using `sort_by` id and then pass that cursor
+// value to a `sort_by` name.
 //
-// NOTE: a cursor value is only valid if the `sort_by` value hasn't changed from the
-// last fetch. For example, you cannot fetch using `sort_by` id and then pass that
-// cursor value to a `sort_by` name.
+// Setting `cursor[enabled]` to 1 fetches the first page with cursor pagination
+// on, up to `per_page` records. Setting `cursor[before]` or `cursor[after]` turns
+// it on too.
 type GetWebinarsCursor struct {
-	// If `cursor[enabled]` is set to 1, the first result set will be fetched with cursor pagination enabled. This
-	// values is ignored if `cursor[before]` or `cursor[after]` are set.
-	//
+	// Set to 1 to fetch the first page with cursor pagination. Ignored when `cursor[before]` or `cursor[after]` is set.
 	Enabled *GetWebinarsEnabled `queryParam:"name=enabled"`
-	// If `cursor[before]` is set then cursor pagination is enabled and all records
-	// before the cursor up to the `per_page` are returned. This feature is useful for
-	// fetching "new records", for example, in a "pull to refersh" feature when showing records in a descending
-	// order.
+	// Returns up to `per_page` records before this cursor. This is useful for
+	// fetching new records, for example in a "pull to refresh" feature that shows records in
+	// descending order.
 	//
 	Before *string `queryParam:"name=before"`
-	// If `cursor[after]` is set then cursor pagination is enabled and all records
-	// after the cursor up to the `per_page` are returned.
-	//
+	// Returns up to `per_page` records after this cursor.
 	After *string `queryParam:"name=after"`
 }
 
@@ -187,16 +180,15 @@ type GetWebinarsRequest struct {
 	Page *int64 `queryParam:"style=form,explode=true,name=page"`
 	// The number of medias per page. Use this for both offset pagination and cursor pagination.
 	PerPage *int64 `queryParam:"style=form,explode=true,name=per_page"`
-	// If `cursor[enabled]` is set to 1 then cursor pagination is enabled and the
-	// first set of records are fetched up to the `per_page`. Cursor
-	// pagination will also be turned on if `cursor[before]` or `cursor[after]`
-	// are set. Records returned will have a `cursor` property set which can be used to fetch more records in the same `sort_by` ordering.
-	// The cursor value of the last record can be used to fetch records after the current result set and
-	// the cursor of the first record can be used to fetch records before the result set.
+	// Cursor pagination. When cursor pagination is enabled, each record returned
+	// has a `cursor`: pass the last one as `cursor[after]` for the next page, or
+	// the first one as `cursor[before]` for the previous page. A cursor only works with the `sort_by` it was fetched with.
+	// For example, you cannot fetch using `sort_by` id and then pass that cursor
+	// value to a `sort_by` name.
 	//
-	// NOTE: a cursor value is only valid if the `sort_by` value hasn't changed from the
-	// last fetch. For example, you cannot fetch using `sort_by` id and then pass that
-	// cursor value to a `sort_by` name.
+	// Setting `cursor[enabled]` to 1 fetches the first page with cursor pagination
+	// on, up to `per_page` records. Setting `cursor[before]` or `cursor[after]` turns
+	// it on too.
 	//
 	Cursor *GetWebinarsCursor `queryParam:"style=deepObject,explode=true,name=cursor"`
 	// Field to sort by. When using cursor pagination (see cursor param),
@@ -210,6 +202,8 @@ type GetWebinarsRequest struct {
 	HashedIds []string `queryParam:"style=form,explode=true,name=hashed_ids[]"`
 	// Filter by whether the webinar has started. Use "true" for webinars that have started, "false" for webinars that have not started yet
 	Started *Started `queryParam:"style=form,explode=true,name=started"`
+	// Only return webinars belonging to the series with this hashed ID
+	SeriesID *string `queryParam:"style=form,explode=true,name=series_id"`
 }
 
 func (g GetWebinarsRequest) MarshalJSON() ([]byte, error) {
@@ -270,6 +264,13 @@ func (g *GetWebinarsRequest) GetStarted() *Started {
 		return nil
 	}
 	return g.Started
+}
+
+func (g *GetWebinarsRequest) GetSeriesID() *string {
+	if g == nil {
+		return nil
+	}
+	return g.SeriesID
 }
 
 // GetWebinarsCode - A machine-readable identifier for the specific authorization failure.
@@ -357,6 +358,38 @@ func (g *GetWebinarsFolder) GetURL() string {
 	return g.URL
 }
 
+type GetWebinarsSeries struct {
+	// A unique alphanumeric identifier for the record.
+	ID string `json:"id"`
+	// A URL for fetching all the records of the given record type. You can pass hashed_ids as a param with multiple values
+	// to do a batch fetch for this records type.
+	//
+	IndexURL string `json:"index_url"`
+	// A URL that can be used to fetch this record.
+	URL string `json:"url"`
+}
+
+func (g *GetWebinarsSeries) GetID() string {
+	if g == nil {
+		return ""
+	}
+	return g.ID
+}
+
+func (g *GetWebinarsSeries) GetIndexURL() string {
+	if g == nil {
+		return ""
+	}
+	return g.IndexURL
+}
+
+func (g *GetWebinarsSeries) GetURL() string {
+	if g == nil {
+		return ""
+	}
+	return g.URL
+}
+
 // GetWebinarsResponseBody - A webinar is an event which allows you to stream a video
 // to multiple participants. See our [Webinars Guide](https://support.wistia.com/en/articles/8288501-getting-started-with-webinars)
 // for more info.
@@ -393,6 +426,8 @@ type GetWebinarsResponseBody struct {
 	ThumbnailURL optionalnullable.OptionalNullable[string] `json:"thumbnail_url,omitzero"`
 	// The folder (project) this webinar belongs to
 	Folder optionalnullable.OptionalNullable[GetWebinarsFolder] `json:"folder,omitzero"`
+	// The series this webinar belongs to, or null if it is not part of a series
+	Series optionalnullable.OptionalNullable[GetWebinarsSeries] `json:"series,omitzero"`
 	// A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
 	Cursor optionalnullable.OptionalNullable[string] `json:"cursor,omitzero"`
 }
@@ -518,6 +553,13 @@ func (g *GetWebinarsResponseBody) GetFolder() optionalnullable.OptionalNullable[
 		return nil
 	}
 	return g.Folder
+}
+
+func (g *GetWebinarsResponseBody) GetSeries() optionalnullable.OptionalNullable[GetWebinarsSeries] {
+	if g == nil {
+		return nil
+	}
+	return g.Series
 }
 
 func (g *GetWebinarsResponseBody) GetCursor() optionalnullable.OptionalNullable[string] {
