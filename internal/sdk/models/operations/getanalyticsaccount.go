@@ -11,9 +11,9 @@ import (
 )
 
 type GetAnalyticsAccountRequest struct {
-	// Start date for the analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date.
+	// Start date for the analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date. Must be no more than 730 days before `end_date`.
 	StartDate types.Date `queryParam:"style=form,explode=true,name=start_date"`
-	// End date for the analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date.
+	// End date for the analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date. Must be on or after `start_date` and no more than 730 days after it.
 	EndDate types.Date `queryParam:"style=form,explode=true,name=end_date"`
 }
 
@@ -69,6 +69,8 @@ func (e *GetAnalyticsAccountCode) IsExact() bool {
 
 // GetAnalyticsAccountResponseBody - Success response with aggregate analytics for the account.
 type GetAnalyticsAccountResponseBody struct {
+	// The total number of video loads.
+	Loads optionalnullable.OptionalNullable[int64] `json:"loads,omitzero"`
 	// The number of unique video loads.
 	UniqueLoads optionalnullable.OptionalNullable[int64] `json:"unique_loads,omitzero"`
 	// The number of unique video plays.
@@ -85,6 +87,13 @@ type GetAnalyticsAccountResponseBody struct {
 	EngagementRate optionalnullable.OptionalNullable[float32] `json:"engagement_rate,omitzero"`
 	// The number of form submissions.
 	FormConversions optionalnullable.OptionalNullable[int64] `json:"form_conversions,omitzero"`
+}
+
+func (g *GetAnalyticsAccountResponseBody) GetLoads() optionalnullable.OptionalNullable[int64] {
+	if g == nil {
+		return nil
+	}
+	return g.Loads
 }
 
 func (g *GetAnalyticsAccountResponseBody) GetUniqueLoads() optionalnullable.OptionalNullable[int64] {

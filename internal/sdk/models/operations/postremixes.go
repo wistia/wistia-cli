@@ -11,9 +11,9 @@ import (
 )
 
 type PostRemixesRequest struct {
-	// Array of source media hashed IDs to remix from.
+	// Array of source media hashed IDs to make the Mochine video from.
 	MediaHashedIds []string `json:"media_hashed_ids"`
-	// Natural language instructions describing the desired remix (e.g., "create a 60-second highlight reel").
+	// Natural language instructions describing the desired Mochine video (e.g., "create a 60-second highlight reel").
 	Instructions string `json:"instructions"`
 	// Hashed ID of the destination folder for the exported media. Defaults to the source media's folder if not specified.
 	FolderID *string `json:"folder_id,omitzero"`
@@ -112,12 +112,12 @@ func (e *PostRemixesCode) IsExact() bool {
 	return false
 }
 
-// PostRemixesStatus - Current status of the remix job.
+// PostRemixesStatus - Current status of the Mochine job. `waiting_for_media` means a source media is still processing and the job starts once it is ready.
 type PostRemixesStatus string
 
 const (
-	PostRemixesStatusPending  PostRemixesStatus = "pending"
-	PostRemixesStatusDeferred PostRemixesStatus = "deferred"
+	PostRemixesStatusWaitingForMedia PostRemixesStatus = "waiting_for_media"
+	PostRemixesStatusPending         PostRemixesStatus = "pending"
 )
 
 func (e PostRemixesStatus) ToPointer() *PostRemixesStatus {
@@ -128,7 +128,7 @@ func (e PostRemixesStatus) ToPointer() *PostRemixesStatus {
 func (e *PostRemixesStatus) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "pending", "deferred":
+		case "waiting_for_media", "pending":
 			return true
 		}
 	}
@@ -156,13 +156,13 @@ func (p *PostRemixesSourceMedia) GetName() *string {
 
 // PostRemixesResponseBody - Remix job successfully created.
 type PostRemixesResponseBody struct {
-	// Hashed ID of the created remix. Use this to poll for status.
+	// Hashed ID of the new Mochine video. Use this to poll for status.
 	RemixID *string `json:"remix_id,omitzero"`
-	// Hashed ID of the remix conversation (groups multiple remix iterations).
+	// Hashed ID of the Mochine conversation, which groups every version of the video.
 	ConversationID *string `json:"conversation_id,omitzero"`
-	// Current status of the remix job.
+	// Current status of the Mochine job. `waiting_for_media` means a source media is still processing and the job starts once it is ready.
 	Status *PostRemixesStatus `json:"status,omitzero"`
-	// The source media used for this remix.
+	// The source media used for this Mochine video.
 	SourceMedias []PostRemixesSourceMedia `json:"source_medias,omitzero"`
 }
 

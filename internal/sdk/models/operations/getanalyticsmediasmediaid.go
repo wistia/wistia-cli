@@ -13,9 +13,9 @@ import (
 type GetAnalyticsMediasMediaIDRequest struct {
 	// The hashed ID of the video.
 	MediaID string `pathParam:"style=simple,explode=false,name=mediaId"`
-	// Start date for the analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date.
+	// Start date for the analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date. Must be no more than 730 days before `end_date`.
 	StartDate types.Date `queryParam:"style=form,explode=true,name=start_date"`
-	// End date for the analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date.
+	// End date for the analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date. Must be on or after `start_date` and no more than 730 days after it.
 	EndDate types.Date `queryParam:"style=form,explode=true,name=end_date"`
 }
 
@@ -78,6 +78,8 @@ func (e *GetAnalyticsMediasMediaIDCode) IsExact() bool {
 
 // GetAnalyticsMediasMediaIDResponseBody - Success response with aggregate analytics for the video.
 type GetAnalyticsMediasMediaIDResponseBody struct {
+	// The total number of video loads.
+	Loads optionalnullable.OptionalNullable[int64] `json:"loads,omitzero"`
 	// The number of unique video loads.
 	UniqueLoads optionalnullable.OptionalNullable[int64] `json:"unique_loads,omitzero"`
 	// The number of unique video plays.
@@ -100,6 +102,13 @@ type GetAnalyticsMediasMediaIDResponseBody struct {
 	CtaConversionRate optionalnullable.OptionalNullable[float32] `json:"cta_conversion_rate,omitzero"`
 	// The number of form submissions.
 	FormConversions optionalnullable.OptionalNullable[int64] `json:"form_conversions,omitzero"`
+}
+
+func (g *GetAnalyticsMediasMediaIDResponseBody) GetLoads() optionalnullable.OptionalNullable[int64] {
+	if g == nil {
+		return nil
+	}
+	return g.Loads
 }
 
 func (g *GetAnalyticsMediasMediaIDResponseBody) GetUniqueLoads() optionalnullable.OptionalNullable[int64] {

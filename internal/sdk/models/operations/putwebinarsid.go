@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-type PutWebinarsIDWebinar struct {
+type Webinar struct {
 	// The title of the webinar
 	Title *string `json:"title,omitzero"`
 	// The description of the webinar
@@ -25,61 +25,61 @@ type PutWebinarsIDWebinar struct {
 	FolderID *string `json:"folder_id,omitzero"`
 }
 
-func (p PutWebinarsIDWebinar) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(p, "", false)
+func (w Webinar) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(w, "", false)
 }
 
-func (p *PutWebinarsIDWebinar) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &p, "", false, nil); err != nil {
+func (w *Webinar) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &w, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (p *PutWebinarsIDWebinar) GetTitle() *string {
-	if p == nil {
+func (w *Webinar) GetTitle() *string {
+	if w == nil {
 		return nil
 	}
-	return p.Title
+	return w.Title
 }
 
-func (p *PutWebinarsIDWebinar) GetDescription() *string {
-	if p == nil {
+func (w *Webinar) GetDescription() *string {
+	if w == nil {
 		return nil
 	}
-	return p.Description
+	return w.Description
 }
 
-func (p *PutWebinarsIDWebinar) GetScheduledFor() *time.Time {
-	if p == nil {
+func (w *Webinar) GetScheduledFor() *time.Time {
+	if w == nil {
 		return nil
 	}
-	return p.ScheduledFor
+	return w.ScheduledFor
 }
 
-func (p *PutWebinarsIDWebinar) GetEventDuration() *int64 {
-	if p == nil {
+func (w *Webinar) GetEventDuration() *int64 {
+	if w == nil {
 		return nil
 	}
-	return p.EventDuration
+	return w.EventDuration
 }
 
-func (p *PutWebinarsIDWebinar) GetTimeZone() *string {
-	if p == nil {
+func (w *Webinar) GetTimeZone() *string {
+	if w == nil {
 		return nil
 	}
-	return p.TimeZone
+	return w.TimeZone
 }
 
-func (p *PutWebinarsIDWebinar) GetFolderID() *string {
-	if p == nil {
+func (w *Webinar) GetFolderID() *string {
+	if w == nil {
 		return nil
 	}
-	return p.FolderID
+	return w.FolderID
 }
 
 type PutWebinarsIDRequestBody struct {
-	Webinar *PutWebinarsIDWebinar `json:"webinar,omitzero"`
+	Webinar *Webinar `json:"webinar,omitzero"`
 }
 
 func (p PutWebinarsIDRequestBody) MarshalJSON() ([]byte, error) {
@@ -93,7 +93,7 @@ func (p *PutWebinarsIDRequestBody) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (p *PutWebinarsIDRequestBody) GetWebinar() *PutWebinarsIDWebinar {
+func (p *PutWebinarsIDRequestBody) GetWebinar() *Webinar {
 	if p == nil {
 		return nil
 	}
@@ -205,6 +205,38 @@ func (p *PutWebinarsIDFolder) GetURL() string {
 	return p.URL
 }
 
+type PutWebinarsIDSeries struct {
+	// A unique alphanumeric identifier for the record.
+	ID string `json:"id"`
+	// A URL for fetching all the records of the given record type. You can pass hashed_ids as a param with multiple values
+	// to do a batch fetch for this records type.
+	//
+	IndexURL string `json:"index_url"`
+	// A URL that can be used to fetch this record.
+	URL string `json:"url"`
+}
+
+func (p *PutWebinarsIDSeries) GetID() string {
+	if p == nil {
+		return ""
+	}
+	return p.ID
+}
+
+func (p *PutWebinarsIDSeries) GetIndexURL() string {
+	if p == nil {
+		return ""
+	}
+	return p.IndexURL
+}
+
+func (p *PutWebinarsIDSeries) GetURL() string {
+	if p == nil {
+		return ""
+	}
+	return p.URL
+}
+
 // PutWebinarsIDResponseBody - A webinar is an event which allows you to stream a video
 // to multiple participants. See our [Webinars Guide](https://support.wistia.com/en/articles/8288501-getting-started-with-webinars)
 // for more info.
@@ -241,6 +273,8 @@ type PutWebinarsIDResponseBody struct {
 	ThumbnailURL optionalnullable.OptionalNullable[string] `json:"thumbnail_url,omitzero"`
 	// The folder (project) this webinar belongs to
 	Folder optionalnullable.OptionalNullable[PutWebinarsIDFolder] `json:"folder,omitzero"`
+	// The series this webinar belongs to, or null if it is not part of a series
+	Series optionalnullable.OptionalNullable[PutWebinarsIDSeries] `json:"series,omitzero"`
 	// A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
 	Cursor optionalnullable.OptionalNullable[string] `json:"cursor,omitzero"`
 }
@@ -366,6 +400,13 @@ func (p *PutWebinarsIDResponseBody) GetFolder() optionalnullable.OptionalNullabl
 		return nil
 	}
 	return p.Folder
+}
+
+func (p *PutWebinarsIDResponseBody) GetSeries() optionalnullable.OptionalNullable[PutWebinarsIDSeries] {
+	if p == nil {
+		return nil
+	}
+	return p.Series
 }
 
 func (p *PutWebinarsIDResponseBody) GetCursor() optionalnullable.OptionalNullable[string] {

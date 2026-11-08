@@ -16,9 +16,9 @@ import (
 )
 
 var postRemixesRemixHashedIDContinueCmdMeta = []flagutil.FlagMeta{
-	{FlagName: "remix-hashed-id", Shorthand: "r", FieldPath: "RemixHashedID", Kind: flagutil.FlagKindString, Required: true, Description: "The hashed ID of the current remix version to edit from. [required]"},
+	{FlagName: "remix-hashed-id", Shorthand: "r", FieldPath: "RemixHashedID", Kind: flagutil.FlagKindString, Required: true, Description: "The remix_id of the Mochine video version to edit from. [required]"},
 	{FlagName: "instructions", Shorthand: "i", FieldPath: "Body.Instructions", Kind: flagutil.FlagKindString, Required: true, Description: "Natural language instructions for the edit (e.g., \"cut the first 10 seconds\"). [required]"},
-	{FlagName: "folder-id", Shorthand: "f", FieldPath: "Body.FolderID", Kind: flagutil.FlagKindString, Optional: true, Description: "Hashed ID of the destination folder for the exported media. Defaults to the same folder as the previous remix version's output."},
+	{FlagName: "folder-id", Shorthand: "f", FieldPath: "Body.FolderID", Kind: flagutil.FlagKindString, Optional: true, Description: "Hashed ID of the destination folder for the exported media. Defaults to the same folder as the previous version's output."},
 }
 
 // initPostRemixesRemixHashedIdContinueCmd initializes the post-remixes-remix-hashed-id-continue command.
@@ -26,7 +26,7 @@ func initPostRemixesRemixHashedIdContinueCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "post-remixes-remix-hashed-id-continue [remix-hashed-id]",
 		Short:   "Continue Remix",
-		Long:    "Submit a follow-up edit to an existing remix. Creates a new remix version\nin the same conversation. The previous remix is preserved and can be\nreferenced later.\n\nThe new remix version is automatically exported (rendered) upon completion.\nIf `folder_id` is provided, the output is exported to that folder. Otherwise,\nit defaults to the same folder as the previous remix version's output.\n\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
+		Long:    "DEPRECATED: This will be removed in a future release, please migrate away from it as soon as possible\n\nDeprecated: use `POST /mochine/edits` with `edit_id` instead, which also\naccepts added sources and a motion kit.\n\nSubmit a follow-up edit to an existing remix. Creates a new remix version\nin the same conversation. The previous remix is preserved and can be\nreferenced later.\n\nThe new remix version is automatically exported (rendered) upon completion.\nIf `folder_id` is provided, the output is exported to that folder. Otherwise,\nit defaults to the same folder as the previous remix version's output.\n\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
 		Example: "  wistia remix post-remixes-remix-hashed-id-continue --remix-hashed-id <id> --instructions 'Cut the intro and add background music'",
 		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runPostRemixesRemixHashedIdContinueCmd,
@@ -40,16 +40,16 @@ func initPostRemixesRemixHashedIdContinueCmd(parent *cobra.Command) error {
 		return fmt.Errorf("invalid metadata for post-remixes-remix-hashed-id-continue: %w", err)
 	}
 	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
-	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Required: false, Kind: "json", BodyFlag: true})
 	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
 	if err := flagutil.AnnotateBodyFields(cmd, postRemixesRemixHashedIDContinueCmdMeta, "Body", "body"); err != nil {
 		return fmt.Errorf("annotate body fields for post-remixes-remix-hashed-id-continue: %w", err)
 	}
-	if err := flagutil.DeclarePositionalFlag(cmd, "remix-hashed-id", "The hashed ID of the current remix version to edit from. (or pass it as the [remix-hashed-id] argument)", true); err != nil {
+	if err := flagutil.DeclarePositionalFlag(cmd, "remix-hashed-id", "The remix_id of the Mochine video version to edit from. (or pass it as the [remix-hashed-id] argument)", true); err != nil {
 		return err
 	}
 	if err := interactive.Declare(cmd, interactive.CommandSpec{Args: []interactive.ArgSpec{
-		{Name: "remix-hashed-id", Summary: "The hashed ID of the current remix version to edit from.", Required: true, SatisfiedBy: []string{"remix-hashed-id"}},
+		{Name: "remix-hashed-id", Summary: "The remix_id of the Mochine video version to edit from.", Required: true, SatisfiedBy: []string{"remix-hashed-id"}},
 	}}); err != nil {
 		return fmt.Errorf("declare interactive arguments for post-remixes-remix-hashed-id-continue: %w", err)
 	}
@@ -88,7 +88,10 @@ func runPostRemixesRemixHashedIdContinueCmd(cmd *cobra.Command, args []string) e
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.Remix.PostRemixesRemixHashedIDContinue(cmd.Context(), *req, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

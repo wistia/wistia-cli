@@ -543,7 +543,8 @@ func (s *Media) Get(ctx context.Context, request operations.GetMediasMediaHashed
 // An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
 // created with the `all:delegate_to_contact_permissions` scope and an
 // authorization granting the `update` permission on this media can also be
-// used.
+// used. Writing `custom_metadata` additionally requires the account to have
+// the custom metadata feature at the time of the request.
 func (s *Media) Update(ctx context.Context, request operations.PutMediasMediaHashedIDRequest, opts ...operations.Option) (*operations.PutMediasMediaHashedIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1115,6 +1116,12 @@ func (s *Media) Delete(ctx context.Context, request operations.DeleteMediasMedia
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and
+// authorizations naming this media and granting the `upload` permission on
+// the destination folder (the media's own folder when `folder_id` is
+// omitted) can also be used.
 func (s *Media) Copy(ctx context.Context, request operations.PostMediasMediaHashedIDCopyRequest, opts ...operations.Option) (*operations.PostMediasMediaHashedIDCopyResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1744,6 +1751,11 @@ func (s *Media) Swap(ctx context.Context, request operations.PutMediasMediaHashe
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `view-stats` permission on this media can also
+// be used.
 func (s *Media) GetStats(ctx context.Context, request operations.GetMediasMediaHashedIDStatsRequest, opts ...operations.Option) (*operations.GetMediasMediaHashedIDStatsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -2035,6 +2047,12 @@ func (s *Media) GetStats(ctx context.Context, request operations.GetMediasMediaH
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `translate` permission on this media can also
+// be used. The translation is attributed to the contact the token was
+// created for.
 func (s *Media) Translate(ctx context.Context, request operations.PostMediasMediaHashedIDTranslateRequest, opts ...operations.Option) (*operations.PostMediasMediaHashedIDTranslateResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -2368,6 +2386,11 @@ func (s *Media) Translate(ctx context.Context, request operations.PostMediasMedi
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// authorization granting the `upload` permission on the destination folder
+// can also be used; `folder_id` is required for such a token.
 func (s *Media) ImportURL(ctx context.Context, request *operations.PostMediasImportURLRequest, opts ...operations.Option) (*operations.PostMediasImportURLResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -2691,6 +2714,11 @@ func (s *Media) ImportURL(ctx context.Context, request *operations.PostMediasImp
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and
+// authorizations granting the `archive` permission on every media being
+// archived can also be used.
 func (s *Media) Archive(ctx context.Context, request operations.PutMediasArchiveRequest, opts ...operations.Option) (*operations.PutMediasArchiveResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -2975,8 +3003,7 @@ func (s *Media) Archive(ctx context.Context, request operations.PutMediasArchive
 // An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
 // created with the `all:delegate_to_contact_permissions` scope and
 // authorizations granting the `update` permission on every media being moved
-// and on the destination folder can also be used. `subfolder_id` is not
-// available to expiring access tokens.
+// and on the destination folder can also be used.
 func (s *Media) Move(ctx context.Context, request operations.PutMediasMoveRequest, opts ...operations.Option) (*operations.PutMediasMoveResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -3301,6 +3328,12 @@ func (s *Media) Move(ctx context.Context, request operations.PutMediasMoveReques
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and
+// authorizations granting the `archive` permission on every media being
+// restored and the `update` permission on the destination folder can also
+// be used.
 func (s *Media) Restore(ctx context.Context, request operations.PutMediasRestoreRequest, opts ...operations.Option) (*operations.PutMediasRestoreResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

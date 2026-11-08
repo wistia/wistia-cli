@@ -24,7 +24,7 @@ func initPostCustomMetadataFieldDefinitionsKeyRestoreCmd(parent *cobra.Command) 
 	var cmd = &cobra.Command{
 		Use:     "post-custom-metadata-field-definitions-key-restore [key]",
 		Short:   "Restore Custom Metadata Field Definition",
-		Long:    "Restores (unarchives) a custom metadata field definition by its immutable key, making it active again. If the field is already active this is a no-op.\n\nRequires the custom metadata feature to be available on your account.\n\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
+		Long:    "Restores (unarchives) a custom metadata field definition by its immutable key, making it active again. If the field is already active this is a no-op.\n\nRequires the custom metadata feature to be available on your account.\n\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\n`account` authorization granting the `manage-custom-metadata` permission\ncan also be used.",
 		Example: "  wistia custom-metadata-field-definitions post-custom-metadata-field-definitions-key-restore --key client",
 		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runPostCustomMetadataFieldDefinitionsKeyRestoreCmd,
@@ -80,7 +80,10 @@ func runPostCustomMetadataFieldDefinitionsKeyRestoreCmd(cmd *cobra.Command, args
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.CustomMetadataFieldDefinitions.PostCustomMetadataFieldDefinitionsKeyRestore(cmd.Context(), *req, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

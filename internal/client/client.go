@@ -4,6 +4,7 @@
 package client
 
 import (
+	"errors"
 	"fmt"
 	"github.com/spf13/cobra"
 	"github.com/wistia/wistia-cli/internal/config"
@@ -13,7 +14,9 @@ import (
 	"github.com/wistia/wistia-cli/internal/testclient"
 	"net"
 	"net/http"
+	"net/url"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 )
@@ -24,7 +27,7 @@ import (
 // Empty allowedSecurityFields accepts every global security alternative.
 func NewClient(cmd *cobra.Command, allowedSecurityFields ...string) (*sdk.Wistia, error) {
 	var sdkOpts []sdk.SDKOption
-	sdkOpts = append(sdkOpts, sdk.WithSecurity(buildGlobalSecurity(cmd, allowedSecurityFields)))
+	sdkOpts = append(sdkOpts, sdk.WithSecurity(BuildGlobalSecurity(cmd, allowedSecurityFields)))
 	if serverURL, _ := flagutil.GetStringFlag(cmd, "server-url"); serverURL != "" {
 		if err := flagutil.ValidateServerURL(serverURL); err != nil {
 			return nil, err
@@ -50,13 +53,93 @@ func NewClient(cmd *cobra.Command, allowedSecurityFields ...string) (*sdk.Wistia
 
 	// Diagnostics and test client composition.
 	// Order: test client (innermost) → diagnostics wrapper (outermost).
-	var httpClient HTTPClient = &http.Client{Transport: newPhaseBoundedTransport(cmd)}
+	var httpClient HTTPClient = &redirectGuardClient{&http.Client{Transport: newPhaseBoundedTransport(cmd), CheckRedirect: SameOriginRedirect}}
 	if testClient := testclient.NewTestHTTPClient(); testClient != nil {
 		httpClient = testClient
 	}
 	httpClient = WrapClientForDiagnostics(cmd, httpClient)
 	sdkOpts = append(sdkOpts, sdk.WithClient(httpClient))
 	return sdk.New(sdkOpts...), nil
+}
+
+// SameOriginRedirect refuses redirects to another scheme or host, and
+// redirects that change the request method: net/http forwards custom
+// credential headers (API keys) across origins and turns a POST answered with
+// 301/302/303 into a bodiless GET.
+func SameOriginRedirect(req *http.Request, via []*http.Request) error {
+	if len(via) >= 10 {
+		return fmt.Errorf("stopped after 10 redirects")
+	}
+	from := via[0].URL
+	if urlOrigin(req.URL) != urlOrigin(from) {
+		return &RedirectRefusedError{message: fmt.Sprintf("refusing to follow a redirect from %s://%s to %s://%s: credentials are only sent to the configured server", from.Scheme, from.Host, req.URL.Scheme, req.URL.Host)}
+	}
+	if prev := via[len(via)-1]; req.Method != prev.Method {
+		return &RedirectRefusedError{message: fmt.Sprintf("refusing to follow a redirect to %s that would send %s instead of %s: the server tried to convert the request", req.URL.Path, req.Method, prev.Method)}
+	}
+	return nil
+}
+
+// RedirectRefusedError is returned for a redirect the CLI declined to follow.
+type RedirectRefusedError struct {
+	message string
+}
+
+func (e *RedirectRefusedError) Error() string { return e.message }
+
+func (e *RedirectRefusedError) CLIRedirectRefused() bool { return true }
+
+func (e *RedirectRefusedError) CLIHints() []string {
+	return []string{"Point --server-url at the endpoint the server redirects to, so the request needs no redirect"}
+}
+
+func (e *RedirectRefusedError) CLIOmitTypeHints() bool { return true }
+
+// redirectGuardClient strips the query, fragment and userinfo from the
+// Location net/http attaches to a refused redirect, so tokens in it are never
+// printed in error or debug output.
+type redirectGuardClient struct {
+	*http.Client
+}
+
+func (c *redirectGuardClient) Do(req *http.Request) (*http.Response, error) {
+	res, err := c.Client.Do(req)
+	var urlErr *url.Error
+	var refused *RedirectRefusedError
+	if errors.As(err, &urlErr) && errors.As(err, &refused) {
+		if u, parseErr := url.Parse(urlErr.URL); parseErr == nil {
+			urlErr.URL = (&url.URL{Scheme: u.Scheme, Host: u.Host, Path: u.Path}).String()
+		} else {
+			urlErr.URL = "<redirect target>"
+		}
+	}
+	return res, err
+}
+
+func urlOrigin(u *url.URL) string {
+	scheme := strings.ToLower(u.Scheme)
+	port := u.Port()
+	if port == "" {
+		switch scheme {
+		case "https":
+			port = "443"
+		case "http":
+			port = "80"
+		}
+	}
+	return scheme + "://" + net.JoinHostPort(asciiLower(u.Hostname()), port)
+}
+
+// asciiLower folds only A-Z. Unicode case folding would equate hosts the
+// transport dials as different IDNA names (U+0130 "İ" and "i").
+func asciiLower(s string) string {
+	b := []byte(s)
+	for i, c := range b {
+		if 'A' <= c && c <= 'Z' {
+			b[i] = c + ('a' - 'A')
+		}
+	}
+	return string(b)
 }
 
 func newPhaseBoundedTransport(cmd *cobra.Command) http.RoundTripper {
@@ -101,8 +184,8 @@ func resolveStringFlag(cmd *cobra.Command, name string) string {
 	return config.GetString(name)
 }
 
-// buildGlobalSecurity reads security credentials with priority: flag > env var > keyring > config.
-func buildGlobalSecurity(cmd *cobra.Command, allowedSecurityFields []string) components.Security {
+// BuildGlobalSecurity reads security credentials with priority: flag > env var > keyring > config.
+func BuildGlobalSecurity(cmd *cobra.Command, allowedSecurityFields []string) components.Security {
 	_ = allowedSecurityFields
 	// Resolve request credentials: flag > env var > keyring > config file (keyring skipped for dry-run)
 	bearerAuth, _ := config.ResolveRequestSecurityCredential(cmd, "bearer-auth")
@@ -110,5 +193,6 @@ func buildGlobalSecurity(cmd *cobra.Command, allowedSecurityFields []string) com
 	if bearerAuth != "" {
 		globalSecurity.BearerAuth = bearerAuth
 	}
+	flagutil.RecordRequestSecurity(cmd, globalSecurity, "")
 	return globalSecurity
 }
