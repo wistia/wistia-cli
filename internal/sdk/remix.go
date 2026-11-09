@@ -32,6 +32,9 @@ func newRemix(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks *hooks.H
 }
 
 // PostRemixes - Create Remix
+// Deprecated: use `POST /mochine/edits` instead, which also accepts a motion
+// kit and narration and slide options.
+//
 // Start a new video remix job. The remix is processed asynchronously — poll
 // the show endpoint to check status and get preview URLs when ready.
 //
@@ -52,6 +55,8 @@ func newRemix(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks *hooks.H
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *Remix) PostRemixes(ctx context.Context, request *operations.PostRemixesRequest, opts ...operations.Option) (*operations.PostRemixesResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -314,6 +319,9 @@ func (s *Remix) PostRemixes(ctx context.Context, request *operations.PostRemixes
 }
 
 // GetRemixesRemixHashedID - Get Remix
+// Deprecated: use `GET /mochine/edits/{editHashedId}` instead, which also
+// returns the output media ID.
+//
 // Get the current status of a remix job. When the status reaches
 // "edit_tree_generated", preview URLs are included in the response.
 //
@@ -326,6 +334,8 @@ func (s *Remix) PostRemixes(ctx context.Context, request *operations.PostRemixes
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *Remix) GetRemixesRemixHashedID(ctx context.Context, request operations.GetRemixesRemixHashedIDRequest, opts ...operations.Option) (*operations.GetRemixesRemixHashedIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -556,6 +566,9 @@ func (s *Remix) GetRemixesRemixHashedID(ctx context.Context, request operations.
 }
 
 // PostRemixesRemixHashedIDContinue - Continue Remix
+// Deprecated: use `POST /mochine/edits/{editHashedId}/revise` instead, which
+// also accepts added source media and a motion kit.
+//
 // Submit a follow-up edit to an existing remix. Creates a new remix version
 // in the same conversation. The previous remix is preserved and can be
 // referenced later.
@@ -573,6 +586,8 @@ func (s *Remix) GetRemixesRemixHashedID(ctx context.Context, request operations.
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *Remix) PostRemixesRemixHashedIDContinue(ctx context.Context, request operations.PostRemixesRemixHashedIDContinueRequest, opts ...operations.Option) (*operations.PostRemixesRemixHashedIDContinueResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -860,6 +875,8 @@ func (s *Remix) PostRemixesRemixHashedIDContinue(ctx context.Context, request op
 }
 
 // PostRemixesRemixHashedIDExport - Export Remix
+// Deprecated: use `POST /mochine/edits/{editHashedId}/export` instead.
+//
 // Export a remix to a folder in your account, triggering the full render pipeline.
 //
 // Remixes created through this API export automatically, so a remix is usually
@@ -879,6 +896,8 @@ func (s *Remix) PostRemixesRemixHashedIDContinue(ctx context.Context, request op
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *Remix) PostRemixesRemixHashedIDExport(ctx context.Context, request operations.PostRemixesRemixHashedIDExportRequest, opts ...operations.Option) (*operations.PostRemixesRemixHashedIDExportResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1166,6 +1185,10 @@ func (s *Remix) PostRemixesRemixHashedIDExport(ctx context.Context, request oper
 }
 
 // GetRemixAccountStatus - Get Remix Account Status
+// Deprecated: use Get Credit Balance (`GET /credits/balance`) instead. Edit
+// With Mochine reports the balance and a summary when it refuses an edit
+// for lack of Credits or allowance.
+//
 // Check the current account's Remix billing mode and ability to create a Remix.
 //
 // ## Requires api token with one of the following permissions
@@ -1177,6 +1200,8 @@ func (s *Remix) PostRemixesRemixHashedIDExport(ctx context.Context, request oper
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *Remix) GetRemixAccountStatus(ctx context.Context, opts ...operations.Option) (*operations.GetRemixAccountStatusResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

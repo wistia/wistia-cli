@@ -17,8 +17,8 @@ import (
 
 var getCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "media-id", Shorthand: "m", FieldPath: "MediaID", Kind: flagutil.FlagKindString, Required: true, Description: "The hashed ID of the video. [required]"},
-	{FlagName: "start-date", Shorthand: "s", FieldPath: "StartDate", Kind: flagutil.FlagKindDate, Required: true, Description: "Start date for the analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date. [required]"},
-	{FlagName: "end-date", Shorthand: "e", FieldPath: "EndDate", Kind: flagutil.FlagKindDate, Required: true, Description: "End date for the analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date. [required]"},
+	{FlagName: "start-date", Shorthand: "s", FieldPath: "StartDate", Kind: flagutil.FlagKindDate, Required: true, Description: "Start date for the analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date. Must be no more than 730 days before 'end_date'. [required]"},
+	{FlagName: "end-date", Shorthand: "e", FieldPath: "EndDate", Kind: flagutil.FlagKindDate, Required: true, Description: "End date for the analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date. Must be on or after 'start_date' and no more than 730 days after it. [required]"},
 }
 
 // initGetCmd initializes the get command.
@@ -26,7 +26,7 @@ func initGetCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "get [media-id]",
 		Short:   "Show Media Analytics",
-		Long:    "Retrieve aggregate analytics for a video over a date range. This endpoint provides\nBottler-powered analytics including plays, loads, engagement rate, play rate, and\nconversion metrics.\n\nThe date range between `start_date` and `end_date` must not exceed 2 years.\n\n\n## Requires api token with one of the following permissions\n```\nRead detailed stats\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
+		Long:    "Retrieve aggregate analytics for a video over a date range. This endpoint provides\nBottler-powered analytics including plays, loads, engagement rate, play rate, and\nconversion metrics.\n\nThe date range between `start_date` and `end_date` must not exceed 2 years.\n\n\n## Requires api token with one of the following permissions\n```\nRead detailed stats\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\nauthorization granting the `view-stats` permission on this media can also\nbe used.",
 		Example: "  wistia analytics-media get --media-id <id> --start-date 2026-06-10 --end-date 2026-12-01",
 		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runGetCmd,
@@ -81,7 +81,10 @@ func runGetCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.AnalyticsMedia.Get(cmd.Context(), *req, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

@@ -13,7 +13,7 @@ import (
 type PostRemixesRemixHashedIDContinueRequestBody struct {
 	// Natural language instructions for the edit (e.g., "cut the first 10 seconds").
 	Instructions string `json:"instructions"`
-	// Hashed ID of the destination folder for the exported media. Defaults to the same folder as the previous remix version's output.
+	// Hashed ID of the destination folder for the exported media. Defaults to the same folder as the previous version's output.
 	FolderID *string `json:"folder_id,omitzero"`
 }
 
@@ -32,7 +32,7 @@ func (p *PostRemixesRemixHashedIDContinueRequestBody) GetFolderID() *string {
 }
 
 type PostRemixesRemixHashedIDContinueRequest struct {
-	// The hashed ID of the current remix version to edit from.
+	// The remix_id of the Mochine video version to edit from.
 	RemixHashedID string                                       `pathParam:"style=simple,explode=false,name=remixHashedId"`
 	Body          *PostRemixesRemixHashedIDContinueRequestBody `request:"mediaType=application/json"`
 }
@@ -134,40 +134,45 @@ func (e *PostRemixesRemixHashedIDContinueCode) IsExact() bool {
 	return false
 }
 
-// PostRemixesRemixHashedIDContinueStatus - Status of the new remix version.
+// PostRemixesRemixHashedIDContinueStatus - Raw processing status returned by the deprecated remix endpoints. `waiting_for_media` and `pending` come before `generating`; `unhydrated_editable_scenes_generated` and `editable_scenes_generated` mean Mochine has drafted the scenes and is still building the edit; previews appear at `edit_tree_generated`; `completed` means the export was enqueued, not that the output media is watchable yet; `error` means the edit failed and `cancelled` that it was stopped.
 type PostRemixesRemixHashedIDContinueStatus string
 
 const (
-	PostRemixesRemixHashedIDContinueStatusPending PostRemixesRemixHashedIDContinueStatus = "pending"
+	PostRemixesRemixHashedIDContinueStatusWaitingForMedia                   PostRemixesRemixHashedIDContinueStatus = "waiting_for_media"
+	PostRemixesRemixHashedIDContinueStatusPending                           PostRemixesRemixHashedIDContinueStatus = "pending"
+	PostRemixesRemixHashedIDContinueStatusGenerating                        PostRemixesRemixHashedIDContinueStatus = "generating"
+	PostRemixesRemixHashedIDContinueStatusUnhydratedEditableScenesGenerated PostRemixesRemixHashedIDContinueStatus = "unhydrated_editable_scenes_generated"
+	PostRemixesRemixHashedIDContinueStatusEditableScenesGenerated           PostRemixesRemixHashedIDContinueStatus = "editable_scenes_generated"
+	PostRemixesRemixHashedIDContinueStatusEditTreeGenerated                 PostRemixesRemixHashedIDContinueStatus = "edit_tree_generated"
+	PostRemixesRemixHashedIDContinueStatusExporting                         PostRemixesRemixHashedIDContinueStatus = "exporting"
+	PostRemixesRemixHashedIDContinueStatusCompleted                         PostRemixesRemixHashedIDContinueStatus = "completed"
+	PostRemixesRemixHashedIDContinueStatusError                             PostRemixesRemixHashedIDContinueStatus = "error"
+	PostRemixesRemixHashedIDContinueStatusCancelled                         PostRemixesRemixHashedIDContinueStatus = "cancelled"
 )
 
 func (e PostRemixesRemixHashedIDContinueStatus) ToPointer() *PostRemixesRemixHashedIDContinueStatus {
 	return &e
 }
-func (e *PostRemixesRemixHashedIDContinueStatus) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *PostRemixesRemixHashedIDContinueStatus) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "waiting_for_media", "pending", "generating", "unhydrated_editable_scenes_generated", "editable_scenes_generated", "edit_tree_generated", "exporting", "completed", "error", "cancelled":
+			return true
+		}
 	}
-	switch v {
-	case "pending":
-		*e = PostRemixesRemixHashedIDContinueStatus(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for PostRemixesRemixHashedIDContinueStatus: %v", v)
-	}
+	return false
 }
 
 // PostRemixesRemixHashedIDContinueResponseBody - New remix version created.
 type PostRemixesRemixHashedIDContinueResponseBody struct {
-	// Hashed ID of the new remix version.
+	// Hashed ID of the new Mochine video version.
 	RemixID *string `json:"remix_id,omitzero"`
 	// Hashed ID of the conversation.
 	ConversationID *string `json:"conversation_id,omitzero"`
-	// Status of the new remix version.
+	// Raw processing status returned by the deprecated remix endpoints. `waiting_for_media` and `pending` come before `generating`; `unhydrated_editable_scenes_generated` and `editable_scenes_generated` mean Mochine has drafted the scenes and is still building the edit; previews appear at `edit_tree_generated`; `completed` means the export was enqueued, not that the output media is watchable yet; `error` means the edit failed and `cancelled` that it was stopped.
 	Status *PostRemixesRemixHashedIDContinueStatus `json:"status,omitzero"`
-	// Hashed ID of the remix version this edit is based on.
-	PreviousRemixID *string `json:"previous_remix_id,omitzero"`
 }
 
 func (p *PostRemixesRemixHashedIDContinueResponseBody) GetRemixID() *string {
@@ -189,13 +194,6 @@ func (p *PostRemixesRemixHashedIDContinueResponseBody) GetStatus() *PostRemixesR
 		return nil
 	}
 	return p.Status
-}
-
-func (p *PostRemixesRemixHashedIDContinueResponseBody) GetPreviousRemixID() *string {
-	if p == nil {
-		return nil
-	}
-	return p.PreviousRemixID
 }
 
 type PostRemixesRemixHashedIDContinueResponse struct {

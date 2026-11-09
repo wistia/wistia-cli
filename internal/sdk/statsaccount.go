@@ -43,6 +43,11 @@ func newStatsAccount(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks *
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// `account` authorization granting the `view-stats` permission can also
+// be used.
 func (s *StatsAccount) Get(ctx context.Context, opts ...operations.Option) (*operations.GetStatsAccountResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -284,6 +289,11 @@ func (s *StatsAccount) Get(ctx context.Context, opts ...operations.Option) (*ope
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// `account` authorization granting the `view-stats` permission can also
+// be used.
 func (s *StatsAccount) GetStatsAccountByDate(ctx context.Context, request *operations.GetStatsAccountByDateRequest, opts ...operations.Option) (*operations.GetStatsAccountByDateResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

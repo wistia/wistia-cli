@@ -24,7 +24,7 @@ func initDeleteCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "delete [channel-hashed-id]",
 		Short:   "Delete Channel",
-		Long:    "Deletes a channel.",
+		Long:    "Deletes a channel.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\nauthorization granting the `destroy` permission on this channel can also\nbe used.",
 		Example: "  wistia channels delete --channel-hashed-id <id>",
 		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runDeleteCmd,
@@ -79,7 +79,10 @@ func runDeleteCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.Channels.Delete(cmd.Context(), *req, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}
