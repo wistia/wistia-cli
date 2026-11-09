@@ -29,6 +29,7 @@ wistia speakers [flags]
       --interactive            Prompt for missing inputs and open guided configure/auth forms (forms fall back to line prompts on stdin off-TTY) (default true)
   -q, --jq string              Filter and transform output using a jq expression (e.g., '.name', '.items[] | .id')
       --no-interactive         Disable all interactive features (auto-prompting, explorer auto-launch, TUI forms)
+      --no-keyring             Never read or write the OS keychain; store secrets in the config file instead (env: WISTIA_CLI_NO_KEYRING)
   -o, --output-format string   Specify the output format. Options: pretty, json, yaml, table, toon. (default "pretty")
       --raw-output             Write --jq string results as raw text instead of JSON strings (like jq -r); non-string results stay JSON
       --server string          Select a server by index (for indexed servers) or name (for named servers)
@@ -42,7 +43,9 @@ wistia speakers [flags]
 * [wistia](wistia.md)	 - Data API: Wistia Data API
 * [wistia speakers assign](wistia_speakers_assign.md)	 - Assign Speaker to Media
 * [wistia speakers create](wistia_speakers_create.md)	 - Create Speaker
+* [wistia speakers delete](wistia_speakers_delete.md)	 - Delete Speaker
 * [wistia speakers list](wistia_speakers_list.md)	 - List Speakers
 * [wistia speakers remove](wistia_speakers_remove.md)	 - Remove Speaker from Media
+* [wistia speakers update](wistia_speakers_update.md)	 - Update Speaker
 
 Exit codes: 0 ok · 1 runtime · 2 usage · 3 authentication/authorization

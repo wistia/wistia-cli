@@ -11,7 +11,7 @@ import (
 type PostTaggingsBulkCreateRequest struct {
 	// An array of the media hashed IDs to be tagged.
 	HashedIds []string `json:"hashed_ids"`
-	// An array of tag names to add to each media.
+	// An array of tag names to add to each media. Names are lowercased and their whitespace collapsed. Each name must be non-blank and at most 50 characters, and a request can include at most 100 names.
 	TagNames []string `json:"tag_names"`
 }
 

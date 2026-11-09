@@ -107,6 +107,38 @@ func (d *DeleteWebinarsIDFolder) GetURL() string {
 	return d.URL
 }
 
+type DeleteWebinarsIDSeries struct {
+	// A unique alphanumeric identifier for the record.
+	ID string `json:"id"`
+	// A URL for fetching all the records of the given record type. You can pass hashed_ids as a param with multiple values
+	// to do a batch fetch for this records type.
+	//
+	IndexURL string `json:"index_url"`
+	// A URL that can be used to fetch this record.
+	URL string `json:"url"`
+}
+
+func (d *DeleteWebinarsIDSeries) GetID() string {
+	if d == nil {
+		return ""
+	}
+	return d.ID
+}
+
+func (d *DeleteWebinarsIDSeries) GetIndexURL() string {
+	if d == nil {
+		return ""
+	}
+	return d.IndexURL
+}
+
+func (d *DeleteWebinarsIDSeries) GetURL() string {
+	if d == nil {
+		return ""
+	}
+	return d.URL
+}
+
 // DeleteWebinarsIDResponseBody - A webinar is an event which allows you to stream a video
 // to multiple participants. See our [Webinars Guide](https://support.wistia.com/en/articles/8288501-getting-started-with-webinars)
 // for more info.
@@ -143,6 +175,8 @@ type DeleteWebinarsIDResponseBody struct {
 	ThumbnailURL optionalnullable.OptionalNullable[string] `json:"thumbnail_url,omitzero"`
 	// The folder (project) this webinar belongs to
 	Folder optionalnullable.OptionalNullable[DeleteWebinarsIDFolder] `json:"folder,omitzero"`
+	// The series this webinar belongs to, or null if it is not part of a series
+	Series optionalnullable.OptionalNullable[DeleteWebinarsIDSeries] `json:"series,omitzero"`
 	// A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
 	Cursor optionalnullable.OptionalNullable[string] `json:"cursor,omitzero"`
 }
@@ -268,6 +302,13 @@ func (d *DeleteWebinarsIDResponseBody) GetFolder() optionalnullable.OptionalNull
 		return nil
 	}
 	return d.Folder
+}
+
+func (d *DeleteWebinarsIDResponseBody) GetSeries() optionalnullable.OptionalNullable[DeleteWebinarsIDSeries] {
+	if d == nil {
+		return nil
+	}
+	return d.Series
 }
 
 func (d *DeleteWebinarsIDResponseBody) GetCursor() optionalnullable.OptionalNullable[string] {

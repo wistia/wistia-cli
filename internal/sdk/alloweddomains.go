@@ -43,6 +43,11 @@ func newAllowedDomains(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// `account` authorization granting the `manage-allowed-domains` permission can
+// also be used. Such a token without that permission receives an empty list.
 func (s *AllowedDomains) List(ctx context.Context, request *operations.GetAllowedDomainsRequest, opts ...operations.Option) (*operations.GetAllowedDomainsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -288,6 +293,11 @@ func (s *AllowedDomains) List(ctx context.Context, request *operations.GetAllowe
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// `account` authorization granting the `manage-allowed-domains` permission can
+// also be used.
 func (s *AllowedDomains) Create(ctx context.Context, request operations.PostAllowedDomainsRequest, opts ...operations.Option) (*operations.PostAllowedDomainsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -561,6 +571,11 @@ func (s *AllowedDomains) Create(ctx context.Context, request operations.PostAllo
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// `account` authorization granting the `manage-allowed-domains` permission can
+// also be used.
 func (s *AllowedDomains) Get(ctx context.Context, request operations.GetAllowedDomainsDomainRequest, opts ...operations.Option) (*operations.GetAllowedDomainsDomainResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -802,6 +817,11 @@ func (s *AllowedDomains) Get(ctx context.Context, request operations.GetAllowedD
 // (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 // made with such a token are authorized using the permissions of the
 // contact assigned to the token.
+//
+// An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+// created with the `all:delegate_to_contact_permissions` scope and an
+// `account` authorization granting the `manage-allowed-domains` permission can
+// also be used.
 func (s *AllowedDomains) Delete(ctx context.Context, request operations.DeleteAllowedDomainsDomainRequest, opts ...operations.Option) (*operations.DeleteAllowedDomainsDomainResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

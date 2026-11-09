@@ -233,7 +233,7 @@ type PostMediasMediaHashedIDCopyResponseBody struct {
 	// The title of the section in which the media appears. This attribute is omitted if the media is not in a section (default).
 	Section   optionalnullable.OptionalNullable[string] `json:"section,omitzero"`
 	Thumbnail *PostMediasMediaHashedIDCopyThumbnail     `json:"thumbnail,omitzero"`
-	// Whether the media is protected (e.g. requires a password or other authentication to view). Null if the media is not protected.
+	// Whether the media is protected by Private Video, which keeps its video files off the public delivery path. Null if the media is not protected.
 	Protected optionalnullable.OptionalNullable[bool] `json:"protected,omitzero"`
 	Folder    *PostMediasMediaHashedIDCopyFolder      `json:"folder"`
 }

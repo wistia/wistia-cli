@@ -25,6 +25,11 @@ Tokens with the "Act with a team member's permissions" permission
 made with such a token are authorized using the permissions of the
 contact assigned to the token.
 
+An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+created with the `all:delegate_to_contact_permissions` scope and an
+`account` authorization granting the `view-stats` permission can also
+be used.
+
 ```
 wistia analytics-account get-top-content [flags]
 ```
@@ -38,14 +43,14 @@ wistia analytics-account get-top-content [flags]
 ### Options
 
 ```
-  -e, --end-date string          End date for the analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date. [required]
+  -e, --end-date string          End date for the analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date. Must be on or after 'start_date' and no more than 730 days after it. [required]
   -g, --group-by string          The type of content to rank. (options: media, channel, project) (default "media")
       --hashed-ids stringArray   Scope the ranking to these specific media's hashed IDs, rather than the whole account. Only valid with group_by=media.
   -h, --help                     help for get-top-content
   -p, --per-page int             Number of results to return. Defaults to the number of hashed_ids requested, or 10 when hashed_ids is not given.
       --sort-by string           The metric to rank content by. (options: plays, loads, play_rate, engagement_rate, played_time, unique_visitors) (default "plays")
       --sort-direction string    The sort direction. (options: asc, desc) (default "desc")
-      --start-date string        Start date for the analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date. [required]
+      --start-date string        Start date for the analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date. Must be no more than 730 days before 'end_date'. [required]
 ```
 
 ### Options inherited from parent commands
@@ -61,6 +66,7 @@ wistia analytics-account get-top-content [flags]
       --interactive            Prompt for missing inputs and open guided configure/auth forms (forms fall back to line prompts on stdin off-TTY) (default true)
   -q, --jq string              Filter and transform output using a jq expression (e.g., '.name', '.items[] | .id')
       --no-interactive         Disable all interactive features (auto-prompting, explorer auto-launch, TUI forms)
+      --no-keyring             Never read or write the OS keychain; store secrets in the config file instead (env: WISTIA_CLI_NO_KEYRING)
   -o, --output-format string   Specify the output format. Options: pretty, json, yaml, table, toon. (default "pretty")
       --raw-output             Write --jq string results as raw text instead of JSON strings (like jq -r); non-string results stay JSON
       --server string          Select a server by index (for indexed servers) or name (for named servers)

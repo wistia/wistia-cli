@@ -24,8 +24,8 @@ var createCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "border-radius", FieldPath: "BorderRadius", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"border_radius,omitempty"`, Description: "The border radius in pixels for rounded corners."},
 	{FlagName: "contrast-icons", Shorthand: "c", FieldPath: "ContrastIcons", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"contrast_icons,omitempty"`, Description: "Controls whether the player icon color is always white or uses an accessible contrast color when necessary. (options: enabled, disabled, unset)"},
 	{FlagName: "opaque-controls", FieldPath: "OpaqueControls", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"opaque_controls,omitempty"`, Description: "Controls the opacity of the video player control bar and big play button. (options: enabled, disabled, unset)"},
-	{FlagName: "page-logo", FieldPath: "PageLogo", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"page_logo,omitempty"`, Description: "The brand logo used for pages. 'url' must be a Wistia delivery URL — see the note on uploading below. On accounts without custom branding the player logo is ignored, but the page logo is always applied."},
-	{FlagName: "player-logo", FieldPath: "PlayerLogo", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"player_logo,omitempty"`, Description: "The brand logo used for the player. 'url' must be a Wistia delivery URL — see the note on uploading below. Ignored on accounts whose plan doesn't include custom branding."},
+	{FlagName: "page-logo", FieldPath: "PageLogo", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"page_logo,omitempty"`, Description: "The brand logo used for pages. On accounts without custom branding the player logo is ignored, but the page logo is always applied."},
+	{FlagName: "player-logo", FieldPath: "PlayerLogo", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"player_logo,omitempty"`, Description: "The brand logo used for the player. Ignored on accounts whose plan doesn't include custom branding."},
 }
 
 // initCreateCmd initializes the create command.
@@ -33,7 +33,7 @@ func initCreateCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "create",
 		Short:   "Create Brand",
-		Long:    "Creates a brand. A brand is a saved set of branding options (colors, fonts,\nlogos, and layout) that can then be applied to media, folders, and\nchannels. `name` is required; every other field is optional and left unset\nwhen omitted.\n\nA new brand isn't applied to anything — it has no effect until you apply\nit to a resource with `POST /brands/{brandId}/apply`.\n\nAccounts whose plan doesn't include multiple brands can only hold one brand.\n\n## Requires api token with one of the following permissions\n```\nAll data\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
+		Long:    "Creates a brand. A brand is a saved set of branding options (colors, fonts,\nlogos, and layout) that can then be applied to media, folders, and\nchannels. `name` is required; every other field is optional and left unset\nwhen omitted.\n\nA new brand isn't applied to anything — it has no effect until you apply\nit to a resource with `POST /brands/{brandId}/apply`.\n\nAccounts whose plan doesn't include multiple brands can only hold one brand.\n\nLogos (`page_logo`, `player_logo`) reference images already in the account\nby delivery URL. To add a new logo image, upload it to the Upload API with\n`asset_type=brand_image` first and pass the returned `asset.url`.\n\n## Requires api token with one of the following permissions\n```\nAll data\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\n`account` authorization granting the `create-brands` permission can also\nbe used. The new brand is not covered by the token that created it, so\nfollow-up requests need a token whose authorizations name the returned\nhashed id.",
 		Example: "  wistia brands create",
 		Args:    cobra.NoArgs,
 		RunE:    runCreateCmd,
@@ -46,7 +46,7 @@ func initCreateCmd(parent *cobra.Command) error {
 		return fmt.Errorf("invalid metadata for create: %w", err)
 	}
 	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
-	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Required: false, Kind: "json", BodyFlag: true})
 	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
 	if err := flagutil.AnnotateBodyFields(cmd, createCmdMeta, "", "body"); err != nil {
 		return fmt.Errorf("annotate body fields for create: %w", err)
@@ -83,7 +83,10 @@ func runCreateCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.Brands.Create(cmd.Context(), request, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

@@ -37,19 +37,14 @@ func newExpiringAccessTokens(rootSDK *Wistia, sdkConfig config.SDKConfiguration,
 // This API is still under development and can change at any time.
 // ```
 //
-// This endpoint is for creating expiring access tokens which can be used for some iframe embeds
-// and, when granted the `all:delegate_to_contact_permissions` scope, for REST API requests
-// authorized by the token's authorizations.
+// Creates a short-lived copy of the API token making the request. The copy has that
+// token's scopes, or the subset named in `scopes`, and `authorizations` narrow it to the
+// objects and permissions they name. Use it as a bearer token for API requests, or pass it
+// to iframe embeds such as the transcript editor.
 //
-// ## Requires api token with one of the following permissions
-// ```
-// Read, update & delete anything
-// ```
-//
-// Tokens with the "Act with a team member's permissions" permission
-// (`all:delegate_to_contact_permissions` scope) can also be used. Requests
-// made with such a token are authorized using the permissions of the
-// contact assigned to the token.
+// Any API token can create one. A copy of a token with the "Act with a team member's
+// permissions" permission (`all:delegate_to_contact_permissions` scope) acts with the
+// permissions of the contact assigned to that token.
 func (s *ExpiringAccessTokens) Create(ctx context.Context, request *operations.PostExpiringTokenRequest, opts ...operations.Option) (*operations.PostExpiringTokenResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

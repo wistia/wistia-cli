@@ -12,36 +12,6 @@ import (
 	"time"
 )
 
-// PutChannelEpisodesChannelEpisodeHashedIDPublishStatus - The status of whether or not the episode has been published to your channel.
-type PutChannelEpisodesChannelEpisodeHashedIDPublishStatus string
-
-const (
-	PutChannelEpisodesChannelEpisodeHashedIDPublishStatusDraft     PutChannelEpisodesChannelEpisodeHashedIDPublishStatus = "draft"
-	PutChannelEpisodesChannelEpisodeHashedIDPublishStatusPublished PutChannelEpisodesChannelEpisodeHashedIDPublishStatus = "published"
-	PutChannelEpisodesChannelEpisodeHashedIDPublishStatusScheduled PutChannelEpisodesChannelEpisodeHashedIDPublishStatus = "scheduled"
-)
-
-func (e PutChannelEpisodesChannelEpisodeHashedIDPublishStatus) ToPointer() *PutChannelEpisodesChannelEpisodeHashedIDPublishStatus {
-	return &e
-}
-func (e *PutChannelEpisodesChannelEpisodeHashedIDPublishStatus) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	switch v {
-	case "draft":
-		fallthrough
-	case "published":
-		fallthrough
-	case "scheduled":
-		*e = PutChannelEpisodesChannelEpisodeHashedIDPublishStatus(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for PutChannelEpisodesChannelEpisodeHashedIDPublishStatus: %v", v)
-	}
-}
-
 type PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeRequest string
 
 const (
@@ -122,21 +92,11 @@ func (p *PutChannelEpisodesChannelEpisodeHashedIDPodcastSettingsRequest) GetHide
 }
 
 type PutChannelEpisodesChannelEpisodeHashedIDRequestBody struct {
-	// The episode's description or episode notes.
-	Description optionalnullable.OptionalNullable[string] `json:"description,omitzero"`
 	// The episode's title. If not provided, the channel episode uses the title of the media used to create it.
 	Title optionalnullable.OptionalNullable[string] `json:"title,omitzero"`
-	// The unique alphanumeric identifier for the media associated with this channel episode.
-	MediaHashedID *string `json:"media_hashed_id,omitzero"`
-	// The unique alphanumeric identifier for the live stream event associated with this channel episode.
-	LiveStreamEventHashedID *string `json:"live_stream_event_hashed_id,omitzero"`
-	// A short summary of the episode that is displayed when space is limited.
-	Summary optionalnullable.OptionalNullable[string] `json:"summary,omitzero"`
-	// The status of whether or not the episode has been published to your channel.
-	PublishStatus *PutChannelEpisodesChannelEpisodeHashedIDPublishStatus `json:"publish_status,omitzero"`
-	// The date and time when the episode is scheduled to be published in UTC timezone.
-	PublishAt *time.Time `json:"publish_at,omitzero"`
-	// Additional notes for the episode.
+	// A short summary of the episode that is displayed when space is limited. Returned as the episode's summary.
+	Description optionalnullable.OptionalNullable[string] `json:"description,omitzero"`
+	// Additional notes for the episode. Returned as the episode's description.
 	EpisodeNotes *string `json:"episode_notes,omitzero"`
 	// Podcast specific settings for a channel episode. These settings only take effect
 	// if podcasting is enabled for the channel.
@@ -155,13 +115,6 @@ func (p *PutChannelEpisodesChannelEpisodeHashedIDRequestBody) UnmarshalJSON(data
 	return nil
 }
 
-func (p *PutChannelEpisodesChannelEpisodeHashedIDRequestBody) GetDescription() optionalnullable.OptionalNullable[string] {
-	if p == nil {
-		return nil
-	}
-	return p.Description
-}
-
 func (p *PutChannelEpisodesChannelEpisodeHashedIDRequestBody) GetTitle() optionalnullable.OptionalNullable[string] {
 	if p == nil {
 		return nil
@@ -169,39 +122,11 @@ func (p *PutChannelEpisodesChannelEpisodeHashedIDRequestBody) GetTitle() optiona
 	return p.Title
 }
 
-func (p *PutChannelEpisodesChannelEpisodeHashedIDRequestBody) GetMediaHashedID() *string {
+func (p *PutChannelEpisodesChannelEpisodeHashedIDRequestBody) GetDescription() optionalnullable.OptionalNullable[string] {
 	if p == nil {
 		return nil
 	}
-	return p.MediaHashedID
-}
-
-func (p *PutChannelEpisodesChannelEpisodeHashedIDRequestBody) GetLiveStreamEventHashedID() *string {
-	if p == nil {
-		return nil
-	}
-	return p.LiveStreamEventHashedID
-}
-
-func (p *PutChannelEpisodesChannelEpisodeHashedIDRequestBody) GetSummary() optionalnullable.OptionalNullable[string] {
-	if p == nil {
-		return nil
-	}
-	return p.Summary
-}
-
-func (p *PutChannelEpisodesChannelEpisodeHashedIDRequestBody) GetPublishStatus() *PutChannelEpisodesChannelEpisodeHashedIDPublishStatus {
-	if p == nil {
-		return nil
-	}
-	return p.PublishStatus
-}
-
-func (p *PutChannelEpisodesChannelEpisodeHashedIDRequestBody) GetPublishAt() *time.Time {
-	if p == nil {
-		return nil
-	}
-	return p.PublishAt
+	return p.Description
 }
 
 func (p *PutChannelEpisodesChannelEpisodeHashedIDRequestBody) GetEpisodeNotes() *string {

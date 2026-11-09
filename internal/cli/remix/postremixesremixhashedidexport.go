@@ -16,7 +16,7 @@ import (
 )
 
 var postRemixesRemixHashedIDExportCmdMeta = []flagutil.FlagMeta{
-	{FlagName: "remix-hashed-id", Shorthand: "r", FieldPath: "RemixHashedID", Kind: flagutil.FlagKindString, Required: true, Description: "The hashed ID of the remix to export. [required]"},
+	{FlagName: "remix-hashed-id", Shorthand: "r", FieldPath: "RemixHashedID", Kind: flagutil.FlagKindString, Required: true, Description: "The remix_id of the Mochine video to export. [required]"},
 	{FlagName: "folder-id", Shorthand: "f", FieldPath: "Body.FolderID", Kind: flagutil.FlagKindString, Optional: true, Description: "Hashed ID of the destination folder. Defaults to the source media's folder."},
 	{FlagName: "name", Shorthand: "n", FieldPath: "Body.Name", Kind: flagutil.FlagKindString, Optional: true, Description: "Custom name for the exported media."},
 }
@@ -26,7 +26,7 @@ func initPostRemixesRemixHashedIdExportCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "post-remixes-remix-hashed-id-export [remix-hashed-id]",
 		Short:   "Export Remix",
-		Long:    "Export a remix to a folder in your account, triggering the full render pipeline.\n\nRemixes created through this API export automatically, so a remix is usually\nalready exported by the time you can call this. Exporting one again does not\nre-render it — it moves and renames the media the first export produced, so you\ncan use this to place a finished remix in a different folder or under a\ndifferent name.\n\nIf no folder_id is provided, the remix is exported to the source media's folder.\n\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
+		Long:    "DEPRECATED: This will be removed in a future release, please migrate away from it as soon as possible\n\nDeprecated: use `POST /mochine/edits/{editHashedId}/export` instead.\n\nExport a remix to a folder in your account, triggering the full render pipeline.\n\nRemixes created through this API export automatically, so a remix is usually\nalready exported by the time you can call this. Exporting one again does not\nre-render it — it moves and renames the media the first export produced, so you\ncan use this to place a finished remix in a different folder or under a\ndifferent name.\n\nIf no folder_id is provided, the remix is exported to the source media's folder.\n\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
 		Example: "  wistia remix post-remixes-remix-hashed-id-export --remix-hashed-id <id>",
 		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runPostRemixesRemixHashedIdExportCmd,
@@ -40,16 +40,16 @@ func initPostRemixesRemixHashedIdExportCmd(parent *cobra.Command) error {
 		return fmt.Errorf("invalid metadata for post-remixes-remix-hashed-id-export: %w", err)
 	}
 	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
-	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Required: false, Kind: "json", BodyFlag: true})
 	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
 	if err := flagutil.AnnotateBodyFields(cmd, postRemixesRemixHashedIDExportCmdMeta, "Body", "body"); err != nil {
 		return fmt.Errorf("annotate body fields for post-remixes-remix-hashed-id-export: %w", err)
 	}
-	if err := flagutil.DeclarePositionalFlag(cmd, "remix-hashed-id", "The hashed ID of the remix to export. (or pass it as the [remix-hashed-id] argument)", true); err != nil {
+	if err := flagutil.DeclarePositionalFlag(cmd, "remix-hashed-id", "The remix_id of the Mochine video to export. (or pass it as the [remix-hashed-id] argument)", true); err != nil {
 		return err
 	}
 	if err := interactive.Declare(cmd, interactive.CommandSpec{Args: []interactive.ArgSpec{
-		{Name: "remix-hashed-id", Summary: "The hashed ID of the remix to export.", Required: true, SatisfiedBy: []string{"remix-hashed-id"}},
+		{Name: "remix-hashed-id", Summary: "The remix_id of the Mochine video to export.", Required: true, SatisfiedBy: []string{"remix-hashed-id"}},
 	}}); err != nil {
 		return fmt.Errorf("declare interactive arguments for post-remixes-remix-hashed-id-export: %w", err)
 	}
@@ -88,7 +88,10 @@ func runPostRemixesRemixHashedIdExportCmd(cmd *cobra.Command, args []string) err
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.Remix.PostRemixesRemixHashedIDExport(cmd.Context(), *req, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

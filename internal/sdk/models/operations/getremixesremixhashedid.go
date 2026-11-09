@@ -11,7 +11,7 @@ import (
 )
 
 type GetRemixesRemixHashedIDRequest struct {
-	// The hashed ID of the remix.
+	// The remix_id of the Mochine video.
 	RemixHashedID string `pathParam:"style=simple,explode=false,name=remixHashedId"`
 }
 
@@ -47,18 +47,20 @@ func (e *GetRemixesRemixHashedIDCode) IsExact() bool {
 	return false
 }
 
-// GetRemixesRemixHashedIDStatus - Current processing status.
+// GetRemixesRemixHashedIDStatus - Raw processing status returned by the deprecated remix endpoints. `waiting_for_media` and `pending` come before `generating`; `unhydrated_editable_scenes_generated` and `editable_scenes_generated` mean Mochine has drafted the scenes and is still building the edit; previews appear at `edit_tree_generated`; `completed` means the export was enqueued, not that the output media is watchable yet; `error` means the edit failed and `cancelled` that it was stopped.
 type GetRemixesRemixHashedIDStatus string
 
 const (
-	GetRemixesRemixHashedIDStatusPending                 GetRemixesRemixHashedIDStatus = "pending"
-	GetRemixesRemixHashedIDStatusGenerating              GetRemixesRemixHashedIDStatus = "generating"
-	GetRemixesRemixHashedIDStatusGeneratingScenes        GetRemixesRemixHashedIDStatus = "generating_scenes"
-	GetRemixesRemixHashedIDStatusEditableScenesGenerated GetRemixesRemixHashedIDStatus = "editable_scenes_generated"
-	GetRemixesRemixHashedIDStatusEditTreeGenerated       GetRemixesRemixHashedIDStatus = "edit_tree_generated"
-	GetRemixesRemixHashedIDStatusExporting               GetRemixesRemixHashedIDStatus = "exporting"
-	GetRemixesRemixHashedIDStatusCompleted               GetRemixesRemixHashedIDStatus = "completed"
-	GetRemixesRemixHashedIDStatusError                   GetRemixesRemixHashedIDStatus = "error"
+	GetRemixesRemixHashedIDStatusWaitingForMedia                   GetRemixesRemixHashedIDStatus = "waiting_for_media"
+	GetRemixesRemixHashedIDStatusPending                           GetRemixesRemixHashedIDStatus = "pending"
+	GetRemixesRemixHashedIDStatusGenerating                        GetRemixesRemixHashedIDStatus = "generating"
+	GetRemixesRemixHashedIDStatusUnhydratedEditableScenesGenerated GetRemixesRemixHashedIDStatus = "unhydrated_editable_scenes_generated"
+	GetRemixesRemixHashedIDStatusEditableScenesGenerated           GetRemixesRemixHashedIDStatus = "editable_scenes_generated"
+	GetRemixesRemixHashedIDStatusEditTreeGenerated                 GetRemixesRemixHashedIDStatus = "edit_tree_generated"
+	GetRemixesRemixHashedIDStatusExporting                         GetRemixesRemixHashedIDStatus = "exporting"
+	GetRemixesRemixHashedIDStatusCompleted                         GetRemixesRemixHashedIDStatus = "completed"
+	GetRemixesRemixHashedIDStatusError                             GetRemixesRemixHashedIDStatus = "error"
+	GetRemixesRemixHashedIDStatusCancelled                         GetRemixesRemixHashedIDStatus = "cancelled"
 )
 
 func (e GetRemixesRemixHashedIDStatus) ToPointer() *GetRemixesRemixHashedIDStatus {
@@ -69,7 +71,7 @@ func (e GetRemixesRemixHashedIDStatus) ToPointer() *GetRemixesRemixHashedIDStatu
 func (e *GetRemixesRemixHashedIDStatus) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "pending", "generating", "generating_scenes", "editable_scenes_generated", "edit_tree_generated", "exporting", "completed", "error":
+		case "waiting_for_media", "pending", "generating", "unhydrated_editable_scenes_generated", "editable_scenes_generated", "edit_tree_generated", "exporting", "completed", "error", "cancelled":
 			return true
 		}
 	}
@@ -109,16 +111,12 @@ func (p *Preview) GetInstantHlsReady() *bool {
 
 // GetRemixesRemixHashedIDResponseBody - Remix status and details.
 type GetRemixesRemixHashedIDResponseBody struct {
-	// Hashed ID of the remix.
+	// Hashed ID of the Mochine video.
 	RemixID *string `json:"remix_id,omitzero"`
-	// Hashed ID of the parent conversation.
-	ConversationID *string `json:"conversation_id,omitzero"`
-	// The ISO 8601 timestamp when the remix was created.
+	// The ISO 8601 timestamp when the Mochine video was created.
 	CreatedAt *time.Time `json:"created_at,omitzero"`
-	// Current processing status.
+	// Raw processing status returned by the deprecated remix endpoints. `waiting_for_media` and `pending` come before `generating`; `unhydrated_editable_scenes_generated` and `editable_scenes_generated` mean Mochine has drafted the scenes and is still building the edit; previews appear at `edit_tree_generated`; `completed` means the export was enqueued, not that the output media is watchable yet; `error` means the edit failed and `cancelled` that it was stopped.
 	Status *GetRemixesRemixHashedIDStatus `json:"status,omitzero"`
-	// Error details if status is "error".
-	ErrorMessage *string `json:"error_message,omitzero"`
 	// Preview URLs, available when status is "edit_tree_generated" or later.
 	Preview *Preview `json:"preview,omitzero"`
 }
@@ -141,13 +139,6 @@ func (g *GetRemixesRemixHashedIDResponseBody) GetRemixID() *string {
 	return g.RemixID
 }
 
-func (g *GetRemixesRemixHashedIDResponseBody) GetConversationID() *string {
-	if g == nil {
-		return nil
-	}
-	return g.ConversationID
-}
-
 func (g *GetRemixesRemixHashedIDResponseBody) GetCreatedAt() *time.Time {
 	if g == nil {
 		return nil
@@ -160,13 +151,6 @@ func (g *GetRemixesRemixHashedIDResponseBody) GetStatus() *GetRemixesRemixHashed
 		return nil
 	}
 	return g.Status
-}
-
-func (g *GetRemixesRemixHashedIDResponseBody) GetErrorMessage() *string {
-	if g == nil {
-		return nil
-	}
-	return g.ErrorMessage
 }
 
 func (g *GetRemixesRemixHashedIDResponseBody) GetPreview() *Preview {

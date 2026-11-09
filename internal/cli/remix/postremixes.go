@@ -15,8 +15,8 @@ import (
 )
 
 var postRemixesCmdMeta = []flagutil.FlagMeta{
-	{FlagName: "media-hashed-ids", Shorthand: "m", FieldPath: "MediaHashedIds", Kind: flagutil.FlagKindStringArray, Required: true, Description: "Array of source media hashed IDs to remix from. [required]"},
-	{FlagName: "instructions", Shorthand: "i", FieldPath: "Instructions", Kind: flagutil.FlagKindString, Required: true, Description: "Natural language instructions describing the desired remix (e.g., \"create a 60-second highlight reel\"). [required]"},
+	{FlagName: "media-hashed-ids", Shorthand: "m", FieldPath: "MediaHashedIds", Kind: flagutil.FlagKindStringArray, Required: true, Description: "Array of source media hashed IDs to make the Mochine video from. [required]"},
+	{FlagName: "instructions", Shorthand: "i", FieldPath: "Instructions", Kind: flagutil.FlagKindString, Required: true, Description: "Natural language instructions describing the desired Mochine video (e.g., \"create a 60-second highlight reel\"). [required]"},
 	{FlagName: "folder-id", Shorthand: "f", FieldPath: "FolderID", Kind: flagutil.FlagKindString, Optional: true, Description: "Hashed ID of the destination folder for the exported media. Defaults to the source media's folder if not specified."},
 }
 
@@ -25,7 +25,7 @@ func initPostRemixesCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "post-remixes",
 		Short:   "Create Remix",
-		Long:    "Start a new video remix job. The remix is processed asynchronously — poll\nthe show endpoint to check status and get preview URLs when ready.\n\nRemix uses AI to analyze video transcripts and create edited versions\n(highlight reels, trailers, cut-downs, etc.) based on your instructions.\n\nThe remix is automatically exported (rendered) upon completion. When the\nstatus reaches \"completed\", the output media is available in the\ndestination folder. If no `folder_id` is provided, the remix is exported\nto the source media's folder.\n\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
+		Long:    "DEPRECATED: This will be removed in a future release, please migrate away from it as soon as possible\n\nDeprecated: use `POST /mochine/edits` instead, which also accepts a motion\nkit and narration and slide options.\n\nStart a new video remix job. The remix is processed asynchronously — poll\nthe show endpoint to check status and get preview URLs when ready.\n\nRemix uses AI to analyze video transcripts and create edited versions\n(highlight reels, trailers, cut-downs, etc.) based on your instructions.\n\nThe remix is automatically exported (rendered) upon completion. When the\nstatus reaches \"completed\", the output media is available in the\ndestination folder. If no `folder_id` is provided, the remix is exported\nto the source media's folder.\n\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
 		Example: "  wistia remix post-remixes --media-hashed-ids abc123 --media-hashed-ids def456 --instructions 'Create a 60-second highlight reel focusing on the product demo section'",
 		Args:    cobra.NoArgs,
 		RunE:    runPostRemixesCmd,
@@ -39,7 +39,7 @@ func initPostRemixesCmd(parent *cobra.Command) error {
 		return fmt.Errorf("invalid metadata for post-remixes: %w", err)
 	}
 	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
-	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Required: false, Kind: "json", BodyFlag: true})
 	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
 	if err := flagutil.AnnotateBodyFields(cmd, postRemixesCmdMeta, "", "body"); err != nil {
 		return fmt.Errorf("annotate body fields for post-remixes: %w", err)
@@ -76,7 +76,10 @@ func runPostRemixesCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.Remix.PostRemixes(cmd.Context(), request, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

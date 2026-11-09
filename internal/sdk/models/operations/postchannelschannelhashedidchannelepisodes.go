@@ -12,19 +12,19 @@ import (
 	"time"
 )
 
-// PostChannelsChannelHashedIDChannelEpisodesPublishStatus - The status of whether or not the episode has been published to your channel.
-type PostChannelsChannelHashedIDChannelEpisodesPublishStatus string
+// PublishStatus - The status of whether or not the episode has been published to your channel.
+type PublishStatus string
 
 const (
-	PostChannelsChannelHashedIDChannelEpisodesPublishStatusDraft     PostChannelsChannelHashedIDChannelEpisodesPublishStatus = "draft"
-	PostChannelsChannelHashedIDChannelEpisodesPublishStatusPublished PostChannelsChannelHashedIDChannelEpisodesPublishStatus = "published"
-	PostChannelsChannelHashedIDChannelEpisodesPublishStatusScheduled PostChannelsChannelHashedIDChannelEpisodesPublishStatus = "scheduled"
+	PublishStatusDraft     PublishStatus = "draft"
+	PublishStatusPublished PublishStatus = "published"
+	PublishStatusScheduled PublishStatus = "scheduled"
 )
 
-func (e PostChannelsChannelHashedIDChannelEpisodesPublishStatus) ToPointer() *PostChannelsChannelHashedIDChannelEpisodesPublishStatus {
+func (e PublishStatus) ToPointer() *PublishStatus {
 	return &e
 }
-func (e *PostChannelsChannelHashedIDChannelEpisodesPublishStatus) UnmarshalJSON(data []byte) error {
+func (e *PublishStatus) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
 		return err
@@ -35,10 +35,10 @@ func (e *PostChannelsChannelHashedIDChannelEpisodesPublishStatus) UnmarshalJSON(
 	case "published":
 		fallthrough
 	case "scheduled":
-		*e = PostChannelsChannelHashedIDChannelEpisodesPublishStatus(v)
+		*e = PublishStatus(v)
 		return nil
 	default:
-		return fmt.Errorf("invalid value for PostChannelsChannelHashedIDChannelEpisodesPublishStatus: %v", v)
+		return fmt.Errorf("invalid value for PublishStatus: %v", v)
 	}
 }
 
@@ -131,7 +131,7 @@ type PostChannelsChannelHashedIDChannelEpisodesRequestBody struct {
 	// A short summary of the episode that is displayed when space is limited.
 	Summary *string `json:"summary,omitzero"`
 	// The status of whether or not the episode has been published to your channel.
-	PublishStatus *PostChannelsChannelHashedIDChannelEpisodesPublishStatus `json:"publish_status,omitzero"`
+	PublishStatus *PublishStatus `json:"publish_status,omitzero"`
 	// The date and time when the episode should be published in UTC timezone. Required when publish_status is 'scheduled'. Must be a valid ISO8601 timestamp in UTC (ending with 'Z').  Can only be provided when publish_status is 'scheduled.'
 	PublishAt *time.Time `json:"publish_at,omitzero"`
 	// Podcast specific settings for a channel episode. These settings only take effect
@@ -179,7 +179,7 @@ func (p *PostChannelsChannelHashedIDChannelEpisodesRequestBody) GetSummary() *st
 	return p.Summary
 }
 
-func (p *PostChannelsChannelHashedIDChannelEpisodesRequestBody) GetPublishStatus() *PostChannelsChannelHashedIDChannelEpisodesPublishStatus {
+func (p *PostChannelsChannelHashedIDChannelEpisodesRequestBody) GetPublishStatus() *PublishStatus {
 	if p == nil {
 		return nil
 	}
