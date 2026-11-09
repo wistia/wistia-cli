@@ -20,6 +20,11 @@ Tokens with the "Act with a team member's permissions" permission
 made with such a token are authorized using the permissions of the
 contact assigned to the token.
 
+An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+created with the `all:delegate_to_contact_permissions` scope and an
+authorization granting the `view-stats` permission on this media can also
+be used.
+
 ```
 wistia analytics-media get-conversions [media-id] [flags]
 ```
@@ -34,11 +39,11 @@ wistia analytics-media get-conversions [media-id] [flags]
 
 ```
   -c, --cursor string       Cursor for pagination. Use the value from the previous response's page_info.end_cursor.
-  -e, --end-date string     End date for the analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date. [required]
+  -e, --end-date string     End date for the analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date. Must be on or after 'start_date' and no more than 730 days after it. [required]
   -h, --help                help for get-conversions
   -m, --media-id string     The hashed ID of the video. (or pass it as the [media-id] argument)
   -p, --per-page int        Number of results to return (max 100). (default 25)
-  -s, --start-date string   Start date for the analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date. [required]
+  -s, --start-date string   Start date for the analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date. Must be no more than 730 days before 'end_date'. [required]
 ```
 
 ### Options inherited from parent commands
@@ -54,6 +59,7 @@ wistia analytics-media get-conversions [media-id] [flags]
       --interactive            Prompt for missing inputs and open guided configure/auth forms (forms fall back to line prompts on stdin off-TTY) (default true)
   -q, --jq string              Filter and transform output using a jq expression (e.g., '.name', '.items[] | .id')
       --no-interactive         Disable all interactive features (auto-prompting, explorer auto-launch, TUI forms)
+      --no-keyring             Never read or write the OS keychain; store secrets in the config file instead (env: WISTIA_CLI_NO_KEYRING)
   -o, --output-format string   Specify the output format. Options: pretty, json, yaml, table, toon. (default "pretty")
       --raw-output             Write --jq string results as raw text instead of JSON strings (like jq -r); non-string results stay JSON
       --server string          Select a server by index (for indexed servers) or name (for named servers)

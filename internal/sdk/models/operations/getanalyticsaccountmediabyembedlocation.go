@@ -41,9 +41,9 @@ func (e *PathMatch) UnmarshalJSON(data []byte) error {
 type GetAnalyticsAccountMediaByEmbedLocationRequest struct {
 	// The URL of the page to look up, e.g. `https://example.com/pricing`. The protocol is optional (https is assumed), so `example.com/pricing` also works.
 	EmbedURL string `queryParam:"style=form,explode=true,name=embed_url"`
-	// Start date for the analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date. Must be within the last 6 months. Defaults to 6 months ago, the start of the queryable window.
+	// Start date for the analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date. Must be no more than 730 days before `end_date`. A date more than 6 months ago is moved forward to 6 months ago. Defaults to 6 months ago, the start of the queryable window.
 	StartDate *types.Date `queryParam:"style=form,explode=true,name=start_date"`
-	// End date for the analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date. Defaults to tomorrow, so today's activity is included.
+	// End date for the analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date. Must be on or after `start_date` and no more than 730 days after it. Defaults to tomorrow, so today's activity is included.
 	EndDate *types.Date `queryParam:"style=form,explode=true,name=end_date"`
 	// How to match the path of `embed_url` against embed locations. `exact` requires the path to match exactly; `prefix` matches any embed path starting with it.
 	PathMatch *PathMatch `default:"exact" queryParam:"style=form,explode=true,name=path_match"`

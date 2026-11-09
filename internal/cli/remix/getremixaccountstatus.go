@@ -17,7 +17,7 @@ func initGetRemixAccountStatusCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "get-remix-account-status",
 		Short:   "Get Remix Account Status",
-		Long:    "Check the current account's Remix billing mode and ability to create a Remix.\n\n\n## Requires api token with one of the following permissions\n```\nRead all folder and media data\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
+		Long:    "DEPRECATED: This will be removed in a future release, please migrate away from it as soon as possible\n\nDeprecated: use Get Credit Balance (`GET /credits/balance`) instead. Edit\nWith Mochine reports the balance and a summary when it refuses an edit\nfor lack of Credits or allowance.\n\nCheck the current account's Remix billing mode and ability to create a Remix.\n\n\n## Requires api token with one of the following permissions\n```\nRead all folder and media data\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
 		Example: "  wistia remix get-remix-account-status",
 		Args:    cobra.NoArgs,
 		RunE:    runGetRemixAccountStatusCmd,
@@ -54,7 +54,10 @@ func runGetRemixAccountStatusCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.Remix.GetRemixAccountStatus(cmd.Context(), sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

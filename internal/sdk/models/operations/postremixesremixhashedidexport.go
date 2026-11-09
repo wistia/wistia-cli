@@ -5,6 +5,7 @@ package operations
 
 import (
 	"github.com/wistia/wistia-cli/internal/sdk/models/components"
+	"github.com/wistia/wistia-cli/internal/sdk/optionalnullable"
 	"github.com/wistia/wistia-cli/internal/sdk/sdkinternal/utils"
 )
 
@@ -30,7 +31,7 @@ func (p *PostRemixesRemixHashedIDExportRequestBody) GetName() *string {
 }
 
 type PostRemixesRemixHashedIDExportRequest struct {
-	// The hashed ID of the remix to export.
+	// The remix_id of the Mochine video to export.
 	RemixHashedID string                                     `pathParam:"style=simple,explode=false,name=remixHashedId"`
 	Body          *PostRemixesRemixHashedIDExportRequestBody `request:"mediaType=application/json"`
 }
@@ -113,11 +114,7 @@ type PostRemixesRemixHashedIDExportResponseBody struct {
 	// Hashed ID of the exported remix.
 	RemixID *string `json:"remix_id,omitzero"`
 	// Hashed ID of the output media being rendered.
-	MediaHashedID *string `json:"media_hashed_id,omitzero"`
-	// Name of the output media.
-	MediaName *string `json:"media_name,omitzero"`
-	// Hashed ID of the destination folder.
-	FolderHashedID *string `json:"folder_hashed_id,omitzero"`
+	MediaHashedID optionalnullable.OptionalNullable[string] `json:"media_hashed_id,omitzero"`
 	// Export status. `completed` means the media is already rendered and ready; `exporting` means the render pipeline is still working.
 	Status *PostRemixesRemixHashedIDExportStatus `json:"status,omitzero"`
 }
@@ -129,25 +126,11 @@ func (p *PostRemixesRemixHashedIDExportResponseBody) GetRemixID() *string {
 	return p.RemixID
 }
 
-func (p *PostRemixesRemixHashedIDExportResponseBody) GetMediaHashedID() *string {
+func (p *PostRemixesRemixHashedIDExportResponseBody) GetMediaHashedID() optionalnullable.OptionalNullable[string] {
 	if p == nil {
 		return nil
 	}
 	return p.MediaHashedID
-}
-
-func (p *PostRemixesRemixHashedIDExportResponseBody) GetMediaName() *string {
-	if p == nil {
-		return nil
-	}
-	return p.MediaName
-}
-
-func (p *PostRemixesRemixHashedIDExportResponseBody) GetFolderHashedID() *string {
-	if p == nil {
-		return nil
-	}
-	return p.FolderHashedID
 }
 
 func (p *PostRemixesRemixHashedIDExportResponseBody) GetStatus() *PostRemixesRemixHashedIDExportStatus {

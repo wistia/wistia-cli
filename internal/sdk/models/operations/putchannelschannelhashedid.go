@@ -1505,7 +1505,8 @@ type PutChannelsChannelHashedIDRequestBody struct {
 	AutoPublishEnabled *bool `json:"auto_publish_enabled,omitzero"`
 	// Whether podcasting is enabled for this channel.
 	PodcastEnabled *bool `json:"podcast_enabled,omitzero"`
-	// Use if embedding the channel on your own site. The custom URL ensures links always direct to your page and not Wistia's.
+	// The page on your own website where you embedded this channel.
+	//
 	CustomURL optionalnullable.OptionalNullable[string] `json:"custom_url,omitzero"`
 	// Podcast specific settings for a channel. These settings only take effect if
 	// podcasting is enabled for the channel. These values appear in the channel's
@@ -2265,14 +2266,29 @@ type PutChannelsChannelHashedIDResponseBody struct {
 	LiveStreamEventCount *int64 `json:"live_stream_event_count,omitzero"`
 	// The display name for the channel
 	Name string `json:"name"`
+	// The link viewers use to watch the channel: the channel's active custom
+	// domain when one is attached, otherwise the Wistia-hosted channel page.
+	// This is the link to share with an audience.
+	//
+	PublicURL string `json:"public_url"`
+	// Whether the channel is locked. Only invited users logged into Wistia will be able to view this channel.
+	Locked bool `json:"locked"`
 	// The date when the channel was last updated.
 	Updated time.Time `json:"updated"`
 	// Whether episodes are automatically published when added to the channel.
 	AutoPublishEnabled optionalnullable.OptionalNullable[bool] `json:"auto_publish_enabled,omitzero"`
 	// Whether podcasting is enabled for the channel.
 	PodcastEnabled optionalnullable.OptionalNullable[bool] `json:"podcast_enabled,omitzero"`
-	// The custom URL used when embedding the channel on your own site. Null if no custom URL is set.
+	// The page on your own website where you embedded this channel, as entered
+	// under "Embedded URL" in channel settings. Null when nothing has been
+	// entered.
+	//
 	CustomURL optionalnullable.OptionalNullable[string] `json:"custom_url,omitzero"`
+	// The channel's destination URL: custom_url when one is entered, otherwise
+	// public_url (the active custom domain or Wistia-hosted channel page).
+	// Also used for the channel's podcast feed and episode links.
+	//
+	EmbeddedURL string `json:"embedded_url"`
 	// Podcast specific settings for the channel. Only present when podcasting
 	// is enabled for the channel.
 	//
@@ -2341,6 +2357,20 @@ func (p *PutChannelsChannelHashedIDResponseBody) GetName() string {
 	return p.Name
 }
 
+func (p *PutChannelsChannelHashedIDResponseBody) GetPublicURL() string {
+	if p == nil {
+		return ""
+	}
+	return p.PublicURL
+}
+
+func (p *PutChannelsChannelHashedIDResponseBody) GetLocked() bool {
+	if p == nil {
+		return false
+	}
+	return p.Locked
+}
+
 func (p *PutChannelsChannelHashedIDResponseBody) GetUpdated() time.Time {
 	if p == nil {
 		return time.Time{}
@@ -2367,6 +2397,13 @@ func (p *PutChannelsChannelHashedIDResponseBody) GetCustomURL() optionalnullable
 		return nil
 	}
 	return p.CustomURL
+}
+
+func (p *PutChannelsChannelHashedIDResponseBody) GetEmbeddedURL() string {
+	if p == nil {
+		return ""
+	}
+	return p.EmbeddedURL
 }
 
 func (p *PutChannelsChannelHashedIDResponseBody) GetPodcastSettings() *PutChannelsChannelHashedIDPodcastSettingsResponse {

@@ -4,6 +4,11 @@ Get Remix
 
 ### Synopsis
 
+DEPRECATED: This will be removed in a future release, please migrate away from it as soon as possible
+
+Deprecated: use `GET /mochine/edits/{editHashedId}` instead, which also
+returns the output media ID.
+
 Get the current status of a remix job. When the status reaches
 "edit_tree_generated", preview URLs are included in the response.
 
@@ -32,7 +37,7 @@ wistia remix get-remixes-remix-hashed-id [remix-hashed-id] [flags]
 
 ```
   -h, --help                     help for get-remixes-remix-hashed-id
-  -r, --remix-hashed-id string   The hashed ID of the remix. (or pass it as the [remix-hashed-id] argument)
+  -r, --remix-hashed-id string   The remix_id of the Mochine video. (or pass it as the [remix-hashed-id] argument)
 ```
 
 ### Options inherited from parent commands
@@ -48,6 +53,7 @@ wistia remix get-remixes-remix-hashed-id [remix-hashed-id] [flags]
       --interactive            Prompt for missing inputs and open guided configure/auth forms (forms fall back to line prompts on stdin off-TTY) (default true)
   -q, --jq string              Filter and transform output using a jq expression (e.g., '.name', '.items[] | .id')
       --no-interactive         Disable all interactive features (auto-prompting, explorer auto-launch, TUI forms)
+      --no-keyring             Never read or write the OS keychain; store secrets in the config file instead (env: WISTIA_CLI_NO_KEYRING)
   -o, --output-format string   Specify the output format. Options: pretty, json, yaml, table, toon. (default "pretty")
       --raw-output             Write --jq string results as raw text instead of JSON strings (like jq -r); non-string results stay JSON
       --server string          Select a server by index (for indexed servers) or name (for named servers)

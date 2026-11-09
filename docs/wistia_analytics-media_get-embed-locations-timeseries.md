@@ -9,6 +9,10 @@ an array of timestamped buckets, each containing metrics for the top embed
 locations (ranked by the chosen metric) plus an "All other" entry aggregating
 the remaining locations.
 
+Embed location data is retained for 6 months. A `start_date` older than
+that is moved forward to 6 months ago (UTC), so buckets before then are
+not returned.
+
 The date range between `start_date` and `end_date` must not exceed 2 years.
 
 
@@ -21,6 +25,11 @@ Tokens with the "Act with a team member's permissions" permission
 (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 made with such a token are authorized using the permissions of the
 contact assigned to the token.
+
+An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+created with the `all:delegate_to_contact_permissions` scope and an
+authorization granting the `view-stats` permission on this media can also
+be used.
 
 ```
 wistia analytics-media get-embed-locations-timeseries [media-id] [flags]
@@ -37,13 +46,13 @@ wistia analytics-media get-embed-locations-timeseries [media-id] [flags]
 ```
       --embed-url string     Filter results to a single embed URL. When provided, only analytics for
                              the page matching this URL are returned. The protocol is optional (https is assumed).
-      --end-date string      End date for the analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date. [required]
+      --end-date string      End date for the analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date. Must be on or after 'start_date' and no more than 730 days after it. [required]
   -g, --granularity string   The time granularity for the timeseries data. (options: daily, weekly, monthly) [required]
   -h, --help                 help for get-embed-locations-timeseries
   -m, --media-id string      The hashed ID of the video. (or pass it as the [media-id] argument)
   -p, --per-page int         Number of top embed locations per time bucket (max 100). Remaining locations are aggregated into an "All other" entry. (default 5)
       --sort-by string       The metric used to rank and select the top embed locations. (options: plays, loads, engagement_rate, play_rate, played_time, unique_visitors) (default "plays")
-      --start-date string    Start date for the analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date. [required]
+      --start-date string    Start date for the analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date. Must be no more than 730 days before 'end_date'. [required]
 ```
 
 ### Options inherited from parent commands
@@ -59,6 +68,7 @@ wistia analytics-media get-embed-locations-timeseries [media-id] [flags]
       --interactive            Prompt for missing inputs and open guided configure/auth forms (forms fall back to line prompts on stdin off-TTY) (default true)
   -q, --jq string              Filter and transform output using a jq expression (e.g., '.name', '.items[] | .id')
       --no-interactive         Disable all interactive features (auto-prompting, explorer auto-launch, TUI forms)
+      --no-keyring             Never read or write the OS keychain; store secrets in the config file instead (env: WISTIA_CLI_NO_KEYRING)
   -o, --output-format string   Specify the output format. Options: pretty, json, yaml, table, toon. (default "pretty")
       --raw-output             Write --jq string results as raw text instead of JSON strings (like jq -r); non-string results stay JSON
       --server string          Select a server by index (for indexed servers) or name (for named servers)

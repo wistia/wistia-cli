@@ -23,7 +23,7 @@ func initCreateCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "create",
 		Short:   "Create Expiring Access Token",
-		Long:    "```\n🚫 Alert\nThis API is still under development and can change at any time.\n```\n\nThis endpoint is for creating expiring access tokens which can be used for some iframe embeds\nand, when granted the `all:delegate_to_contact_permissions` scope, for REST API requests\nauthorized by the token's authorizations.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
+		Long:    "```\n🚫 Alert\nThis API is still under development and can change at any time.\n```\n\nCreates a short-lived copy of the API token making the request. The copy has that\ntoken's scopes, or the subset named in `scopes`, and `authorizations` narrow it to the\nobjects and permissions they name. Use it as a bearer token for API requests, or pass it\nto iframe embeds such as the transcript editor.\n\nAny API token can create one. A copy of a token with the \"Act with a team member's\npermissions\" permission (`all:delegate_to_contact_permissions` scope) acts with the\npermissions of the contact assigned to that token.",
 		Example: "  wistia expiring-access-tokens create",
 		Args:    cobra.NoArgs,
 		RunE:    runCreateCmd,
@@ -36,7 +36,7 @@ func initCreateCmd(parent *cobra.Command) error {
 		return fmt.Errorf("invalid metadata for create: %w", err)
 	}
 	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.")
-	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Kind: "json", BodyFlag: true})
+	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Required: false, Kind: "json", BodyFlag: true})
 	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
 	if err := flagutil.AnnotateBodyFields(cmd, createCmdMeta, "", "body"); err != nil {
 		return fmt.Errorf("annotate body fields for create: %w", err)
@@ -73,7 +73,10 @@ func runCreateCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.ExpiringAccessTokens.Create(cmd.Context(), request, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

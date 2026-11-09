@@ -29,6 +29,7 @@ wistia account [flags]
       --interactive            Prompt for missing inputs and open guided configure/auth forms (forms fall back to line prompts on stdin off-TTY) (default true)
   -q, --jq string              Filter and transform output using a jq expression (e.g., '.name', '.items[] | .id')
       --no-interactive         Disable all interactive features (auto-prompting, explorer auto-launch, TUI forms)
+      --no-keyring             Never read or write the OS keychain; store secrets in the config file instead (env: WISTIA_CLI_NO_KEYRING)
   -o, --output-format string   Specify the output format. Options: pretty, json, yaml, table, toon. (default "pretty")
       --raw-output             Write --jq string results as raw text instead of JSON strings (like jq -r); non-string results stay JSON
       --server string          Select a server by index (for indexed servers) or name (for named servers)
@@ -45,6 +46,7 @@ wistia account [flags]
 * [wistia account get-brand-preload](wistia_account_get-brand-preload.md)	 - Get Brand Preload
 * [wistia account get-credit-balance](wistia_account_get-credit-balance.md)	 - Get Credit Balance
 * [wistia account get-token-details](wistia_account_get-token-details.md)	 - Get Current Token
+* [wistia account get-transcript-settings](wistia_account_get-transcript-settings.md)	 - Get Transcript Settings
 * [wistia account get-usage](wistia_account_get-usage.md)	 - Get Account Usage
 * [wistia account update-brand-preload](wistia_account_update-brand-preload.md)	 - Update Brand Preload
 

@@ -33,6 +33,29 @@ func (e *GetAccountUsageCode) IsExact() bool {
 	return false
 }
 
+// TrialPlan - The plan the account is trialing, or null if not trialing. During a trial the
+// account has most of this plan's features; `tier` and `name` above stay its paid plan.
+type TrialPlan struct {
+	// The trial plan's tier identifier
+	Tier string `json:"tier"`
+	// Human-readable name of the trial plan
+	Name string `json:"name"`
+}
+
+func (t *TrialPlan) GetTier() string {
+	if t == nil {
+		return ""
+	}
+	return t.Tier
+}
+
+func (t *TrialPlan) GetName() string {
+	if t == nil {
+		return ""
+	}
+	return t.Name
+}
+
 // Plan - The account's current plan information
 type Plan struct {
 	// The plan tier identifier. Common values include `free`, `starter`, `plus`,
@@ -48,6 +71,10 @@ type Plan struct {
 	IsTrial bool `json:"is_trial"`
 	// ISO 8601 timestamp when the trial expires, or null if not trialing
 	TrialExpiresAt *string `json:"trial_expires_at"`
+	// The plan the account is trialing, or null if not trialing. During a trial the
+	// account has most of this plan's features; `tier` and `name` above stay its paid plan.
+	//
+	TrialPlan *TrialPlan `json:"trial_plan"`
 }
 
 func (p *Plan) GetTier() string {
@@ -83,6 +110,13 @@ func (p *Plan) GetTrialExpiresAt() *string {
 		return nil
 	}
 	return p.TrialExpiresAt
+}
+
+func (p *Plan) GetTrialPlan() *TrialPlan {
+	if p == nil {
+		return nil
+	}
+	return p.TrialPlan
 }
 
 // PrimaryResource - The primary resource type for this plan's limits — "storage" for standard plans, "media" for legacy plans
@@ -401,6 +435,24 @@ type GetAccountUsageResponseBody struct {
 	// the account has a verified business domain.
 	//
 	CanInviteTeammates bool `json:"can_invite_teammates"`
+	// Feature flags the Wistia desktop app may read, evaluated for this
+	// account and keyed by flag name. A flag missing from the map is off.
+	// Omitted when the flags could not be evaluated; servers that predate
+	// the field omit it too. Only the flags the desktop app is registered
+	// to read are included, never every flag.
+	//
+	DesktopFlags map[string]bool `json:"desktop_flags,omitzero"`
+}
+
+func (g GetAccountUsageResponseBody) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(g, "", false)
+}
+
+func (g *GetAccountUsageResponseBody) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &g, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (g *GetAccountUsageResponseBody) GetPlan() Plan {
@@ -457,6 +509,13 @@ func (g *GetAccountUsageResponseBody) GetCanInviteTeammates() bool {
 		return false
 	}
 	return g.CanInviteTeammates
+}
+
+func (g *GetAccountUsageResponseBody) GetDesktopFlags() map[string]bool {
+	if g == nil {
+		return nil
+	}
+	return g.DesktopFlags
 }
 
 type GetAccountUsageResponse struct {

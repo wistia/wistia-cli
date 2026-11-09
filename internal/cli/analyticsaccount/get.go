@@ -15,8 +15,8 @@ import (
 )
 
 var getCmdMeta = []flagutil.FlagMeta{
-	{FlagName: "start-date", Shorthand: "s", FieldPath: "StartDate", Kind: flagutil.FlagKindDate, Required: true, Description: "Start date for the analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date. [required]"},
-	{FlagName: "end-date", Shorthand: "e", FieldPath: "EndDate", Kind: flagutil.FlagKindDate, Required: true, Description: "End date for the analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date. [required]"},
+	{FlagName: "start-date", Shorthand: "s", FieldPath: "StartDate", Kind: flagutil.FlagKindDate, Required: true, Description: "Start date for the analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date. Must be no more than 730 days before 'end_date'. [required]"},
+	{FlagName: "end-date", Shorthand: "e", FieldPath: "EndDate", Kind: flagutil.FlagKindDate, Required: true, Description: "End date for the analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date. Must be on or after 'start_date' and no more than 730 days after it. [required]"},
 }
 
 // initGetCmd initializes the get command.
@@ -24,7 +24,7 @@ func initGetCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "get",
 		Short:   "Show Account Analytics",
-		Long:    "Retrieve aggregate analytics for the entire account over a date range. This endpoint\nprovides Bottler-powered analytics across all of the account's media including plays,\nloads, engagement rate, play rate, and conversion metrics.\n\nThe date range between `start_date` and `end_date` must not exceed 2 years.\n\n\n## Requires api token with one of the following permissions\n```\nRead detailed stats\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
+		Long:    "Retrieve aggregate analytics for the entire account over a date range. This endpoint\nprovides Bottler-powered analytics across all of the account's media including plays,\nloads, engagement rate, play rate, and conversion metrics.\n\nThe date range between `start_date` and `end_date` must not exceed 2 years.\n\n\n## Requires api token with one of the following permissions\n```\nRead detailed stats\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\n`account` authorization granting the `view-stats` permission can also\nbe used.",
 		Example: "  wistia analytics-account get --start-date 2024-04-09 --end-date 2025-11-25",
 		Args:    cobra.NoArgs,
 		RunE:    runGetCmd,
@@ -68,7 +68,10 @@ func runGetCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.AnalyticsAccount.Get(cmd.Context(), *req, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

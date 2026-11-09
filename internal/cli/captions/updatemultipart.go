@@ -16,7 +16,7 @@ import (
 
 var updateMultipartCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "media-hashed-id", Shorthand: "m", FieldPath: "MediaHashedID", Kind: flagutil.FlagKindString, Required: true, Description: "Unique identifier for the media. [required]"},
-	{FlagName: "language-code", Shorthand: "l", FieldPath: "LanguageCode", Kind: flagutil.FlagKindString, Required: true, Description: "Language code conforming to ISO-639-2 for which the captions should be updated. [required]"},
+	{FlagName: "language-code", Shorthand: "l", FieldPath: "LanguageCode", Kind: flagutil.FlagKindString, Required: true, Pattern: "^[a-z]{3}$", Description: "Language code conforming to ISO-639-2 for which the captions should be updated. [required]"},
 	{FlagName: "caption-file", Shorthand: "c", FieldPath: "Body.CaptionFile", Kind: flagutil.FlagKindFile, Required: true, Description: "Either an attached SRT file or a string parameter with the contents of an SRT file. [required]"},
 }
 
@@ -25,7 +25,7 @@ func initUpdateMultipartCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "update-multipart",
 		Short:   "Update Captions",
-		Long:    "This method is for replacing the captions on a video or audio media for the specified language.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.",
+		Long:    "This method is for replacing the captions on a video or audio media for the specified language.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\nauthorization granting the `edit-transcripts` permission on this media can\nalso be used.",
 		Example: "  wistia captions update-multipart --media-hashed-id <id> --language-code <value> --caption-file ./path/to/file",
 		Args:    cobra.NoArgs,
 		RunE:    runUpdateMultipartCmd,
@@ -70,7 +70,10 @@ func runUpdateMultipartCmd(cmd *cobra.Command, args []string) error {
 	if output.WantsRawJSON(cmd) {
 		sdkOpts = append(sdkOpts, operations.WithSkipDeserialization())
 	}
+	stopProgress := output.StartRequestProgress(cmd)
+	defer stopProgress()
 	res, err := s.Captions.UpdateMultipart(cmd.Context(), *req, sdkOpts...)
+	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)
 	}

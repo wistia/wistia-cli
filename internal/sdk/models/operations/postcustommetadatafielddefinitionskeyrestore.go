@@ -296,6 +296,9 @@ func (u *PostCustomMetadataFieldDefinitionsKeyRestoreConfigUnion) UnmarshalJSON(
 	}
 
 	if len(candidates) == 0 {
+		if !json.Valid(data) {
+			return fmt.Errorf("could not unmarshal `%s` into any supported union types for PostCustomMetadataFieldDefinitionsKeyRestoreConfigUnion", string(data))
+		}
 		u.UnknownRaw = json.RawMessage(data)
 		u.Type = PostCustomMetadataFieldDefinitionsKeyRestoreConfigUnionTypeUnknown
 		return nil
@@ -323,6 +326,9 @@ func (u *PostCustomMetadataFieldDefinitionsKeyRestoreConfigUnion) UnmarshalJSON(
 		return nil
 	}
 
+	if !json.Valid(data) {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for PostCustomMetadataFieldDefinitionsKeyRestoreConfigUnion", string(data))
+	}
 	u.UnknownRaw = json.RawMessage(data)
 	u.Type = PostCustomMetadataFieldDefinitionsKeyRestoreConfigUnionTypeUnknown
 	return nil

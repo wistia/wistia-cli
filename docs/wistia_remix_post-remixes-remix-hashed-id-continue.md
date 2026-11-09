@@ -4,6 +4,11 @@ Continue Remix
 
 ### Synopsis
 
+DEPRECATED: This will be removed in a future release, please migrate away from it as soon as possible
+
+Deprecated: use `POST /mochine/edits/{editHashedId}/revise` instead, which
+also accepts added source media and a motion kit.
+
 Submit a follow-up edit to an existing remix. Creates a new remix version
 in the same conversation. The previous remix is preserved and can be
 referenced later.
@@ -37,10 +42,10 @@ wistia remix post-remixes-remix-hashed-id-continue [remix-hashed-id] [flags]
 
 ```
       --body string              Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.
-  -f, --folder-id string         Hashed ID of the destination folder for the exported media. Defaults to the same folder as the previous remix version's output.
+  -f, --folder-id string         Hashed ID of the destination folder for the exported media. Defaults to the same folder as the previous version's output.
   -h, --help                     help for post-remixes-remix-hashed-id-continue
   -i, --instructions string      Natural language instructions for the edit (e.g., "cut the first 10 seconds"). [required]
-  -r, --remix-hashed-id string   The hashed ID of the current remix version to edit from. (or pass it as the [remix-hashed-id] argument)
+  -r, --remix-hashed-id string   The remix_id of the Mochine video version to edit from. (or pass it as the [remix-hashed-id] argument)
 ```
 
 ### Options inherited from parent commands
@@ -56,6 +61,7 @@ wistia remix post-remixes-remix-hashed-id-continue [remix-hashed-id] [flags]
       --interactive            Prompt for missing inputs and open guided configure/auth forms (forms fall back to line prompts on stdin off-TTY) (default true)
   -q, --jq string              Filter and transform output using a jq expression (e.g., '.name', '.items[] | .id')
       --no-interactive         Disable all interactive features (auto-prompting, explorer auto-launch, TUI forms)
+      --no-keyring             Never read or write the OS keychain; store secrets in the config file instead (env: WISTIA_CLI_NO_KEYRING)
   -o, --output-format string   Specify the output format. Options: pretty, json, yaml, table, toon. (default "pretty")
       --raw-output             Write --jq string results as raw text instead of JSON strings (like jq -r); non-string results stay JSON
       --server string          Select a server by index (for indexed servers) or name (for named servers)

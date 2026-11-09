@@ -35,6 +35,19 @@ func (e *DeleteWebinarsWebinarIDCollaboratorsIDNotFoundError) Error() string {
 	return string(data)
 }
 
+// DeleteWebinarsWebinarIDCollaboratorsIDForbiddenError - Forbidden, token is valid but account does not have access to feature
+type DeleteWebinarsWebinarIDCollaboratorsIDForbiddenError struct {
+	Error_   *string                 `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata `json:"-"`
+}
+
+var _ error = &DeleteWebinarsWebinarIDCollaboratorsIDForbiddenError{}
+
+func (e *DeleteWebinarsWebinarIDCollaboratorsIDForbiddenError) Error() string {
+	data, _ := json.Marshal(e)
+	return string(data)
+}
+
 // DeleteWebinarsWebinarIDCollaboratorsIDUnauthorizedError - Unauthorized, invalid or missing token
 type DeleteWebinarsWebinarIDCollaboratorsIDUnauthorizedError struct {
 	// A machine-readable identifier for the specific authorization failure.

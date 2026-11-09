@@ -206,7 +206,7 @@ Outside agent mode, explicit JSON and `--jq` preserve the compatibility envelope
 }
 ```
 
-`error_type` is one of `authentication_error`, `authorization_error`, `not_found`, `validation_error`, `rate_limit_error`, `server_error`, `api_error`, `connection_error`, `protocol_error`, `runtime_error`, `unsupported_error`, `async_failed`, `async_timeout`, `async_unknown_state`. Classification derives from the HTTP status and transport evidence; `error_reason` is absent for API errors. Status-less local failures may use `CLI_VALIDATION`, `CLI_CONNECTION`, `CLI_PROTOCOL`, `CLI_RUNTIME`, `CLI_UNAVAILABLE`, `CLI_AUTHENTICATION`, or the async polling reasons `CLI_ASYNC_FAILED`, `CLI_ASYNC_TIMEOUT`, and `CLI_ASYNC_UNKNOWN_STATE`. `hints` preserves server guidance first, adds the most specific local taxonomy guidance, then typed CLI and command-specific guidance, removing exact duplicates. `exit_code` is always the code for the final `error_type` shown in the envelope: 1 runtime, 2 usage, or 3 authentication/authorization.
+`error_type` is one of `authentication_error`, `authorization_error`, `not_found`, `validation_error`, `rate_limit_error`, `server_error`, `api_error`, `connection_error`, `protocol_error`, `runtime_error`, `unsupported_error`, `async_failed`, `async_timeout`, `async_unknown_state`. Classification derives from the HTTP status and transport evidence; `error_reason` is absent for API errors. Status-less local failures may use `CLI_VALIDATION`, `CLI_CONNECTION`, `CLI_PROTOCOL`, `CLI_RUNTIME`, `CLI_UNAVAILABLE`, `CLI_AUTHENTICATION`, the async polling reasons `CLI_ASYNC_FAILED`, `CLI_ASYNC_TIMEOUT`, and `CLI_ASYNC_UNKNOWN_STATE`, or `CLI_OUTCOME_FAILED` when a successful response reports a declared failure state; that envelope also carries `state` (the reported state) and, when the command declares an error pointer, `error` (the failure detail taken from the response). `hints` preserves server guidance first, adds the most specific local taxonomy guidance, then typed CLI and command-specific guidance, removing exact duplicates. `exit_code` is always the code for the final `error_type` shown in the envelope: 1 runtime, 2 usage, or 3 authentication/authorization.
 <!-- End For AI agents [agents] -->
 
 <!-- Start Authentication [security] -->
@@ -245,6 +245,8 @@ Secret credentials (tokens, API keys, passwords) are automatically stored in:
 
 If no keychain is available (e.g., in CI environments), credentials fall back to the config file.
 
+Where the keychain cannot be unlocked (e.g., headless Linux or SSH sessions with a locked GNOME Keyring), skip it entirely with `--no-keyring`, `WISTIA_CLI_NO_KEYRING=true`, or `no_keyring: true` in the config file. The keychain is then never read or written, and secrets are stored in the config file instead; flags and environment variables still take precedence.
+
 ### 4. Configuration file
 
 Run the interactive `configure` command to store non-secret settings:
@@ -280,8 +282,8 @@ Configuration is stored in `~/.config/wistia/config.yaml`.
   * [`delete-custom-metadata-field-definitions-key`](docs/wistia_custom-metadata-field-definitions_delete-custom-metadata-field-definitions-key.md) - Archive Custom Metadata Field Definition
   * [`post-custom-metadata-field-definitions-key-restore`](docs/wistia_custom-metadata-field-definitions_post-custom-metadata-field-definitions-key-restore.md) - Restore Custom Metadata Field Definition
 * [`deleted-media`](docs/wistia_deleted-media.md) - Operations for deleted-media
-  * [`get`](docs/wistia_deleted-media_get.md) - List Deleted Media
-  * [`post-deleted-media-restore`](docs/wistia_deleted-media_post-deleted-media-restore.md) - Restore Deleted Media
+  * [`list`](docs/wistia_deleted-media_list.md) - List Deleted Media
+  * [`restore`](docs/wistia_deleted-media_restore.md) - Restore Deleted Media
 * [`media`](docs/wistia_media.md) - Operations for media
   * [`list`](docs/wistia_media_list.md) - List Media
   * [`get`](docs/wistia_media_get.md) - Show Media
@@ -343,6 +345,8 @@ Configuration is stored in `~/.config/wistia/config.yaml`.
   * [`remove`](docs/wistia_speakers_remove.md) - Remove Speaker from Media
   * [`list`](docs/wistia_speakers_list.md) - List Speakers
   * [`create`](docs/wistia_speakers_create.md) - Create Speaker
+  * [`update`](docs/wistia_speakers_update.md) - Update Speaker
+  * [`delete`](docs/wistia_speakers_delete.md) - Delete Speaker
 * [`localizations`](docs/wistia_localizations.md) - Operations for localizations
   * [`list`](docs/wistia_localizations_list.md) - List Localizations
   * [`create`](docs/wistia_localizations_create.md) - Create Localization
@@ -368,12 +372,17 @@ Configuration is stored in `~/.config/wistia/config.yaml`.
   * [`update`](docs/wistia_brands_update.md) - Update Brand
   * [`delete`](docs/wistia_brands_delete.md) - Delete Brand
   * [`apply`](docs/wistia_brands_apply.md) - Apply Brand
+* [`recording-rooms`](docs/wistia_recording-rooms.md) - Operations for recording-rooms
+  * [`list`](docs/wistia_recording-rooms_list.md) - List Recording Rooms
+  * [`create`](docs/wistia_recording-rooms_create.md) - Create Recording Room
+  * [`update`](docs/wistia_recording-rooms_update.md) - Update Recording Room
+  * [`delete`](docs/wistia_recording-rooms_delete.md) - Delete Recording Room
 * [`tags`](docs/wistia_tags.md) - Operations for tags
   * [`list`](docs/wistia_tags_list.md) - List Tags
   * [`create`](docs/wistia_tags_create.md) - Create Tags
   * [`delete`](docs/wistia_tags_delete.md) - Delete Tag
 * [`bulk-actions`](docs/wistia_bulk-actions.md) - Operations for bulk-actions
-  * [`post-bulk`](docs/wistia_bulk-actions_post-bulk.md) - Create Bulk Actions
+  * [`create`](docs/wistia_bulk-actions_create.md) - Create Bulk Actions
 * [`bulk`](docs/wistia_bulk.md) - Operations for bulk
   * [`purchase`](docs/wistia_bulk_purchase.md) - Create Bulk Purchase
 * [`taggings`](docs/wistia_taggings.md) - Operations for taggings
@@ -431,10 +440,19 @@ Configuration is stored in `~/.config/wistia/config.yaml`.
   * [`list`](docs/wistia_webinar-collaborators_list.md) - List Webinar Collaborators
   * [`create`](docs/wistia_webinar-collaborators_create.md) - Create Webinar Collaborator
   * [`delete`](docs/wistia_webinar-collaborators_delete.md) - Delete Webinar Collaborator
+* [`series`](docs/wistia_series.md) - Operations for series
+  * [`list`](docs/wistia_series_list.md) - List Series
+  * [`create`](docs/wistia_series_create.md) - Create Series
+  * [`get`](docs/wistia_series_get.md) - Show Series
+  * [`update`](docs/wistia_series_update.md) - Update Series
+  * [`delete`](docs/wistia_series_delete.md) - Delete Series
+  * [`create-webinar`](docs/wistia_series_create-webinar.md) - Create Webinar in Series
+  * [`copy`](docs/wistia_series_copy.md) - Copy Series
 * [`account`](docs/wistia_account.md) - Operations for account
   * [`get`](docs/wistia_account_get.md) - Get Current Account
   * [`get-usage`](docs/wistia_account_get-usage.md) - Get Account Usage
   * [`get-credit-balance`](docs/wistia_account_get-credit-balance.md) - Get Credit Balance
+  * [`get-transcript-settings`](docs/wistia_account_get-transcript-settings.md) - Get Transcript Settings
   * [`get-brand-preload`](docs/wistia_account_get-brand-preload.md) - Get Brand Preload
   * [`update-brand-preload`](docs/wistia_account_update-brand-preload.md) - Update Brand Preload
   * [`get-brand-kit-colors`](docs/wistia_account_get-brand-kit-colors.md) - Get Brand Kit Colors
@@ -459,11 +477,11 @@ Configuration is stored in `~/.config/wistia/config.yaml`.
   * [`get`](docs/wistia_allowed-domains_get.md) - Show Allowed Domain
   * [`delete`](docs/wistia_allowed-domains_delete.md) - Delete Allowed Domain
 * [`remix`](docs/wistia_remix.md) - Operations for remix
-  * [`post-remixes`](docs/wistia_remix_post-remixes.md) - Create Remix
-  * [`get-remixes-remix-hashed-id`](docs/wistia_remix_get-remixes-remix-hashed-id.md) - Get Remix
-  * [`post-remixes-remix-hashed-id-continue`](docs/wistia_remix_post-remixes-remix-hashed-id-continue.md) - Continue Remix
-  * [`post-remixes-remix-hashed-id-export`](docs/wistia_remix_post-remixes-remix-hashed-id-export.md) - Export Remix
-  * [`get-remix-account-status`](docs/wistia_remix_get-remix-account-status.md) - Get Remix Account Status
+  * [`~~post-remixes~~`](docs/wistia_remix_post-remixes.md) - Create Remix :warning: **Deprecated**
+  * [`~~get-remixes-remix-hashed-id~~`](docs/wistia_remix_get-remixes-remix-hashed-id.md) - Get Remix :warning: **Deprecated**
+  * [`~~post-remixes-remix-hashed-id-continue~~`](docs/wistia_remix_post-remixes-remix-hashed-id-continue.md) - Continue Remix :warning: **Deprecated**
+  * [`~~post-remixes-remix-hashed-id-export~~`](docs/wistia_remix_post-remixes-remix-hashed-id-export.md) - Export Remix :warning: **Deprecated**
+  * [`~~get-remix-account-status~~`](docs/wistia_remix_get-remix-account-status.md) - Get Remix Account Status :warning: **Deprecated**
 * [`stats-account`](docs/wistia_stats-account.md) - Operations for stats-account
   * [`get`](docs/wistia_stats-account_get.md) - Show Current Account Stats
   * [`get-stats-account-by-date`](docs/wistia_stats-account_get-stats-account-by-date.md) - Show Account Stats by Date
@@ -688,7 +706,7 @@ In human output modes, stdout is empty and the `[DRY-RUN]` block goes to stderr.
 - Request headers (sensitive values redacted)
 - Request body preview (sensitive fields redacted)
 
-With `--output-format json`, or with a caller-explicit `--jq`, stderr is silent and stdout is NDJSON: one compact preview object per would-be request. The jq filter is not applied, and command-declared jq presets do not select the JSON protocol.
+In machine modes (`--agent-mode`, `--output-format json`, `yaml` or `toon`, or a caller-explicit `--jq`), stderr is silent and stdout is NDJSON: one compact preview object per would-be request, whatever the output format. The jq filter is not applied, and command-declared jq presets do not select the JSON protocol.
 
 ```json
 {"dry_run":true,"request":{"method":"POST","url":"https://…","headers":{"Accept":["application/json"],…},"body":<JSON value | string | null>}}
@@ -721,7 +739,7 @@ If both `--dry-run` and `--debug` are set, `--dry-run` takes precedence and no n
 
 Sensitive information is automatically redacted in diagnostic output:
 - **Headers**: `Authorization`, `Cookie`, `Set-Cookie`, `X-API-Key`, and other security headers show `[REDACTED]`
-- **Body**: JSON fields named `password`, `secret`, `token`, `api_key`, `client_secret`, etc. show `[REDACTED]`
+- **Body**: JSON fields named `password`, `secret`, `token`, `api_key`, `client_secret`, etc., and fields named like sensitive headers (such as `Authorization`, `Cookie` or `X-Auth-Token`), show `[REDACTED]`. A JSON Schema stored under such a name keeps its structure, with `default`, `const`, `enum`, `example` and `examples` masked at every level
 - **Binary data**: binary media and canonical base64 strings are replaced with `<bytes:N>`
 - **URL query**: credential-like query parameters are replaced with `[REDACTED]`
 
