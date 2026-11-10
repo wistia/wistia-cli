@@ -18,6 +18,7 @@ import (
 
 	"github.com/wistia/wistia-cli/internal/clierrors"
 	"github.com/wistia/wistia-cli/internal/flagutil"
+	"github.com/wistia/wistia-cli/internal/sdk/sdkinternal/utils"
 )
 
 type ErrorType string
@@ -160,6 +161,10 @@ func Classify(cmd *cobra.Command, err error) Classification {
 	}
 	if classification, ok := ClassificationFrom(err); ok {
 		return classification
+	}
+	var invalidPath *utils.InvalidPathParameterError
+	if errors.As(err, &invalidPath) {
+		err = flagutil.WithCLIValidation(err)
 	}
 
 	c := Classification{
@@ -659,6 +664,7 @@ const (
 	ReasonCLIAsyncTimeout      = "CLI_ASYNC_TIMEOUT"
 	ReasonCLIAsyncUnknownState = "CLI_ASYNC_UNKNOWN_STATE"
 	ReasonCLIOutcomeFailed     = "CLI_OUTCOME_FAILED"
+	ReasonCLIContinuationLimit = "CLI_CONTINUATION_LIMIT"
 )
 
 type cliReasonError struct {
@@ -681,7 +687,7 @@ func normalizeCLIReason(reason string) string {
 	case ReasonCLIValidation, ReasonCLIConnection, ReasonCLIProtocol,
 		ReasonCLIRuntime, ReasonCLIUnavailable, ReasonCLIAuthentication,
 		ReasonCLIAsyncFailed, ReasonCLIAsyncTimeout, ReasonCLIAsyncUnknownState,
-		ReasonCLIOutcomeFailed:
+		ReasonCLIOutcomeFailed, ReasonCLIContinuationLimit:
 		return reason
 	}
 	return ReasonCLIRuntime

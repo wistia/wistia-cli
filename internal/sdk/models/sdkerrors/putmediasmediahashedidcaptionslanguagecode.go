@@ -22,6 +22,19 @@ func (e *PutMediasMediaHashedIDCaptionsLanguageCodeInternalServerError) Error() 
 	return string(data)
 }
 
+// PutMediasMediaHashedIDCaptionsLanguageCodeNotFoundError - Captions or media not found. For a missing caption language, `error` lists the media's caption languages.
+type PutMediasMediaHashedIDCaptionsLanguageCodeNotFoundError struct {
+	Error_   *string                 `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata `json:"-"`
+}
+
+var _ error = &PutMediasMediaHashedIDCaptionsLanguageCodeNotFoundError{}
+
+func (e *PutMediasMediaHashedIDCaptionsLanguageCodeNotFoundError) Error() string {
+	data, _ := json.Marshal(e)
+	return string(data)
+}
+
 // PutMediasMediaHashedIDCaptionsLanguageCodeUnauthorizedError - Unauthorized, invalid or missing token
 type PutMediasMediaHashedIDCaptionsLanguageCodeUnauthorizedError struct {
 	// A machine-readable identifier for the specific authorization failure.
