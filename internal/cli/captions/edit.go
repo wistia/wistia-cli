@@ -16,7 +16,7 @@ import (
 
 var editCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "media-hashed-id", Shorthand: "m", FieldPath: "MediaHashedID", Kind: flagutil.FlagKindString, Required: true, Description: "The hashed ID of the media whose transcript should be edited. [required]"},
-	{FlagName: "language-code", Shorthand: "l", FieldPath: "LanguageCode", Kind: flagutil.FlagKindString, Required: true, Description: "The 3-character ISO 639-2 language code of the caption track to edit (e.g., 'eng', 'fra', 'spa'). Some languages use extended IETF subtags (e.g., 'zh-Hant'). [required]"},
+	{FlagName: "language-code", Shorthand: "l", FieldPath: "LanguageCode", Kind: flagutil.FlagKindString, Required: true, Description: "The 3-character ISO 639-2 language code of the caption track to edit (e.g., 'eng', 'fre', 'spa'), exactly as stored. Some languages use extended IETF subtags (e.g., 'zh-Hant'). [required]"},
 	{FlagName: "edits", FieldPath: "Body.Edits", Kind: flagutil.FlagKindJSON, Required: true, Annotations: `json:"edits"`, Description: "The corrections to apply, all-or-nothing, in one new version. (JSON array) [required]"},
 	{FlagName: "expected-version", FieldPath: "Body.ExpectedVersion", Kind: flagutil.FlagKindInt64, Required: true, Description: "The active caption version returned with the caption content used to prepare these edits. The edit applies only if that is still the active version; otherwise it returns 409 so you re-read and retry. [required]"},
 }

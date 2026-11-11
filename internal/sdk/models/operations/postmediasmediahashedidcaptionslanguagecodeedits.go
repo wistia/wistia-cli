@@ -71,7 +71,7 @@ func (p *PostMediasMediaHashedIDCaptionsLanguageCodeEditsRequestBody) GetExpecte
 type PostMediasMediaHashedIDCaptionsLanguageCodeEditsRequest struct {
 	// The hashed ID of the media whose transcript should be edited.
 	MediaHashedID string `pathParam:"style=simple,explode=false,name=mediaHashedId"`
-	// The 3-character ISO 639-2 language code of the caption track to edit (e.g., `eng`, `fra`, `spa`). Some languages use extended IETF subtags (e.g., `zh-Hant`).
+	// The 3-character ISO 639-2 language code of the caption track to edit (e.g., `eng`, `fre`, `spa`), exactly as stored. Some languages use extended IETF subtags (e.g., `zh-Hant`).
 	LanguageCode string                                                      `pathParam:"style=simple,explode=false,name=languageCode"`
 	Body         PostMediasMediaHashedIDCaptionsLanguageCodeEditsRequestBody `request:"mediaType=application/json"`
 }
