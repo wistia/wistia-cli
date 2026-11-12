@@ -10,6 +10,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"net"
+	"net/http"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -597,9 +599,84 @@ func (e serverURLValidationError) Error() string {
 	return fmt.Sprintf("invalid --server-url %q: %v", e.value, e.error)
 }
 
+// ParseHeaderFlags parses "Name: value" --header values into canonical header
+// names, keeping repeated values in the order given.
+func ParseHeaderFlags(values []string) (http.Header, error) {
+	headers := http.Header{}
+	for _, h := range values {
+		k, v, ok := strings.Cut(h, ":")
+		if !ok {
+			return nil, WithCLIValidation(fmt.Errorf("invalid --header value: expected \"Key: Value\" with a colon after the header name"))
+		}
+		name, value := strings.TrimSpace(k), strings.TrimSpace(v)
+		if !validHeaderName(name) {
+			return nil, WithCLIValidation(fmt.Errorf("invalid header name %q: use letters, digits and !#$%%&'*+-.^_`|~", name))
+		}
+		if !validHeaderValue(value) {
+			return nil, WithCLIValidation(fmt.Errorf("invalid value for header %q: control characters such as CR or LF are not allowed", name))
+		}
+		if http.CanonicalHeaderKey(name) == RepeatedHeadersMarker {
+			return nil, WithCLIValidation(fmt.Errorf("invalid header name %q: reserved for internal use", name))
+		}
+		headers.Add(name, value)
+	}
+	return headers, nil
+}
+
+// RepeatedHeadersMarker tags the requests an operation builds itself, so the
+// remaining values of a repeated --header reach only those requests and not
+// the requests SDK hooks send through the same client, such as OAuth token
+// calls.
+const RepeatedHeadersMarker = "X-Cli-Repeated-Headers"
+
+// RepeatedHeaders returns the headers given more than once.
+func RepeatedHeaders(headers http.Header) http.Header {
+	repeated := http.Header{}
+	for name, values := range headers {
+		if len(values) > 1 {
+			repeated[name] = values
+		}
+	}
+	return repeated
+}
+
+func validHeaderName(name string) bool {
+	if name == "" {
+		return false
+	}
+	for i := 0; i < len(name); i++ {
+		c := name[i]
+		switch {
+		case 'a' <= c && c <= 'z', 'A' <= c && c <= 'Z', '0' <= c && c <= '9':
+		case strings.IndexByte("!#$%&'*+-.^_`|~", c) >= 0:
+		default:
+			return false
+		}
+	}
+	return true
+}
+
+func validHeaderValue(value string) bool {
+	for i := 0; i < len(value); i++ {
+		if c := value[i]; (c < 0x20 && c != '\t') || c == 0x7f {
+			return false
+		}
+	}
+	return true
+}
+
 func ValidateServerURL(value string) error {
-	if _, err := url.Parse(value); err != nil {
+	u, err := url.Parse(value)
+	if err != nil {
 		return serverURLValidationError{value: value, error: err}
+	}
+	switch {
+	case u.Scheme == "" || u.Opaque != "":
+		return serverURLValidationError{value: value, error: fmt.Errorf("the URL must start with http:// or https://")}
+	case u.Scheme != "http" && u.Scheme != "https":
+		return serverURLValidationError{value: value, error: fmt.Errorf("unsupported scheme %q: use http or https", u.Scheme)}
+	case u.Hostname() == "":
+		return serverURLValidationError{value: value, error: fmt.Errorf("the URL has no host")}
 	}
 	return nil
 }
@@ -835,6 +912,76 @@ func MergePresetStdinBody(cmd *cobra.Command, m PresetMerge) error {
 	return nil
 }
 
+// RequiredBodyInput is a declared intent input whose body path must be
+// present in a caller-supplied request body.
+type RequiredBodyInput struct {
+	Path   []string
+	Source string
+}
+
+// RequireBodyInputs reports the first required input absent from the body in
+// --bodyFlagName or, when bodyFlagName is "", the body re-attached from stdin.
+func RequireBodyInputs(cmd *cobra.Command, bodyFlagName string, inputs []RequiredBodyInput) error {
+	source, raw := "stdin", []byte(nil)
+	if bodyFlagName != "" {
+		s, _ := GetStringFlag(cmd, bodyFlagName)
+		raw, source = []byte(s), "--"+bodyFlagName
+	} else {
+		in := cmd.InOrStdin()
+		if in == os.Stdin {
+			return nil
+		}
+		data, err := io.ReadAll(in)
+		if err != nil {
+			return fmt.Errorf("failed to read stdin: %w", err)
+		}
+		cmd.SetIn(bytes.NewReader(data))
+		raw = data
+	}
+	if len(bytes.TrimSpace(raw)) == 0 {
+		raw = []byte("{}")
+	}
+	var obj map[string]json.RawMessage
+	if err := json.Unmarshal(raw, &obj); err != nil {
+		return nil
+	}
+	if obj == nil {
+		obj = map[string]json.RawMessage{}
+	}
+	for _, input := range inputs {
+		if !bodyHasPath(obj, input.Path) {
+			field := strings.Join(input.Path, ".")
+			return WithCLIValidation(fmt.Errorf("the request body from %s has no %q: pass %s or set %q in the body", source, field, input.Source, field))
+		}
+	}
+	return nil
+}
+
+func bodyHasPath(obj map[string]json.RawMessage, path []string) bool {
+	if len(path) == 0 {
+		return true
+	}
+	raw, present := obj[path[0]]
+	if !present {
+		return false
+	}
+	if len(path) == 1 {
+		return bodyValuePresent(raw)
+	}
+	var child map[string]json.RawMessage
+	if err := json.Unmarshal(raw, &child); err != nil || child == nil {
+		return false
+	}
+	return bodyHasPath(child, path[1:])
+}
+
+// bodyValuePresent reports whether a body member carries a value. An explicit
+// null counts as absent: the SDK would send its type's zero value instead.
+func bodyValuePresent(raw json.RawMessage) bool {
+	trimmed := bytes.TrimSpace(raw)
+	return len(trimmed) > 0 && string(trimmed) != "null"
+}
+
 func DefaultBodyInput(cmd *cobra.Command, bodyFlags []string, key, flagName string, value any) error {
 	for _, name := range bodyFlags {
 		if name != "" && FlagChanged(cmd, name) {
@@ -956,6 +1103,33 @@ func mergeBodyPath(obj map[string]json.RawMessage, path []string, pointer, field
 	}
 	obj[key] = encoded
 	return nil
+}
+
+// URLOrigin returns scheme://host:port with the default port filled in.
+func URLOrigin(u *url.URL) string {
+	scheme := strings.ToLower(u.Scheme)
+	port := u.Port()
+	if port == "" {
+		switch scheme {
+		case "https":
+			port = "443"
+		case "http":
+			port = "80"
+		}
+	}
+	return scheme + "://" + net.JoinHostPort(asciiLower(u.Hostname()), port)
+}
+
+// asciiLower folds only A-Z. Unicode case folding would equate hosts the
+// transport dials as different IDNA names (U+0130 "İ" and "i").
+func asciiLower(s string) string {
+	b := []byte(s)
+	for i, c := range b {
+		if 'A' <= c && c <= 'Z' {
+			b[i] = c + ('a' - 'A')
+		}
+	}
+	return string(b)
 }
 
 func SetBodyPath(body map[string]any, path []string, value any) {

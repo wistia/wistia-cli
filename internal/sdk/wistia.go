@@ -3,7 +3,7 @@
 
 package sdk
 
-// Generated from OpenAPI doc version edge-version and generator version 2.956.1
+// Generated from OpenAPI doc version edge-version and generator version 2.960.8
 
 import (
 	"context"
@@ -174,11 +174,11 @@ func WithTimeout(timeout time.Duration) SDKOption {
 // New creates a new instance of the SDK with the provided options
 func New(opts ...SDKOption) *Wistia {
 	sdk := &Wistia{
-		SDKVersion: "0.3.0",
+		SDKVersion: "0.3.1",
 		sdkConfiguration: config.SDKConfiguration{
-			UserAgent:         "speakeasy-sdk/go 0.3.0 2.956.1 edge-version github.com/wistia/wistia-cli/internal/sdk",
-			SDKVersion:        "0.3.0",
-			GenVersion:        "2.956.1",
+			UserAgent:         "speakeasy-sdk/go 0.3.1 2.960.8 edge-version github.com/wistia/wistia-cli/internal/sdk",
+			SDKVersion:        "0.3.1",
+			GenVersion:        "2.960.8",
 			OpenAPIDocVersion: "edge-version",
 			ServerList:        ServerList,
 		},

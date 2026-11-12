@@ -534,6 +534,12 @@ type GetSearchRequest struct {
 	CreatedAfter *string `queryParam:"style=form,explode=true,name=created_after"`
 	// Only content created at or before this time, in the same forms as `created_after`. A truncated value runs to the end of its year, month, or day, so `created_after=2026-08` with `created_before=2026-08` covers all of August 2026. Both bounds are inclusive, so "before 2026" is `created_before=2025`, and "before March 2026" is `created_before=2026-02`.
 	CreatedBefore *string `queryParam:"style=form,explode=true,name=created_before"`
+	// Only media last played at or after this time, in the same forms as `created_after`. Excludes media that have never been played. Play data is current as of the last day or so.
+	LastPlayedAfter *string `queryParam:"style=form,explode=true,name=last_played_after"`
+	// Only media last played at or before this time, in the same forms and end-of-period rules as `created_before`, so "not played since June 2026" is `last_played_before=2026-05`. Also matches media that have never been played; for those alone, use `play_count_group[]=0`.
+	LastPlayedBefore *string `queryParam:"style=form,explode=true,name=last_played_before"`
+	// `true` for media with at least one tracked view outside the Wistia app, `false` for media with none. A view on the media's public Wistia share page counts, so this is not strictly "embedded on a website".
+	Embedded *bool `queryParam:"style=form,explode=true,name=embedded"`
 	// Ordering. Omit for relevance ranking, which is what you want alongside a `query`; set it for content by recency or name ("the latest video" is `sort=newest` with `per_page=1`, not `per_page=1` alone).
 	Sort *Sort `queryParam:"style=form,explode=true,name=sort"`
 	// The page of results to return (default 1). Pages reach only the first 10,000 matches, so `page` × `per_page` can't pass 10,000. To reach later records, change the filters or sort and start again at page 1.
@@ -744,6 +750,27 @@ func (g *GetSearchRequest) GetCreatedBefore() *string {
 		return nil
 	}
 	return g.CreatedBefore
+}
+
+func (g *GetSearchRequest) GetLastPlayedAfter() *string {
+	if g == nil {
+		return nil
+	}
+	return g.LastPlayedAfter
+}
+
+func (g *GetSearchRequest) GetLastPlayedBefore() *string {
+	if g == nil {
+		return nil
+	}
+	return g.LastPlayedBefore
+}
+
+func (g *GetSearchRequest) GetEmbedded() *bool {
+	if g == nil {
+		return nil
+	}
+	return g.Embedded
 }
 
 func (g *GetSearchRequest) GetSort() *Sort {
@@ -1371,6 +1398,8 @@ type Content struct {
 	// Length in seconds.
 	Duration  *float64 `json:"duration,omitzero"`
 	PlayCount *int64   `json:"play_count,omitzero"`
+	// When the media was last played, current as of the last day or so. Absent if it has never been played.
+	LastPlayedAt *time.Time `json:"last_played_at,omitzero"`
 	// How the media was created, such as Editor, Live, or Record.
 	Origin *string `json:"origin,omitzero"`
 	// Tag names.
@@ -1388,6 +1417,8 @@ type Content struct {
 	FolderHashedID *string `json:"folder_hashed_id,omitzero"`
 	// Media in a folder or subfolder, or episodes in a channel.
 	MediaCount *int64 `json:"media_count,omitzero"`
+	// Whether a folder or subfolder belongs to someone's personal library ("My Library"), whoever is asking.
+	PersonalLibrary *bool `json:"personal_library,omitzero"`
 	// A webinar's lifecycle status.
 	LifecycleStatus *string `json:"lifecycle_status,omitzero"`
 	// ISO 8601 start time of a webinar.
@@ -1494,6 +1525,13 @@ func (c *Content) GetPlayCount() *int64 {
 	return c.PlayCount
 }
 
+func (c *Content) GetLastPlayedAt() *time.Time {
+	if c == nil {
+		return nil
+	}
+	return c.LastPlayedAt
+}
+
 func (c *Content) GetOrigin() *string {
 	if c == nil {
 		return nil
@@ -1555,6 +1593,13 @@ func (c *Content) GetMediaCount() *int64 {
 		return nil
 	}
 	return c.MediaCount
+}
+
+func (c *Content) GetPersonalLibrary() *bool {
+	if c == nil {
+		return nil
+	}
+	return c.PersonalLibrary
 }
 
 func (c *Content) GetLifecycleStatus() *string {
