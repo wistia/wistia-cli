@@ -389,6 +389,29 @@ func (g *GetMediasMediaHashedIDSpeaker) GetName() string {
 	return g.Name
 }
 
+// GetMediasMediaHashedIDCompositeType - Set when the media is assembled from separate feeds: `recording` for a Wistia Record take, `live_vod` for the recording of a live event. Null for other medias, including a single feed of a take and Mochine edit outputs (see `mochine_edit_id`).
+type GetMediasMediaHashedIDCompositeType string
+
+const (
+	GetMediasMediaHashedIDCompositeTypeRecording GetMediasMediaHashedIDCompositeType = "recording"
+	GetMediasMediaHashedIDCompositeTypeLiveVod   GetMediasMediaHashedIDCompositeType = "live_vod"
+)
+
+func (e GetMediasMediaHashedIDCompositeType) ToPointer() *GetMediasMediaHashedIDCompositeType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetMediasMediaHashedIDCompositeType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "recording", "live_vod":
+			return true
+		}
+	}
+	return false
+}
+
 // GetMediasMediaHashedIDResponseBody - A media generally represents a video or an audio which can be embedded into your website.
 //
 // CDN-backed medias are accessible using this url structure: https://fast.wistia.com/embed/medias/{hashed_id}.m3u8.
@@ -436,6 +459,10 @@ type GetMediasMediaHashedIDResponseBody struct {
 	Tags []GetMediasMediaHashedIDTag `json:"tags,omitzero"`
 	// Active transcript speaker assignments used for diarization. Webinar hosts and panelists are not included. Present when `include=speakers` is requested.
 	Speakers []GetMediasMediaHashedIDSpeaker `json:"speakers,omitzero"`
+	// For a media a Mochine edit produced, the hashed ID of the edit revision that produced it. Get the edit with it (`GET /modern/mochine/edits/{id}`, the `get-mochine-edit` tool) to read the `source_media_ids` it was cut from; the edit's own `id` may differ. Null for other medias.
+	MochineEditID *string `json:"mochine_edit_id"`
+	// Set when the media is assembled from separate feeds: `recording` for a Wistia Record take, `live_vod` for the recording of a live event. Null for other medias, including a single feed of a take and Mochine edit outputs (see `mochine_edit_id`).
+	CompositeType *GetMediasMediaHashedIDCompositeType `json:"composite_type"`
 }
 
 func (g GetMediasMediaHashedIDResponseBody) MarshalJSON() ([]byte, error) {
@@ -587,6 +614,20 @@ func (g *GetMediasMediaHashedIDResponseBody) GetSpeakers() []GetMediasMediaHashe
 		return nil
 	}
 	return g.Speakers
+}
+
+func (g *GetMediasMediaHashedIDResponseBody) GetMochineEditID() *string {
+	if g == nil {
+		return nil
+	}
+	return g.MochineEditID
+}
+
+func (g *GetMediasMediaHashedIDResponseBody) GetCompositeType() *GetMediasMediaHashedIDCompositeType {
+	if g == nil {
+		return nil
+	}
+	return g.CompositeType
 }
 
 type GetMediasMediaHashedIDResponse struct {

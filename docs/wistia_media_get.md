@@ -4,7 +4,9 @@ Show Media
 
 ### Synopsis
 
-Fetches a single media by its hashed id.
+Fetches a single media by its hashed id. A media a Mochine edit produced
+carries `mochine_edit_id`; get that edit (`GET /modern/mochine/edits/{id}`)
+for the `source_media_ids` it was cut from.
 
 ## Requires api token with one of the following permissions
 ```

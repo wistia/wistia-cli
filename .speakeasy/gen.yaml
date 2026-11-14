@@ -33,7 +33,7 @@ generation:
     generateNewTests: true
     skipResponseBodyAssertions: false
 cli:
-  version: 0.3.0
+  version: 0.3.1
   additionalDependencies: {}
   agentEnvironmentDetection: true
   arrayFlagFormat: repeatable

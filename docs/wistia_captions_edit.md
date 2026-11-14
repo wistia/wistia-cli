@@ -41,7 +41,7 @@ wistia captions edit [flags]
       --edits string             The corrections to apply, all-or-nothing, in one new version. (JSON array) [required]
       --expected-version int     The active caption version returned with the caption content used to prepare these edits. The edit applies only if that is still the active version; otherwise it returns 409 so you re-read and retry. [required]
   -h, --help                     help for edit
-  -l, --language-code string     The 3-character ISO 639-2 language code of the caption track to edit (e.g., 'eng', 'fra', 'spa'). Some languages use extended IETF subtags (e.g., 'zh-Hant'). [required]
+  -l, --language-code string     The 3-character ISO 639-2 language code of the caption track to edit (e.g., 'eng', 'fre', 'spa'), exactly as stored. Some languages use extended IETF subtags (e.g., 'zh-Hant'). [required]
   -m, --media-hashed-id string   The hashed ID of the media whose transcript should be edited. [required]
 ```
 
