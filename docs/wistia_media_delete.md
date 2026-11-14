@@ -8,6 +8,9 @@ Deletes a media. Deleted media moves to the account's Recently Deleted area,
 where it can be restored until the account's restore window ends, after which
 it is permanently purged.
 
+A media that is streaming in a pre-recorded webinar that is live right now
+cannot be deleted; the request is refused with a 422 until the webinar ends.
+
 ## Requires api token with one of the following permissions
 ```
 Read, update & delete anything

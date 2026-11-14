@@ -476,12 +476,6 @@ Configuration is stored in `~/.config/wistia/config.yaml`.
   * [`create`](docs/wistia_allowed-domains_create.md) - Create Allowed Domain
   * [`get`](docs/wistia_allowed-domains_get.md) - Show Allowed Domain
   * [`delete`](docs/wistia_allowed-domains_delete.md) - Delete Allowed Domain
-* [`remix`](docs/wistia_remix.md) - Operations for remix
-  * [`~~post-remixes~~`](docs/wistia_remix_post-remixes.md) - Create Remix :warning: **Deprecated**
-  * [`~~get-remixes-remix-hashed-id~~`](docs/wistia_remix_get-remixes-remix-hashed-id.md) - Get Remix :warning: **Deprecated**
-  * [`~~post-remixes-remix-hashed-id-continue~~`](docs/wistia_remix_post-remixes-remix-hashed-id-continue.md) - Continue Remix :warning: **Deprecated**
-  * [`~~post-remixes-remix-hashed-id-export~~`](docs/wistia_remix_post-remixes-remix-hashed-id-export.md) - Export Remix :warning: **Deprecated**
-  * [`~~get-remix-account-status~~`](docs/wistia_remix_get-remix-account-status.md) - Get Remix Account Status :warning: **Deprecated**
 * [`stats-account`](docs/wistia_stats-account.md) - Operations for stats-account
   * [`get`](docs/wistia_stats-account_get.md) - Show Current Account Stats
   * [`get-stats-account-by-date`](docs/wistia_stats-account_get-stats-account-by-date.md) - Show Account Stats by Date

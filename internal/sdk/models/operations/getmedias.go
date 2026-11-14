@@ -675,6 +675,29 @@ func (g *GetMediasSpeaker) GetName() string {
 	return g.Name
 }
 
+// GetMediasCompositeType - Set when the media is assembled from separate feeds: `recording` for a Wistia Record take, `live_vod` for the recording of a live event. Null for other medias, including a single feed of a take and Mochine edit outputs (see `mochine_edit_id`).
+type GetMediasCompositeType string
+
+const (
+	GetMediasCompositeTypeRecording GetMediasCompositeType = "recording"
+	GetMediasCompositeTypeLiveVod   GetMediasCompositeType = "live_vod"
+)
+
+func (e GetMediasCompositeType) ToPointer() *GetMediasCompositeType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetMediasCompositeType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "recording", "live_vod":
+			return true
+		}
+	}
+	return false
+}
+
 // GetMediasResponseBody - A media generally represents a video or an audio which can be embedded into your website.
 //
 // CDN-backed medias are accessible using this url structure: https://fast.wistia.com/embed/medias/{hashed_id}.m3u8.
@@ -722,6 +745,10 @@ type GetMediasResponseBody struct {
 	Tags []GetMediasTag `json:"tags,omitzero"`
 	// Active transcript speaker assignments used for diarization. Webinar hosts and panelists are not included. Present when `include=speakers` is requested.
 	Speakers []GetMediasSpeaker `json:"speakers,omitzero"`
+	// For a media a Mochine edit produced, the hashed ID of the edit revision that produced it. Get the edit with it (`GET /modern/mochine/edits/{id}`, the `get-mochine-edit` tool) to read the `source_media_ids` it was cut from; the edit's own `id` may differ. Null for other medias.
+	MochineEditID *string `json:"mochine_edit_id"`
+	// Set when the media is assembled from separate feeds: `recording` for a Wistia Record take, `live_vod` for the recording of a live event. Null for other medias, including a single feed of a take and Mochine edit outputs (see `mochine_edit_id`).
+	CompositeType *GetMediasCompositeType `json:"composite_type"`
 	// A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
 	Cursor optionalnullable.OptionalNullable[string] `json:"cursor,omitzero"`
 }
@@ -875,6 +902,20 @@ func (g *GetMediasResponseBody) GetSpeakers() []GetMediasSpeaker {
 		return nil
 	}
 	return g.Speakers
+}
+
+func (g *GetMediasResponseBody) GetMochineEditID() *string {
+	if g == nil {
+		return nil
+	}
+	return g.MochineEditID
+}
+
+func (g *GetMediasResponseBody) GetCompositeType() *GetMediasCompositeType {
+	if g == nil {
+		return nil
+	}
+	return g.CompositeType
 }
 
 func (g *GetMediasResponseBody) GetCursor() optionalnullable.OptionalNullable[string] {

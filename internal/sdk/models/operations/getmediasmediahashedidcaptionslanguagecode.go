@@ -41,7 +41,7 @@ func (e *GetMediasMediaHashedIDCaptionsLanguageCodeInclude) UnmarshalJSON(data [
 type GetMediasMediaHashedIDCaptionsLanguageCodeRequest struct {
 	// The hashed ID of the media from which captions are to be retrieved.
 	MediaHashedID string `pathParam:"style=simple,explode=false,name=mediaHashedId"`
-	// The 3-character ISO 639-2 language code of the captions to be retrieved (e.g., `eng`, `fra`, `spa`). Some languages use extended IETF subtags (e.g., `zh-Hant`).
+	// The 3-character ISO 639-2 language code of the captions to be retrieved (e.g., `eng`, `fre`, `spa`). Some languages use extended IETF subtags (e.g., `zh-Hant`).
 	LanguageCode string `pathParam:"style=simple,explode=false,name=languageCode"`
 	// Set to `segments` for time-coded caption cues or `diarized_segments` for speaker-turn segments in JSON responses.
 	Include *GetMediasMediaHashedIDCaptionsLanguageCodeInclude `queryParam:"style=form,explode=true,name=include"`

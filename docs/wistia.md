@@ -66,7 +66,6 @@ wistia [flags]
 * [wistia media-extended-audio-descriptions](wistia_media-extended-audio-descriptions.md)	 - Operations for media-extended-audio-descriptions
 * [wistia push-devices](wistia_push-devices.md)	 - Operations for push-devices
 * [wistia recording-rooms](wistia_recording-rooms.md)	 - Operations for recording-rooms
-* [wistia remix](wistia_remix.md)	 - Operations for remix
 * [wistia resource-urls](wistia_resource-urls.md)	 - Operations for resource-urls
 * [wistia review-bundles](wistia_review-bundles.md)	 - Operations for review-bundles
 * [wistia search](wistia_search.md)	 - Operations for search

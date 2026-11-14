@@ -42,12 +42,12 @@ wistia captions find-matches [flags]
 
 ```
       --body string             Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.
-  -e, --end-ms int              Optional end of a time range used to disambiguate the match.
+  -e, --end-ms int              Optional end of a time range used to disambiguate the match. Omit to run to the end.
   -h, --help                    help for find-matches
   -l, --language-code string    Exact IETF language tag. Omit when each media has only one caption track.
   -m, --media-ids stringArray   Explicit hashed IDs of the media whose captions should be searched. [required]
       --occurrence int          One-based exact occurrence to start the page of matches at, including occurrences after the first 10.
-  -s, --start-ms int            Optional start of a time range used to disambiguate the match.
+  -s, --start-ms int            Optional start of a time range used to disambiguate the match. Omit to start at the beginning.
   -t, --target-text string      Exact caption wording to locate. [required]
 ```
 

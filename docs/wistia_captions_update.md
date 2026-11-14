@@ -37,7 +37,7 @@ wistia captions update [flags]
       --body string              Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.
   -c, --caption-file string      Either an attached SRT file or a string parameter with the contents of an SRT file. [required]
   -h, --help                     help for update
-  -l, --language-code string     Language code conforming to ISO-639-2 for which the captions should be updated. [required]
+  -l, --language-code string     Language code conforming to ISO-639-2 for which the captions should be updated. Must be the track's stored code (e.g., 'fre'). [required]
   -m, --media-hashed-id string   Unique identifier for the media. [required]
 ```
 

@@ -19,8 +19,8 @@ var findMatchesCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "target-text", Shorthand: "t", FieldPath: "TargetText", Kind: flagutil.FlagKindString, Required: true, MinLength: 1, HasMaxLength: true, MaxLength: 500, Description: "Exact caption wording to locate. [required]"},
 	{FlagName: "language-code", Shorthand: "l", FieldPath: "LanguageCode", Kind: flagutil.FlagKindString, Optional: true, MinLength: 1, Description: "Exact IETF language tag. Omit when each media has only one caption track."},
 	{FlagName: "occurrence", FieldPath: "Occurrence", Kind: flagutil.FlagKindInt64, Optional: true, HasMinimum: true, Minimum: 1, Description: "One-based exact occurrence to start the page of matches at, including occurrences after the first 10."},
-	{FlagName: "start-ms", Shorthand: "s", FieldPath: "StartMs", Kind: flagutil.FlagKindInt64, Optional: true, HasMinimum: true, Minimum: 0, Description: "Optional start of a time range used to disambiguate the match."},
-	{FlagName: "end-ms", Shorthand: "e", FieldPath: "EndMs", Kind: flagutil.FlagKindInt64, Optional: true, HasMinimum: true, Minimum: 0, Description: "Optional end of a time range used to disambiguate the match."},
+	{FlagName: "start-ms", Shorthand: "s", FieldPath: "StartMs", Kind: flagutil.FlagKindInt64, Optional: true, HasMinimum: true, Minimum: 0, Description: "Optional start of a time range used to disambiguate the match. Omit to start at the beginning."},
+	{FlagName: "end-ms", Shorthand: "e", FieldPath: "EndMs", Kind: flagutil.FlagKindInt64, Optional: true, HasMinimum: true, Minimum: 0, Description: "Optional end of a time range used to disambiguate the match. Omit to run to the end."},
 }
 
 // initFindMatchesCmd initializes the find-matches command.
