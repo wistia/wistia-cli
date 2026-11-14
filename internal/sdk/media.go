@@ -278,7 +278,9 @@ func (s *Media) List(ctx context.Context, request *operations.GetMediasRequest, 
 }
 
 // Get - Show Media
-// Fetches a single media by its hashed id.
+// Fetches a single media by its hashed id. A media a Mochine edit produced
+// carries `mochine_edit_id`; get that edit (`GET /modern/mochine/edits/{id}`)
+// for the `source_media_ids` it was cut from.
 //
 // ## Requires api token with one of the following permissions
 // ```
@@ -836,6 +838,9 @@ func (s *Media) Update(ctx context.Context, request operations.PutMediasMediaHas
 // where it can be restored until the account's restore window ends, after which
 // it is permanently purged.
 //
+// A media that is streaming in a pre-recorded webinar that is live right now
+// cannot be deleted; the request is refused with a 422 until the webinar ends.
+//
 // ## Requires api token with one of the following permissions
 // ```
 // Read, update & delete anything
@@ -1039,6 +1044,31 @@ func (s *Media) Delete(ctx context.Context, request operations.DeleteMediasMedia
 			}
 
 			var out sdkerrors.DeleteMediasMediaHashedIDNotFoundError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
+			}
+
+			out.HTTPMeta = components.HTTPMetadata{
+				Request:  req,
+				Response: httpRes,
+			}
+			return nil, &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+			return nil, sdkerrors.NewSDKDefaultError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
+	case httpRes.StatusCode == 422:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out sdkerrors.DeleteMediasMediaHashedIDUnprocessableEntityError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, sdkerrors.NewResponseValidationError("response did not match the declared error schema", httpRes.StatusCode, string(rawBody), httpRes, err)
 			}
