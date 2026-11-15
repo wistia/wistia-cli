@@ -13,9 +13,9 @@ type EditRequest struct {
 	TargetText string `json:"target_text"`
 	// The text to substitute for the target. Use an empty string to delete the target.
 	ReplacementText string `json:"replacement_text"`
-	// Optional lower bound (inclusive, in the requested media's coordinate space) restricting the match to a time window. Must be sent with end_ms.
+	// Optional lower bound (inclusive, in the requested media's coordinate space) restricting the match to a time window. Omit to start at the beginning.
 	StartMs *int64 `json:"start_ms,omitzero"`
-	// Optional upper bound (inclusive) restricting the match to a time window. Must be sent with start_ms.
+	// Optional upper bound (inclusive) restricting the match to a time window. Omit to run to the end.
 	EndMs *int64 `json:"end_ms,omitzero"`
 }
 
@@ -71,7 +71,7 @@ func (p *PostMediasMediaHashedIDCaptionsLanguageCodeEditsRequestBody) GetExpecte
 type PostMediasMediaHashedIDCaptionsLanguageCodeEditsRequest struct {
 	// The hashed ID of the media whose transcript should be edited.
 	MediaHashedID string `pathParam:"style=simple,explode=false,name=mediaHashedId"`
-	// The 3-character ISO 639-2 language code of the caption track to edit (e.g., `eng`, `fra`, `spa`). Some languages use extended IETF subtags (e.g., `zh-Hant`).
+	// The 3-character ISO 639-2 language code of the caption track to edit (e.g., `eng`, `fre`, `spa`), exactly as stored. Some languages use extended IETF subtags (e.g., `zh-Hant`).
 	LanguageCode string                                                      `pathParam:"style=simple,explode=false,name=languageCode"`
 	Body         PostMediasMediaHashedIDCaptionsLanguageCodeEditsRequestBody `request:"mediaType=application/json"`
 }

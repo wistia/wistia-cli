@@ -16,6 +16,14 @@ import (
 	"github.com/wistia/wistia-cli/internal/sdk/types"
 )
 
+type InvalidPathParameterError struct {
+	Name string
+}
+
+func (e *InvalidPathParameterError) Error() string {
+	return fmt.Sprintf("path parameter %q contains a dot segment", e.Name)
+}
+
 func GenerateURL(_ context.Context, serverURL, path string, pathParams interface{}, globals interface{}) (string, error) {
 	uri := strings.TrimSuffix(serverURL, "/") + path
 
