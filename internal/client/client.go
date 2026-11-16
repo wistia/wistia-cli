@@ -16,7 +16,6 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
-	"strings"
 	"sync"
 	"time"
 )
@@ -48,6 +47,9 @@ func NewClient(cmd *cobra.Command, allowedSecurityFields ...string) (*sdk.Wistia
 		if err != nil {
 			return nil, flagutil.WithCLIValidation(fmt.Errorf("invalid --timeout value %q: %w", timeoutStr, err))
 		}
+		if timeout <= 0 {
+			return nil, flagutil.WithCLIValidation(fmt.Errorf("invalid --timeout value %q: must be a positive Go duration", timeoutStr))
+		}
 		sdkOpts = append(sdkOpts, sdk.WithTimeout(timeout))
 	}
 
@@ -58,8 +60,37 @@ func NewClient(cmd *cobra.Command, allowedSecurityFields ...string) (*sdk.Wistia
 		httpClient = testClient
 	}
 	httpClient = WrapClientForDiagnostics(cmd, httpClient)
+	if hdrs, _ := flagutil.GetStringArrayFlag(cmd, "header"); len(hdrs) > 0 {
+		headers, err := flagutil.ParseHeaderFlags(hdrs)
+		if err != nil {
+			return nil, err
+		}
+		if repeated := flagutil.RepeatedHeaders(headers); len(repeated) > 0 {
+			httpClient = &repeatedHeaderClient{next: httpClient, headers: repeated}
+		}
+	}
 	sdkOpts = append(sdkOpts, sdk.WithClient(httpClient))
 	return sdk.New(sdkOpts...), nil
+}
+
+// repeatedHeaderClient sends every value of a header repeated with --header on
+// requests tagged with flagutil.RepeatedHeadersMarker.
+// operations.WithSetHeaders carries only one value per header.
+type repeatedHeaderClient struct {
+	next    HTTPClient
+	headers http.Header
+}
+
+func (c *repeatedHeaderClient) Do(req *http.Request) (*http.Response, error) {
+	if req.Header.Get(flagutil.RepeatedHeadersMarker) == "" {
+		return c.next.Do(req)
+	}
+	req = req.Clone(req.Context())
+	req.Header.Del(flagutil.RepeatedHeadersMarker)
+	for name, values := range c.headers {
+		req.Header[name] = append([]string(nil), values...)
+	}
+	return c.next.Do(req)
 }
 
 // SameOriginRedirect refuses redirects to another scheme or host, and
@@ -71,7 +102,7 @@ func SameOriginRedirect(req *http.Request, via []*http.Request) error {
 		return fmt.Errorf("stopped after 10 redirects")
 	}
 	from := via[0].URL
-	if urlOrigin(req.URL) != urlOrigin(from) {
+	if flagutil.URLOrigin(req.URL) != flagutil.URLOrigin(from) {
 		return &RedirectRefusedError{message: fmt.Sprintf("refusing to follow a redirect from %s://%s to %s://%s: credentials are only sent to the configured server", from.Scheme, from.Host, req.URL.Scheme, req.URL.Host)}
 	}
 	if prev := via[len(via)-1]; req.Method != prev.Method {
@@ -114,32 +145,6 @@ func (c *redirectGuardClient) Do(req *http.Request) (*http.Response, error) {
 		}
 	}
 	return res, err
-}
-
-func urlOrigin(u *url.URL) string {
-	scheme := strings.ToLower(u.Scheme)
-	port := u.Port()
-	if port == "" {
-		switch scheme {
-		case "https":
-			port = "443"
-		case "http":
-			port = "80"
-		}
-	}
-	return scheme + "://" + net.JoinHostPort(asciiLower(u.Hostname()), port)
-}
-
-// asciiLower folds only A-Z. Unicode case folding would equate hosts the
-// transport dials as different IDNA names (U+0130 "İ" and "i").
-func asciiLower(s string) string {
-	b := []byte(s)
-	for i, c := range b {
-		if 'A' <= c && c <= 'Z' {
-			b[i] = c + ('a' - 'A')
-		}
-	}
-	return string(b)
 }
 
 func newPhaseBoundedTransport(cmd *cobra.Command) http.RoundTripper {

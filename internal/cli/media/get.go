@@ -25,7 +25,7 @@ func initGetCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "get [media-hashed-id]",
 		Short:   "Show Media",
-		Long:    "Fetches a single media by its hashed id.\n\n## Requires api token with one of the following permissions\n```\nRead all folder and media data\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\nauthorization for this media can also be used; any permission granted on a\nmedia allows showing it.",
+		Long:    "Fetches a single media by its hashed id. A media a Mochine edit produced\ncarries `mochine_edit_id`; get that edit (`GET /modern/mochine/edits/{id}`)\nfor the `source_media_ids` it was cut from.\n\n## Requires api token with one of the following permissions\n```\nRead all folder and media data\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\nauthorization for this media can also be used; any permission granted on a\nmedia allows showing it.",
 		Example: "  wistia media get --media-hashed-id <id>",
 		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runGetCmd,
