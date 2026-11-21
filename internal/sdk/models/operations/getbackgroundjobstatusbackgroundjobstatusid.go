@@ -423,6 +423,8 @@ type GetBackgroundJobStatusBackgroundJobStatusIDBackgroundJobStatus struct {
 	// poll content. Use `type` to discriminate which shape this is.
 	//
 	Object *Object `json:"object,omitzero"`
+	// Human-readable detail about the job's status, present only when the job type sets one.
+	Message *string `json:"message,omitzero"`
 }
 
 func (g *GetBackgroundJobStatusBackgroundJobStatusIDBackgroundJobStatus) GetID() int64 {
@@ -451,6 +453,13 @@ func (g *GetBackgroundJobStatusBackgroundJobStatusIDBackgroundJobStatus) GetObje
 		return nil
 	}
 	return g.Object
+}
+
+func (g *GetBackgroundJobStatusBackgroundJobStatusIDBackgroundJobStatus) GetMessage() *string {
+	if g == nil {
+		return nil
+	}
+	return g.Message
 }
 
 // GetBackgroundJobStatusBackgroundJobStatusIDResponseBody - OK
