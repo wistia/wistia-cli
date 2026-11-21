@@ -1,22 +1,23 @@
-## wistia remix post-remixes-remix-hashed-id-export
+## wistia account update-transcript-settings
 
-Export Remix
+Update Transcript Settings
 
 ### Synopsis
 
-DEPRECATED: This will be removed in a future release, please migrate away from it as soon as possible
+Updates the account's keyword glossary. Provide keywords to replace the
+complete list, or add_keywords and/or remove_keywords to edit it.
+An empty keywords array clears the glossary. Omitted, null, and empty
+add_keywords or remove_keywords mean no action. keywords cannot be combined
+with a nonempty add_keywords or remove_keywords, and a term cannot appear in
+both. Whitespace is squished and duplicate terms are processed once.
+Matching is case-sensitive.
 
-Deprecated: use `POST /mochine/edits/{editHashedId}/export` instead.
-
-Export a remix to a folder in your account, triggering the full render pipeline.
-
-Remixes created through this API export automatically, so a remix is usually
-already exported by the time you can call this. Exporting one again does not
-re-render it — it moves and renames the media the first export produced, so you
-can use this to place a finished remix in a different folder or under a
-different name.
-
-If no folder_id is provided, the remix is exported to the source media's folder.
+The resulting glossary must fit 100 terms and 500 characters, excluding
+separators. Invalid requests return 400 without saving any changes.
+Additions and removals preserve unrelated terms. A full replacement can
+overwrite changes made since you last read the glossary.
+Only the glossary is writable. Returns the same
+representation as Get Transcript Settings.
 
 
 ## Requires api token with one of the following permissions
@@ -27,26 +28,40 @@ Read, update & delete anything
 Tokens with the "Act with a team member's permissions" permission
 (`all:delegate_to_contact_permissions` scope) can also be used. Requests
 made with such a token are authorized using the permissions of the
-contact assigned to the token.
+contact assigned to the token. That contact must have permission to update
+the account's settings.
+
+An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+created with the `all:delegate_to_contact_permissions` scope and an
+`account` authorization granting the `manage-transcript-settings`
+permission can also be used.
 
 ```
-wistia remix post-remixes-remix-hashed-id-export [remix-hashed-id] [flags]
+wistia account update-transcript-settings [flags]
 ```
 
 ### Examples
 
 ```
-  wistia remix post-remixes-remix-hashed-id-export --remix-hashed-id <id>
+  wistia account update-transcript-settings
 ```
 
 ### Options
 
 ```
-      --body string              Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.
-  -f, --folder-id string         Hashed ID of the destination folder. Defaults to the source media's folder.
-  -h, --help                     help for post-remixes-remix-hashed-id-export
-  -n, --name string              Custom name for the exported media.
-  -r, --remix-hashed-id string   The remix_id of the Mochine video to export. (or pass it as the [remix-hashed-id] argument)
+  -a, --add-keywords string      Terms to add while keeping existing entries. Terms already present are
+                                 unchanged. Omitted, null, and empty all mean no action.
+                                 (JSON array)
+      --body string              Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF. Use --schema to print the exact JSON Schema.
+  -h, --help                     help for update-transcript-settings
+  -k, --keywords string          Replaces the entire glossary. To clear it, send 'keywords: []'.
+                                 To edit individual terms, omit 'keywords' or set it to 'null' and
+                                 provide terms in 'add_keywords', 'remove_keywords', or both.
+                                 (JSON array)
+  -r, --remove-keywords string   Terms to remove while keeping other entries. Absent terms are
+                                 unchanged. Omitted, null, and empty all mean no action.
+                                 (JSON array)
+      --schema                   Print the exact JSON Schema of the request body and exit
 ```
 
 ### Options inherited from parent commands
@@ -73,12 +88,13 @@ wistia remix post-remixes-remix-hashed-id-export [remix-hashed-id] [flags]
 
 ### SEE ALSO
 
-* [wistia remix](wistia_remix.md)	 - Operations for remix
+* [wistia account](wistia_account.md)	 - Operations for account
 
 ### Machine interface
 
-* `wistia remix post-remixes-remix-hashed-id-export --usage` — this command's flags, defaults and env vars as machine-readable KDL
-* `wistia remix post-remixes-remix-hashed-id-export --dry-run` — preview the request without OS-keychain access or a network call (human preview on stderr)
+* `wistia account update-transcript-settings --usage` — this command's flags, defaults and env vars as machine-readable KDL
+* `wistia account update-transcript-settings --schema` — the exact JSON Schema of the request body (all `$ref`s bundled)
+* `wistia account update-transcript-settings --dry-run` — preview the request without OS-keychain access or a network call (human preview on stderr)
 * `--dry-run --output-format json` (or a caller-explicit `--jq`) writes one preview object per request as NDJSON on stdout; jq is not applied to previews
 * `--output-format json` or `--jq <expr>` for machine-readable live output; in agent mode errors are a JSON envelope on stderr
 

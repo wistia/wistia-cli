@@ -1,9 +1,9 @@
-speakeasyVersion: 1.806.0
+speakeasyVersion: 1.811.0
 sources:
     Wistia-OAS:
         sourceNamespace: wistia-oas
-        sourceRevisionDigest: sha256:d7eb9c9bb78f371a689a29fc663009750171e4d73331f3fd080c5d4c32b14303
-        sourceBlobDigest: sha256:8f63a4f902984307dffb3113aedc55a4809d85aa31111e128b7c87fb7d605f32
+        sourceRevisionDigest: sha256:724733132388d057d92965c146669661adfe71eb5580d958206950d21b56fc42
+        sourceBlobDigest: sha256:d6a70b5c5d4c41ffda62d8fa65c584977971d454205d503a8ebccd4056ad4b61
         tags:
             - latest
             - edge-version
@@ -11,8 +11,8 @@ targets:
     wistia:
         source: Wistia-OAS
         sourceNamespace: wistia-oas
-        sourceRevisionDigest: sha256:d7eb9c9bb78f371a689a29fc663009750171e4d73331f3fd080c5d4c32b14303
-        sourceBlobDigest: sha256:8f63a4f902984307dffb3113aedc55a4809d85aa31111e128b7c87fb7d605f32
+        sourceRevisionDigest: sha256:724733132388d057d92965c146669661adfe71eb5580d958206950d21b56fc42
+        sourceBlobDigest: sha256:d6a70b5c5d4c41ffda62d8fa65c584977971d454205d503a8ebccd4056ad4b61
 workflow:
     workflowVersion: 1.0.0
     speakeasyVersion: latest

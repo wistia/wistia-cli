@@ -35,7 +35,7 @@ wistia captions delete [flags]
 
 ```
   -h, --help                     help for delete
-  -l, --language-code string     Language code conforming to ISO-639-2 for which the captions should be removed. [required]
+  -l, --language-code string     Language code conforming to ISO-639-2 for which the captions should be removed. Must be the track's stored code (e.g., 'fre'). [required]
   -m, --media-hashed-id string   Unique identifier for the media. [required]
 ```
 
