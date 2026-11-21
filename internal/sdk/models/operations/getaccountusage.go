@@ -372,6 +372,190 @@ func (l *Limits) GetBandwidth() Bandwidth {
 	return l.Bandwidth
 }
 
+// DubUnit - Unit of the price, either US dollars or Credits.
+type DubUnit string
+
+const (
+	DubUnitUsd     DubUnit = "usd"
+	DubUnitCredits DubUnit = "credits"
+)
+
+func (e DubUnit) ToPointer() *DubUnit {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *DubUnit) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "usd", "credits":
+			return true
+		}
+	}
+	return false
+}
+
+// DubPer - What one price buys.
+type DubPer string
+
+const (
+	DubPerMinute      DubPer = "minute"
+	DubPerTranslation DubPer = "translation"
+)
+
+func (e DubPer) ToPointer() *DubPer {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *DubPer) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "minute", "translation":
+			return true
+		}
+	}
+	return false
+}
+
+// Dub - Rate for dubbing a media into one language, per minute of the source
+// media, rounded up to whole minutes.
+type Dub struct {
+	// Exact price for one `per`, encoded as a decimal string.
+	Price string `json:"price"`
+	// Unit of the price, either US dollars or Credits.
+	Unit DubUnit `json:"unit"`
+	// What one price buys.
+	Per DubPer `json:"per"`
+}
+
+func (d *Dub) GetPrice() string {
+	if d == nil {
+		return ""
+	}
+	return d.Price
+}
+
+func (d *Dub) GetUnit() DubUnit {
+	if d == nil {
+		return DubUnit("")
+	}
+	return d.Unit
+}
+
+func (d *Dub) GetPer() DubPer {
+	if d == nil {
+		return DubPer("")
+	}
+	return d.Per
+}
+
+// TextTranslationUnit - Unit of the price, either US dollars or Credits.
+type TextTranslationUnit string
+
+const (
+	TextTranslationUnitUsd     TextTranslationUnit = "usd"
+	TextTranslationUnitCredits TextTranslationUnit = "credits"
+)
+
+func (e TextTranslationUnit) ToPointer() *TextTranslationUnit {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *TextTranslationUnit) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "usd", "credits":
+			return true
+		}
+	}
+	return false
+}
+
+// TextTranslationPer - What one price buys.
+type TextTranslationPer string
+
+const (
+	TextTranslationPerMinute      TextTranslationPer = "minute"
+	TextTranslationPerTranslation TextTranslationPer = "translation"
+)
+
+func (e TextTranslationPer) ToPointer() *TextTranslationPer {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *TextTranslationPer) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "minute", "translation":
+			return true
+		}
+	}
+	return false
+}
+
+// TextTranslation - An exact rate for one paid action, with its billing unit.
+type TextTranslation struct {
+	// Exact price for one `per`, encoded as a decimal string.
+	Price string `json:"price"`
+	// Unit of the price, either US dollars or Credits.
+	Unit TextTranslationUnit `json:"unit"`
+	// What one price buys.
+	Per TextTranslationPer `json:"per"`
+}
+
+func (t *TextTranslation) GetPrice() string {
+	if t == nil {
+		return ""
+	}
+	return t.Price
+}
+
+func (t *TextTranslation) GetUnit() TextTranslationUnit {
+	if t == nil {
+		return TextTranslationUnit("")
+	}
+	return t.Unit
+}
+
+func (t *TextTranslation) GetPer() TextTranslationPer {
+	if t == nil {
+		return TextTranslationPer("")
+	}
+	return t.Per
+}
+
+// Rates - What the account pays for a dub and a text translation, before tax. Each
+// rate is in Credits when the account pays for these with Credits, otherwise
+// in US dollars. Null when the authenticated contact is a viewer.
+type Rates struct {
+	// Rate for dubbing a media into one language, per minute of the source
+	// media, rounded up to whole minutes.
+	//
+	Dub Dub `json:"dub"`
+	// Rate for translating a media's transcript into one language. `null`
+	// when the account doesn't pay for text translation with Credits: the
+	// plan's translation allowance and overage apply instead.
+	//
+	TextTranslation *TextTranslation `json:"text_translation"`
+}
+
+func (r *Rates) GetDub() Dub {
+	if r == nil {
+		return Dub{}
+	}
+	return r.Dub
+}
+
+func (r *Rates) GetTextTranslation() *TextTranslation {
+	if r == nil {
+		return nil
+	}
+	return r.TextTranslation
+}
+
 // Links - URLs for plan, usage, and billing pages
 type Links struct {
 	// URL to the account's plans page. Always present.
@@ -418,6 +602,11 @@ type GetAccountUsageResponseBody struct {
 	// billing visibility (i.e. is not an account owner or manager).
 	//
 	Limits *Limits `json:"limits"`
+	// What the account pays for a dub and a text translation, before tax. Each
+	// rate is in Credits when the account pays for these with Credits, otherwise
+	// in US dollars. Null when the authenticated contact is a viewer.
+	//
+	Rates *Rates `json:"rates"`
 	// URLs for plan, usage, and billing pages
 	Links Links `json:"links"`
 	// The authenticated contact's role on the account. One of `owner`, `manager`,
@@ -481,6 +670,13 @@ func (g *GetAccountUsageResponseBody) GetLimits() *Limits {
 		return nil
 	}
 	return g.Limits
+}
+
+func (g *GetAccountUsageResponseBody) GetRates() *Rates {
+	if g == nil {
+		return nil
+	}
+	return g.Rates
 }
 
 func (g *GetAccountUsageResponseBody) GetLinks() Links {
