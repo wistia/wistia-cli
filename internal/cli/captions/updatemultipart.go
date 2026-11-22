@@ -16,7 +16,7 @@ import (
 
 var updateMultipartCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "media-hashed-id", Shorthand: "m", FieldPath: "MediaHashedID", Kind: flagutil.FlagKindString, Required: true, Description: "Unique identifier for the media. [required]"},
-	{FlagName: "language-code", Shorthand: "l", FieldPath: "LanguageCode", Kind: flagutil.FlagKindString, Required: true, Pattern: "^[a-z]{3}$", Description: "Language code conforming to ISO-639-2 for which the captions should be updated. [required]"},
+	{FlagName: "language-code", Shorthand: "l", FieldPath: "LanguageCode", Kind: flagutil.FlagKindString, Required: true, Pattern: "^[a-z]{3}$", Description: "Language code conforming to ISO-639-2 for which the captions should be updated. Must be the track's stored code (e.g., 'fre'). [required]"},
 	{FlagName: "caption-file", Shorthand: "c", FieldPath: "Body.CaptionFile", Kind: flagutil.FlagKindFile, Required: true, Description: "Either an attached SRT file or a string parameter with the contents of an SRT file. [required]"},
 }
 

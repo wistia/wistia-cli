@@ -294,22 +294,23 @@ func (w *WebinarAuthorization) GetPermissions() []Permission4 {
 type Permission3 string
 
 const (
-	Permission3Show                 Permission3 = "show"
-	Permission3CreateFolders        Permission3 = "create-folders"
-	Permission3CreateChannels       Permission3 = "create-channels"
-	Permission3CreateWebinars       Permission3 = "create-webinars"
-	Permission3ViewStats            Permission3 = "view-stats"
-	Permission3ManageTeam           Permission3 = "manage-team"
-	Permission3AccessCustomMetadata Permission3 = "access-custom-metadata"
-	Permission3ManageCustomMetadata Permission3 = "manage-custom-metadata"
-	Permission3ViewSpeakers         Permission3 = "view-speakers"
-	Permission3ManageSpeakers       Permission3 = "manage-speakers"
-	Permission3ViewTags             Permission3 = "view-tags"
-	Permission3ManageTags           Permission3 = "manage-tags"
-	Permission3ManageAllowedDomains Permission3 = "manage-allowed-domains"
-	Permission3ManageDeletedMedia   Permission3 = "manage-deleted-media"
-	Permission3CreateBrands         Permission3 = "create-brands"
-	Permission3ManageBrandPreload   Permission3 = "manage-brand-preload"
+	Permission3Show                     Permission3 = "show"
+	Permission3CreateFolders            Permission3 = "create-folders"
+	Permission3CreateChannels           Permission3 = "create-channels"
+	Permission3CreateWebinars           Permission3 = "create-webinars"
+	Permission3ViewStats                Permission3 = "view-stats"
+	Permission3ManageTeam               Permission3 = "manage-team"
+	Permission3AccessCustomMetadata     Permission3 = "access-custom-metadata"
+	Permission3ManageCustomMetadata     Permission3 = "manage-custom-metadata"
+	Permission3ViewSpeakers             Permission3 = "view-speakers"
+	Permission3ManageSpeakers           Permission3 = "manage-speakers"
+	Permission3ViewTags                 Permission3 = "view-tags"
+	Permission3ManageTags               Permission3 = "manage-tags"
+	Permission3ManageAllowedDomains     Permission3 = "manage-allowed-domains"
+	Permission3ManageDeletedMedia       Permission3 = "manage-deleted-media"
+	Permission3CreateBrands             Permission3 = "create-brands"
+	Permission3ManageBrandPreload       Permission3 = "manage-brand-preload"
+	Permission3ManageTranscriptSettings Permission3 = "manage-transcript-settings"
 )
 
 func (e Permission3) ToPointer() *Permission3 {
@@ -352,6 +353,8 @@ func (e *Permission3) UnmarshalJSON(data []byte) error {
 	case "create-brands":
 		fallthrough
 	case "manage-brand-preload":
+		fallthrough
+	case "manage-transcript-settings":
 		*e = Permission3(v)
 		return nil
 	default:
@@ -375,6 +378,7 @@ func (e *Permission3) UnmarshalJSON(data []byte) error {
 // `manage-deleted-media` allows listing and restoring the deleted media the
 // token's media rules name. `create-brands` allows creating brands, and
 // `manage-brand-preload` allows updating the brand preload.
+// `manage-transcript-settings` allows adding, removing, replacing, and clearing transcript glossary terms.
 type AccountAuthorization struct {
 	//lint:ignore U1000 accessed via reflection for JSON marshaling
 	type_ string `const:"account" json:"type"`
