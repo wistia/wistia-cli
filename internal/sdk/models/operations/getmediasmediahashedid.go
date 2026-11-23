@@ -181,6 +181,31 @@ func (g *GetMediasMediaHashedIDThumbnail) GetHeight() *int64 {
 	return g.Height
 }
 
+// GetMediasMediaHashedIDTranscriptStatus - Whether the media has a transcript to read. - `ready`: a transcript can be read now in at least one language. - `generating`: none can be read yet, but one is being generated. - `failed`: an English transcript was ordered but none can be read or is being generated, and another order would be refused. - `none`: none can be read and none is being generated. Media without audio, such as images and PDFs, are always `none`.
+type GetMediasMediaHashedIDTranscriptStatus string
+
+const (
+	GetMediasMediaHashedIDTranscriptStatusReady      GetMediasMediaHashedIDTranscriptStatus = "ready"
+	GetMediasMediaHashedIDTranscriptStatusGenerating GetMediasMediaHashedIDTranscriptStatus = "generating"
+	GetMediasMediaHashedIDTranscriptStatusFailed     GetMediasMediaHashedIDTranscriptStatus = "failed"
+	GetMediasMediaHashedIDTranscriptStatusNone       GetMediasMediaHashedIDTranscriptStatus = "none"
+)
+
+func (e GetMediasMediaHashedIDTranscriptStatus) ToPointer() *GetMediasMediaHashedIDTranscriptStatus {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetMediasMediaHashedIDTranscriptStatus) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "ready", "generating", "failed", "none":
+			return true
+		}
+	}
+	return false
+}
+
 type GetMediasMediaHashedIDFolder struct {
 	// A unique numeric identifier for the folder within the system.
 	ID *int64 `json:"id,omitzero"`
@@ -389,6 +414,28 @@ func (g *GetMediasMediaHashedIDSpeaker) GetName() string {
 	return g.Name
 }
 
+type GetMediasMediaHashedIDCompositeType string
+
+const (
+	GetMediasMediaHashedIDCompositeTypeRecording GetMediasMediaHashedIDCompositeType = "recording"
+	GetMediasMediaHashedIDCompositeTypeLiveVod   GetMediasMediaHashedIDCompositeType = "live_vod"
+)
+
+func (e GetMediasMediaHashedIDCompositeType) ToPointer() *GetMediasMediaHashedIDCompositeType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetMediasMediaHashedIDCompositeType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "recording", "live_vod":
+			return true
+		}
+	}
+	return false
+}
+
 // GetMediasMediaHashedIDResponseBody - A media generally represents a video or an audio which can be embedded into your website.
 //
 // CDN-backed medias are accessible using this url structure: https://fast.wistia.com/embed/medias/{hashed_id}.m3u8.
@@ -427,7 +474,10 @@ type GetMediasMediaHashedIDResponseBody struct {
 	Thumbnail *GetMediasMediaHashedIDThumbnail          `json:"thumbnail,omitzero"`
 	// Whether the media is protected by Private Video, which keeps its video files off the public delivery path. Null if the media is not protected.
 	Protected optionalnullable.OptionalNullable[bool] `json:"protected,omitzero"`
-	Folder    *GetMediasMediaHashedIDFolder           `json:"folder"`
+	// Whether the media has a transcript to read. - `ready`: a transcript can be read now in at least one language. - `generating`: none can be read yet, but one is being generated. - `failed`: an English transcript was ordered but none can be read or is being generated, and another order would be refused. - `none`: none can be read and none is being generated. Media without audio, such as images and PDFs, are always `none`.
+	//
+	TranscriptStatus GetMediasMediaHashedIDTranscriptStatus `json:"transcript_status"`
+	Folder           *GetMediasMediaHashedIDFolder          `json:"folder"`
 	// An array of the assets available for this media.
 	Assets []GetMediasMediaHashedIDAsset `json:"assets,omitzero"`
 	// The subfolder (media group) in which the media appears. Null if the media is not in a subfolder.
@@ -436,6 +486,10 @@ type GetMediasMediaHashedIDResponseBody struct {
 	Tags []GetMediasMediaHashedIDTag `json:"tags,omitzero"`
 	// Active transcript speaker assignments used for diarization. Webinar hosts and panelists are not included. Present when `include=speakers` is requested.
 	Speakers []GetMediasMediaHashedIDSpeaker `json:"speakers,omitzero"`
+	// For a media a Mochine edit produced, the hashed ID of the edit revision that produced it. Get the edit with it (`GET /modern/mochine/edits/{id}`, the `get-mochine-edit` tool) to read the `source_media_ids` it was cut from; the edit's own `id` may differ. Null for other medias.
+	MochineEditID *string `json:"mochine_edit_id"`
+	// Set when the media is assembled from separate feeds: `recording` for a Wistia Record take, `live_vod` for the recording of a live event. Null for other medias, including a single feed of a take and Mochine edit outputs (see `mochine_edit_id`).
+	CompositeType *GetMediasMediaHashedIDCompositeType `json:"composite_type"`
 }
 
 func (g GetMediasMediaHashedIDResponseBody) MarshalJSON() ([]byte, error) {
@@ -554,6 +608,13 @@ func (g *GetMediasMediaHashedIDResponseBody) GetProtected() optionalnullable.Opt
 	return g.Protected
 }
 
+func (g *GetMediasMediaHashedIDResponseBody) GetTranscriptStatus() GetMediasMediaHashedIDTranscriptStatus {
+	if g == nil {
+		return GetMediasMediaHashedIDTranscriptStatus("")
+	}
+	return g.TranscriptStatus
+}
+
 func (g *GetMediasMediaHashedIDResponseBody) GetFolder() *GetMediasMediaHashedIDFolder {
 	if g == nil {
 		return nil
@@ -587,6 +648,20 @@ func (g *GetMediasMediaHashedIDResponseBody) GetSpeakers() []GetMediasMediaHashe
 		return nil
 	}
 	return g.Speakers
+}
+
+func (g *GetMediasMediaHashedIDResponseBody) GetMochineEditID() *string {
+	if g == nil {
+		return nil
+	}
+	return g.MochineEditID
+}
+
+func (g *GetMediasMediaHashedIDResponseBody) GetCompositeType() *GetMediasMediaHashedIDCompositeType {
+	if g == nil {
+		return nil
+	}
+	return g.CompositeType
 }
 
 type GetMediasMediaHashedIDResponse struct {
