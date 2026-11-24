@@ -22,6 +22,22 @@ func (e *DeleteMediasMediaHashedIDInternalServerError) Error() string {
 	return string(data)
 }
 
+// DeleteMediasMediaHashedIDUnprocessableEntityError - Unprocessable entity, the request parameters were invalid.
+type DeleteMediasMediaHashedIDUnprocessableEntityError struct {
+	// A single error message describing what went wrong.
+	Error_ *string `json:"error,omitzero"`
+	// Array of error messages describing what went wrong.
+	Errors   []string                `json:"errors,omitzero"`
+	HTTPMeta components.HTTPMetadata `json:"-"`
+}
+
+var _ error = &DeleteMediasMediaHashedIDUnprocessableEntityError{}
+
+func (e *DeleteMediasMediaHashedIDUnprocessableEntityError) Error() string {
+	data, _ := json.Marshal(e)
+	return string(data)
+}
+
 // DeleteMediasMediaHashedIDNotFoundError - Resource not found
 type DeleteMediasMediaHashedIDNotFoundError struct {
 	Error_   *string                 `json:"error,omitzero"`

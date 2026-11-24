@@ -22,6 +22,19 @@ func (e *DeleteMediasMediaHashedIDCaptionsLanguageCodeInternalServerError) Error
 	return string(data)
 }
 
+// DeleteMediasMediaHashedIDCaptionsLanguageCodeNotFoundError - Captions or media not found. For a missing caption language, `error` lists the media's caption languages.
+type DeleteMediasMediaHashedIDCaptionsLanguageCodeNotFoundError struct {
+	Error_   *string                 `json:"error,omitzero"`
+	HTTPMeta components.HTTPMetadata `json:"-"`
+}
+
+var _ error = &DeleteMediasMediaHashedIDCaptionsLanguageCodeNotFoundError{}
+
+func (e *DeleteMediasMediaHashedIDCaptionsLanguageCodeNotFoundError) Error() string {
+	data, _ := json.Marshal(e)
+	return string(data)
+}
+
 // DeleteMediasMediaHashedIDCaptionsLanguageCodeUnauthorizedError - Unauthorized, invalid or missing token
 type DeleteMediasMediaHashedIDCaptionsLanguageCodeUnauthorizedError struct {
 	// A machine-readable identifier for the specific authorization failure.

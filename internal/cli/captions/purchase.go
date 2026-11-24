@@ -17,9 +17,9 @@ import (
 
 var purchaseCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "media-hashed-id", Shorthand: "m", FieldPath: "MediaHashedID", Kind: flagutil.FlagKindString, Required: true, Description: "Unique identifier for the media. [required]"},
-	{FlagName: "automated", FieldPath: "Body.Automated", Kind: flagutil.FlagKindBool, Optional: true, HasDefault: true, Description: "Order computer-generated captions or human-reviewed ones. What each costs depends on the account's plan and billing settings; computer-generated captions are included at no cost on some plans and billed per minute on others."},
-	{FlagName: "rush", Shorthand: "r", FieldPath: "Body.Rush", Kind: flagutil.FlagKindBool, Optional: true, HasDefault: true, DefaultBool: true, Description: "Enable rush order for one business day turnaround instead of the standard four, for human-reviewed captions only. Rush bills at the account's higher per-minute rate."},
-	{FlagName: "automatically-enable", FieldPath: "Body.AutomaticallyEnable", Kind: flagutil.FlagKindBool, Optional: true, HasDefault: true, DefaultBool: true, Description: "Automatically enable captions for the media once the order is ready or hold the captions for review before manually enabling."},
+	{FlagName: "automated", FieldPath: "Body.Automated", Kind: flagutil.FlagKindBool, Required: true, Description: "Order computer-generated captions (true) or human-reviewed ones (false). What each costs depends on the account's plan and billing settings; computer-generated captions are included at no cost on some plans and billed per minute on others. [required]"},
+	{FlagName: "rush", Shorthand: "r", FieldPath: "Body.Rush", Kind: flagutil.FlagKindBool, Optional: true, HasDefault: true, Description: "Enable rush order for one business day turnaround instead of the standard four, for human-reviewed captions only. Rush bills at the account's higher per-minute rate."},
+	{FlagName: "automatically-enable", FieldPath: "Body.AutomaticallyEnable", Kind: flagutil.FlagKindBool, Optional: true, HasDefault: true, Description: "Automatically enable captions for the media once the order is ready or hold the captions for review before manually enabling."},
 }
 
 // initPurchaseCmd initializes the purchase command.
@@ -28,7 +28,7 @@ func initPurchaseCmd(parent *cobra.Command) error {
 		Use:     "purchase [media-hashed-id]",
 		Short:   "Purchase Captions",
 		Long:    "This method is for purchasing English captions for a media. The request will charge the credit card on the account if successful. A saved credit card is required to use this endpoint.\n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n\nTokens with the \"Act with a team member's permissions\" permission\n(`all:delegate_to_contact_permissions` scope) can also be used. Requests\nmade with such a token are authorized using the permissions of the\ncontact assigned to the token.\n\nAn [expiring access token](https://docs.wistia.com/reference/post_expiring-token)\ncreated with the `all:delegate_to_contact_permissions` scope and an\nauthorization granting the `create-transcripts` permission on this media can\nalso be used.",
-		Example: "  wistia captions purchase --media-hashed-id <id>",
+		Example: "  wistia captions purchase --media-hashed-id <id> --automated=false",
 		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runPurchaseCmd,
 		Annotations: map[string]string{
