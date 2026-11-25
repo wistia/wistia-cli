@@ -221,7 +221,7 @@ type GetAnalyticsAccountTopContentResponseBody3 struct {
 	// The number of unique visitors.
 	UniqueVisitors optionalnullable.OptionalNullable[int64] `json:"unique_visitors,omitzero"`
 	// Total time spent watching in seconds.
-	PlayedTime optionalnullable.OptionalNullable[float32] `json:"played_time,omitzero"`
+	PlayedTime optionalnullable.OptionalNullable[float64] `json:"played_time,omitzero"`
 	// The name of the folder.
 	ProjectName optionalnullable.OptionalNullable[string] `json:"project_name,omitzero"`
 	// The hashed ID of the folder.
@@ -273,7 +273,7 @@ func (g *GetAnalyticsAccountTopContentResponseBody3) GetUniqueVisitors() optiona
 	return g.UniqueVisitors
 }
 
-func (g *GetAnalyticsAccountTopContentResponseBody3) GetPlayedTime() optionalnullable.OptionalNullable[float32] {
+func (g *GetAnalyticsAccountTopContentResponseBody3) GetPlayedTime() optionalnullable.OptionalNullable[float64] {
 	if g == nil {
 		return nil
 	}
@@ -328,7 +328,7 @@ type GetAnalyticsAccountTopContentResponseBody2 struct {
 	// The number of unique visitors.
 	UniqueVisitors optionalnullable.OptionalNullable[int64] `json:"unique_visitors,omitzero"`
 	// Total time spent watching in seconds.
-	PlayedTime optionalnullable.OptionalNullable[float32] `json:"played_time,omitzero"`
+	PlayedTime optionalnullable.OptionalNullable[float64] `json:"played_time,omitzero"`
 	// The title of the channel.
 	ChannelTitle optionalnullable.OptionalNullable[string] `json:"channel_title,omitzero"`
 	// The hashed ID of the channel.
@@ -380,7 +380,7 @@ func (g *GetAnalyticsAccountTopContentResponseBody2) GetUniqueVisitors() optiona
 	return g.UniqueVisitors
 }
 
-func (g *GetAnalyticsAccountTopContentResponseBody2) GetPlayedTime() optionalnullable.OptionalNullable[float32] {
+func (g *GetAnalyticsAccountTopContentResponseBody2) GetPlayedTime() optionalnullable.OptionalNullable[float64] {
 	if g == nil {
 		return nil
 	}
@@ -435,7 +435,7 @@ type GetAnalyticsAccountTopContentResponseBody1 struct {
 	// The number of unique visitors.
 	UniqueVisitors optionalnullable.OptionalNullable[int64] `json:"unique_visitors,omitzero"`
 	// Total time spent watching in seconds.
-	PlayedTime optionalnullable.OptionalNullable[float32] `json:"played_time,omitzero"`
+	PlayedTime optionalnullable.OptionalNullable[float64] `json:"played_time,omitzero"`
 	// The name of the media.
 	MediaName optionalnullable.OptionalNullable[string] `json:"media_name,omitzero"`
 	// The hashed ID of the media.
@@ -450,6 +450,8 @@ type GetAnalyticsAccountTopContentResponseBody1 struct {
 	MediaUploadedAt optionalnullable.OptionalNullable[string] `json:"media_uploaded_at,omitzero"`
 	// When the media was deleted, in ISO 8601 format. Null for media that still exist.
 	MediaDeletedAt optionalnullable.OptionalNullable[string] `json:"media_deleted_at,omitzero"`
+	// The number of times the media was loaded. 0 or null means nothing was recorded in the period.
+	Loads optionalnullable.OptionalNullable[int64] `json:"loads,omitzero"`
 	// The number of unique video loads.
 	UniqueLoads optionalnullable.OptionalNullable[int64] `json:"unique_loads,omitzero"`
 	// The number of unique video plays.
@@ -503,7 +505,7 @@ func (g *GetAnalyticsAccountTopContentResponseBody1) GetUniqueVisitors() optiona
 	return g.UniqueVisitors
 }
 
-func (g *GetAnalyticsAccountTopContentResponseBody1) GetPlayedTime() optionalnullable.OptionalNullable[float32] {
+func (g *GetAnalyticsAccountTopContentResponseBody1) GetPlayedTime() optionalnullable.OptionalNullable[float64] {
 	if g == nil {
 		return nil
 	}
@@ -557,6 +559,13 @@ func (g *GetAnalyticsAccountTopContentResponseBody1) GetMediaDeletedAt() optiona
 		return nil
 	}
 	return g.MediaDeletedAt
+}
+
+func (g *GetAnalyticsAccountTopContentResponseBody1) GetLoads() optionalnullable.OptionalNullable[int64] {
+	if g == nil {
+		return nil
+	}
+	return g.Loads
 }
 
 func (g *GetAnalyticsAccountTopContentResponseBody1) GetUniqueLoads() optionalnullable.OptionalNullable[int64] {

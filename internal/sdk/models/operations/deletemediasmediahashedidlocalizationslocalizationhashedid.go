@@ -201,8 +201,8 @@ type DeleteMediasMediaHashedIDLocalizationsLocalizationHashedIDResponseBody stru
 	CreatedAt time.Time `json:"created_at"`
 	// The date when the localization was last updated.
 	UpdatedAt time.Time `json:"updated_at"`
-	// The date when the localization was ordered.
-	OrderedAt *time.Time `json:"ordered_at"`
+	// The date when the localization was requested.
+	RequestedAt *time.Time `json:"requested_at"`
 	// The date when the localization was enabled.
 	EnabledAt *time.Time `json:"enabled_at"`
 	// Whether or not the localization is enabled.
@@ -273,11 +273,11 @@ func (d *DeleteMediasMediaHashedIDLocalizationsLocalizationHashedIDResponseBody)
 	return d.UpdatedAt
 }
 
-func (d *DeleteMediasMediaHashedIDLocalizationsLocalizationHashedIDResponseBody) GetOrderedAt() *time.Time {
+func (d *DeleteMediasMediaHashedIDLocalizationsLocalizationHashedIDResponseBody) GetRequestedAt() *time.Time {
 	if d == nil {
 		return nil
 	}
-	return d.OrderedAt
+	return d.RequestedAt
 }
 
 func (d *DeleteMediasMediaHashedIDLocalizationsLocalizationHashedIDResponseBody) GetEnabledAt() *time.Time {

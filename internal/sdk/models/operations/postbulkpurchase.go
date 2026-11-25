@@ -10,44 +10,43 @@ import (
 	"github.com/wistia/wistia-cli/internal/sdk/sdkinternal/utils"
 )
 
-// PostBulkPurchaseAction - A single paid order within a bulk purchase request.
+// PostBulkPurchaseAction - A single generation request within a bulk request.
 type PostBulkPurchaseAction struct {
-	// Always `purchase`. This endpoint places orders only; to create, update,
-	// or delete records in bulk use the Create Bulk Actions endpoint, which
-	// does not accept `purchase`.
+	// Always `generate`. This endpoint starts generation requests only; to
+	// create, update, or delete records in bulk use the Create Bulk Actions
+	// endpoint, which does not accept `generate`.
 	//
 	Operation PostBulkPurchaseOperation `json:"operation"`
-	// What to order for the media.
+	// What to generate for the media.
 	//
-	// `captions` orders Wistia-generated English captions -- computer-generated
-	// or human-reviewed. `localization` orders a dubbed, language-specific
-	// version of the media. `extended_audio_description` orders an extended
+	// `captions` produces English captions -- computer-generated or
+	// human-reviewed. `localization` produces a dubbed, language-specific
+	// version of the media. `extended_audio_description` produces an extended
 	// audio description track. `text_translation` translates the media's
 	// existing transcript into another language, leaving the audio alone.
 	//
 	ResourceType PostBulkPurchaseResourceType `json:"resource_type"`
-	// The hashed ID of the media to order for. Always the media's own ID: what
-	// the order produces does not exist yet.
+	// The hashed ID of the media to generate for. Always the media's own ID:
+	// what the request produces does not exist yet.
 	//
 	ID string `json:"id"`
-	// Order options. The accepted fields depend on the resource type and match
+	// Options. The accepted fields depend on the resource type and match
 	// the corresponding single-media endpoint's request body. Omit it to take
 	// every default.
 	//
-	// `captions` accepts `automated` (order computer-generated captions
-	// instead of human-reviewed ones), `rush` (one business day turnaround
-	// instead of four, human-reviewed only, at a higher per-minute rate), and
+	// `captions` accepts `automated` (computer-generated captions instead of
+	// human-reviewed ones), `rush` (one business day turnaround instead of
+	// four, human-reviewed only, metered at a higher per-minute rate), and
 	// `automatically_enable` (show the captions on the video as soon as they
 	// are ready). Each is treated as `false` when omitted or unrecognized.
-	// What each option costs depends on the account's plan and billing
-	// settings.
+	// How each option is metered depends on the account's plan and settings.
 	//
 	// `localization` requires `output_language`, a 3-character IETF language
 	// code, and accepts `auto_enable` (default `true`).
 	//
 	// `extended_audio_description` accepts `enabled` (default `true`),
 	// `ai_enabled` (default `true`), `ietf_language_tag` (default `eng`), and
-	// `order_instructions`.
+	// `instructions`.
 	//
 	// `text_translation` requires `target_language` and accepts
 	// `source_language` (which transcript to translate from, defaulting to the
@@ -96,13 +95,13 @@ func (p *PostBulkPurchaseAction) GetPayload() *PostBulkPurchasePayload {
 	return p.Payload
 }
 
-// PostBulkPurchaseOperation - Always `purchase`. This endpoint places orders only; to create, update,
-// or delete records in bulk use the Create Bulk Actions endpoint, which
-// does not accept `purchase`.
+// PostBulkPurchaseOperation - Always `generate`. This endpoint starts generation requests only; to
+// create, update, or delete records in bulk use the Create Bulk Actions
+// endpoint, which does not accept `generate`.
 type PostBulkPurchaseOperation string
 
 const (
-	PostBulkPurchaseOperationPurchase PostBulkPurchaseOperation = "purchase"
+	PostBulkPurchaseOperationGenerate PostBulkPurchaseOperation = "generate"
 )
 
 func (e PostBulkPurchaseOperation) ToPointer() *PostBulkPurchaseOperation {
@@ -114,7 +113,7 @@ func (e *PostBulkPurchaseOperation) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	switch v {
-	case "purchase":
+	case "generate":
 		*e = PostBulkPurchaseOperation(v)
 		return nil
 	default:
@@ -122,11 +121,11 @@ func (e *PostBulkPurchaseOperation) UnmarshalJSON(data []byte) error {
 	}
 }
 
-// PostBulkPurchaseResourceType - What to order for the media.
+// PostBulkPurchaseResourceType - What to generate for the media.
 //
-// `captions` orders Wistia-generated English captions -- computer-generated
-// or human-reviewed. `localization` orders a dubbed, language-specific
-// version of the media. `extended_audio_description` orders an extended
+// `captions` produces English captions -- computer-generated or
+// human-reviewed. `localization` produces a dubbed, language-specific
+// version of the media. `extended_audio_description` produces an extended
 // audio description track. `text_translation` translates the media's
 // existing transcript into another language, leaving the audio alone.
 type PostBulkPurchaseResourceType string
@@ -163,7 +162,7 @@ func (e *PostBulkPurchaseResourceType) UnmarshalJSON(data []byte) error {
 
 // PostBulkPurchaseType - The kind of parent `id` names. Required, because a hashed ID does not say
 // what it belongs to -- the same value could name a folder or a channel.
-// Use `account` to order for every media in the account.
+// Use `account` to generate for every media in the account.
 type PostBulkPurchaseType string
 
 const (
@@ -196,12 +195,12 @@ func (e *PostBulkPurchaseType) UnmarshalJSON(data []byte) error {
 	}
 }
 
-// PostBulkPurchaseScope - The parent whose media the order applies to. An order always addresses the
+// PostBulkPurchaseScope - The parent whose media the job applies to. A job always addresses the
 // media, so the valid parent types are the same for every resource type here.
 type PostBulkPurchaseScope struct {
 	// The kind of parent `id` names. Required, because a hashed ID does not say
 	// what it belongs to -- the same value could name a folder or a channel.
-	// Use `account` to order for every media in the account.
+	// Use `account` to generate for every media in the account.
 	//
 	Type PostBulkPurchaseType `json:"type"`
 	// The parent's hashed ID. Required for every scope type except `account`.
@@ -223,24 +222,23 @@ func (p *PostBulkPurchaseScope) GetID() *string {
 	return p.ID
 }
 
-// PostBulkPurchasePayload - Order options. The accepted fields depend on the resource type and match
+// PostBulkPurchasePayload - Options. The accepted fields depend on the resource type and match
 // the corresponding single-media endpoint's request body. Omit it to take
 // every default.
 //
-// `captions` accepts `automated` (order computer-generated captions
-// instead of human-reviewed ones), `rush` (one business day turnaround
-// instead of four, human-reviewed only, at a higher per-minute rate), and
+// `captions` accepts `automated` (computer-generated captions instead of
+// human-reviewed ones), `rush` (one business day turnaround instead of
+// four, human-reviewed only, metered at a higher per-minute rate), and
 // `automatically_enable` (show the captions on the video as soon as they
 // are ready). Each is treated as `false` when omitted or unrecognized.
-// What each option costs depends on the account's plan and billing
-// settings.
+// How each option is metered depends on the account's plan and settings.
 //
 // `localization` requires `output_language`, a 3-character IETF language
 // code, and accepts `auto_enable` (default `true`).
 //
 // `extended_audio_description` accepts `enabled` (default `true`),
 // `ai_enabled` (default `true`), `ietf_language_tag` (default `eng`), and
-// `order_instructions`.
+// `instructions`.
 //
 // `text_translation` requires `target_language` and accepts
 // `source_language` (which transcript to translate from, defaulting to the
@@ -249,42 +247,41 @@ func (p *PostBulkPurchaseScope) GetID() *string {
 type PostBulkPurchasePayload struct {
 }
 
-// PostBulkPurchaseJob - One order placed for many media, named by a parent (`scope`) or listed
-// explicitly (`ids`), so ordering captions for a folder of 47 videos takes one
-// job rather than 47 orders.
+// PostBulkPurchaseJob - One request applied to many media, named by a parent (`scope`) or listed
+// explicitly (`ids`), so generating captions for a folder of 47 videos takes
+// one job rather than 47 actions.
 //
 // A `scope` resolves to exactly what List Media returns for that parent,
 // including media in the folder's subfolders and **archived** media, and to at
 // most 5000 media -- beyond that the job is rejected rather than truncated.
 //
-// The job attempts one order for every media it resolves to. Ineligible media
-// fail individually without placing an order; successful orders are metered
-// and may incur charges according to the account's plan. Confirm the scope and
-// potential cost with the customer before submitting. Not available to external
-// contacts.
+// The job attempts one request for every media it resolves to. Ineligible
+// media fail individually without starting anything; successful requests are
+// metered according to the account's plan. Confirm the scope and applicable
+// rates with the customer before submitting. Not available to external contacts.
 type PostBulkPurchaseJob struct {
-	// Always `purchase`.
+	// Always `generate`.
 	Operation PostBulkPurchaseOperation `json:"operation"`
-	// What to order for the media.
+	// What to generate for the media.
 	//
-	// `captions` orders Wistia-generated English captions -- computer-generated
-	// or human-reviewed. `localization` orders a dubbed, language-specific
-	// version of the media. `extended_audio_description` orders an extended
+	// `captions` produces English captions -- computer-generated or
+	// human-reviewed. `localization` produces a dubbed, language-specific
+	// version of the media. `extended_audio_description` produces an extended
 	// audio description track. `text_translation` translates the media's
 	// existing transcript into another language, leaving the audio alone.
 	//
 	ResourceType PostBulkPurchaseResourceType `json:"resource_type"`
-	// The parent whose media the order applies to. An order always addresses the
+	// The parent whose media the job applies to. A job always addresses the
 	// media, so the valid parent types are the same for every resource type here.
 	//
 	Scope *PostBulkPurchaseScope `json:"scope,omitzero"`
-	// The media to order for, named explicitly. Use this instead of `scope`
+	// The media to generate for, named explicitly. Use this instead of `scope`
 	// when the media do not share a parent. Give either `scope` or `ids`, never
 	// both.
 	//
 	Ids []string `json:"ids,omitzero"`
-	// Order options applied to every matching media, in the same shape a single
-	// order's payload takes for this resource type.
+	// Options applied to every matching media, in the same shape a single
+	// action's payload takes for this resource type.
 	//
 	Payload *PostBulkPurchasePayload `json:"payload,omitzero"`
 }
@@ -335,36 +332,35 @@ func (p *PostBulkPurchaseJob) GetPayload() *PostBulkPurchasePayload {
 	return p.Payload
 }
 
-// PostBulkPurchaseRequest - A bulk purchase request, in one of two shapes.
+// PostBulkPurchaseRequest - A bulk generation request, in one of two shapes.
 //
-// Send `actions` to name each media individually, and `job` to order for every
-// media under a parent. Provide exactly one of them -- a request carrying both
-// is rejected, and so is a request carrying neither.
+// Send `actions` to name each media individually, and `job` to generate for
+// every media under a parent. Provide exactly one of them -- a request
+// carrying both is rejected, and so is a request carrying neither.
 type PostBulkPurchaseRequest struct {
-	// The orders to place, one per media. Maximum 1000 per request, and the
+	// The requests to start, one per media. Maximum 1000 per request, and the
 	// request body must stay under 2 MB -- whichever limit is reached first. An
-	// oversized body is rejected with a `413` and no order in it is placed.
+	// oversized body is rejected with a `413` and nothing in it is started.
 	//
-	// Every order is priced and placed independently: one failing (an
-	// ineligible media, an account without a saved card, a language that
+	// Every request is metered and started independently: one failing (an
+	// ineligible media, an account that cannot cover it, a language that
 	// already has a localization) does not stop the rest of the batch.
 	//
-	// Use `job` instead to order for a whole folder, channel, or account.
+	// Use `job` instead to generate for a whole folder, channel, or account.
 	//
 	Actions []PostBulkPurchaseAction `json:"actions,omitzero"`
-	// One order placed for many media, named by a parent (`scope`) or listed
-	// explicitly (`ids`), so ordering captions for a folder of 47 videos takes one
-	// job rather than 47 orders.
+	// One request applied to many media, named by a parent (`scope`) or listed
+	// explicitly (`ids`), so generating captions for a folder of 47 videos takes
+	// one job rather than 47 actions.
 	//
 	// A `scope` resolves to exactly what List Media returns for that parent,
 	// including media in the folder's subfolders and **archived** media, and to at
 	// most 5000 media -- beyond that the job is rejected rather than truncated.
 	//
-	// The job attempts one order for every media it resolves to. Ineligible media
-	// fail individually without placing an order; successful orders are metered
-	// and may incur charges according to the account's plan. Confirm the scope and
-	// potential cost with the customer before submitting. Not available to external
-	// contacts.
+	// The job attempts one request for every media it resolves to. Ineligible
+	// media fail individually without starting anything; successful requests are
+	// metered according to the account's plan. Confirm the scope and applicable
+	// rates with the customer before submitting. Not available to external contacts.
 	//
 	Job *PostBulkPurchaseJob `json:"job,omitzero"`
 }

@@ -59,7 +59,7 @@ func newBulk(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks *hooks.Ho
 // eligibility match the equivalent single-media endpoints exactly.
 //
 // Use the Create Bulk Actions endpoint for create, update, and delete work; it
-// does not accept `purchase`, and this endpoint accepts nothing else.
+// does not accept `generate`, and this endpoint accepts nothing else.
 //
 // ## Requires api token with one of the following permissions
 // ```

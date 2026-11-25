@@ -34,9 +34,9 @@ import (
 	"github.com/wistia/wistia-cli/internal/cli/localizations"
 	"github.com/wistia/wistia-cli/internal/cli/media"
 	"github.com/wistia/wistia-cli/internal/cli/mediaextendedaudiodescriptions"
+	"github.com/wistia/wistia-cli/internal/cli/pronunciationwords"
 	"github.com/wistia/wistia-cli/internal/cli/pushdevices"
 	"github.com/wistia/wistia-cli/internal/cli/recordingrooms"
-	"github.com/wistia/wistia-cli/internal/cli/remix"
 	"github.com/wistia/wistia-cli/internal/cli/resourceurls"
 	"github.com/wistia/wistia-cli/internal/cli/reviewbundles"
 	"github.com/wistia/wistia-cli/internal/cli/search"
@@ -235,8 +235,8 @@ func NewRootCommand() (*cobra.Command, error) {
 	if err := alloweddomains.InitAllowedDomainsRoot(rootCmd); err != nil {
 		return nil, fmt.Errorf("init allowed-domains: %w", err)
 	}
-	if err := remix.InitRemixRoot(rootCmd); err != nil {
-		return nil, fmt.Errorf("init remix: %w", err)
+	if err := pronunciationwords.InitPronunciationWordsRoot(rootCmd); err != nil {
+		return nil, fmt.Errorf("init pronunciation-words: %w", err)
 	}
 	if err := statsaccount.InitStatsAccountRoot(rootCmd); err != nil {
 		return nil, fmt.Errorf("init stats-account: %w", err)

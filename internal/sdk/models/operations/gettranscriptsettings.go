@@ -33,8 +33,8 @@ func (e *GetTranscriptSettingsCode) IsExact() bool {
 	return false
 }
 
-// KeywordLimits - The glossary limits and how much room is left.
-type KeywordLimits struct {
+// GetTranscriptSettingsKeywordLimits - The glossary limits and how much room is left.
+type GetTranscriptSettingsKeywordLimits struct {
 	MaxTerms int64 `json:"max_terms"`
 	// Counted across all terms, excluding the separators.
 	MaxCharacters       int64 `json:"max_characters"`
@@ -42,48 +42,48 @@ type KeywordLimits struct {
 	CharactersRemaining int64 `json:"characters_remaining"`
 }
 
-func (k *KeywordLimits) GetMaxTerms() int64 {
-	if k == nil {
+func (g *GetTranscriptSettingsKeywordLimits) GetMaxTerms() int64 {
+	if g == nil {
 		return 0
 	}
-	return k.MaxTerms
+	return g.MaxTerms
 }
 
-func (k *KeywordLimits) GetMaxCharacters() int64 {
-	if k == nil {
+func (g *GetTranscriptSettingsKeywordLimits) GetMaxCharacters() int64 {
+	if g == nil {
 		return 0
 	}
-	return k.MaxCharacters
+	return g.MaxCharacters
 }
 
-func (k *KeywordLimits) GetTermsRemaining() int64 {
-	if k == nil {
+func (g *GetTranscriptSettingsKeywordLimits) GetTermsRemaining() int64 {
+	if g == nil {
 		return 0
 	}
-	return k.TermsRemaining
+	return g.TermsRemaining
 }
 
-func (k *KeywordLimits) GetCharactersRemaining() int64 {
-	if k == nil {
+func (g *GetTranscriptSettingsKeywordLimits) GetCharactersRemaining() int64 {
+	if g == nil {
 		return 0
 	}
-	return k.CharactersRemaining
+	return g.CharactersRemaining
 }
 
-// AutomatedUnit - Unit of the per-minute price, either US dollars or Credits.
-type AutomatedUnit string
+// GetTranscriptSettingsAutomatedUnit - Unit of the per-minute price, either US dollars or Credits.
+type GetTranscriptSettingsAutomatedUnit string
 
 const (
-	AutomatedUnitUsd     AutomatedUnit = "usd"
-	AutomatedUnitCredits AutomatedUnit = "credits"
+	GetTranscriptSettingsAutomatedUnitUsd     GetTranscriptSettingsAutomatedUnit = "usd"
+	GetTranscriptSettingsAutomatedUnitCredits GetTranscriptSettingsAutomatedUnit = "credits"
 )
 
-func (e AutomatedUnit) ToPointer() *AutomatedUnit {
+func (e GetTranscriptSettingsAutomatedUnit) ToPointer() *GetTranscriptSettingsAutomatedUnit {
 	return &e
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *AutomatedUnit) IsExact() bool {
+func (e *GetTranscriptSettingsAutomatedUnit) IsExact() bool {
 	if e != nil {
 		switch *e {
 		case "usd", "credits":
@@ -93,42 +93,42 @@ func (e *AutomatedUnit) IsExact() bool {
 	return false
 }
 
-// Automated - Per-minute price for computer-generated transcripts.
-type Automated struct {
+// GetTranscriptSettingsAutomated - Per-minute price for computer-generated transcripts.
+type GetTranscriptSettingsAutomated struct {
 	// Exact price per billable minute, encoded as a decimal string.
 	PricePerMinute string `json:"price_per_minute"`
 	// Unit of the per-minute price, either US dollars or Credits.
-	Unit AutomatedUnit `json:"unit"`
+	Unit GetTranscriptSettingsAutomatedUnit `json:"unit"`
 }
 
-func (a *Automated) GetPricePerMinute() string {
-	if a == nil {
+func (g *GetTranscriptSettingsAutomated) GetPricePerMinute() string {
+	if g == nil {
 		return ""
 	}
-	return a.PricePerMinute
+	return g.PricePerMinute
 }
 
-func (a *Automated) GetUnit() AutomatedUnit {
-	if a == nil {
-		return AutomatedUnit("")
+func (g *GetTranscriptSettingsAutomated) GetUnit() GetTranscriptSettingsAutomatedUnit {
+	if g == nil {
+		return GetTranscriptSettingsAutomatedUnit("")
 	}
-	return a.Unit
+	return g.Unit
 }
 
-// StandardUnit - Unit of the per-minute price, either US dollars or Credits.
-type StandardUnit string
+// GetTranscriptSettingsStandardUnit - Unit of the per-minute price, either US dollars or Credits.
+type GetTranscriptSettingsStandardUnit string
 
 const (
-	StandardUnitUsd     StandardUnit = "usd"
-	StandardUnitCredits StandardUnit = "credits"
+	GetTranscriptSettingsStandardUnitUsd     GetTranscriptSettingsStandardUnit = "usd"
+	GetTranscriptSettingsStandardUnitCredits GetTranscriptSettingsStandardUnit = "credits"
 )
 
-func (e StandardUnit) ToPointer() *StandardUnit {
+func (e GetTranscriptSettingsStandardUnit) ToPointer() *GetTranscriptSettingsStandardUnit {
 	return &e
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *StandardUnit) IsExact() bool {
+func (e *GetTranscriptSettingsStandardUnit) IsExact() bool {
 	if e != nil {
 		switch *e {
 		case "usd", "credits":
@@ -138,42 +138,42 @@ func (e *StandardUnit) IsExact() bool {
 	return false
 }
 
-// Standard - Per-minute price for professional transcripts with standard turnaround.
-type Standard struct {
+// GetTranscriptSettingsStandard - Per-minute price for professional transcripts with standard turnaround.
+type GetTranscriptSettingsStandard struct {
 	// Exact price per billable minute, encoded as a decimal string.
 	PricePerMinute string `json:"price_per_minute"`
 	// Unit of the per-minute price, either US dollars or Credits.
-	Unit StandardUnit `json:"unit"`
+	Unit GetTranscriptSettingsStandardUnit `json:"unit"`
 }
 
-func (s *Standard) GetPricePerMinute() string {
-	if s == nil {
+func (g *GetTranscriptSettingsStandard) GetPricePerMinute() string {
+	if g == nil {
 		return ""
 	}
-	return s.PricePerMinute
+	return g.PricePerMinute
 }
 
-func (s *Standard) GetUnit() StandardUnit {
-	if s == nil {
-		return StandardUnit("")
+func (g *GetTranscriptSettingsStandard) GetUnit() GetTranscriptSettingsStandardUnit {
+	if g == nil {
+		return GetTranscriptSettingsStandardUnit("")
 	}
-	return s.Unit
+	return g.Unit
 }
 
-// RushUnit - Unit of the per-minute price, either US dollars or Credits.
-type RushUnit string
+// GetTranscriptSettingsRushUnit - Unit of the per-minute price, either US dollars or Credits.
+type GetTranscriptSettingsRushUnit string
 
 const (
-	RushUnitUsd     RushUnit = "usd"
-	RushUnitCredits RushUnit = "credits"
+	GetTranscriptSettingsRushUnitUsd     GetTranscriptSettingsRushUnit = "usd"
+	GetTranscriptSettingsRushUnitCredits GetTranscriptSettingsRushUnit = "credits"
 )
 
-func (e RushUnit) ToPointer() *RushUnit {
+func (e GetTranscriptSettingsRushUnit) ToPointer() *GetTranscriptSettingsRushUnit {
 	return &e
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *RushUnit) IsExact() bool {
+func (e *GetTranscriptSettingsRushUnit) IsExact() bool {
 	if e != nil {
 		switch *e {
 		case "usd", "credits":
@@ -183,91 +183,91 @@ func (e *RushUnit) IsExact() bool {
 	return false
 }
 
-// Rush - Per-minute price for professional transcripts with rushed turnaround.
-type Rush struct {
+// GetTranscriptSettingsRush - Per-minute price for professional transcripts with rushed turnaround.
+type GetTranscriptSettingsRush struct {
 	// Exact price per billable minute, encoded as a decimal string.
 	PricePerMinute string `json:"price_per_minute"`
 	// Unit of the per-minute price, either US dollars or Credits.
-	Unit RushUnit `json:"unit"`
+	Unit GetTranscriptSettingsRushUnit `json:"unit"`
 }
 
-func (r *Rush) GetPricePerMinute() string {
-	if r == nil {
+func (g *GetTranscriptSettingsRush) GetPricePerMinute() string {
+	if g == nil {
 		return ""
 	}
-	return r.PricePerMinute
+	return g.PricePerMinute
 }
 
-func (r *Rush) GetUnit() RushUnit {
-	if r == nil {
-		return RushUnit("")
+func (g *GetTranscriptSettingsRush) GetUnit() GetTranscriptSettingsRushUnit {
+	if g == nil {
+		return GetTranscriptSettingsRushUnit("")
 	}
-	return r.Unit
+	return g.Unit
 }
 
-// Pricing - Current per-minute rates for ordinary transcript purchases, before tax.
-// Complimentary automatic orders are not reflected in these rates.
+// GetTranscriptSettingsPricing - Current per-minute rates for ordinary transcript requests, before tax.
+// Complimentary automatic transcripts are not reflected in these rates.
 // Professional transcripts use Credits when enabled for the account, otherwise USD.
 // Automated transcripts use USD, including zero when included in the plan.
 // Subscription allowances and overage rates are not included.
-// Dollar orders round duration to the nearest minute, with a one-minute minimum.
-// Credit orders round duration up to whole minutes, with a one-minute minimum.
-type Pricing struct {
+// Requests metered in USD round duration to the nearest minute, with a one-minute minimum.
+// Requests metered in Credits round duration up to whole minutes, with a one-minute minimum.
+type GetTranscriptSettingsPricing struct {
 	// Per-minute price for computer-generated transcripts.
-	Automated Automated `json:"automated"`
+	Automated GetTranscriptSettingsAutomated `json:"automated"`
 	// Per-minute price for professional transcripts with standard turnaround.
-	Standard Standard `json:"standard"`
+	Standard GetTranscriptSettingsStandard `json:"standard"`
 	// Per-minute price for professional transcripts with rushed turnaround.
-	Rush Rush `json:"rush"`
+	Rush GetTranscriptSettingsRush `json:"rush"`
 }
 
-func (p *Pricing) GetAutomated() Automated {
-	if p == nil {
-		return Automated{}
+func (g *GetTranscriptSettingsPricing) GetAutomated() GetTranscriptSettingsAutomated {
+	if g == nil {
+		return GetTranscriptSettingsAutomated{}
 	}
-	return p.Automated
+	return g.Automated
 }
 
-func (p *Pricing) GetStandard() Standard {
-	if p == nil {
-		return Standard{}
+func (g *GetTranscriptSettingsPricing) GetStandard() GetTranscriptSettingsStandard {
+	if g == nil {
+		return GetTranscriptSettingsStandard{}
 	}
-	return p.Standard
+	return g.Standard
 }
 
-func (p *Pricing) GetRush() Rush {
-	if p == nil {
-		return Rush{}
+func (g *GetTranscriptSettingsPricing) GetRush() GetTranscriptSettingsRush {
+	if g == nil {
+		return GetTranscriptSettingsRush{}
 	}
-	return p.Rush
+	return g.Rush
 }
 
-// PlanConstraints - Which transcript settings the account's plan allows changing.
-type PlanConstraints struct {
+// GetTranscriptSettingsPlanConstraints - Which transcript settings the account's plan allows changing.
+type GetTranscriptSettingsPlanConstraints struct {
 	// False on free plans, which must keep automatic transcripts on.
 	CanDisableActive bool `json:"can_disable_active"`
 	// False on plans without free automated transcripts.
 	CanAutoGenerateChapters bool `json:"can_auto_generate_chapters"`
 }
 
-func (p *PlanConstraints) GetCanDisableActive() bool {
-	if p == nil {
+func (g *GetTranscriptSettingsPlanConstraints) GetCanDisableActive() bool {
+	if g == nil {
 		return false
 	}
-	return p.CanDisableActive
+	return g.CanDisableActive
 }
 
-func (p *PlanConstraints) GetCanAutoGenerateChapters() bool {
-	if p == nil {
+func (g *GetTranscriptSettingsPlanConstraints) GetCanAutoGenerateChapters() bool {
+	if g == nil {
 		return false
 	}
-	return p.CanAutoGenerateChapters
+	return g.CanAutoGenerateChapters
 }
 
 // GetTranscriptSettingsResponseBody - The account's transcript and caption defaults, including the keyword
-// glossary and transcript purchase rates. Account-wide; applies to future transcript orders.
+// glossary and transcript rates. Account-wide; applies to future transcripts.
 type GetTranscriptSettingsResponseBody struct {
-	// Whether transcripts are ordered automatically for every new video and podcast upload.
+	// Whether transcripts are generated automatically for every new video and podcast upload.
 	Active bool `json:"active"`
 	// True for computer-generated transcripts, false for professional transcripts.
 	Automated bool `json:"automated"`
@@ -288,18 +288,18 @@ type GetTranscriptSettingsResponseBody struct {
 	//
 	Keywords []string `json:"keywords"`
 	// The glossary limits and how much room is left.
-	KeywordLimits KeywordLimits `json:"keyword_limits"`
-	// Current per-minute rates for ordinary transcript purchases, before tax.
-	// Complimentary automatic orders are not reflected in these rates.
+	KeywordLimits GetTranscriptSettingsKeywordLimits `json:"keyword_limits"`
+	// Current per-minute rates for ordinary transcript requests, before tax.
+	// Complimentary automatic transcripts are not reflected in these rates.
 	// Professional transcripts use Credits when enabled for the account, otherwise USD.
 	// Automated transcripts use USD, including zero when included in the plan.
 	// Subscription allowances and overage rates are not included.
-	// Dollar orders round duration to the nearest minute, with a one-minute minimum.
-	// Credit orders round duration up to whole minutes, with a one-minute minimum.
+	// Requests metered in USD round duration to the nearest minute, with a one-minute minimum.
+	// Requests metered in Credits round duration up to whole minutes, with a one-minute minimum.
 	//
-	Pricing Pricing `json:"pricing"`
+	Pricing GetTranscriptSettingsPricing `json:"pricing"`
 	// Which transcript settings the account's plan allows changing.
-	PlanConstraints PlanConstraints `json:"plan_constraints"`
+	PlanConstraints GetTranscriptSettingsPlanConstraints `json:"plan_constraints"`
 }
 
 func (g *GetTranscriptSettingsResponseBody) GetActive() bool {
@@ -358,23 +358,23 @@ func (g *GetTranscriptSettingsResponseBody) GetKeywords() []string {
 	return g.Keywords
 }
 
-func (g *GetTranscriptSettingsResponseBody) GetKeywordLimits() KeywordLimits {
+func (g *GetTranscriptSettingsResponseBody) GetKeywordLimits() GetTranscriptSettingsKeywordLimits {
 	if g == nil {
-		return KeywordLimits{}
+		return GetTranscriptSettingsKeywordLimits{}
 	}
 	return g.KeywordLimits
 }
 
-func (g *GetTranscriptSettingsResponseBody) GetPricing() Pricing {
+func (g *GetTranscriptSettingsResponseBody) GetPricing() GetTranscriptSettingsPricing {
 	if g == nil {
-		return Pricing{}
+		return GetTranscriptSettingsPricing{}
 	}
 	return g.Pricing
 }
 
-func (g *GetTranscriptSettingsResponseBody) GetPlanConstraints() PlanConstraints {
+func (g *GetTranscriptSettingsResponseBody) GetPlanConstraints() GetTranscriptSettingsPlanConstraints {
 	if g == nil {
-		return PlanConstraints{}
+		return GetTranscriptSettingsPlanConstraints{}
 	}
 	return g.PlanConstraints
 }

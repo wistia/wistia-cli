@@ -16,7 +16,7 @@ import (
 
 var getCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "media-hashed-id", Shorthand: "m", FieldPath: "MediaHashedID", Kind: flagutil.FlagKindString, Required: true, Description: "The hashed ID of the media from which captions are to be retrieved. [required]"},
-	{FlagName: "language-code", Shorthand: "l", FieldPath: "LanguageCode", Kind: flagutil.FlagKindString, Required: true, Description: "The 3-character ISO 639-2 language code of the captions to be retrieved (e.g., 'eng', 'fra', 'spa'). Some languages use extended IETF subtags (e.g., 'zh-Hant'). [required]"},
+	{FlagName: "language-code", Shorthand: "l", FieldPath: "LanguageCode", Kind: flagutil.FlagKindString, Required: true, Description: "The 3-character ISO 639-2 language code of the captions to be retrieved (e.g., 'eng', 'fre', 'spa'). Some languages use extended IETF subtags (e.g., 'zh-Hant'). [required]"},
 	{FlagName: "include", FieldPath: "Include", Kind: flagutil.FlagKindEnum, Optional: true, EnumValues: []string{"segments", "diarized_segments"}, Description: "Set to 'segments' for time-coded caption cues or 'diarized_segments' for speaker-turn segments in JSON responses. (options: segments, diarized_segments)"},
 	{FlagName: "include-speakers", FieldPath: "IncludeSpeakers", Kind: flagutil.FlagKindBool, Optional: true, HasDefault: true, Description: "For TXT responses, set to true to group the transcript by speaker turns and include speaker labels. Ignored for other response formats."},
 }

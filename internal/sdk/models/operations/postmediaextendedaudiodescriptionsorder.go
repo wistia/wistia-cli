@@ -13,12 +13,12 @@ import (
 )
 
 // IetfLanguageTag - IETF language tag for the audio description. Defaults to `eng` (English).
-// Non-English orders must set `ai_enabled: false` — AI-generated audio
+// Non-English requests must set `ai_enabled: false` — AI-generated audio
 // descriptions are only available in English.
 //
-// Spanish (`es-419`) orders are only accepted when the source media is
+// Spanish (`es-419`) requests are only accepted when the source media is
 // tagged as a Spanish-language variant or has no detected language
-// (e.g. silent videos). Spanish orders against a media in another
+// (e.g. silent videos). Spanish requests against a media in another
 // language return `400`.
 type IetfLanguageTag string
 
@@ -47,21 +47,21 @@ func (e *IetfLanguageTag) UnmarshalJSON(data []byte) error {
 }
 
 type PostMediaExtendedAudioDescriptionsOrderRequest struct {
-	// The hashed id of the media to order the extended audio description for.
+	// The hashed id of the media to generate the extended audio description for.
 	MediaID string `json:"media_id"`
-	// Whether the extended audio description should be automatically enabled once the order is complete.
+	// Whether the extended audio description should be automatically enabled once it is ready.
 	Enabled *bool `default:"true" json:"enabled"`
-	// Whether to use AI-generated audio descriptions (cheaper) or human-generated (higher quality). AI is only available for English orders.
+	// Whether to use AI-generated audio descriptions or human-generated ones (higher quality, metered at a higher rate). AI is only available in English.
 	AiEnabled *bool `default:"true" json:"ai_enabled"`
 	// Optional instructions for the audio description provider.
-	OrderInstructions *string `json:"order_instructions,omitzero"`
+	Instructions *string `json:"instructions,omitzero"`
 	// IETF language tag for the audio description. Defaults to `eng` (English).
-	// Non-English orders must set `ai_enabled: false` — AI-generated audio
+	// Non-English requests must set `ai_enabled: false` — AI-generated audio
 	// descriptions are only available in English.
 	//
-	// Spanish (`es-419`) orders are only accepted when the source media is
+	// Spanish (`es-419`) requests are only accepted when the source media is
 	// tagged as a Spanish-language variant or has no detected language
-	// (e.g. silent videos). Spanish orders against a media in another
+	// (e.g. silent videos). Spanish requests against a media in another
 	// language return `400`.
 	//
 	IetfLanguageTag *IetfLanguageTag `default:"eng" json:"ietf_language_tag"`
@@ -99,11 +99,11 @@ func (p *PostMediaExtendedAudioDescriptionsOrderRequest) GetAiEnabled() *bool {
 	return p.AiEnabled
 }
 
-func (p *PostMediaExtendedAudioDescriptionsOrderRequest) GetOrderInstructions() *string {
+func (p *PostMediaExtendedAudioDescriptionsOrderRequest) GetInstructions() *string {
 	if p == nil {
 		return nil
 	}
-	return p.OrderInstructions
+	return p.Instructions
 }
 
 func (p *PostMediaExtendedAudioDescriptionsOrderRequest) GetIetfLanguageTag() *IetfLanguageTag {
@@ -138,22 +138,22 @@ func (e *PostMediaExtendedAudioDescriptionsOrderCode) IsExact() bool {
 	return false
 }
 
-// PostMediaExtendedAudioDescriptionsOrderOrderStatus - The current status of the order.
-type PostMediaExtendedAudioDescriptionsOrderOrderStatus string
+// PostMediaExtendedAudioDescriptionsOrderRequestStatus - The current status of the request.
+type PostMediaExtendedAudioDescriptionsOrderRequestStatus string
 
 const (
-	PostMediaExtendedAudioDescriptionsOrderOrderStatusInProgress PostMediaExtendedAudioDescriptionsOrderOrderStatus = "in_progress"
-	PostMediaExtendedAudioDescriptionsOrderOrderStatusCompleted  PostMediaExtendedAudioDescriptionsOrderOrderStatus = "completed"
-	PostMediaExtendedAudioDescriptionsOrderOrderStatusCancelled  PostMediaExtendedAudioDescriptionsOrderOrderStatus = "cancelled"
-	PostMediaExtendedAudioDescriptionsOrderOrderStatusFailed     PostMediaExtendedAudioDescriptionsOrderOrderStatus = "failed"
+	PostMediaExtendedAudioDescriptionsOrderRequestStatusInProgress PostMediaExtendedAudioDescriptionsOrderRequestStatus = "in_progress"
+	PostMediaExtendedAudioDescriptionsOrderRequestStatusCompleted  PostMediaExtendedAudioDescriptionsOrderRequestStatus = "completed"
+	PostMediaExtendedAudioDescriptionsOrderRequestStatusCancelled  PostMediaExtendedAudioDescriptionsOrderRequestStatus = "cancelled"
+	PostMediaExtendedAudioDescriptionsOrderRequestStatusFailed     PostMediaExtendedAudioDescriptionsOrderRequestStatus = "failed"
 )
 
-func (e PostMediaExtendedAudioDescriptionsOrderOrderStatus) ToPointer() *PostMediaExtendedAudioDescriptionsOrderOrderStatus {
+func (e PostMediaExtendedAudioDescriptionsOrderRequestStatus) ToPointer() *PostMediaExtendedAudioDescriptionsOrderRequestStatus {
 	return &e
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *PostMediaExtendedAudioDescriptionsOrderOrderStatus) IsExact() bool {
+func (e *PostMediaExtendedAudioDescriptionsOrderRequestStatus) IsExact() bool {
 	if e != nil {
 		switch *e {
 		case "in_progress", "completed", "cancelled", "failed":
@@ -227,85 +227,85 @@ func (p *PostMediaExtendedAudioDescriptionsOrderMediaExtendedAudioDescription) G
 	return p.URL
 }
 
-type PostMediaExtendedAudioDescriptionsOrderOrder struct {
-	// The hashed ID of the order. Use this to poll order status via the order_status endpoint.
+type PostMediaExtendedAudioDescriptionsOrderRequestResponse struct {
+	// The hashed ID of the request. Use it to poll the status endpoint.
 	ID string `json:"id"`
-	// The current status of the order.
-	OrderStatus PostMediaExtendedAudioDescriptionsOrderOrderStatus `json:"order_status"`
-	CreatedAt   time.Time                                          `json:"created_at"`
-	UpdatedAt   time.Time                                          `json:"updated_at"`
-	// IETF language tag the audio description was ordered in (e.g. `eng`, `es-419`).
+	// The current status of the request.
+	RequestStatus PostMediaExtendedAudioDescriptionsOrderRequestStatus `json:"request_status"`
+	CreatedAt     time.Time                                            `json:"created_at"`
+	UpdatedAt     time.Time                                            `json:"updated_at"`
+	// IETF language tag the audio description was requested in (e.g. `eng`, `es-419`).
 	IetfLanguageTag string                                       `json:"ietf_language_tag"`
 	Media           PostMediaExtendedAudioDescriptionsOrderMedia `json:"media"`
-	// Link to the resulting media extended audio description. Null while the order is in progress.
+	// Link to the resulting media extended audio description. Null while the request is in progress.
 	MediaExtendedAudioDescription optionalnullable.OptionalNullable[PostMediaExtendedAudioDescriptionsOrderMediaExtendedAudioDescription] `json:"media_extended_audio_description,omitzero"`
 }
 
-func (p PostMediaExtendedAudioDescriptionsOrderOrder) MarshalJSON() ([]byte, error) {
+func (p PostMediaExtendedAudioDescriptionsOrderRequestResponse) MarshalJSON() ([]byte, error) {
 	return utils.MarshalJSON(p, "", false)
 }
 
-func (p *PostMediaExtendedAudioDescriptionsOrderOrder) UnmarshalJSON(data []byte) error {
+func (p *PostMediaExtendedAudioDescriptionsOrderRequestResponse) UnmarshalJSON(data []byte) error {
 	if err := utils.UnmarshalJSON(data, &p, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (p *PostMediaExtendedAudioDescriptionsOrderOrder) GetID() string {
+func (p *PostMediaExtendedAudioDescriptionsOrderRequestResponse) GetID() string {
 	if p == nil {
 		return ""
 	}
 	return p.ID
 }
 
-func (p *PostMediaExtendedAudioDescriptionsOrderOrder) GetOrderStatus() PostMediaExtendedAudioDescriptionsOrderOrderStatus {
+func (p *PostMediaExtendedAudioDescriptionsOrderRequestResponse) GetRequestStatus() PostMediaExtendedAudioDescriptionsOrderRequestStatus {
 	if p == nil {
-		return PostMediaExtendedAudioDescriptionsOrderOrderStatus("")
+		return PostMediaExtendedAudioDescriptionsOrderRequestStatus("")
 	}
-	return p.OrderStatus
+	return p.RequestStatus
 }
 
-func (p *PostMediaExtendedAudioDescriptionsOrderOrder) GetCreatedAt() time.Time {
+func (p *PostMediaExtendedAudioDescriptionsOrderRequestResponse) GetCreatedAt() time.Time {
 	if p == nil {
 		return time.Time{}
 	}
 	return p.CreatedAt
 }
 
-func (p *PostMediaExtendedAudioDescriptionsOrderOrder) GetUpdatedAt() time.Time {
+func (p *PostMediaExtendedAudioDescriptionsOrderRequestResponse) GetUpdatedAt() time.Time {
 	if p == nil {
 		return time.Time{}
 	}
 	return p.UpdatedAt
 }
 
-func (p *PostMediaExtendedAudioDescriptionsOrderOrder) GetIetfLanguageTag() string {
+func (p *PostMediaExtendedAudioDescriptionsOrderRequestResponse) GetIetfLanguageTag() string {
 	if p == nil {
 		return ""
 	}
 	return p.IetfLanguageTag
 }
 
-func (p *PostMediaExtendedAudioDescriptionsOrderOrder) GetMedia() PostMediaExtendedAudioDescriptionsOrderMedia {
+func (p *PostMediaExtendedAudioDescriptionsOrderRequestResponse) GetMedia() PostMediaExtendedAudioDescriptionsOrderMedia {
 	if p == nil {
 		return PostMediaExtendedAudioDescriptionsOrderMedia{}
 	}
 	return p.Media
 }
 
-func (p *PostMediaExtendedAudioDescriptionsOrderOrder) GetMediaExtendedAudioDescription() optionalnullable.OptionalNullable[PostMediaExtendedAudioDescriptionsOrderMediaExtendedAudioDescription] {
+func (p *PostMediaExtendedAudioDescriptionsOrderRequestResponse) GetMediaExtendedAudioDescription() optionalnullable.OptionalNullable[PostMediaExtendedAudioDescriptionsOrderMediaExtendedAudioDescription] {
 	if p == nil {
 		return nil
 	}
 	return p.MediaExtendedAudioDescription
 }
 
-// PostMediaExtendedAudioDescriptionsOrderResponseBody - Extended audio description ordered successfully.
+// PostMediaExtendedAudioDescriptionsOrderResponseBody - Extended audio description requested successfully.
 type PostMediaExtendedAudioDescriptionsOrderResponseBody struct {
-	// Success message indicating the order has been placed.
-	Message string                                       `json:"message"`
-	Order   PostMediaExtendedAudioDescriptionsOrderOrder `json:"order"`
+	// Message confirming that the extended audio description has been requested.
+	Message string                                                 `json:"message"`
+	Request PostMediaExtendedAudioDescriptionsOrderRequestResponse `json:"request"`
 	// The credits held for the audio description, deducted when it completes. Null when the audio description is not paid for with credits. Decimal amounts are returned as strings.
 	ExpectedBilledCredits *string `json:"expected_billed_credits"`
 }
@@ -317,11 +317,11 @@ func (p *PostMediaExtendedAudioDescriptionsOrderResponseBody) GetMessage() strin
 	return p.Message
 }
 
-func (p *PostMediaExtendedAudioDescriptionsOrderResponseBody) GetOrder() PostMediaExtendedAudioDescriptionsOrderOrder {
+func (p *PostMediaExtendedAudioDescriptionsOrderResponseBody) GetRequest() PostMediaExtendedAudioDescriptionsOrderRequestResponse {
 	if p == nil {
-		return PostMediaExtendedAudioDescriptionsOrderOrder{}
+		return PostMediaExtendedAudioDescriptionsOrderRequestResponse{}
 	}
-	return p.Order
+	return p.Request
 }
 
 func (p *PostMediaExtendedAudioDescriptionsOrderResponseBody) GetExpectedBilledCredits() *string {
@@ -333,7 +333,7 @@ func (p *PostMediaExtendedAudioDescriptionsOrderResponseBody) GetExpectedBilledC
 
 type PostMediaExtendedAudioDescriptionsOrderResponse struct {
 	HTTPMeta components.HTTPMetadata `json:"-"`
-	// Extended audio description ordered successfully.
+	// Extended audio description requested successfully.
 	Object *PostMediaExtendedAudioDescriptionsOrderResponseBody
 }
 

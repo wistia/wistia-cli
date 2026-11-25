@@ -492,8 +492,8 @@ type PostMediasMediaHashedIDLocalizationsResponseBody struct {
 	CreatedAt time.Time `json:"created_at"`
 	// The date when the localization was last updated.
 	UpdatedAt time.Time `json:"updated_at"`
-	// The date when the localization was ordered.
-	OrderedAt *time.Time `json:"ordered_at"`
+	// The date when the localization was requested.
+	RequestedAt *time.Time `json:"requested_at"`
 	// The date when the localization was enabled.
 	EnabledAt *time.Time `json:"enabled_at"`
 	// Whether or not the localization is enabled.
@@ -576,11 +576,11 @@ func (p *PostMediasMediaHashedIDLocalizationsResponseBody) GetUpdatedAt() time.T
 	return p.UpdatedAt
 }
 
-func (p *PostMediasMediaHashedIDLocalizationsResponseBody) GetOrderedAt() *time.Time {
+func (p *PostMediasMediaHashedIDLocalizationsResponseBody) GetRequestedAt() *time.Time {
 	if p == nil {
 		return nil
 	}
-	return p.OrderedAt
+	return p.RequestedAt
 }
 
 func (p *PostMediasMediaHashedIDLocalizationsResponseBody) GetEnabledAt() *time.Time {

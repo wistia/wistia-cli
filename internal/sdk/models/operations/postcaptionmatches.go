@@ -18,9 +18,9 @@ type PostCaptionMatchesRequest struct {
 	LanguageCode *string `json:"language_code,omitzero"`
 	// One-based exact occurrence to start the page of matches at, including occurrences after the first 10.
 	Occurrence *int64 `json:"occurrence,omitzero"`
-	// Optional start of a time range used to disambiguate the match.
+	// Optional start of a time range used to disambiguate the match. Omit to start at the beginning.
 	StartMs *int64 `json:"start_ms,omitzero"`
-	// Optional end of a time range used to disambiguate the match.
+	// Optional end of a time range used to disambiguate the match. Omit to run to the end.
 	EndMs *int64 `json:"end_ms,omitzero"`
 }
 

@@ -140,8 +140,10 @@ func (s *Summary) GetFailed() int64 {
 	return s.Failed
 }
 
-// GetBackgroundJobStatusBackgroundJobStatusIDOperation - The operation that was performed. `purchase` appears only for
-// operations submitted through the Create Bulk Purchase endpoint.
+// GetBackgroundJobStatusBackgroundJobStatusIDOperation - The operation that was performed. `generate` appears only for
+// operations submitted through the Create Bulk Purchase endpoint, and
+// `purchase` only for those submitted before it was renamed to
+// `generate`.
 type GetBackgroundJobStatusBackgroundJobStatusIDOperation string
 
 const (
@@ -151,6 +153,7 @@ const (
 	GetBackgroundJobStatusBackgroundJobStatusIDOperationMove     GetBackgroundJobStatusBackgroundJobStatusIDOperation = "move"
 	GetBackgroundJobStatusBackgroundJobStatusIDOperationAddTags  GetBackgroundJobStatusBackgroundJobStatusIDOperation = "add_tags"
 	GetBackgroundJobStatusBackgroundJobStatusIDOperationArchive  GetBackgroundJobStatusBackgroundJobStatusIDOperation = "archive"
+	GetBackgroundJobStatusBackgroundJobStatusIDOperationGenerate GetBackgroundJobStatusBackgroundJobStatusIDOperation = "generate"
 	GetBackgroundJobStatusBackgroundJobStatusIDOperationPurchase GetBackgroundJobStatusBackgroundJobStatusIDOperation = "purchase"
 )
 
@@ -162,7 +165,7 @@ func (e GetBackgroundJobStatusBackgroundJobStatusIDOperation) ToPointer() *GetBa
 func (e *GetBackgroundJobStatusBackgroundJobStatusIDOperation) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "create", "update", "delete", "move", "add_tags", "archive", "purchase":
+		case "create", "update", "delete", "move", "add_tags", "archive", "generate", "purchase":
 			return true
 		}
 	}
@@ -195,8 +198,10 @@ func (e *ObjectStatus) IsExact() bool {
 type GetBackgroundJobStatusBackgroundJobStatusIDResult struct {
 	// The zero-based index of the action within the submitted batch.
 	Position int64 `json:"position"`
-	// The operation that was performed. `purchase` appears only for
-	// operations submitted through the Create Bulk Purchase endpoint.
+	// The operation that was performed. `generate` appears only for
+	// operations submitted through the Create Bulk Purchase endpoint, and
+	// `purchase` only for those submitted before it was renamed to
+	// `generate`.
 	//
 	Operation *GetBackgroundJobStatusBackgroundJobStatusIDOperation `json:"operation,omitzero"`
 	// The type of resource the action operated on.
@@ -423,6 +428,8 @@ type GetBackgroundJobStatusBackgroundJobStatusIDBackgroundJobStatus struct {
 	// poll content. Use `type` to discriminate which shape this is.
 	//
 	Object *Object `json:"object,omitzero"`
+	// Human-readable detail about the job's status, present only when the job type sets one.
+	Message *string `json:"message,omitzero"`
 }
 
 func (g *GetBackgroundJobStatusBackgroundJobStatusIDBackgroundJobStatus) GetID() int64 {
@@ -451,6 +458,13 @@ func (g *GetBackgroundJobStatusBackgroundJobStatusIDBackgroundJobStatus) GetObje
 		return nil
 	}
 	return g.Object
+}
+
+func (g *GetBackgroundJobStatusBackgroundJobStatusIDBackgroundJobStatus) GetMessage() *string {
+	if g == nil {
+		return nil
+	}
+	return g.Message
 }
 
 // GetBackgroundJobStatusBackgroundJobStatusIDResponseBody - OK
