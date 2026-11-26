@@ -37,8 +37,16 @@ func newSearch(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks *hooks.
 // descriptions, and transcripts; `total_count` and `counts_by_type` count every
 // match, not just the returned page, and `per_page=0` returns only the counts.
 //
+// This is a relevance search, not a lookup. A `query` also matches word prefixes,
+// close spellings, and words spoken in transcripts, and records come back best
+// match first. The matches for a query are broad and can change as
+// search improves, so don't depend on a query returning a particular set or number
+// of records. For an exact phrase or name, pass `exact_match=true`. For a record
+// whose hashed ID you know, use Show Media or Show Folder.
+//
 // Releases through 2026-09 serve the previous search, which takes `q` and nests
-// results by type under `data`.
+// results by type under `data`. To move to this search, send `query`
+// in place of `q` and read the records, each with a `type`, from `content`.
 //
 // ## Requires api token with one of the following permissions
 // ```

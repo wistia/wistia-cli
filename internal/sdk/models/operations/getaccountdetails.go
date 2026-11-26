@@ -46,6 +46,8 @@ type GetAccountDetailsResponseBody struct {
 	MediaCount int64 `json:"media_count"`
 	// The account's video limit
 	VideoLimit *int64 `json:"video_limit"`
+	// Whether the account restricts media and channel embeds by referring domain.
+	DomainRestriction bool `json:"domain_restriction"`
 	// The total number of folders in this account
 	FolderCount int64 `json:"folder_count"`
 	// The total number of channels in this account
@@ -85,6 +87,13 @@ func (g *GetAccountDetailsResponseBody) GetVideoLimit() *int64 {
 		return nil
 	}
 	return g.VideoLimit
+}
+
+func (g *GetAccountDetailsResponseBody) GetDomainRestriction() bool {
+	if g == nil {
+		return false
+	}
+	return g.DomainRestriction
 }
 
 func (g *GetAccountDetailsResponseBody) GetFolderCount() int64 {
