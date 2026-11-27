@@ -2237,10 +2237,9 @@ type PostChannelsResponseBody struct {
 	Name string `json:"name"`
 	// The link viewers use to watch the channel: the channel's active custom
 	// domain when one is attached, otherwise the Wistia-hosted channel page.
-	// This is the link to share with an audience.
 	//
 	PublicURL string `json:"public_url"`
-	// Whether the channel is locked. Only invited users logged into Wistia will be able to view this channel.
+	// Whether viewing the channel requires signing in to Wistia with channel access. Password protection is a separate setting.
 	Locked bool `json:"locked"`
 	// The date when the channel was last updated.
 	Updated time.Time `json:"updated"`

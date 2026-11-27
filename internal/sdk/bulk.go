@@ -56,10 +56,13 @@ func newBulk(rootSDK *Wistia, sdkConfig config.SDKConfiguration, hooks *hooks.Ho
 // Orders are priced and placed individually: failures -- an ineligible media,
 // a language that already has a localization, an account not entitled to buy
 // -- are reported per order and do not stop the rest of the batch. Pricing and
-// eligibility match the equivalent single-media endpoints exactly.
+// eligibility match the equivalent single-media endpoints exactly. A `captions`
+// request must set `automated` in its payload, and the whole request is
+// refused with a 400 without it.
 //
 // Use the Create Bulk Actions endpoint for create, update, and delete work; it
-// does not accept `purchase`, and this endpoint accepts nothing else.
+// also accepts `generate` for `captions` and `text_translation`, and this
+// endpoint accepts nothing else.
 //
 // ## Requires api token with one of the following permissions
 // ```

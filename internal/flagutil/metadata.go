@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"math"
 	"os"
 	"path/filepath"
@@ -662,6 +663,7 @@ func validateFieldPath(v reflect.Value, path string) error {
 // bodyFlagName is the name of the whole-body JSON flag (e.g. "body"). When non-empty and the
 // flag is set, its value takes priority over stdin. Individual flags always override both.
 func BuildRequest[T any](cmd *cobra.Command, meta []FlagMeta, bodyFieldPath string, bodyFlagName string) (*T, error) {
+	defer utils.PreserveJSONNumbers()()
 	var req T
 	v := reflect.ValueOf(&req).Elem()
 	bodyPrePopulated := false
@@ -689,7 +691,7 @@ func BuildRequest[T any](cmd *cobra.Command, meta []FlagMeta, bodyFieldPath stri
 			return enforceStrictOrWarn(cmd, verifyBodyKeys(source, data, bodyField, u))
 		}
 		withDefaults := applyNestedUnionDefaults(data, meta, "", reflect.TypeOf(req))
-		if err := json.Unmarshal(withDefaults, &req); err != nil {
+		if err := decodeJSONNumbers(withDefaults, &req); err != nil {
 			return newDecodeError("failed to parse "+source+" as JSON", err)
 		}
 		v = reflect.ValueOf(&req).Elem() // refresh after unmarshal
@@ -798,6 +800,7 @@ func BuildRequest[T any](cmd *cobra.Command, meta []FlagMeta, bodyFieldPath stri
 // This handles the IsRequestBody pattern where the entire body is a single JSON blob.
 // When isRequired is false and no input is provided, returns (nil, nil) instead of an error.
 func BuildRequestBody[T any](cmd *cobra.Command, flagName string, annotations string, isRequired bool) (*T, error) {
+	defer utils.PreserveJSONNumbers()()
 	var requestData string
 
 	if FlagChanged(cmd, flagName) {
@@ -1398,13 +1401,28 @@ func unmarshalIntoField(field reflect.Value, data []byte) error {
 		fieldType = fieldType.Elem()
 	}
 	target := reflect.New(fieldType)
-	if err := json.Unmarshal(data, target.Interface()); err != nil {
+	if err := decodeJSONNumbers(data, target.Interface()); err != nil {
 		return err
 	}
 	if isPtr {
 		field.Set(target)
 	} else {
 		field.Set(target.Elem())
+	}
+	return nil
+}
+
+func decodeJSONNumbers(data []byte, v any) error {
+	dec := json.NewDecoder(bytes.NewReader(data))
+	dec.UseNumber()
+	if err := dec.Decode(v); err != nil {
+		return err
+	}
+	if _, err := dec.Token(); err != io.EOF {
+		if err == nil {
+			err = errors.New("invalid character after top-level value")
+		}
+		return err
 	}
 	return nil
 }
@@ -2121,11 +2139,12 @@ func buildJSONField(cmd *cobra.Command, v reflect.Value, m FlagMeta) error {
 		}
 	}
 
-	// For interface{} fields, use standard json.Unmarshal since the SDK's custom
-	// unmarshaler doesn't handle unaddressable interface values.
+	// For interface{} fields, decode with the standard library (keeping numbers
+	// as json.Number) since the SDK's custom unmarshaler doesn't handle
+	// unaddressable interface values.
 	if fieldType.Kind() == reflect.Interface {
 		var parsed interface{}
-		if err := json.Unmarshal([]byte(val), &parsed); err != nil {
+		if err := decodeJSONNumbers([]byte(val), &parsed); err != nil {
 			// Not valid JSON — treat as raw string
 			parsed = val
 		}
@@ -2509,33 +2528,49 @@ func buildUnionField(cmd *cobra.Command, root reflect.Value, m FlagMeta) error {
 		// Variant fields are always *VariantType pointers
 		variantType := variantStructField.Type.Elem()
 
-		// Priority 2: Variant-level JSON flag
+		// Priority 2: Variant-level JSON flag, with that variant's expanded
+		// field flags applied on top
 		if FlagChanged(cmd, v.FlagName) {
 			jsonStr, _ := GetStringFlag(cmd, v.FlagName)
 			variantPtr := reflect.New(variantType)
 			if err := utils.UnmarshalJsonFromString(jsonStr, variantPtr.Interface(), ""); err != nil {
 				return newDecodeError("invalid value for --"+v.FlagName, err)
 			}
+			if err := enforceStrictOrWarn(cmd, verifyBodyKeys("--"+v.FlagName, []byte(jsonStr), variantPtr, nil)); err != nil {
+				return err
+			}
 			injectDiscriminator(variantPtr.Elem(), u.DiscriminatorKey, v.DiscriminatorValue)
+			if v.CanExpand {
+				for _, fm := range relaxVariantFields(v.Fields) {
+					if err := buildFieldOnValue(cmd, variantPtr.Elem(), fm); err != nil {
+						return err
+					}
+				}
+			}
 			unionVal := assembleUnionValue(unionType, v.FieldName, variantPtr)
 			setUnionFieldValue(unionField, unionVal, isPtr)
 			return nil
 		}
 
-		// Priority 3: Expanded variant fields
+		// Priority 3: Expanded variant fields, layered over the same variant
+		// when --body or stdin already supplied it
 		if v.CanExpand {
-			variantVal := reflect.New(variantType).Elem()
+			variantPtr := reflect.New(variantType)
+			fields := v.Fields
+			if existing := existingUnionVariant(unionField, v.FieldName); existing.IsValid() {
+				variantPtr.Elem().Set(existing.Elem())
+				fields = relaxVariantFields(fields)
+			}
+			variantVal := variantPtr.Elem()
 			injectDiscriminator(variantVal, u.DiscriminatorKey, v.DiscriminatorValue)
 
 			// Build variant fields using the same per-kind builders
-			for _, fm := range v.Fields {
+			for _, fm := range fields {
 				if err := buildFieldOnValue(cmd, variantVal, fm); err != nil {
 					return err
 				}
 			}
 
-			variantPtr := reflect.New(variantType)
-			variantPtr.Elem().Set(variantVal)
 			unionVal := assembleUnionValue(unionType, v.FieldName, variantPtr)
 			setUnionFieldValue(unionField, unionVal, isPtr)
 			return nil
@@ -2543,6 +2578,35 @@ func buildUnionField(cmd *cobra.Command, root reflect.Value, m FlagMeta) error {
 	}
 
 	return nil
+}
+
+// existingUnionVariant returns the variant pointer already stored on a union
+// field, or an invalid Value when the field is unset or holds another variant.
+func existingUnionVariant(unionField reflect.Value, variantFieldName string) reflect.Value {
+	union := unionField
+	if union.Kind() == reflect.Ptr {
+		if union.IsNil() {
+			return reflect.Value{}
+		}
+		union = union.Elem()
+	}
+	variant := union.FieldByName(variantFieldName)
+	if !variant.IsValid() || variant.Kind() != reflect.Ptr || variant.IsNil() {
+		return reflect.Value{}
+	}
+	return variant
+}
+
+// relaxVariantFields keeps unset variant field flags from requiring or
+// defaulting values that an earlier source already supplied.
+func relaxVariantFields(fields []FlagMeta) []FlagMeta {
+	relaxed := make([]FlagMeta, len(fields))
+	copy(relaxed, fields)
+	for i := range relaxed {
+		relaxed[i].Required = false
+		relaxed[i].HasDefault = false
+	}
+	return relaxed
 }
 
 // setUnionFieldValue sets a union field on the request struct.

@@ -10,12 +10,12 @@ import (
 	"time"
 )
 
-type GetMediaExtendedAudioDescriptionsOrderStatusIDRequest struct {
-	// The hashed ID of the order returned from the order endpoint.
+type GetMediaExtendedAudioDescriptionsOrderStatusIDRequestRequest struct {
+	// The hashed ID returned when the extended audio description was requested.
 	ID string `pathParam:"style=simple,explode=false,name=id"`
 }
 
-func (g *GetMediaExtendedAudioDescriptionsOrderStatusIDRequest) GetID() string {
+func (g *GetMediaExtendedAudioDescriptionsOrderStatusIDRequestRequest) GetID() string {
 	if g == nil {
 		return ""
 	}
@@ -47,22 +47,22 @@ func (e *GetMediaExtendedAudioDescriptionsOrderStatusIDCode) IsExact() bool {
 	return false
 }
 
-// GetMediaExtendedAudioDescriptionsOrderStatusIDOrderStatus - The current status of the order.
-type GetMediaExtendedAudioDescriptionsOrderStatusIDOrderStatus string
+// GetMediaExtendedAudioDescriptionsOrderStatusIDRequestStatus - The current status of the request.
+type GetMediaExtendedAudioDescriptionsOrderStatusIDRequestStatus string
 
 const (
-	GetMediaExtendedAudioDescriptionsOrderStatusIDOrderStatusInProgress GetMediaExtendedAudioDescriptionsOrderStatusIDOrderStatus = "in_progress"
-	GetMediaExtendedAudioDescriptionsOrderStatusIDOrderStatusCompleted  GetMediaExtendedAudioDescriptionsOrderStatusIDOrderStatus = "completed"
-	GetMediaExtendedAudioDescriptionsOrderStatusIDOrderStatusCancelled  GetMediaExtendedAudioDescriptionsOrderStatusIDOrderStatus = "cancelled"
-	GetMediaExtendedAudioDescriptionsOrderStatusIDOrderStatusFailed     GetMediaExtendedAudioDescriptionsOrderStatusIDOrderStatus = "failed"
+	GetMediaExtendedAudioDescriptionsOrderStatusIDRequestStatusInProgress GetMediaExtendedAudioDescriptionsOrderStatusIDRequestStatus = "in_progress"
+	GetMediaExtendedAudioDescriptionsOrderStatusIDRequestStatusCompleted  GetMediaExtendedAudioDescriptionsOrderStatusIDRequestStatus = "completed"
+	GetMediaExtendedAudioDescriptionsOrderStatusIDRequestStatusCancelled  GetMediaExtendedAudioDescriptionsOrderStatusIDRequestStatus = "cancelled"
+	GetMediaExtendedAudioDescriptionsOrderStatusIDRequestStatusFailed     GetMediaExtendedAudioDescriptionsOrderStatusIDRequestStatus = "failed"
 )
 
-func (e GetMediaExtendedAudioDescriptionsOrderStatusIDOrderStatus) ToPointer() *GetMediaExtendedAudioDescriptionsOrderStatusIDOrderStatus {
+func (e GetMediaExtendedAudioDescriptionsOrderStatusIDRequestStatus) ToPointer() *GetMediaExtendedAudioDescriptionsOrderStatusIDRequestStatus {
 	return &e
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *GetMediaExtendedAudioDescriptionsOrderStatusIDOrderStatus) IsExact() bool {
+func (e *GetMediaExtendedAudioDescriptionsOrderStatusIDRequestStatus) IsExact() bool {
 	if e != nil {
 		switch *e {
 		case "in_progress", "completed", "cancelled", "failed":
@@ -136,95 +136,95 @@ func (g *GetMediaExtendedAudioDescriptionsOrderStatusIDMediaExtendedAudioDescrip
 	return g.URL
 }
 
-type GetMediaExtendedAudioDescriptionsOrderStatusIDOrder struct {
-	// The hashed ID of the order. Use this to poll order status via the order_status endpoint.
+type MediaExtendedAudioDescriptionsGetMediaExtendedAudioDescriptionsOrderStatusIDRequest struct {
+	// The hashed ID of the request. Use it to poll the status endpoint.
 	ID string `json:"id"`
-	// The current status of the order.
-	OrderStatus GetMediaExtendedAudioDescriptionsOrderStatusIDOrderStatus `json:"order_status"`
-	CreatedAt   time.Time                                                 `json:"created_at"`
-	UpdatedAt   time.Time                                                 `json:"updated_at"`
-	// IETF language tag the audio description was ordered in (e.g. `eng`, `es-419`).
+	// The current status of the request.
+	RequestStatus GetMediaExtendedAudioDescriptionsOrderStatusIDRequestStatus `json:"request_status"`
+	CreatedAt     time.Time                                                   `json:"created_at"`
+	UpdatedAt     time.Time                                                   `json:"updated_at"`
+	// IETF language tag the audio description was requested in (e.g. `eng`, `es-419`).
 	IetfLanguageTag string                                              `json:"ietf_language_tag"`
 	Media           GetMediaExtendedAudioDescriptionsOrderStatusIDMedia `json:"media"`
-	// Link to the resulting media extended audio description. Null while the order is in progress.
+	// Link to the resulting media extended audio description. Null while the request is in progress.
 	MediaExtendedAudioDescription optionalnullable.OptionalNullable[GetMediaExtendedAudioDescriptionsOrderStatusIDMediaExtendedAudioDescription] `json:"media_extended_audio_description,omitzero"`
 }
 
-func (g GetMediaExtendedAudioDescriptionsOrderStatusIDOrder) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(g, "", false)
+func (m MediaExtendedAudioDescriptionsGetMediaExtendedAudioDescriptionsOrderStatusIDRequest) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
 }
 
-func (g *GetMediaExtendedAudioDescriptionsOrderStatusIDOrder) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &g, "", false, nil); err != nil {
+func (m *MediaExtendedAudioDescriptionsGetMediaExtendedAudioDescriptionsOrderStatusIDRequest) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (g *GetMediaExtendedAudioDescriptionsOrderStatusIDOrder) GetID() string {
-	if g == nil {
+func (m *MediaExtendedAudioDescriptionsGetMediaExtendedAudioDescriptionsOrderStatusIDRequest) GetID() string {
+	if m == nil {
 		return ""
 	}
-	return g.ID
+	return m.ID
 }
 
-func (g *GetMediaExtendedAudioDescriptionsOrderStatusIDOrder) GetOrderStatus() GetMediaExtendedAudioDescriptionsOrderStatusIDOrderStatus {
-	if g == nil {
-		return GetMediaExtendedAudioDescriptionsOrderStatusIDOrderStatus("")
+func (m *MediaExtendedAudioDescriptionsGetMediaExtendedAudioDescriptionsOrderStatusIDRequest) GetRequestStatus() GetMediaExtendedAudioDescriptionsOrderStatusIDRequestStatus {
+	if m == nil {
+		return GetMediaExtendedAudioDescriptionsOrderStatusIDRequestStatus("")
 	}
-	return g.OrderStatus
+	return m.RequestStatus
 }
 
-func (g *GetMediaExtendedAudioDescriptionsOrderStatusIDOrder) GetCreatedAt() time.Time {
-	if g == nil {
+func (m *MediaExtendedAudioDescriptionsGetMediaExtendedAudioDescriptionsOrderStatusIDRequest) GetCreatedAt() time.Time {
+	if m == nil {
 		return time.Time{}
 	}
-	return g.CreatedAt
+	return m.CreatedAt
 }
 
-func (g *GetMediaExtendedAudioDescriptionsOrderStatusIDOrder) GetUpdatedAt() time.Time {
-	if g == nil {
+func (m *MediaExtendedAudioDescriptionsGetMediaExtendedAudioDescriptionsOrderStatusIDRequest) GetUpdatedAt() time.Time {
+	if m == nil {
 		return time.Time{}
 	}
-	return g.UpdatedAt
+	return m.UpdatedAt
 }
 
-func (g *GetMediaExtendedAudioDescriptionsOrderStatusIDOrder) GetIetfLanguageTag() string {
-	if g == nil {
+func (m *MediaExtendedAudioDescriptionsGetMediaExtendedAudioDescriptionsOrderStatusIDRequest) GetIetfLanguageTag() string {
+	if m == nil {
 		return ""
 	}
-	return g.IetfLanguageTag
+	return m.IetfLanguageTag
 }
 
-func (g *GetMediaExtendedAudioDescriptionsOrderStatusIDOrder) GetMedia() GetMediaExtendedAudioDescriptionsOrderStatusIDMedia {
-	if g == nil {
+func (m *MediaExtendedAudioDescriptionsGetMediaExtendedAudioDescriptionsOrderStatusIDRequest) GetMedia() GetMediaExtendedAudioDescriptionsOrderStatusIDMedia {
+	if m == nil {
 		return GetMediaExtendedAudioDescriptionsOrderStatusIDMedia{}
 	}
-	return g.Media
+	return m.Media
 }
 
-func (g *GetMediaExtendedAudioDescriptionsOrderStatusIDOrder) GetMediaExtendedAudioDescription() optionalnullable.OptionalNullable[GetMediaExtendedAudioDescriptionsOrderStatusIDMediaExtendedAudioDescription] {
-	if g == nil {
+func (m *MediaExtendedAudioDescriptionsGetMediaExtendedAudioDescriptionsOrderStatusIDRequest) GetMediaExtendedAudioDescription() optionalnullable.OptionalNullable[GetMediaExtendedAudioDescriptionsOrderStatusIDMediaExtendedAudioDescription] {
+	if m == nil {
 		return nil
 	}
-	return g.MediaExtendedAudioDescription
+	return m.MediaExtendedAudioDescription
 }
 
-// GetMediaExtendedAudioDescriptionsOrderStatusIDResponseBody - Order status retrieved successfully.
+// GetMediaExtendedAudioDescriptionsOrderStatusIDResponseBody - Status retrieved successfully.
 type GetMediaExtendedAudioDescriptionsOrderStatusIDResponseBody struct {
-	Order GetMediaExtendedAudioDescriptionsOrderStatusIDOrder `json:"order"`
+	Request MediaExtendedAudioDescriptionsGetMediaExtendedAudioDescriptionsOrderStatusIDRequest `json:"request"`
 }
 
-func (g *GetMediaExtendedAudioDescriptionsOrderStatusIDResponseBody) GetOrder() GetMediaExtendedAudioDescriptionsOrderStatusIDOrder {
+func (g *GetMediaExtendedAudioDescriptionsOrderStatusIDResponseBody) GetRequest() MediaExtendedAudioDescriptionsGetMediaExtendedAudioDescriptionsOrderStatusIDRequest {
 	if g == nil {
-		return GetMediaExtendedAudioDescriptionsOrderStatusIDOrder{}
+		return MediaExtendedAudioDescriptionsGetMediaExtendedAudioDescriptionsOrderStatusIDRequest{}
 	}
-	return g.Order
+	return g.Request
 }
 
 type GetMediaExtendedAudioDescriptionsOrderStatusIDResponse struct {
 	HTTPMeta components.HTTPMetadata `json:"-"`
-	// Order status retrieved successfully.
+	// Status retrieved successfully.
 	Object *GetMediaExtendedAudioDescriptionsOrderStatusIDResponseBody
 }
 

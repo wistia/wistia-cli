@@ -34,7 +34,8 @@ func initPostMultipartCmd(parent *cobra.Command) error {
 		RunE:    runPostMultipartCmd,
 		Aliases: []string{"pm"},
 		Annotations: map[string]string{
-			"speakeasy_operation": "post_/",
+			"speakeasy_operation":     "post_/",
+			"speakeasy_sdk_operation": "post_/_multipart",
 		},
 	}
 	flagutil.RegisterFlags(cmd, postMultipartCmdMeta)

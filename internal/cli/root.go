@@ -9,6 +9,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/wistia/wistia-cli/internal/cli/account"
+	"github.com/wistia/wistia-cli/internal/cli/accountactivity"
 	"github.com/wistia/wistia-cli/internal/cli/accounttrials"
 	"github.com/wistia/wistia-cli/internal/cli/alloweddomains"
 	"github.com/wistia/wistia-cli/internal/cli/analyticsaccount"
@@ -34,9 +35,9 @@ import (
 	"github.com/wistia/wistia-cli/internal/cli/localizations"
 	"github.com/wistia/wistia-cli/internal/cli/media"
 	"github.com/wistia/wistia-cli/internal/cli/mediaextendedaudiodescriptions"
+	"github.com/wistia/wistia-cli/internal/cli/pronunciationwords"
 	"github.com/wistia/wistia-cli/internal/cli/pushdevices"
 	"github.com/wistia/wistia-cli/internal/cli/recordingrooms"
-	"github.com/wistia/wistia-cli/internal/cli/remix"
 	"github.com/wistia/wistia-cli/internal/cli/resourceurls"
 	"github.com/wistia/wistia-cli/internal/cli/reviewbundles"
 	"github.com/wistia/wistia-cli/internal/cli/search"
@@ -82,6 +83,7 @@ func NewRootCommand() (*cobra.Command, error) {
 		Long:          "Data API: Wistia Data API",
 		SilenceUsage:  true,
 		SilenceErrors: true,
+		Annotations:   map[string]string{config.OptionalAnnotation: "true"},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if usage.UsageRequested(cmd) {
 				return usage.EmitSchema(cmd, cmd.OutOrStdout())
@@ -102,7 +104,10 @@ func NewRootCommand() (*cobra.Command, error) {
 				return err
 			}
 			if err := config.Init("wistia", "WISTIA_CLI"); err != nil {
-				return err
+				if !config.RunsWithoutConfig(cmd) {
+					return err
+				}
+				fmt.Fprintf(cmd.ErrOrStderr(), "Warning: %v\n", err)
 			}
 			config.SetKeyringWarningOutput(cmd.ErrOrStderr())
 			if noKeyring, changed := flagutil.GetBoolFlag(cmd, "no-keyring"); changed {
@@ -129,6 +134,9 @@ func NewRootCommand() (*cobra.Command, error) {
 	}
 	if err := custommetadatafielddefinitions.InitCustomMetadataFieldDefinitionsRoot(rootCmd); err != nil {
 		return nil, fmt.Errorf("init custom-metadata-field-definitions: %w", err)
+	}
+	if err := accountactivity.InitAccountActivityRoot(rootCmd); err != nil {
+		return nil, fmt.Errorf("init account-activity: %w", err)
 	}
 	if err := deletedmedia.InitDeletedMediaRoot(rootCmd); err != nil {
 		return nil, fmt.Errorf("init deleted-media: %w", err)
@@ -235,8 +243,8 @@ func NewRootCommand() (*cobra.Command, error) {
 	if err := alloweddomains.InitAllowedDomainsRoot(rootCmd); err != nil {
 		return nil, fmt.Errorf("init allowed-domains: %w", err)
 	}
-	if err := remix.InitRemixRoot(rootCmd); err != nil {
-		return nil, fmt.Errorf("init remix: %w", err)
+	if err := pronunciationwords.InitPronunciationWordsRoot(rootCmd); err != nil {
+		return nil, fmt.Errorf("init pronunciation-words: %w", err)
 	}
 	if err := statsaccount.InitStatsAccountRoot(rootCmd); err != nil {
 		return nil, fmt.Errorf("init stats-account: %w", err)
@@ -348,7 +356,9 @@ func NewRootCommand() (*cobra.Command, error) {
 	usage.MarkGenerated(rootCmd)
 
 	// Cobra creates its default help and completion commands lazily inside Execute.
-	usage.InitDefaultCommands(rootCmd)
+	for _, cmd := range usage.InitDefaultCommands(rootCmd) {
+		cmd.Annotations[config.OptionalAnnotation] = "true"
+	}
 	interactive.Intercept(rootCmd)
 	usage.Intercept(rootCmd)
 	// Cobra validates Args before any PersistentPreRunE runs.
@@ -446,15 +456,23 @@ func ExplorerHandoffArgs(root *cobra.Command, selectedArgs []string) []string {
 	if debug, _ := root.PersistentFlags().GetBool("debug"); debug {
 		handoffArgs = append(handoffArgs, "--debug")
 	}
-	// Rendering flags given to the explore invocation apply to the selected
-	// command: the fresh command tree re-parses argv (and resets the
-	// preparsed rendering state), so they must travel with it. The
-	// --name=value form keeps boolean flags from swallowing the next token.
-	for _, name := range []string{"output-format", "jq", "raw-output", "color"} {
-		if flag := root.PersistentFlags().Lookup(name); flag != nil && flag.Changed {
-			handoffArgs = append(handoffArgs, "--"+name+"="+flag.Value.String())
+	// Global flags given to the explore invocation (server, credentials,
+	// headers, rendering) apply to the selected command: the fresh command
+	// tree re-parses argv, so they must travel with it. The --name=value form
+	// keeps boolean flags from swallowing the next token.
+	handled := map[string]bool{"interactive": true, "no-interactive": true, "dry-run": true, "debug": true, "help": true}
+	root.PersistentFlags().VisitAll(func(flag *pflag.Flag) {
+		if !flag.Changed || handled[flag.Name] {
+			return
 		}
-	}
+		if values, ok := flag.Value.(pflag.SliceValue); ok {
+			for _, value := range values.GetSlice() {
+				handoffArgs = append(handoffArgs, "--"+flag.Name+"="+value)
+			}
+			return
+		}
+		handoffArgs = append(handoffArgs, "--"+flag.Name+"="+flag.Value.String())
+	})
 	return append(handoffArgs, selectedArgs...)
 }
 
