@@ -22,6 +22,15 @@ const (
 func (e Permission7) ToPointer() *Permission7 {
 	return &e
 }
+
+// Permission7Values returns every known Permission7 value in schema order.
+func Permission7Values() []Permission7 {
+	return []Permission7{
+		Permission7Show,
+		Permission7Update,
+		Permission7Destroy,
+	}
+}
 func (e *Permission7) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -91,6 +100,14 @@ const (
 func (e Permission6) ToPointer() *Permission6 {
 	return &e
 }
+
+// Permission6Values returns every known Permission6 value in schema order.
+func Permission6Values() []Permission6 {
+	return []Permission6{
+		Permission6Show,
+		Permission6Destroy,
+	}
+}
 func (e *Permission6) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -157,6 +174,15 @@ const (
 
 func (e Permission5) ToPointer() *Permission5 {
 	return &e
+}
+
+// Permission5Values returns every known Permission5 value in schema order.
+func Permission5Values() []Permission5 {
+	return []Permission5{
+		Permission5Show,
+		Permission5Update,
+		Permission5Destroy,
+	}
 }
 func (e *Permission5) UnmarshalJSON(data []byte) error {
 	var v string
@@ -230,6 +256,16 @@ const (
 func (e Permission4) ToPointer() *Permission4 {
 	return &e
 }
+
+// Permission4Values returns every known Permission4 value in schema order.
+func Permission4Values() []Permission4 {
+	return []Permission4{
+		Permission4Show,
+		Permission4Update,
+		Permission4Destroy,
+		Permission4ViewStats,
+	}
+}
 func (e *Permission4) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -294,26 +330,50 @@ func (w *WebinarAuthorization) GetPermissions() []Permission4 {
 type Permission3 string
 
 const (
-	Permission3Show                 Permission3 = "show"
-	Permission3CreateFolders        Permission3 = "create-folders"
-	Permission3CreateChannels       Permission3 = "create-channels"
-	Permission3CreateWebinars       Permission3 = "create-webinars"
-	Permission3ViewStats            Permission3 = "view-stats"
-	Permission3ManageTeam           Permission3 = "manage-team"
-	Permission3AccessCustomMetadata Permission3 = "access-custom-metadata"
-	Permission3ManageCustomMetadata Permission3 = "manage-custom-metadata"
-	Permission3ViewSpeakers         Permission3 = "view-speakers"
-	Permission3ManageSpeakers       Permission3 = "manage-speakers"
-	Permission3ViewTags             Permission3 = "view-tags"
-	Permission3ManageTags           Permission3 = "manage-tags"
-	Permission3ManageAllowedDomains Permission3 = "manage-allowed-domains"
-	Permission3ManageDeletedMedia   Permission3 = "manage-deleted-media"
-	Permission3CreateBrands         Permission3 = "create-brands"
-	Permission3ManageBrandPreload   Permission3 = "manage-brand-preload"
+	Permission3Show                     Permission3 = "show"
+	Permission3CreateFolders            Permission3 = "create-folders"
+	Permission3CreateChannels           Permission3 = "create-channels"
+	Permission3CreateWebinars           Permission3 = "create-webinars"
+	Permission3ViewStats                Permission3 = "view-stats"
+	Permission3ManageTeam               Permission3 = "manage-team"
+	Permission3AccessCustomMetadata     Permission3 = "access-custom-metadata"
+	Permission3ManageCustomMetadata     Permission3 = "manage-custom-metadata"
+	Permission3ViewSpeakers             Permission3 = "view-speakers"
+	Permission3ManageSpeakers           Permission3 = "manage-speakers"
+	Permission3ViewTags                 Permission3 = "view-tags"
+	Permission3ManageTags               Permission3 = "manage-tags"
+	Permission3ManageAllowedDomains     Permission3 = "manage-allowed-domains"
+	Permission3ManageDeletedMedia       Permission3 = "manage-deleted-media"
+	Permission3CreateBrands             Permission3 = "create-brands"
+	Permission3ManageBrandPreload       Permission3 = "manage-brand-preload"
+	Permission3ManageTranscriptSettings Permission3 = "manage-transcript-settings"
 )
 
 func (e Permission3) ToPointer() *Permission3 {
 	return &e
+}
+
+// Permission3Values returns every known Permission3 value in schema order.
+func Permission3Values() []Permission3 {
+	return []Permission3{
+		Permission3Show,
+		Permission3CreateFolders,
+		Permission3CreateChannels,
+		Permission3CreateWebinars,
+		Permission3ViewStats,
+		Permission3ManageTeam,
+		Permission3AccessCustomMetadata,
+		Permission3ManageCustomMetadata,
+		Permission3ViewSpeakers,
+		Permission3ManageSpeakers,
+		Permission3ViewTags,
+		Permission3ManageTags,
+		Permission3ManageAllowedDomains,
+		Permission3ManageDeletedMedia,
+		Permission3CreateBrands,
+		Permission3ManageBrandPreload,
+		Permission3ManageTranscriptSettings,
+	}
 }
 func (e *Permission3) UnmarshalJSON(data []byte) error {
 	var v string
@@ -352,6 +412,8 @@ func (e *Permission3) UnmarshalJSON(data []byte) error {
 	case "create-brands":
 		fallthrough
 	case "manage-brand-preload":
+		fallthrough
+	case "manage-transcript-settings":
 		*e = Permission3(v)
 		return nil
 	default:
@@ -375,6 +437,7 @@ func (e *Permission3) UnmarshalJSON(data []byte) error {
 // `manage-deleted-media` allows listing and restoring the deleted media the
 // token's media rules name. `create-brands` allows creating brands, and
 // `manage-brand-preload` allows updating the brand preload.
+// `manage-transcript-settings` allows adding, removing, replacing, and clearing transcript glossary terms.
 type AccountAuthorization struct {
 	//lint:ignore U1000 accessed via reflection for JSON marshaling
 	type_ string `const:"account" json:"type"`
@@ -426,6 +489,18 @@ const (
 
 func (e Permission2) ToPointer() *Permission2 {
 	return &e
+}
+
+// Permission2Values returns every known Permission2 value in schema order.
+func Permission2Values() []Permission2 {
+	return []Permission2{
+		Permission2Show,
+		Permission2Update,
+		Permission2Destroy,
+		Permission2Upload,
+		Permission2Share,
+		Permission2ViewStats,
+	}
 }
 func (e *Permission2) UnmarshalJSON(data []byte) error {
 	var v string
@@ -513,6 +588,23 @@ const (
 
 func (e Permission1) ToPointer() *Permission1 {
 	return &e
+}
+
+// Permission1Values returns every known Permission1 value in schema order.
+func Permission1Values() []Permission1 {
+	return []Permission1{
+		Permission1Show,
+		Permission1Update,
+		Permission1Destroy,
+		Permission1EditTranscripts,
+		Permission1ViewStats,
+		Permission1Translate,
+		Permission1Archive,
+		Permission1Edit,
+		Permission1Share,
+		Permission1OrderAudioDescriptions,
+		Permission1CreateTranscripts,
+	}
 }
 func (e *Permission1) UnmarshalJSON(data []byte) error {
 	var v string
@@ -890,6 +982,16 @@ const (
 
 func (e PostExpiringTokenCode) ToPointer() *PostExpiringTokenCode {
 	return &e
+}
+
+// PostExpiringTokenCodeValues returns every known PostExpiringTokenCode value in schema order.
+func PostExpiringTokenCodeValues() []PostExpiringTokenCode {
+	return []PostExpiringTokenCode{
+		PostExpiringTokenCodeUnauthorizedCredentials,
+		PostExpiringTokenCodeAccountInactive,
+		PostExpiringTokenCodeUnauthorizedScope,
+		PostExpiringTokenCodeUnauthorizedParams,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

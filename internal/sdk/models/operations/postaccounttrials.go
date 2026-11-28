@@ -23,6 +23,16 @@ func (e PostAccountTrialsCode) ToPointer() *PostAccountTrialsCode {
 	return &e
 }
 
+// PostAccountTrialsCodeValues returns every known PostAccountTrialsCode value in schema order.
+func PostAccountTrialsCodeValues() []PostAccountTrialsCode {
+	return []PostAccountTrialsCode{
+		PostAccountTrialsCodeUnauthorizedCredentials,
+		PostAccountTrialsCodeAccountInactive,
+		PostAccountTrialsCodeUnauthorizedScope,
+		PostAccountTrialsCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *PostAccountTrialsCode) IsExact() bool {
 	if e != nil {

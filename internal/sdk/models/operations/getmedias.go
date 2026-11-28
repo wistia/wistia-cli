@@ -24,6 +24,14 @@ const (
 func (e GetMediasEnabled) ToPointer() *GetMediasEnabled {
 	return &e
 }
+
+// GetMediasEnabledValues returns every known GetMediasEnabled value in schema order.
+func GetMediasEnabledValues() []GetMediasEnabled {
+	return []GetMediasEnabled{
+		GetMediasEnabledZero,
+		GetMediasEnabledOne,
+	}
+}
 func (e *GetMediasEnabled) UnmarshalJSON(data []byte) error {
 	var v int64
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -97,6 +105,16 @@ const (
 func (e GetMediasSortBy) ToPointer() *GetMediasSortBy {
 	return &e
 }
+
+// GetMediasSortByValues returns every known GetMediasSortBy value in schema order.
+func GetMediasSortByValues() []GetMediasSortBy {
+	return []GetMediasSortBy{
+		GetMediasSortByName,
+		GetMediasSortByCreated,
+		GetMediasSortByUpdated,
+		GetMediasSortByPosition,
+	}
+}
 func (e *GetMediasSortBy) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -128,6 +146,14 @@ const (
 func (e GetMediasSortDirection) ToPointer() *GetMediasSortDirection {
 	return &e
 }
+
+// GetMediasSortDirectionValues returns every known GetMediasSortDirection value in schema order.
+func GetMediasSortDirectionValues() []GetMediasSortDirection {
+	return []GetMediasSortDirection{
+		GetMediasSortDirectionZero,
+		GetMediasSortDirectionOne,
+	}
+}
 func (e *GetMediasSortDirection) UnmarshalJSON(data []byte) error {
 	var v int64
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -153,6 +179,13 @@ const (
 
 func (e GetMediasInclude) ToPointer() *GetMediasInclude {
 	return &e
+}
+
+// GetMediasIncludeValues returns every known GetMediasInclude value in schema order.
+func GetMediasIncludeValues() []GetMediasInclude {
+	return []GetMediasInclude{
+		GetMediasIncludeSpeakers,
+	}
 }
 func (e *GetMediasInclude) UnmarshalJSON(data []byte) error {
 	var v string
@@ -183,6 +216,19 @@ const (
 
 func (e GetMediasQueryParamType) ToPointer() *GetMediasQueryParamType {
 	return &e
+}
+
+// GetMediasQueryParamTypeValues returns every known GetMediasQueryParamType value in schema order.
+func GetMediasQueryParamTypeValues() []GetMediasQueryParamType {
+	return []GetMediasQueryParamType{
+		GetMediasQueryParamTypeVideo,
+		GetMediasQueryParamTypeAudio,
+		GetMediasQueryParamTypeImage,
+		GetMediasQueryParamTypePdfDocument,
+		GetMediasQueryParamTypeMicrosoftOfficeDocument,
+		GetMediasQueryParamTypeSwf,
+		GetMediasQueryParamTypeUnknownType,
+	}
 }
 func (e *GetMediasQueryParamType) UnmarshalJSON(data []byte) error {
 	var v string
@@ -376,6 +422,16 @@ func (e GetMediasCode) ToPointer() *GetMediasCode {
 	return &e
 }
 
+// GetMediasCodeValues returns every known GetMediasCode value in schema order.
+func GetMediasCodeValues() []GetMediasCode {
+	return []GetMediasCode{
+		GetMediasCodeUnauthorizedCredentials,
+		GetMediasCodeAccountInactive,
+		GetMediasCodeUnauthorizedScope,
+		GetMediasCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *GetMediasCode) IsExact() bool {
 	if e != nil {
@@ -404,6 +460,19 @@ func (e GetMediasTypeResponse) ToPointer() *GetMediasTypeResponse {
 	return &e
 }
 
+// GetMediasTypeResponseValues returns every known GetMediasTypeResponse value in schema order.
+func GetMediasTypeResponseValues() []GetMediasTypeResponse {
+	return []GetMediasTypeResponse{
+		GetMediasTypeResponseVideo,
+		GetMediasTypeResponseAudio,
+		GetMediasTypeResponseImage,
+		GetMediasTypeResponsePdfDocument,
+		GetMediasTypeResponseMicrosoftOfficeDocument,
+		GetMediasTypeResponseSwf,
+		GetMediasTypeResponseUnknownType,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *GetMediasTypeResponse) IsExact() bool {
 	if e != nil {
@@ -427,6 +496,16 @@ const (
 
 func (e GetMediasStatus) ToPointer() *GetMediasStatus {
 	return &e
+}
+
+// GetMediasStatusValues returns every known GetMediasStatus value in schema order.
+func GetMediasStatusValues() []GetMediasStatus {
+	return []GetMediasStatus{
+		GetMediasStatusQueued,
+		GetMediasStatusProcessing,
+		GetMediasStatusReady,
+		GetMediasStatusFailed,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
@@ -465,6 +544,41 @@ func (g *GetMediasThumbnail) GetHeight() *int64 {
 		return nil
 	}
 	return g.Height
+}
+
+// GetMediasTranscriptStatus - Whether the media has a transcript to read. - `ready`: a transcript can be read now in at least one language. - `generating`: none can be read yet, but one is being generated. - `failed`: an English transcript was ordered but none can be read or is being generated, and another order would be refused. - `none`: none can be read and none is being generated. Media without audio, such as images and PDFs, are always `none`.
+type GetMediasTranscriptStatus string
+
+const (
+	GetMediasTranscriptStatusReady      GetMediasTranscriptStatus = "ready"
+	GetMediasTranscriptStatusGenerating GetMediasTranscriptStatus = "generating"
+	GetMediasTranscriptStatusFailed     GetMediasTranscriptStatus = "failed"
+	GetMediasTranscriptStatusNone       GetMediasTranscriptStatus = "none"
+)
+
+func (e GetMediasTranscriptStatus) ToPointer() *GetMediasTranscriptStatus {
+	return &e
+}
+
+// GetMediasTranscriptStatusValues returns every known GetMediasTranscriptStatus value in schema order.
+func GetMediasTranscriptStatusValues() []GetMediasTranscriptStatus {
+	return []GetMediasTranscriptStatus{
+		GetMediasTranscriptStatusReady,
+		GetMediasTranscriptStatusGenerating,
+		GetMediasTranscriptStatusFailed,
+		GetMediasTranscriptStatusNone,
+	}
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetMediasTranscriptStatus) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "ready", "generating", "failed", "none":
+			return true
+		}
+	}
+	return false
 }
 
 type GetMediasFolder struct {
@@ -675,6 +789,72 @@ func (g *GetMediasSpeaker) GetName() string {
 	return g.Name
 }
 
+type GetMediasCompositeType string
+
+const (
+	GetMediasCompositeTypeRecording GetMediasCompositeType = "recording"
+	GetMediasCompositeTypeLiveVod   GetMediasCompositeType = "live_vod"
+)
+
+func (e GetMediasCompositeType) ToPointer() *GetMediasCompositeType {
+	return &e
+}
+
+// GetMediasCompositeTypeValues returns every known GetMediasCompositeType value in schema order.
+func GetMediasCompositeTypeValues() []GetMediasCompositeType {
+	return []GetMediasCompositeType{
+		GetMediasCompositeTypeRecording,
+		GetMediasCompositeTypeLiveVod,
+	}
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetMediasCompositeType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "recording", "live_vod":
+			return true
+		}
+	}
+	return false
+}
+
+type GetMediasRecorder string
+
+const (
+	GetMediasRecorderGroupRecord     GetMediasRecorder = "group_record"
+	GetMediasRecorderQuickRecord     GetMediasRecorder = "quick_record"
+	GetMediasRecorderDesktop         GetMediasRecorder = "desktop"
+	GetMediasRecorderAnonymousRecord GetMediasRecorder = "anonymous_record"
+	GetMediasRecorderLegacyRecord    GetMediasRecorder = "legacy_record"
+)
+
+func (e GetMediasRecorder) ToPointer() *GetMediasRecorder {
+	return &e
+}
+
+// GetMediasRecorderValues returns every known GetMediasRecorder value in schema order.
+func GetMediasRecorderValues() []GetMediasRecorder {
+	return []GetMediasRecorder{
+		GetMediasRecorderGroupRecord,
+		GetMediasRecorderQuickRecord,
+		GetMediasRecorderDesktop,
+		GetMediasRecorderAnonymousRecord,
+		GetMediasRecorderLegacyRecord,
+	}
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetMediasRecorder) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "group_record", "quick_record", "desktop", "anonymous_record", "legacy_record":
+			return true
+		}
+	}
+	return false
+}
+
 // GetMediasResponseBody - A media generally represents a video or an audio which can be embedded into your website.
 //
 // CDN-backed medias are accessible using this url structure: https://fast.wistia.com/embed/medias/{hashed_id}.m3u8.
@@ -713,7 +893,10 @@ type GetMediasResponseBody struct {
 	Thumbnail *GetMediasThumbnail                       `json:"thumbnail,omitzero"`
 	// Whether the media is protected by Private Video, which keeps its video files off the public delivery path. Null if the media is not protected.
 	Protected optionalnullable.OptionalNullable[bool] `json:"protected,omitzero"`
-	Folder    *GetMediasFolder                        `json:"folder"`
+	// Whether the media has a transcript to read. - `ready`: a transcript can be read now in at least one language. - `generating`: none can be read yet, but one is being generated. - `failed`: an English transcript was ordered but none can be read or is being generated, and another order would be refused. - `none`: none can be read and none is being generated. Media without audio, such as images and PDFs, are always `none`.
+	//
+	TranscriptStatus GetMediasTranscriptStatus `json:"transcript_status"`
+	Folder           *GetMediasFolder          `json:"folder"`
 	// An array of the assets available for this media.
 	Assets []GetMediasAsset `json:"assets,omitzero"`
 	// The subfolder (media group) in which the media appears. Null if the media is not in a subfolder.
@@ -722,6 +905,12 @@ type GetMediasResponseBody struct {
 	Tags []GetMediasTag `json:"tags,omitzero"`
 	// Active transcript speaker assignments used for diarization. Webinar hosts and panelists are not included. Present when `include=speakers` is requested.
 	Speakers []GetMediasSpeaker `json:"speakers,omitzero"`
+	// For a media a Mochine edit produced, the hashed ID of the edit revision that produced it. Get the edit with it (`GET /modern/mochine/edits/{id}`, the `get-mochine-edit` tool) to read the `source_media_ids` it was cut from; the edit's own `id` may differ. Null for other medias.
+	MochineEditID *string `json:"mochine_edit_id"`
+	// Set when the media is assembled from separate feeds: `recording` for a Wistia Record take, `live_vod` for the recording of a live event. Null for other medias, including a single feed of a take and Mochine edit outputs (see `mochine_edit_id`).
+	CompositeType *GetMediasCompositeType `json:"composite_type"`
+	// Set when `composite_type` is `recording`: the recorder that made the take. `group_record` for Group Record, `quick_record` for Quick Record in the browser, `desktop` for the desktop app, `anonymous_record` for a recording made without signing in and imported into the account, and `legacy_record` for the original single-person web recorder. Null for other medias.
+	Recorder *GetMediasRecorder `json:"recorder"`
 	// A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
 	Cursor optionalnullable.OptionalNullable[string] `json:"cursor,omitzero"`
 }
@@ -842,6 +1031,13 @@ func (g *GetMediasResponseBody) GetProtected() optionalnullable.OptionalNullable
 	return g.Protected
 }
 
+func (g *GetMediasResponseBody) GetTranscriptStatus() GetMediasTranscriptStatus {
+	if g == nil {
+		return GetMediasTranscriptStatus("")
+	}
+	return g.TranscriptStatus
+}
+
 func (g *GetMediasResponseBody) GetFolder() *GetMediasFolder {
 	if g == nil {
 		return nil
@@ -875,6 +1071,27 @@ func (g *GetMediasResponseBody) GetSpeakers() []GetMediasSpeaker {
 		return nil
 	}
 	return g.Speakers
+}
+
+func (g *GetMediasResponseBody) GetMochineEditID() *string {
+	if g == nil {
+		return nil
+	}
+	return g.MochineEditID
+}
+
+func (g *GetMediasResponseBody) GetCompositeType() *GetMediasCompositeType {
+	if g == nil {
+		return nil
+	}
+	return g.CompositeType
+}
+
+func (g *GetMediasResponseBody) GetRecorder() *GetMediasRecorder {
+	if g == nil {
+		return nil
+	}
+	return g.Recorder
 }
 
 func (g *GetMediasResponseBody) GetCursor() optionalnullable.OptionalNullable[string] {

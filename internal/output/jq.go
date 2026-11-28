@@ -5,7 +5,10 @@ package output
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
+	"io"
+	"strings"
 	"sync"
 
 	"github.com/itchyny/gojq"
@@ -49,7 +52,8 @@ func compileJqExpression(expression string) (*gojq.Code, error) {
 
 // ApplyJqFilter applies a jq expression to the given content and returns the results.
 // The content is first marshaled to JSON and back to ensure a clean interface{} structure,
-// then the jq expression is evaluated against it.
+// then the jq expression is evaluated against it. A jq halt or halt_error ends
+// evaluation: the results produced before it are returned with its *gojq.HaltError.
 func ApplyJqFilter(content interface{}, expression string) ([]interface{}, error) {
 	// Marshal to JSON and back to get a clean JSON-compatible structure.
 	// SDK types have custom marshal methods so we need to go through JSON
@@ -59,8 +63,8 @@ func ApplyJqFilter(content interface{}, expression string) ([]interface{}, error
 		return nil, fmt.Errorf("failed to marshal for jq: %w", err)
 	}
 
-	var data interface{}
-	if err := json.Unmarshal(jsonData, &data); err != nil {
+	data, err := decodeWithNumbers(jsonData)
+	if err != nil {
 		return nil, fmt.Errorf("failed to prepare data for jq: %w", err)
 	}
 
@@ -77,10 +81,50 @@ func ApplyJqFilter(content interface{}, expression string) ([]interface{}, error
 			break
 		}
 		if err, isErr := v.(error); isErr {
+			if halt := jqHalt(err); halt != nil {
+				return results, halt
+			}
 			return nil, fmt.Errorf("jq error: %w", err)
 		}
 		results = append(results, v)
 	}
 
 	return results, nil
+}
+
+func jqHalt(err error) *gojq.HaltError {
+	var halt *gojq.HaltError
+	if errors.As(err, &halt) {
+		return halt
+	}
+	return nil
+}
+
+// jqHaltOutcome follows jq: halt succeeds, halt_error writes its value to
+// stderr, and a non-zero halt_error fails the command with that value as the
+// message.
+func jqHaltOutcome(stderr io.Writer, halt *gojq.HaltError) error {
+	value := halt.Value()
+	if value == nil {
+		if halt.ExitCode() == 0 {
+			return nil
+		}
+		return errors.New("jq halt_error")
+	}
+	message, isString := value.(string)
+	if !isString {
+		data, err := json.Marshal(value)
+		if err != nil {
+			return fmt.Errorf("jq error: %w", halt)
+		}
+		message = string(data) + "\n"
+	}
+	if halt.ExitCode() == 0 {
+		_, err := io.WriteString(stderr, message)
+		return err
+	}
+	if message = strings.TrimRight(message, "\n"); message == "" {
+		message = "jq halt_error"
+	}
+	return errors.New(message)
 }

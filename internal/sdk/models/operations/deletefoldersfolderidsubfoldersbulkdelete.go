@@ -54,6 +54,16 @@ func (e DeleteFoldersFolderIDSubfoldersBulkDeleteCode) ToPointer() *DeleteFolder
 	return &e
 }
 
+// DeleteFoldersFolderIDSubfoldersBulkDeleteCodeValues returns every known DeleteFoldersFolderIDSubfoldersBulkDeleteCode value in schema order.
+func DeleteFoldersFolderIDSubfoldersBulkDeleteCodeValues() []DeleteFoldersFolderIDSubfoldersBulkDeleteCode {
+	return []DeleteFoldersFolderIDSubfoldersBulkDeleteCode{
+		DeleteFoldersFolderIDSubfoldersBulkDeleteCodeUnauthorizedCredentials,
+		DeleteFoldersFolderIDSubfoldersBulkDeleteCodeAccountInactive,
+		DeleteFoldersFolderIDSubfoldersBulkDeleteCodeUnauthorizedScope,
+		DeleteFoldersFolderIDSubfoldersBulkDeleteCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *DeleteFoldersFolderIDSubfoldersBulkDeleteCode) IsExact() bool {
 	if e != nil {
@@ -77,6 +87,16 @@ const (
 
 func (e DeleteFoldersFolderIDSubfoldersBulkDeleteStatus) ToPointer() *DeleteFoldersFolderIDSubfoldersBulkDeleteStatus {
 	return &e
+}
+
+// DeleteFoldersFolderIDSubfoldersBulkDeleteStatusValues returns every known DeleteFoldersFolderIDSubfoldersBulkDeleteStatus value in schema order.
+func DeleteFoldersFolderIDSubfoldersBulkDeleteStatusValues() []DeleteFoldersFolderIDSubfoldersBulkDeleteStatus {
+	return []DeleteFoldersFolderIDSubfoldersBulkDeleteStatus{
+		DeleteFoldersFolderIDSubfoldersBulkDeleteStatusQueued,
+		DeleteFoldersFolderIDSubfoldersBulkDeleteStatusStarted,
+		DeleteFoldersFolderIDSubfoldersBulkDeleteStatusFinished,
+		DeleteFoldersFolderIDSubfoldersBulkDeleteStatusFailed,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

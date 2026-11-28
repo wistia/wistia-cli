@@ -27,6 +27,18 @@ const (
 func (e GetAnalyticsAccountEmbedLocationsSortBy) ToPointer() *GetAnalyticsAccountEmbedLocationsSortBy {
 	return &e
 }
+
+// GetAnalyticsAccountEmbedLocationsSortByValues returns every known GetAnalyticsAccountEmbedLocationsSortBy value in schema order.
+func GetAnalyticsAccountEmbedLocationsSortByValues() []GetAnalyticsAccountEmbedLocationsSortBy {
+	return []GetAnalyticsAccountEmbedLocationsSortBy{
+		GetAnalyticsAccountEmbedLocationsSortByPlays,
+		GetAnalyticsAccountEmbedLocationsSortByLoads,
+		GetAnalyticsAccountEmbedLocationsSortByEngagementRate,
+		GetAnalyticsAccountEmbedLocationsSortByPlayRate,
+		GetAnalyticsAccountEmbedLocationsSortByPlayedTime,
+		GetAnalyticsAccountEmbedLocationsSortByUniqueVisitors,
+	}
+}
 func (e *GetAnalyticsAccountEmbedLocationsSortBy) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -61,6 +73,14 @@ const (
 
 func (e GetAnalyticsAccountEmbedLocationsSortDirection) ToPointer() *GetAnalyticsAccountEmbedLocationsSortDirection {
 	return &e
+}
+
+// GetAnalyticsAccountEmbedLocationsSortDirectionValues returns every known GetAnalyticsAccountEmbedLocationsSortDirection value in schema order.
+func GetAnalyticsAccountEmbedLocationsSortDirectionValues() []GetAnalyticsAccountEmbedLocationsSortDirection {
+	return []GetAnalyticsAccountEmbedLocationsSortDirection{
+		GetAnalyticsAccountEmbedLocationsSortDirectionAsc,
+		GetAnalyticsAccountEmbedLocationsSortDirectionDesc,
+	}
 }
 func (e *GetAnalyticsAccountEmbedLocationsSortDirection) UnmarshalJSON(data []byte) error {
 	var v string
@@ -149,6 +169,16 @@ const (
 
 func (e GetAnalyticsAccountEmbedLocationsCode) ToPointer() *GetAnalyticsAccountEmbedLocationsCode {
 	return &e
+}
+
+// GetAnalyticsAccountEmbedLocationsCodeValues returns every known GetAnalyticsAccountEmbedLocationsCode value in schema order.
+func GetAnalyticsAccountEmbedLocationsCodeValues() []GetAnalyticsAccountEmbedLocationsCode {
+	return []GetAnalyticsAccountEmbedLocationsCode{
+		GetAnalyticsAccountEmbedLocationsCodeUnauthorizedCredentials,
+		GetAnalyticsAccountEmbedLocationsCodeAccountInactive,
+		GetAnalyticsAccountEmbedLocationsCodeUnauthorizedScope,
+		GetAnalyticsAccountEmbedLocationsCodeUnauthorizedParams,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

@@ -10,7 +10,7 @@ import (
 type DeleteMediasMediaHashedIDCaptionsLanguageCodeRequest struct {
 	// Unique identifier for the media.
 	MediaHashedID string `pathParam:"style=simple,explode=false,name=mediaHashedId"`
-	// Language code conforming to ISO-639-2 for which the captions should be removed.
+	// Language code conforming to ISO-639-2 for which the captions should be removed. Must be the track's stored code (e.g., `fre`).
 	LanguageCode string `pathParam:"style=simple,explode=false,name=languageCode"`
 }
 
@@ -40,6 +40,16 @@ const (
 
 func (e DeleteMediasMediaHashedIDCaptionsLanguageCodeCode) ToPointer() *DeleteMediasMediaHashedIDCaptionsLanguageCodeCode {
 	return &e
+}
+
+// DeleteMediasMediaHashedIDCaptionsLanguageCodeCodeValues returns every known DeleteMediasMediaHashedIDCaptionsLanguageCodeCode value in schema order.
+func DeleteMediasMediaHashedIDCaptionsLanguageCodeCodeValues() []DeleteMediasMediaHashedIDCaptionsLanguageCodeCode {
+	return []DeleteMediasMediaHashedIDCaptionsLanguageCodeCode{
+		DeleteMediasMediaHashedIDCaptionsLanguageCodeCodeUnauthorizedCredentials,
+		DeleteMediasMediaHashedIDCaptionsLanguageCodeCodeAccountInactive,
+		DeleteMediasMediaHashedIDCaptionsLanguageCodeCodeUnauthorizedScope,
+		DeleteMediasMediaHashedIDCaptionsLanguageCodeCodeUnauthorizedParams,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

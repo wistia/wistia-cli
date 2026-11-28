@@ -159,6 +159,16 @@ func (e PutMediasMediaIDCustomizationsRelatedMediaCode) ToPointer() *PutMediasMe
 	return &e
 }
 
+// PutMediasMediaIDCustomizationsRelatedMediaCodeValues returns every known PutMediasMediaIDCustomizationsRelatedMediaCode value in schema order.
+func PutMediasMediaIDCustomizationsRelatedMediaCodeValues() []PutMediasMediaIDCustomizationsRelatedMediaCode {
+	return []PutMediasMediaIDCustomizationsRelatedMediaCode{
+		PutMediasMediaIDCustomizationsRelatedMediaCodeUnauthorizedCredentials,
+		PutMediasMediaIDCustomizationsRelatedMediaCodeAccountInactive,
+		PutMediasMediaIDCustomizationsRelatedMediaCodeUnauthorizedScope,
+		PutMediasMediaIDCustomizationsRelatedMediaCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *PutMediasMediaIDCustomizationsRelatedMediaCode) IsExact() bool {
 	if e != nil {

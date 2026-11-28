@@ -23,6 +23,14 @@ const (
 func (e GetMediaExtendedAudioDescriptionsEnabled) ToPointer() *GetMediaExtendedAudioDescriptionsEnabled {
 	return &e
 }
+
+// GetMediaExtendedAudioDescriptionsEnabledValues returns every known GetMediaExtendedAudioDescriptionsEnabled value in schema order.
+func GetMediaExtendedAudioDescriptionsEnabledValues() []GetMediaExtendedAudioDescriptionsEnabled {
+	return []GetMediaExtendedAudioDescriptionsEnabled{
+		GetMediaExtendedAudioDescriptionsEnabledZero,
+		GetMediaExtendedAudioDescriptionsEnabledOne,
+	}
+}
 func (e *GetMediaExtendedAudioDescriptionsEnabled) UnmarshalJSON(data []byte) error {
 	var v int64
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -94,6 +102,16 @@ const (
 func (e GetMediaExtendedAudioDescriptionsSortBy) ToPointer() *GetMediaExtendedAudioDescriptionsSortBy {
 	return &e
 }
+
+// GetMediaExtendedAudioDescriptionsSortByValues returns every known GetMediaExtendedAudioDescriptionsSortBy value in schema order.
+func GetMediaExtendedAudioDescriptionsSortByValues() []GetMediaExtendedAudioDescriptionsSortBy {
+	return []GetMediaExtendedAudioDescriptionsSortBy{
+		GetMediaExtendedAudioDescriptionsSortByLanguage,
+		GetMediaExtendedAudioDescriptionsSortByCreated,
+		GetMediaExtendedAudioDescriptionsSortByUpdated,
+		GetMediaExtendedAudioDescriptionsSortByID,
+	}
+}
 func (e *GetMediaExtendedAudioDescriptionsSortBy) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -124,6 +142,14 @@ const (
 
 func (e GetMediaExtendedAudioDescriptionsSortDirection) ToPointer() *GetMediaExtendedAudioDescriptionsSortDirection {
 	return &e
+}
+
+// GetMediaExtendedAudioDescriptionsSortDirectionValues returns every known GetMediaExtendedAudioDescriptionsSortDirection value in schema order.
+func GetMediaExtendedAudioDescriptionsSortDirectionValues() []GetMediaExtendedAudioDescriptionsSortDirection {
+	return []GetMediaExtendedAudioDescriptionsSortDirection{
+		GetMediaExtendedAudioDescriptionsSortDirectionZero,
+		GetMediaExtendedAudioDescriptionsSortDirectionOne,
+	}
 }
 func (e *GetMediaExtendedAudioDescriptionsSortDirection) UnmarshalJSON(data []byte) error {
 	var v int64
@@ -232,6 +258,16 @@ const (
 
 func (e GetMediaExtendedAudioDescriptionsCode) ToPointer() *GetMediaExtendedAudioDescriptionsCode {
 	return &e
+}
+
+// GetMediaExtendedAudioDescriptionsCodeValues returns every known GetMediaExtendedAudioDescriptionsCode value in schema order.
+func GetMediaExtendedAudioDescriptionsCodeValues() []GetMediaExtendedAudioDescriptionsCode {
+	return []GetMediaExtendedAudioDescriptionsCode{
+		GetMediaExtendedAudioDescriptionsCodeUnauthorizedCredentials,
+		GetMediaExtendedAudioDescriptionsCodeAccountInactive,
+		GetMediaExtendedAudioDescriptionsCodeUnauthorizedScope,
+		GetMediaExtendedAudioDescriptionsCodeUnauthorizedParams,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

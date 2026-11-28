@@ -23,6 +23,14 @@ const (
 func (e GetChannelsChannelHashedIDCollaboratorsEnabled) ToPointer() *GetChannelsChannelHashedIDCollaboratorsEnabled {
 	return &e
 }
+
+// GetChannelsChannelHashedIDCollaboratorsEnabledValues returns every known GetChannelsChannelHashedIDCollaboratorsEnabled value in schema order.
+func GetChannelsChannelHashedIDCollaboratorsEnabledValues() []GetChannelsChannelHashedIDCollaboratorsEnabled {
+	return []GetChannelsChannelHashedIDCollaboratorsEnabled{
+		GetChannelsChannelHashedIDCollaboratorsEnabledZero,
+		GetChannelsChannelHashedIDCollaboratorsEnabledOne,
+	}
+}
 func (e *GetChannelsChannelHashedIDCollaboratorsEnabled) UnmarshalJSON(data []byte) error {
 	var v int64
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -94,6 +102,15 @@ const (
 func (e GetChannelsChannelHashedIDCollaboratorsSortBy) ToPointer() *GetChannelsChannelHashedIDCollaboratorsSortBy {
 	return &e
 }
+
+// GetChannelsChannelHashedIDCollaboratorsSortByValues returns every known GetChannelsChannelHashedIDCollaboratorsSortBy value in schema order.
+func GetChannelsChannelHashedIDCollaboratorsSortByValues() []GetChannelsChannelHashedIDCollaboratorsSortBy {
+	return []GetChannelsChannelHashedIDCollaboratorsSortBy{
+		GetChannelsChannelHashedIDCollaboratorsSortByCreated,
+		GetChannelsChannelHashedIDCollaboratorsSortByUpdated,
+		GetChannelsChannelHashedIDCollaboratorsSortByID,
+	}
+}
 func (e *GetChannelsChannelHashedIDCollaboratorsSortBy) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -122,6 +139,14 @@ const (
 
 func (e GetChannelsChannelHashedIDCollaboratorsSortDirection) ToPointer() *GetChannelsChannelHashedIDCollaboratorsSortDirection {
 	return &e
+}
+
+// GetChannelsChannelHashedIDCollaboratorsSortDirectionValues returns every known GetChannelsChannelHashedIDCollaboratorsSortDirection value in schema order.
+func GetChannelsChannelHashedIDCollaboratorsSortDirectionValues() []GetChannelsChannelHashedIDCollaboratorsSortDirection {
+	return []GetChannelsChannelHashedIDCollaboratorsSortDirection{
+		GetChannelsChannelHashedIDCollaboratorsSortDirectionZero,
+		GetChannelsChannelHashedIDCollaboratorsSortDirectionOne,
+	}
 }
 func (e *GetChannelsChannelHashedIDCollaboratorsSortDirection) UnmarshalJSON(data []byte) error {
 	var v int64
@@ -234,6 +259,16 @@ func (e GetChannelsChannelHashedIDCollaboratorsCode) ToPointer() *GetChannelsCha
 	return &e
 }
 
+// GetChannelsChannelHashedIDCollaboratorsCodeValues returns every known GetChannelsChannelHashedIDCollaboratorsCode value in schema order.
+func GetChannelsChannelHashedIDCollaboratorsCodeValues() []GetChannelsChannelHashedIDCollaboratorsCode {
+	return []GetChannelsChannelHashedIDCollaboratorsCode{
+		GetChannelsChannelHashedIDCollaboratorsCodeUnauthorizedCredentials,
+		GetChannelsChannelHashedIDCollaboratorsCodeAccountInactive,
+		GetChannelsChannelHashedIDCollaboratorsCodeUnauthorizedScope,
+		GetChannelsChannelHashedIDCollaboratorsCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *GetChannelsChannelHashedIDCollaboratorsCode) IsExact() bool {
 	if e != nil {
@@ -255,6 +290,14 @@ const (
 
 func (e GetChannelsChannelHashedIDCollaboratorsRole) ToPointer() *GetChannelsChannelHashedIDCollaboratorsRole {
 	return &e
+}
+
+// GetChannelsChannelHashedIDCollaboratorsRoleValues returns every known GetChannelsChannelHashedIDCollaboratorsRole value in schema order.
+func GetChannelsChannelHashedIDCollaboratorsRoleValues() []GetChannelsChannelHashedIDCollaboratorsRole {
+	return []GetChannelsChannelHashedIDCollaboratorsRole{
+		GetChannelsChannelHashedIDCollaboratorsRoleAdmin,
+		GetChannelsChannelHashedIDCollaboratorsRoleViewer,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

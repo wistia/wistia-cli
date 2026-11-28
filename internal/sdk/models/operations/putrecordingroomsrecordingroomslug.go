@@ -66,6 +66,16 @@ func (e PutRecordingRoomsRecordingRoomSlugCode) ToPointer() *PutRecordingRoomsRe
 	return &e
 }
 
+// PutRecordingRoomsRecordingRoomSlugCodeValues returns every known PutRecordingRoomsRecordingRoomSlugCode value in schema order.
+func PutRecordingRoomsRecordingRoomSlugCodeValues() []PutRecordingRoomsRecordingRoomSlugCode {
+	return []PutRecordingRoomsRecordingRoomSlugCode{
+		PutRecordingRoomsRecordingRoomSlugCodeUnauthorizedCredentials,
+		PutRecordingRoomsRecordingRoomSlugCodeAccountInactive,
+		PutRecordingRoomsRecordingRoomSlugCodeUnauthorizedScope,
+		PutRecordingRoomsRecordingRoomSlugCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *PutRecordingRoomsRecordingRoomSlugCode) IsExact() bool {
 	if e != nil {

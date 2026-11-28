@@ -33,6 +33,16 @@ func (e DeleteMediasMediaIDShareLinkCode) ToPointer() *DeleteMediasMediaIDShareL
 	return &e
 }
 
+// DeleteMediasMediaIDShareLinkCodeValues returns every known DeleteMediasMediaIDShareLinkCode value in schema order.
+func DeleteMediasMediaIDShareLinkCodeValues() []DeleteMediasMediaIDShareLinkCode {
+	return []DeleteMediasMediaIDShareLinkCode{
+		DeleteMediasMediaIDShareLinkCodeUnauthorizedCredentials,
+		DeleteMediasMediaIDShareLinkCodeAccountInactive,
+		DeleteMediasMediaIDShareLinkCodeUnauthorizedScope,
+		DeleteMediasMediaIDShareLinkCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *DeleteMediasMediaIDShareLinkCode) IsExact() bool {
 	if e != nil {

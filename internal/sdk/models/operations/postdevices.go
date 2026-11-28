@@ -23,6 +23,14 @@ const (
 func (e EnvironmentRequest) ToPointer() *EnvironmentRequest {
 	return &e
 }
+
+// EnvironmentRequestValues returns every known EnvironmentRequest value in schema order.
+func EnvironmentRequestValues() []EnvironmentRequest {
+	return []EnvironmentRequest{
+		EnvironmentRequestSandbox,
+		EnvironmentRequestProduction,
+	}
+}
 func (e *EnvironmentRequest) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -83,6 +91,16 @@ func (e PostDevicesCode) ToPointer() *PostDevicesCode {
 	return &e
 }
 
+// PostDevicesCodeValues returns every known PostDevicesCode value in schema order.
+func PostDevicesCodeValues() []PostDevicesCode {
+	return []PostDevicesCode{
+		PostDevicesCodeUnauthorizedCredentials,
+		PostDevicesCodeAccountInactive,
+		PostDevicesCodeUnauthorizedScope,
+		PostDevicesCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *PostDevicesCode) IsExact() bool {
 	if e != nil {
@@ -104,6 +122,14 @@ const (
 
 func (e PostDevicesEnvironmentResponse) ToPointer() *PostDevicesEnvironmentResponse {
 	return &e
+}
+
+// PostDevicesEnvironmentResponseValues returns every known PostDevicesEnvironmentResponse value in schema order.
+func PostDevicesEnvironmentResponseValues() []PostDevicesEnvironmentResponse {
+	return []PostDevicesEnvironmentResponse{
+		PostDevicesEnvironmentResponseSandbox,
+		PostDevicesEnvironmentResponseProduction,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

@@ -23,6 +23,14 @@ const (
 func (e GetAllowedDomainsEnabled) ToPointer() *GetAllowedDomainsEnabled {
 	return &e
 }
+
+// GetAllowedDomainsEnabledValues returns every known GetAllowedDomainsEnabled value in schema order.
+func GetAllowedDomainsEnabledValues() []GetAllowedDomainsEnabled {
+	return []GetAllowedDomainsEnabled{
+		GetAllowedDomainsEnabledZero,
+		GetAllowedDomainsEnabledOne,
+	}
+}
 func (e *GetAllowedDomainsEnabled) UnmarshalJSON(data []byte) error {
 	var v int64
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -94,6 +102,15 @@ const (
 func (e GetAllowedDomainsSortBy) ToPointer() *GetAllowedDomainsSortBy {
 	return &e
 }
+
+// GetAllowedDomainsSortByValues returns every known GetAllowedDomainsSortBy value in schema order.
+func GetAllowedDomainsSortByValues() []GetAllowedDomainsSortBy {
+	return []GetAllowedDomainsSortBy{
+		GetAllowedDomainsSortByID,
+		GetAllowedDomainsSortByDomain,
+		GetAllowedDomainsSortByCreated,
+	}
+}
 func (e *GetAllowedDomainsSortBy) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -122,6 +139,14 @@ const (
 
 func (e GetAllowedDomainsSortDirection) ToPointer() *GetAllowedDomainsSortDirection {
 	return &e
+}
+
+// GetAllowedDomainsSortDirectionValues returns every known GetAllowedDomainsSortDirection value in schema order.
+func GetAllowedDomainsSortDirectionValues() []GetAllowedDomainsSortDirection {
+	return []GetAllowedDomainsSortDirection{
+		GetAllowedDomainsSortDirectionZero,
+		GetAllowedDomainsSortDirectionOne,
+	}
 }
 func (e *GetAllowedDomainsSortDirection) UnmarshalJSON(data []byte) error {
 	var v int64
@@ -223,6 +248,16 @@ const (
 
 func (e GetAllowedDomainsCode) ToPointer() *GetAllowedDomainsCode {
 	return &e
+}
+
+// GetAllowedDomainsCodeValues returns every known GetAllowedDomainsCode value in schema order.
+func GetAllowedDomainsCodeValues() []GetAllowedDomainsCode {
+	return []GetAllowedDomainsCode{
+		GetAllowedDomainsCodeUnauthorizedCredentials,
+		GetAllowedDomainsCodeAccountInactive,
+		GetAllowedDomainsCodeUnauthorizedScope,
+		GetAllowedDomainsCodeUnauthorizedParams,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

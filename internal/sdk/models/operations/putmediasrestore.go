@@ -43,6 +43,16 @@ func (e PutMediasRestoreCode) ToPointer() *PutMediasRestoreCode {
 	return &e
 }
 
+// PutMediasRestoreCodeValues returns every known PutMediasRestoreCode value in schema order.
+func PutMediasRestoreCodeValues() []PutMediasRestoreCode {
+	return []PutMediasRestoreCode{
+		PutMediasRestoreCodeUnauthorizedCredentials,
+		PutMediasRestoreCodeAccountInactive,
+		PutMediasRestoreCodeUnauthorizedScope,
+		PutMediasRestoreCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *PutMediasRestoreCode) IsExact() bool {
 	if e != nil {
@@ -66,6 +76,16 @@ const (
 
 func (e PutMediasRestoreStatus) ToPointer() *PutMediasRestoreStatus {
 	return &e
+}
+
+// PutMediasRestoreStatusValues returns every known PutMediasRestoreStatus value in schema order.
+func PutMediasRestoreStatusValues() []PutMediasRestoreStatus {
+	return []PutMediasRestoreStatus{
+		PutMediasRestoreStatusQueued,
+		PutMediasRestoreStatusStarted,
+		PutMediasRestoreStatusFinished,
+		PutMediasRestoreStatusFailed,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

@@ -64,6 +64,16 @@ func (e GetFoldersFolderIDSubfoldersSubfolderIDCode) ToPointer() *GetFoldersFold
 	return &e
 }
 
+// GetFoldersFolderIDSubfoldersSubfolderIDCodeValues returns every known GetFoldersFolderIDSubfoldersSubfolderIDCode value in schema order.
+func GetFoldersFolderIDSubfoldersSubfolderIDCodeValues() []GetFoldersFolderIDSubfoldersSubfolderIDCode {
+	return []GetFoldersFolderIDSubfoldersSubfolderIDCode{
+		GetFoldersFolderIDSubfoldersSubfolderIDCodeUnauthorizedCredentials,
+		GetFoldersFolderIDSubfoldersSubfolderIDCodeAccountInactive,
+		GetFoldersFolderIDSubfoldersSubfolderIDCodeUnauthorizedScope,
+		GetFoldersFolderIDSubfoldersSubfolderIDCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *GetFoldersFolderIDSubfoldersSubfolderIDCode) IsExact() bool {
 	if e != nil {
@@ -92,6 +102,19 @@ func (e GetFoldersFolderIDSubfoldersSubfolderIDType) ToPointer() *GetFoldersFold
 	return &e
 }
 
+// GetFoldersFolderIDSubfoldersSubfolderIDTypeValues returns every known GetFoldersFolderIDSubfoldersSubfolderIDType value in schema order.
+func GetFoldersFolderIDSubfoldersSubfolderIDTypeValues() []GetFoldersFolderIDSubfoldersSubfolderIDType {
+	return []GetFoldersFolderIDSubfoldersSubfolderIDType{
+		GetFoldersFolderIDSubfoldersSubfolderIDTypeVideo,
+		GetFoldersFolderIDSubfoldersSubfolderIDTypeAudio,
+		GetFoldersFolderIDSubfoldersSubfolderIDTypeImage,
+		GetFoldersFolderIDSubfoldersSubfolderIDTypePdfDocument,
+		GetFoldersFolderIDSubfoldersSubfolderIDTypeMicrosoftOfficeDocument,
+		GetFoldersFolderIDSubfoldersSubfolderIDTypeSwf,
+		GetFoldersFolderIDSubfoldersSubfolderIDTypeUnknownType,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *GetFoldersFolderIDSubfoldersSubfolderIDType) IsExact() bool {
 	if e != nil {
@@ -115,6 +138,16 @@ const (
 
 func (e GetFoldersFolderIDSubfoldersSubfolderIDStatus) ToPointer() *GetFoldersFolderIDSubfoldersSubfolderIDStatus {
 	return &e
+}
+
+// GetFoldersFolderIDSubfoldersSubfolderIDStatusValues returns every known GetFoldersFolderIDSubfoldersSubfolderIDStatus value in schema order.
+func GetFoldersFolderIDSubfoldersSubfolderIDStatusValues() []GetFoldersFolderIDSubfoldersSubfolderIDStatus {
+	return []GetFoldersFolderIDSubfoldersSubfolderIDStatus{
+		GetFoldersFolderIDSubfoldersSubfolderIDStatusQueued,
+		GetFoldersFolderIDSubfoldersSubfolderIDStatusProcessing,
+		GetFoldersFolderIDSubfoldersSubfolderIDStatusReady,
+		GetFoldersFolderIDSubfoldersSubfolderIDStatusFailed,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

@@ -63,6 +63,16 @@ func (e PostSeriesCode) ToPointer() *PostSeriesCode {
 	return &e
 }
 
+// PostSeriesCodeValues returns every known PostSeriesCode value in schema order.
+func PostSeriesCodeValues() []PostSeriesCode {
+	return []PostSeriesCode{
+		PostSeriesCodeUnauthorizedCredentials,
+		PostSeriesCodeAccountInactive,
+		PostSeriesCodeUnauthorizedScope,
+		PostSeriesCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *PostSeriesCode) IsExact() bool {
 	if e != nil {

@@ -32,6 +32,13 @@ func ShouldColorize(colorFlag string) bool {
 	return shouldColorizeWriter(colorFlag, os.Stdout)
 }
 
+// stderrColorize reports whether output written to the command's error stream
+// should be colorized, judged on that stream rather than stdout.
+func stderrColorize(cmd *cobra.Command) bool {
+	colorFlag, _ := flagutil.GetStringFlag(cmd, "color")
+	return shouldColorizeWriter(colorFlag, cmd.ErrOrStderr())
+}
+
 func shouldColorizeWriter(colorFlag string, out io.Writer) bool {
 	// Agent mode: never colorize — output must be machine-parseable.
 	if IsAgentMode() {

@@ -34,6 +34,16 @@ func (e GetMediasMediaIDCustomizationsAccessibilityCode) ToPointer() *GetMediasM
 	return &e
 }
 
+// GetMediasMediaIDCustomizationsAccessibilityCodeValues returns every known GetMediasMediaIDCustomizationsAccessibilityCode value in schema order.
+func GetMediasMediaIDCustomizationsAccessibilityCodeValues() []GetMediasMediaIDCustomizationsAccessibilityCode {
+	return []GetMediasMediaIDCustomizationsAccessibilityCode{
+		GetMediasMediaIDCustomizationsAccessibilityCodeUnauthorizedCredentials,
+		GetMediasMediaIDCustomizationsAccessibilityCodeAccountInactive,
+		GetMediasMediaIDCustomizationsAccessibilityCodeUnauthorizedScope,
+		GetMediasMediaIDCustomizationsAccessibilityCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *GetMediasMediaIDCustomizationsAccessibilityCode) IsExact() bool {
 	if e != nil {

@@ -36,6 +36,16 @@ func (e GetSeriesIDCode) ToPointer() *GetSeriesIDCode {
 	return &e
 }
 
+// GetSeriesIDCodeValues returns every known GetSeriesIDCode value in schema order.
+func GetSeriesIDCodeValues() []GetSeriesIDCode {
+	return []GetSeriesIDCode{
+		GetSeriesIDCodeUnauthorizedCredentials,
+		GetSeriesIDCodeAccountInactive,
+		GetSeriesIDCodeUnauthorizedScope,
+		GetSeriesIDCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *GetSeriesIDCode) IsExact() bool {
 	if e != nil {

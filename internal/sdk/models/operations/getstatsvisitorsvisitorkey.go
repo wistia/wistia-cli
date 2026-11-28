@@ -36,6 +36,16 @@ func (e GetStatsVisitorsVisitorKeyCode) ToPointer() *GetStatsVisitorsVisitorKeyC
 	return &e
 }
 
+// GetStatsVisitorsVisitorKeyCodeValues returns every known GetStatsVisitorsVisitorKeyCode value in schema order.
+func GetStatsVisitorsVisitorKeyCodeValues() []GetStatsVisitorsVisitorKeyCode {
+	return []GetStatsVisitorsVisitorKeyCode{
+		GetStatsVisitorsVisitorKeyCodeUnauthorizedCredentials,
+		GetStatsVisitorsVisitorKeyCodeAccountInactive,
+		GetStatsVisitorsVisitorKeyCodeUnauthorizedScope,
+		GetStatsVisitorsVisitorKeyCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *GetStatsVisitorsVisitorKeyCode) IsExact() bool {
 	if e != nil {

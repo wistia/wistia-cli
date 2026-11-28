@@ -24,6 +24,16 @@ const (
 func (e GetReviewBundlesSortBy) ToPointer() *GetReviewBundlesSortBy {
 	return &e
 }
+
+// GetReviewBundlesSortByValues returns every known GetReviewBundlesSortBy value in schema order.
+func GetReviewBundlesSortByValues() []GetReviewBundlesSortBy {
+	return []GetReviewBundlesSortBy{
+		GetReviewBundlesSortByID,
+		GetReviewBundlesSortByName,
+		GetReviewBundlesSortByCreated,
+		GetReviewBundlesSortByUpdated,
+	}
+}
 func (e *GetReviewBundlesSortBy) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -55,6 +65,14 @@ const (
 func (e GetReviewBundlesSortDirection) ToPointer() *GetReviewBundlesSortDirection {
 	return &e
 }
+
+// GetReviewBundlesSortDirectionValues returns every known GetReviewBundlesSortDirection value in schema order.
+func GetReviewBundlesSortDirectionValues() []GetReviewBundlesSortDirection {
+	return []GetReviewBundlesSortDirection{
+		GetReviewBundlesSortDirectionZero,
+		GetReviewBundlesSortDirectionOne,
+	}
+}
 func (e *GetReviewBundlesSortDirection) UnmarshalJSON(data []byte) error {
 	var v int64
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -81,6 +99,14 @@ const (
 
 func (e GetReviewBundlesEnabled) ToPointer() *GetReviewBundlesEnabled {
 	return &e
+}
+
+// GetReviewBundlesEnabledValues returns every known GetReviewBundlesEnabled value in schema order.
+func GetReviewBundlesEnabledValues() []GetReviewBundlesEnabled {
+	return []GetReviewBundlesEnabled{
+		GetReviewBundlesEnabledZero,
+		GetReviewBundlesEnabledOne,
+	}
 }
 func (e *GetReviewBundlesEnabled) UnmarshalJSON(data []byte) error {
 	var v int64
@@ -258,6 +284,16 @@ const (
 
 func (e GetReviewBundlesCode) ToPointer() *GetReviewBundlesCode {
 	return &e
+}
+
+// GetReviewBundlesCodeValues returns every known GetReviewBundlesCode value in schema order.
+func GetReviewBundlesCodeValues() []GetReviewBundlesCode {
+	return []GetReviewBundlesCode{
+		GetReviewBundlesCodeUnauthorizedCredentials,
+		GetReviewBundlesCodeAccountInactive,
+		GetReviewBundlesCodeUnauthorizedScope,
+		GetReviewBundlesCodeUnauthorizedParams,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

@@ -67,6 +67,16 @@ func (e PostFoldersFolderIDSubfoldersCode) ToPointer() *PostFoldersFolderIDSubfo
 	return &e
 }
 
+// PostFoldersFolderIDSubfoldersCodeValues returns every known PostFoldersFolderIDSubfoldersCode value in schema order.
+func PostFoldersFolderIDSubfoldersCodeValues() []PostFoldersFolderIDSubfoldersCode {
+	return []PostFoldersFolderIDSubfoldersCode{
+		PostFoldersFolderIDSubfoldersCodeUnauthorizedCredentials,
+		PostFoldersFolderIDSubfoldersCodeAccountInactive,
+		PostFoldersFolderIDSubfoldersCodeUnauthorizedScope,
+		PostFoldersFolderIDSubfoldersCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *PostFoldersFolderIDSubfoldersCode) IsExact() bool {
 	if e != nil {

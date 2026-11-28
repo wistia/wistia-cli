@@ -55,6 +55,16 @@ func (e GetStatsAccountByDateCode) ToPointer() *GetStatsAccountByDateCode {
 	return &e
 }
 
+// GetStatsAccountByDateCodeValues returns every known GetStatsAccountByDateCode value in schema order.
+func GetStatsAccountByDateCodeValues() []GetStatsAccountByDateCode {
+	return []GetStatsAccountByDateCode{
+		GetStatsAccountByDateCodeUnauthorizedCredentials,
+		GetStatsAccountByDateCodeAccountInactive,
+		GetStatsAccountByDateCodeUnauthorizedScope,
+		GetStatsAccountByDateCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *GetStatsAccountByDateCode) IsExact() bool {
 	if e != nil {

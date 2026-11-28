@@ -76,6 +76,16 @@ func (e PostMediasMediaHashedIDCopyCode) ToPointer() *PostMediasMediaHashedIDCop
 	return &e
 }
 
+// PostMediasMediaHashedIDCopyCodeValues returns every known PostMediasMediaHashedIDCopyCode value in schema order.
+func PostMediasMediaHashedIDCopyCodeValues() []PostMediasMediaHashedIDCopyCode {
+	return []PostMediasMediaHashedIDCopyCode{
+		PostMediasMediaHashedIDCopyCodeUnauthorizedCredentials,
+		PostMediasMediaHashedIDCopyCodeAccountInactive,
+		PostMediasMediaHashedIDCopyCodeUnauthorizedScope,
+		PostMediasMediaHashedIDCopyCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *PostMediasMediaHashedIDCopyCode) IsExact() bool {
 	if e != nil {
@@ -104,6 +114,19 @@ func (e PostMediasMediaHashedIDCopyType) ToPointer() *PostMediasMediaHashedIDCop
 	return &e
 }
 
+// PostMediasMediaHashedIDCopyTypeValues returns every known PostMediasMediaHashedIDCopyType value in schema order.
+func PostMediasMediaHashedIDCopyTypeValues() []PostMediasMediaHashedIDCopyType {
+	return []PostMediasMediaHashedIDCopyType{
+		PostMediasMediaHashedIDCopyTypeVideo,
+		PostMediasMediaHashedIDCopyTypeAudio,
+		PostMediasMediaHashedIDCopyTypeImage,
+		PostMediasMediaHashedIDCopyTypePdfDocument,
+		PostMediasMediaHashedIDCopyTypeMicrosoftOfficeDocument,
+		PostMediasMediaHashedIDCopyTypeSwf,
+		PostMediasMediaHashedIDCopyTypeUnknownType,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *PostMediasMediaHashedIDCopyType) IsExact() bool {
 	if e != nil {
@@ -127,6 +150,16 @@ const (
 
 func (e PostMediasMediaHashedIDCopyStatus) ToPointer() *PostMediasMediaHashedIDCopyStatus {
 	return &e
+}
+
+// PostMediasMediaHashedIDCopyStatusValues returns every known PostMediasMediaHashedIDCopyStatus value in schema order.
+func PostMediasMediaHashedIDCopyStatusValues() []PostMediasMediaHashedIDCopyStatus {
+	return []PostMediasMediaHashedIDCopyStatus{
+		PostMediasMediaHashedIDCopyStatusQueued,
+		PostMediasMediaHashedIDCopyStatusProcessing,
+		PostMediasMediaHashedIDCopyStatusReady,
+		PostMediasMediaHashedIDCopyStatusFailed,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

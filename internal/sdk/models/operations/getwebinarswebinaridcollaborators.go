@@ -23,6 +23,14 @@ const (
 func (e GetWebinarsWebinarIDCollaboratorsEnabled) ToPointer() *GetWebinarsWebinarIDCollaboratorsEnabled {
 	return &e
 }
+
+// GetWebinarsWebinarIDCollaboratorsEnabledValues returns every known GetWebinarsWebinarIDCollaboratorsEnabled value in schema order.
+func GetWebinarsWebinarIDCollaboratorsEnabledValues() []GetWebinarsWebinarIDCollaboratorsEnabled {
+	return []GetWebinarsWebinarIDCollaboratorsEnabled{
+		GetWebinarsWebinarIDCollaboratorsEnabledZero,
+		GetWebinarsWebinarIDCollaboratorsEnabledOne,
+	}
+}
 func (e *GetWebinarsWebinarIDCollaboratorsEnabled) UnmarshalJSON(data []byte) error {
 	var v int64
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -94,6 +102,15 @@ const (
 func (e GetWebinarsWebinarIDCollaboratorsSortBy) ToPointer() *GetWebinarsWebinarIDCollaboratorsSortBy {
 	return &e
 }
+
+// GetWebinarsWebinarIDCollaboratorsSortByValues returns every known GetWebinarsWebinarIDCollaboratorsSortBy value in schema order.
+func GetWebinarsWebinarIDCollaboratorsSortByValues() []GetWebinarsWebinarIDCollaboratorsSortBy {
+	return []GetWebinarsWebinarIDCollaboratorsSortBy{
+		GetWebinarsWebinarIDCollaboratorsSortByCreated,
+		GetWebinarsWebinarIDCollaboratorsSortByUpdated,
+		GetWebinarsWebinarIDCollaboratorsSortByID,
+	}
+}
 func (e *GetWebinarsWebinarIDCollaboratorsSortBy) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -122,6 +139,14 @@ const (
 
 func (e GetWebinarsWebinarIDCollaboratorsSortDirection) ToPointer() *GetWebinarsWebinarIDCollaboratorsSortDirection {
 	return &e
+}
+
+// GetWebinarsWebinarIDCollaboratorsSortDirectionValues returns every known GetWebinarsWebinarIDCollaboratorsSortDirection value in schema order.
+func GetWebinarsWebinarIDCollaboratorsSortDirectionValues() []GetWebinarsWebinarIDCollaboratorsSortDirection {
+	return []GetWebinarsWebinarIDCollaboratorsSortDirection{
+		GetWebinarsWebinarIDCollaboratorsSortDirectionZero,
+		GetWebinarsWebinarIDCollaboratorsSortDirectionOne,
+	}
 }
 func (e *GetWebinarsWebinarIDCollaboratorsSortDirection) UnmarshalJSON(data []byte) error {
 	var v int64
@@ -234,6 +259,16 @@ func (e GetWebinarsWebinarIDCollaboratorsCode) ToPointer() *GetWebinarsWebinarID
 	return &e
 }
 
+// GetWebinarsWebinarIDCollaboratorsCodeValues returns every known GetWebinarsWebinarIDCollaboratorsCode value in schema order.
+func GetWebinarsWebinarIDCollaboratorsCodeValues() []GetWebinarsWebinarIDCollaboratorsCode {
+	return []GetWebinarsWebinarIDCollaboratorsCode{
+		GetWebinarsWebinarIDCollaboratorsCodeUnauthorizedCredentials,
+		GetWebinarsWebinarIDCollaboratorsCodeAccountInactive,
+		GetWebinarsWebinarIDCollaboratorsCodeUnauthorizedScope,
+		GetWebinarsWebinarIDCollaboratorsCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *GetWebinarsWebinarIDCollaboratorsCode) IsExact() bool {
 	if e != nil {
@@ -254,6 +289,13 @@ const (
 
 func (e GetWebinarsWebinarIDCollaboratorsRole) ToPointer() *GetWebinarsWebinarIDCollaboratorsRole {
 	return &e
+}
+
+// GetWebinarsWebinarIDCollaboratorsRoleValues returns every known GetWebinarsWebinarIDCollaboratorsRole value in schema order.
+func GetWebinarsWebinarIDCollaboratorsRoleValues() []GetWebinarsWebinarIDCollaboratorsRole {
+	return []GetWebinarsWebinarIDCollaboratorsRole{
+		GetWebinarsWebinarIDCollaboratorsRoleAdmin,
+	}
 }
 func (e *GetWebinarsWebinarIDCollaboratorsRole) UnmarshalJSON(data []byte) error {
 	var v string

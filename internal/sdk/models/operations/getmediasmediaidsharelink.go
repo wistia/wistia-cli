@@ -35,6 +35,16 @@ func (e GetMediasMediaIDShareLinkCode) ToPointer() *GetMediasMediaIDShareLinkCod
 	return &e
 }
 
+// GetMediasMediaIDShareLinkCodeValues returns every known GetMediasMediaIDShareLinkCode value in schema order.
+func GetMediasMediaIDShareLinkCodeValues() []GetMediasMediaIDShareLinkCode {
+	return []GetMediasMediaIDShareLinkCode{
+		GetMediasMediaIDShareLinkCodeUnauthorizedCredentials,
+		GetMediasMediaIDShareLinkCodeAccountInactive,
+		GetMediasMediaIDShareLinkCodeUnauthorizedScope,
+		GetMediasMediaIDShareLinkCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *GetMediasMediaIDShareLinkCode) IsExact() bool {
 	if e != nil {
@@ -66,6 +76,16 @@ const (
 
 func (e GetMediasMediaIDShareLinkVisibility) ToPointer() *GetMediasMediaIDShareLinkVisibility {
 	return &e
+}
+
+// GetMediasMediaIDShareLinkVisibilityValues returns every known GetMediasMediaIDShareLinkVisibility value in schema order.
+func GetMediasMediaIDShareLinkVisibilityValues() []GetMediasMediaIDShareLinkVisibility {
+	return []GetMediasMediaIDShareLinkVisibility{
+		GetMediasMediaIDShareLinkVisibilityUnlocked,
+		GetMediasMediaIDShareLinkVisibilityAccount,
+		GetMediasMediaIDShareLinkVisibilityLocked,
+		GetMediasMediaIDShareLinkVisibilityDomainVerified,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

@@ -33,6 +33,16 @@ func (e DeleteTagsNameCode) ToPointer() *DeleteTagsNameCode {
 	return &e
 }
 
+// DeleteTagsNameCodeValues returns every known DeleteTagsNameCode value in schema order.
+func DeleteTagsNameCodeValues() []DeleteTagsNameCode {
+	return []DeleteTagsNameCode{
+		DeleteTagsNameCodeUnauthorizedCredentials,
+		DeleteTagsNameCodeAccountInactive,
+		DeleteTagsNameCodeUnauthorizedScope,
+		DeleteTagsNameCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *DeleteTagsNameCode) IsExact() bool {
 	if e != nil {

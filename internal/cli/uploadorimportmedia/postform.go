@@ -35,7 +35,8 @@ func initPostFormCmd(parent *cobra.Command) error {
 		RunE:    runPostFormCmd,
 		Aliases: []string{"pf"},
 		Annotations: map[string]string{
-			"speakeasy_operation": "post_/",
+			"speakeasy_operation":     "post_/",
+			"speakeasy_sdk_operation": "post_/_form",
 		},
 	}
 	flagutil.RegisterFlags(cmd, postFormCmdMeta)

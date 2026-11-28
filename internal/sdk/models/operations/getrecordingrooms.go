@@ -24,6 +24,15 @@ const (
 func (e GetRecordingRoomsSortBy) ToPointer() *GetRecordingRoomsSortBy {
 	return &e
 }
+
+// GetRecordingRoomsSortByValues returns every known GetRecordingRoomsSortBy value in schema order.
+func GetRecordingRoomsSortByValues() []GetRecordingRoomsSortBy {
+	return []GetRecordingRoomsSortBy{
+		GetRecordingRoomsSortByID,
+		GetRecordingRoomsSortBySlug,
+		GetRecordingRoomsSortByCreated,
+	}
+}
 func (e *GetRecordingRoomsSortBy) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -53,6 +62,14 @@ const (
 func (e GetRecordingRoomsSortDirection) ToPointer() *GetRecordingRoomsSortDirection {
 	return &e
 }
+
+// GetRecordingRoomsSortDirectionValues returns every known GetRecordingRoomsSortDirection value in schema order.
+func GetRecordingRoomsSortDirectionValues() []GetRecordingRoomsSortDirection {
+	return []GetRecordingRoomsSortDirection{
+		GetRecordingRoomsSortDirectionZero,
+		GetRecordingRoomsSortDirectionOne,
+	}
+}
 func (e *GetRecordingRoomsSortDirection) UnmarshalJSON(data []byte) error {
 	var v int64
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -79,6 +96,14 @@ const (
 
 func (e GetRecordingRoomsEnabled) ToPointer() *GetRecordingRoomsEnabled {
 	return &e
+}
+
+// GetRecordingRoomsEnabledValues returns every known GetRecordingRoomsEnabled value in schema order.
+func GetRecordingRoomsEnabledValues() []GetRecordingRoomsEnabled {
+	return []GetRecordingRoomsEnabled{
+		GetRecordingRoomsEnabledZero,
+		GetRecordingRoomsEnabledOne,
+	}
 }
 func (e *GetRecordingRoomsEnabled) UnmarshalJSON(data []byte) error {
 	var v int64
@@ -229,6 +254,16 @@ const (
 
 func (e GetRecordingRoomsCode) ToPointer() *GetRecordingRoomsCode {
 	return &e
+}
+
+// GetRecordingRoomsCodeValues returns every known GetRecordingRoomsCode value in schema order.
+func GetRecordingRoomsCodeValues() []GetRecordingRoomsCode {
+	return []GetRecordingRoomsCode{
+		GetRecordingRoomsCodeUnauthorizedCredentials,
+		GetRecordingRoomsCodeAccountInactive,
+		GetRecordingRoomsCodeUnauthorizedScope,
+		GetRecordingRoomsCodeUnauthorizedParams,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

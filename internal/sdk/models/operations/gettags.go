@@ -23,6 +23,14 @@ const (
 func (e GetTagsEnabled) ToPointer() *GetTagsEnabled {
 	return &e
 }
+
+// GetTagsEnabledValues returns every known GetTagsEnabled value in schema order.
+func GetTagsEnabledValues() []GetTagsEnabled {
+	return []GetTagsEnabled{
+		GetTagsEnabledZero,
+		GetTagsEnabledOne,
+	}
+}
 func (e *GetTagsEnabled) UnmarshalJSON(data []byte) error {
 	var v int64
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -97,6 +105,17 @@ const (
 func (e GetTagsSortBy) ToPointer() *GetTagsSortBy {
 	return &e
 }
+
+// GetTagsSortByValues returns every known GetTagsSortBy value in schema order.
+func GetTagsSortByValues() []GetTagsSortBy {
+	return []GetTagsSortBy{
+		GetTagsSortByName,
+		GetTagsSortByCreated,
+		GetTagsSortByUpdated,
+		GetTagsSortByTaggingsCount,
+		GetTagsSortByID,
+	}
+}
 func (e *GetTagsSortBy) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -129,6 +148,14 @@ const (
 
 func (e GetTagsSortDirection) ToPointer() *GetTagsSortDirection {
 	return &e
+}
+
+// GetTagsSortDirectionValues returns every known GetTagsSortDirection value in schema order.
+func GetTagsSortDirectionValues() []GetTagsSortDirection {
+	return []GetTagsSortDirection{
+		GetTagsSortDirectionZero,
+		GetTagsSortDirectionOne,
+	}
 }
 func (e *GetTagsSortDirection) UnmarshalJSON(data []byte) error {
 	var v int64
@@ -231,6 +258,16 @@ const (
 
 func (e GetTagsCode) ToPointer() *GetTagsCode {
 	return &e
+}
+
+// GetTagsCodeValues returns every known GetTagsCode value in schema order.
+func GetTagsCodeValues() []GetTagsCode {
+	return []GetTagsCode{
+		GetTagsCodeUnauthorizedCredentials,
+		GetTagsCodeAccountInactive,
+		GetTagsCodeUnauthorizedScope,
+		GetTagsCodeUnauthorizedParams,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

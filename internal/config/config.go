@@ -103,6 +103,36 @@ func Init(name, prefix string) error {
 	return initErr
 }
 
+// OptionalAnnotation marks a command that still runs, with a warning, when the
+// config file cannot be read or parsed.
+const OptionalAnnotation = "speakeasy_config_optional"
+
+// RunsWithoutConfig reports whether cmd can run when the config file cannot
+// be read or parsed. Subcommands inherit OptionalAnnotation from every
+// ancestor except the root.
+func RunsWithoutConfig(cmd *cobra.Command) bool {
+	switch cmd.Name() {
+	case cobra.ShellCompRequestCmd, cobra.ShellCompNoDescRequestCmd:
+		return true
+	}
+	if cmd.Annotations[OptionalAnnotation] == "true" {
+		return true
+	}
+	for p := cmd.Parent(); p != nil && p.HasParent(); p = p.Parent() {
+		if p.Annotations[OptionalAnnotation] == "true" {
+			return true
+		}
+	}
+	return false
+}
+
+// LoadError returns the error from reading or parsing the config file, if any.
+func LoadError() error {
+	initMu.Lock()
+	defer initMu.Unlock()
+	return initErr
+}
+
 // Reset clears all configuration state, allowing Init to be called again.
 // This is intended for use in tests to support re-initialization between test cases.
 func Reset() {
@@ -135,8 +165,12 @@ func GetString(key string) string {
 
 // GetEnvValue returns the environment variable value for a flag name, or "".
 func GetEnvValue(key string) string {
-	envKey := envPrefix + "_" + strings.ToUpper(strings.ReplaceAll(key, "-", "_"))
-	return os.Getenv(envKey)
+	return os.Getenv(EnvVarName(key))
+}
+
+// EnvVarName returns the environment variable that sets a flag name.
+func EnvVarName(key string) string {
+	return envPrefix + "_" + strings.ToUpper(strings.ReplaceAll(key, "-", "_"))
 }
 
 // GetConfigValue returns the config file value for a flag name, or "".
@@ -442,6 +476,9 @@ func GetConfig() *Config {
 // SaveConfig saves the configuration to the config file.
 // Creates the config directory if it doesn't exist.
 func SaveConfig(c *Config) error {
+	if err := LoadError(); err != nil {
+		return fmt.Errorf("%w; fix or remove the file before saving settings", err)
+	}
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		return fmt.Errorf("failed to get home directory: %w", err)
@@ -459,7 +496,7 @@ func SaveConfig(c *Config) error {
 		return fmt.Errorf("failed to marshal config: %w", err)
 	}
 
-	if err := os.WriteFile(configPath, data, 0600); err != nil {
+	if err := writeConfigFile(configDir, configPath, data); err != nil {
 		return fmt.Errorf("failed to write config file: %w", err)
 	}
 
@@ -469,4 +506,42 @@ func SaveConfig(c *Config) error {
 	cfgMu.Unlock()
 
 	return nil
+}
+
+// writeConfigFile replaces the config file through a rename so a failed write
+// keeps the previous contents. The file can hold credentials, so permissions
+// left over from an earlier write are tightened rather than inherited.
+func writeConfigFile(configDir, configPath string, data []byte) error {
+	if err := os.Chmod(configDir, 0700); err != nil {
+		return err
+	}
+	if info, err := os.Lstat(configPath); err == nil && info.Mode()&os.ModeSymlink != 0 {
+		target, err := filepath.EvalSymlinks(configPath)
+		if err != nil {
+			return fmt.Errorf("resolve config symlink: %w", err)
+		}
+		configPath = target
+	}
+	tmp, err := os.CreateTemp(filepath.Dir(configPath), ".config-*.yaml.tmp")
+	if err != nil {
+		return err
+	}
+	tmpName := tmp.Name()
+	defer os.Remove(tmpName)
+	if err := tmp.Chmod(0600); err != nil {
+		tmp.Close()
+		return err
+	}
+	if _, err := tmp.Write(data); err != nil {
+		tmp.Close()
+		return err
+	}
+	if err := tmp.Sync(); err != nil {
+		tmp.Close()
+		return err
+	}
+	if err := tmp.Close(); err != nil {
+		return err
+	}
+	return os.Rename(tmpName, configPath)
 }

@@ -25,6 +25,15 @@ const (
 func (e GetAnalyticsAccountTimeseriesGranularity) ToPointer() *GetAnalyticsAccountTimeseriesGranularity {
 	return &e
 }
+
+// GetAnalyticsAccountTimeseriesGranularityValues returns every known GetAnalyticsAccountTimeseriesGranularity value in schema order.
+func GetAnalyticsAccountTimeseriesGranularityValues() []GetAnalyticsAccountTimeseriesGranularity {
+	return []GetAnalyticsAccountTimeseriesGranularity{
+		GetAnalyticsAccountTimeseriesGranularityDaily,
+		GetAnalyticsAccountTimeseriesGranularityWeekly,
+		GetAnalyticsAccountTimeseriesGranularityMonthly,
+	}
+}
 func (e *GetAnalyticsAccountTimeseriesGranularity) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -96,6 +105,16 @@ const (
 
 func (e GetAnalyticsAccountTimeseriesCode) ToPointer() *GetAnalyticsAccountTimeseriesCode {
 	return &e
+}
+
+// GetAnalyticsAccountTimeseriesCodeValues returns every known GetAnalyticsAccountTimeseriesCode value in schema order.
+func GetAnalyticsAccountTimeseriesCodeValues() []GetAnalyticsAccountTimeseriesCode {
+	return []GetAnalyticsAccountTimeseriesCode{
+		GetAnalyticsAccountTimeseriesCodeUnauthorizedCredentials,
+		GetAnalyticsAccountTimeseriesCodeAccountInactive,
+		GetAnalyticsAccountTimeseriesCodeUnauthorizedScope,
+		GetAnalyticsAccountTimeseriesCodeUnauthorizedParams,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

@@ -119,6 +119,16 @@ func (e PutMediasMediaHashedIDCode) ToPointer() *PutMediasMediaHashedIDCode {
 	return &e
 }
 
+// PutMediasMediaHashedIDCodeValues returns every known PutMediasMediaHashedIDCode value in schema order.
+func PutMediasMediaHashedIDCodeValues() []PutMediasMediaHashedIDCode {
+	return []PutMediasMediaHashedIDCode{
+		PutMediasMediaHashedIDCodeUnauthorizedCredentials,
+		PutMediasMediaHashedIDCodeAccountInactive,
+		PutMediasMediaHashedIDCodeUnauthorizedScope,
+		PutMediasMediaHashedIDCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *PutMediasMediaHashedIDCode) IsExact() bool {
 	if e != nil {
@@ -147,6 +157,19 @@ func (e PutMediasMediaHashedIDType) ToPointer() *PutMediasMediaHashedIDType {
 	return &e
 }
 
+// PutMediasMediaHashedIDTypeValues returns every known PutMediasMediaHashedIDType value in schema order.
+func PutMediasMediaHashedIDTypeValues() []PutMediasMediaHashedIDType {
+	return []PutMediasMediaHashedIDType{
+		PutMediasMediaHashedIDTypeVideo,
+		PutMediasMediaHashedIDTypeAudio,
+		PutMediasMediaHashedIDTypeImage,
+		PutMediasMediaHashedIDTypePdfDocument,
+		PutMediasMediaHashedIDTypeMicrosoftOfficeDocument,
+		PutMediasMediaHashedIDTypeSwf,
+		PutMediasMediaHashedIDTypeUnknownType,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *PutMediasMediaHashedIDType) IsExact() bool {
 	if e != nil {
@@ -170,6 +193,16 @@ const (
 
 func (e PutMediasMediaHashedIDStatus) ToPointer() *PutMediasMediaHashedIDStatus {
 	return &e
+}
+
+// PutMediasMediaHashedIDStatusValues returns every known PutMediasMediaHashedIDStatus value in schema order.
+func PutMediasMediaHashedIDStatusValues() []PutMediasMediaHashedIDStatus {
+	return []PutMediasMediaHashedIDStatus{
+		PutMediasMediaHashedIDStatusQueued,
+		PutMediasMediaHashedIDStatusProcessing,
+		PutMediasMediaHashedIDStatusReady,
+		PutMediasMediaHashedIDStatusFailed,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

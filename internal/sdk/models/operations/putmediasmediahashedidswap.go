@@ -67,6 +67,16 @@ func (e PutMediasMediaHashedIDSwapCode) ToPointer() *PutMediasMediaHashedIDSwapC
 	return &e
 }
 
+// PutMediasMediaHashedIDSwapCodeValues returns every known PutMediasMediaHashedIDSwapCode value in schema order.
+func PutMediasMediaHashedIDSwapCodeValues() []PutMediasMediaHashedIDSwapCode {
+	return []PutMediasMediaHashedIDSwapCode{
+		PutMediasMediaHashedIDSwapCodeUnauthorizedCredentials,
+		PutMediasMediaHashedIDSwapCodeAccountInactive,
+		PutMediasMediaHashedIDSwapCodeUnauthorizedScope,
+		PutMediasMediaHashedIDSwapCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *PutMediasMediaHashedIDSwapCode) IsExact() bool {
 	if e != nil {
@@ -90,6 +100,16 @@ const (
 
 func (e PutMediasMediaHashedIDSwapBackgroundJobStatusStatus) ToPointer() *PutMediasMediaHashedIDSwapBackgroundJobStatusStatus {
 	return &e
+}
+
+// PutMediasMediaHashedIDSwapBackgroundJobStatusStatusValues returns every known PutMediasMediaHashedIDSwapBackgroundJobStatusStatus value in schema order.
+func PutMediasMediaHashedIDSwapBackgroundJobStatusStatusValues() []PutMediasMediaHashedIDSwapBackgroundJobStatusStatus {
+	return []PutMediasMediaHashedIDSwapBackgroundJobStatusStatus{
+		PutMediasMediaHashedIDSwapBackgroundJobStatusStatusQueued,
+		PutMediasMediaHashedIDSwapBackgroundJobStatusStatusStarted,
+		PutMediasMediaHashedIDSwapBackgroundJobStatusStatusFinished,
+		PutMediasMediaHashedIDSwapBackgroundJobStatusStatusFailed,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
@@ -152,6 +172,19 @@ func (e PutMediasMediaHashedIDSwapType) ToPointer() *PutMediasMediaHashedIDSwapT
 	return &e
 }
 
+// PutMediasMediaHashedIDSwapTypeValues returns every known PutMediasMediaHashedIDSwapType value in schema order.
+func PutMediasMediaHashedIDSwapTypeValues() []PutMediasMediaHashedIDSwapType {
+	return []PutMediasMediaHashedIDSwapType{
+		PutMediasMediaHashedIDSwapTypeVideo,
+		PutMediasMediaHashedIDSwapTypeAudio,
+		PutMediasMediaHashedIDSwapTypeImage,
+		PutMediasMediaHashedIDSwapTypePdfDocument,
+		PutMediasMediaHashedIDSwapTypeMicrosoftOfficeDocument,
+		PutMediasMediaHashedIDSwapTypeSwf,
+		PutMediasMediaHashedIDSwapTypeUnknownType,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *PutMediasMediaHashedIDSwapType) IsExact() bool {
 	if e != nil {
@@ -175,6 +208,16 @@ const (
 
 func (e PutMediasMediaHashedIDSwapStatus) ToPointer() *PutMediasMediaHashedIDSwapStatus {
 	return &e
+}
+
+// PutMediasMediaHashedIDSwapStatusValues returns every known PutMediasMediaHashedIDSwapStatus value in schema order.
+func PutMediasMediaHashedIDSwapStatusValues() []PutMediasMediaHashedIDSwapStatus {
+	return []PutMediasMediaHashedIDSwapStatus{
+		PutMediasMediaHashedIDSwapStatusQueued,
+		PutMediasMediaHashedIDSwapStatusProcessing,
+		PutMediasMediaHashedIDSwapStatusReady,
+		PutMediasMediaHashedIDSwapStatusFailed,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

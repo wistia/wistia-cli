@@ -25,6 +25,15 @@ const (
 func (e GetAnalyticsMediasMediaIDTimeseriesGranularity) ToPointer() *GetAnalyticsMediasMediaIDTimeseriesGranularity {
 	return &e
 }
+
+// GetAnalyticsMediasMediaIDTimeseriesGranularityValues returns every known GetAnalyticsMediasMediaIDTimeseriesGranularity value in schema order.
+func GetAnalyticsMediasMediaIDTimeseriesGranularityValues() []GetAnalyticsMediasMediaIDTimeseriesGranularity {
+	return []GetAnalyticsMediasMediaIDTimeseriesGranularity{
+		GetAnalyticsMediasMediaIDTimeseriesGranularityDaily,
+		GetAnalyticsMediasMediaIDTimeseriesGranularityWeekly,
+		GetAnalyticsMediasMediaIDTimeseriesGranularityMonthly,
+	}
+}
 func (e *GetAnalyticsMediasMediaIDTimeseriesGranularity) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -105,6 +114,16 @@ const (
 
 func (e GetAnalyticsMediasMediaIDTimeseriesCode) ToPointer() *GetAnalyticsMediasMediaIDTimeseriesCode {
 	return &e
+}
+
+// GetAnalyticsMediasMediaIDTimeseriesCodeValues returns every known GetAnalyticsMediasMediaIDTimeseriesCode value in schema order.
+func GetAnalyticsMediasMediaIDTimeseriesCodeValues() []GetAnalyticsMediasMediaIDTimeseriesCode {
+	return []GetAnalyticsMediasMediaIDTimeseriesCode{
+		GetAnalyticsMediasMediaIDTimeseriesCodeUnauthorizedCredentials,
+		GetAnalyticsMediasMediaIDTimeseriesCodeAccountInactive,
+		GetAnalyticsMediasMediaIDTimeseriesCodeUnauthorizedScope,
+		GetAnalyticsMediasMediaIDTimeseriesCodeUnauthorizedParams,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

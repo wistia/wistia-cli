@@ -24,6 +24,15 @@ const (
 func (e PublishStatus) ToPointer() *PublishStatus {
 	return &e
 }
+
+// PublishStatusValues returns every known PublishStatus value in schema order.
+func PublishStatusValues() []PublishStatus {
+	return []PublishStatus{
+		PublishStatusDraft,
+		PublishStatusPublished,
+		PublishStatusScheduled,
+	}
+}
 func (e *PublishStatus) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -52,6 +61,15 @@ const (
 
 func (e PostChannelsChannelHashedIDChannelEpisodesEpisodeTypeRequest) ToPointer() *PostChannelsChannelHashedIDChannelEpisodesEpisodeTypeRequest {
 	return &e
+}
+
+// PostChannelsChannelHashedIDChannelEpisodesEpisodeTypeRequestValues returns every known PostChannelsChannelHashedIDChannelEpisodesEpisodeTypeRequest value in schema order.
+func PostChannelsChannelHashedIDChannelEpisodesEpisodeTypeRequestValues() []PostChannelsChannelHashedIDChannelEpisodesEpisodeTypeRequest {
+	return []PostChannelsChannelHashedIDChannelEpisodesEpisodeTypeRequest{
+		PostChannelsChannelHashedIDChannelEpisodesEpisodeTypeRequestFull,
+		PostChannelsChannelHashedIDChannelEpisodesEpisodeTypeRequestTrailer,
+		PostChannelsChannelHashedIDChannelEpisodesEpisodeTypeRequestBonus,
+	}
 }
 func (e *PostChannelsChannelHashedIDChannelEpisodesEpisodeTypeRequest) UnmarshalJSON(data []byte) error {
 	var v string
@@ -234,6 +252,16 @@ func (e PostChannelsChannelHashedIDChannelEpisodesCode) ToPointer() *PostChannel
 	return &e
 }
 
+// PostChannelsChannelHashedIDChannelEpisodesCodeValues returns every known PostChannelsChannelHashedIDChannelEpisodesCode value in schema order.
+func PostChannelsChannelHashedIDChannelEpisodesCodeValues() []PostChannelsChannelHashedIDChannelEpisodesCode {
+	return []PostChannelsChannelHashedIDChannelEpisodesCode{
+		PostChannelsChannelHashedIDChannelEpisodesCodeUnauthorizedCredentials,
+		PostChannelsChannelHashedIDChannelEpisodesCodeAccountInactive,
+		PostChannelsChannelHashedIDChannelEpisodesCodeUnauthorizedScope,
+		PostChannelsChannelHashedIDChannelEpisodesCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *PostChannelsChannelHashedIDChannelEpisodesCode) IsExact() bool {
 	if e != nil {
@@ -255,6 +283,15 @@ const (
 
 func (e PostChannelsChannelHashedIDChannelEpisodesEpisodeTypeResponse) ToPointer() *PostChannelsChannelHashedIDChannelEpisodesEpisodeTypeResponse {
 	return &e
+}
+
+// PostChannelsChannelHashedIDChannelEpisodesEpisodeTypeResponseValues returns every known PostChannelsChannelHashedIDChannelEpisodesEpisodeTypeResponse value in schema order.
+func PostChannelsChannelHashedIDChannelEpisodesEpisodeTypeResponseValues() []PostChannelsChannelHashedIDChannelEpisodesEpisodeTypeResponse {
+	return []PostChannelsChannelHashedIDChannelEpisodesEpisodeTypeResponse{
+		PostChannelsChannelHashedIDChannelEpisodesEpisodeTypeResponseFull,
+		PostChannelsChannelHashedIDChannelEpisodesEpisodeTypeResponseTrailer,
+		PostChannelsChannelHashedIDChannelEpisodesEpisodeTypeResponseBonus,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

@@ -26,6 +26,17 @@ const (
 func (e GetAnalyticsMediasMediaIDTrafficGroupBy) ToPointer() *GetAnalyticsMediasMediaIDTrafficGroupBy {
 	return &e
 }
+
+// GetAnalyticsMediasMediaIDTrafficGroupByValues returns every known GetAnalyticsMediasMediaIDTrafficGroupBy value in schema order.
+func GetAnalyticsMediasMediaIDTrafficGroupByValues() []GetAnalyticsMediasMediaIDTrafficGroupBy {
+	return []GetAnalyticsMediasMediaIDTrafficGroupBy{
+		GetAnalyticsMediasMediaIDTrafficGroupByUtmCampaign,
+		GetAnalyticsMediasMediaIDTrafficGroupByUtmSource,
+		GetAnalyticsMediasMediaIDTrafficGroupByUtmMedium,
+		GetAnalyticsMediasMediaIDTrafficGroupByReferrerDomain,
+		GetAnalyticsMediasMediaIDTrafficGroupByViewerScreenSize,
+	}
+}
 func (e *GetAnalyticsMediasMediaIDTrafficGroupBy) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -60,6 +71,15 @@ const (
 func (e GetAnalyticsMediasMediaIDTrafficSortBy) ToPointer() *GetAnalyticsMediasMediaIDTrafficSortBy {
 	return &e
 }
+
+// GetAnalyticsMediasMediaIDTrafficSortByValues returns every known GetAnalyticsMediasMediaIDTrafficSortBy value in schema order.
+func GetAnalyticsMediasMediaIDTrafficSortByValues() []GetAnalyticsMediasMediaIDTrafficSortBy {
+	return []GetAnalyticsMediasMediaIDTrafficSortBy{
+		GetAnalyticsMediasMediaIDTrafficSortByPlays,
+		GetAnalyticsMediasMediaIDTrafficSortByLoads,
+		GetAnalyticsMediasMediaIDTrafficSortByEngagementRate,
+	}
+}
 func (e *GetAnalyticsMediasMediaIDTrafficSortBy) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -88,6 +108,14 @@ const (
 
 func (e GetAnalyticsMediasMediaIDTrafficSortDirection) ToPointer() *GetAnalyticsMediasMediaIDTrafficSortDirection {
 	return &e
+}
+
+// GetAnalyticsMediasMediaIDTrafficSortDirectionValues returns every known GetAnalyticsMediasMediaIDTrafficSortDirection value in schema order.
+func GetAnalyticsMediasMediaIDTrafficSortDirectionValues() []GetAnalyticsMediasMediaIDTrafficSortDirection {
+	return []GetAnalyticsMediasMediaIDTrafficSortDirection{
+		GetAnalyticsMediasMediaIDTrafficSortDirectionAsc,
+		GetAnalyticsMediasMediaIDTrafficSortDirectionDesc,
+	}
 }
 func (e *GetAnalyticsMediasMediaIDTrafficSortDirection) UnmarshalJSON(data []byte) error {
 	var v string
@@ -194,6 +222,16 @@ const (
 
 func (e GetAnalyticsMediasMediaIDTrafficCode) ToPointer() *GetAnalyticsMediasMediaIDTrafficCode {
 	return &e
+}
+
+// GetAnalyticsMediasMediaIDTrafficCodeValues returns every known GetAnalyticsMediasMediaIDTrafficCode value in schema order.
+func GetAnalyticsMediasMediaIDTrafficCodeValues() []GetAnalyticsMediasMediaIDTrafficCode {
+	return []GetAnalyticsMediasMediaIDTrafficCode{
+		GetAnalyticsMediasMediaIDTrafficCodeUnauthorizedCredentials,
+		GetAnalyticsMediasMediaIDTrafficCodeAccountInactive,
+		GetAnalyticsMediasMediaIDTrafficCodeUnauthorizedScope,
+		GetAnalyticsMediasMediaIDTrafficCodeUnauthorizedParams,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

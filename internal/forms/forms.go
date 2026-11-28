@@ -264,7 +264,7 @@ type Form struct {
 
 // New returns a form over pages.
 func New(pages ...*Page) *Form {
-	f := &Form{pages: pages, in: os.Stdin, out: os.Stdout}
+	f := &Form{pages: pages, in: os.Stdin, out: os.Stderr}
 	f.resize(terminalWidth(), 0)
 	return f
 }

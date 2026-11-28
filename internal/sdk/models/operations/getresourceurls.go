@@ -25,6 +25,18 @@ const (
 func (e GetResourceUrlsType) ToPointer() *GetResourceUrlsType {
 	return &e
 }
+
+// GetResourceUrlsTypeValues returns every known GetResourceUrlsType value in schema order.
+func GetResourceUrlsTypeValues() []GetResourceUrlsType {
+	return []GetResourceUrlsType{
+		GetResourceUrlsTypeMedia,
+		GetResourceUrlsTypeFolder,
+		GetResourceUrlsTypeChannel,
+		GetResourceUrlsTypeChannelEpisode,
+		GetResourceUrlsTypeWebinar,
+		GetResourceUrlsTypeRemix,
+	}
+}
 func (e *GetResourceUrlsType) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -82,6 +94,16 @@ const (
 
 func (e GetResourceUrlsCode) ToPointer() *GetResourceUrlsCode {
 	return &e
+}
+
+// GetResourceUrlsCodeValues returns every known GetResourceUrlsCode value in schema order.
+func GetResourceUrlsCodeValues() []GetResourceUrlsCode {
+	return []GetResourceUrlsCode{
+		GetResourceUrlsCodeUnauthorizedCredentials,
+		GetResourceUrlsCodeAccountInactive,
+		GetResourceUrlsCodeUnauthorizedScope,
+		GetResourceUrlsCodeUnauthorizedParams,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

@@ -23,6 +23,14 @@ const (
 func (e GetChannelsEnabled) ToPointer() *GetChannelsEnabled {
 	return &e
 }
+
+// GetChannelsEnabledValues returns every known GetChannelsEnabled value in schema order.
+func GetChannelsEnabledValues() []GetChannelsEnabled {
+	return []GetChannelsEnabled{
+		GetChannelsEnabledZero,
+		GetChannelsEnabledOne,
+	}
+}
 func (e *GetChannelsEnabled) UnmarshalJSON(data []byte) error {
 	var v int64
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -95,6 +103,16 @@ const (
 func (e GetChannelsSortBy) ToPointer() *GetChannelsSortBy {
 	return &e
 }
+
+// GetChannelsSortByValues returns every known GetChannelsSortBy value in schema order.
+func GetChannelsSortByValues() []GetChannelsSortBy {
+	return []GetChannelsSortBy{
+		GetChannelsSortByCreated,
+		GetChannelsSortByID,
+		GetChannelsSortByUpdated,
+		GetChannelsSortByName,
+	}
+}
 func (e *GetChannelsSortBy) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -125,6 +143,14 @@ const (
 
 func (e GetChannelsSortDirection) ToPointer() *GetChannelsSortDirection {
 	return &e
+}
+
+// GetChannelsSortDirectionValues returns every known GetChannelsSortDirection value in schema order.
+func GetChannelsSortDirectionValues() []GetChannelsSortDirection {
+	return []GetChannelsSortDirection{
+		GetChannelsSortDirectionZero,
+		GetChannelsSortDirectionOne,
+	}
 }
 func (e *GetChannelsSortDirection) UnmarshalJSON(data []byte) error {
 	var v int64
@@ -235,6 +261,16 @@ func (e GetChannelsCode) ToPointer() *GetChannelsCode {
 	return &e
 }
 
+// GetChannelsCodeValues returns every known GetChannelsCode value in schema order.
+func GetChannelsCodeValues() []GetChannelsCode {
+	return []GetChannelsCode{
+		GetChannelsCodeUnauthorizedCredentials,
+		GetChannelsCodeAccountInactive,
+		GetChannelsCodeUnauthorizedScope,
+		GetChannelsCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *GetChannelsCode) IsExact() bool {
 	if e != nil {
@@ -256,6 +292,15 @@ const (
 
 func (e GetChannelsEpisodeFormat) ToPointer() *GetChannelsEpisodeFormat {
 	return &e
+}
+
+// GetChannelsEpisodeFormatValues returns every known GetChannelsEpisodeFormat value in schema order.
+func GetChannelsEpisodeFormatValues() []GetChannelsEpisodeFormat {
+	return []GetChannelsEpisodeFormat{
+		GetChannelsEpisodeFormatEpisodic,
+		GetChannelsEpisodeFormatEpisodicWithSeasons,
+		GetChannelsEpisodeFormatSerial,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
@@ -388,6 +433,122 @@ func (e GetChannelsCategory1) ToPointer() *GetChannelsCategory1 {
 	return &e
 }
 
+// GetChannelsCategory1Values returns every known GetChannelsCategory1 value in schema order.
+func GetChannelsCategory1Values() []GetChannelsCategory1 {
+	return []GetChannelsCategory1{
+		GetChannelsCategory1Arts,
+		GetChannelsCategory1ArtsGreaterThanBooks,
+		GetChannelsCategory1ArtsGreaterThanDesign,
+		GetChannelsCategory1ArtsGreaterThanFashionAndBeauty,
+		GetChannelsCategory1ArtsGreaterThanFood,
+		GetChannelsCategory1ArtsGreaterThanPerformingArts,
+		GetChannelsCategory1ArtsGreaterThanVisualArts,
+		GetChannelsCategory1Business,
+		GetChannelsCategory1BusinessGreaterThanCareers,
+		GetChannelsCategory1BusinessGreaterThanEntrepreneurship,
+		GetChannelsCategory1BusinessGreaterThanInvesting,
+		GetChannelsCategory1BusinessGreaterThanManagement,
+		GetChannelsCategory1BusinessGreaterThanMarketing,
+		GetChannelsCategory1BusinessGreaterThanNonProfit,
+		GetChannelsCategory1Comedy,
+		GetChannelsCategory1ComedyGreaterThanComedyInterviews,
+		GetChannelsCategory1ComedyGreaterThanImprov,
+		GetChannelsCategory1ComedyGreaterThanStandUp,
+		GetChannelsCategory1Education,
+		GetChannelsCategory1EducationGreaterThanCourses,
+		GetChannelsCategory1EducationGreaterThanHowTo,
+		GetChannelsCategory1EducationGreaterThanLanguageLearning,
+		GetChannelsCategory1EducationGreaterThanSelfImprovement,
+		GetChannelsCategory1Fiction,
+		GetChannelsCategory1FictionGreaterThanComedyFiction,
+		GetChannelsCategory1FictionGreaterThanDrama,
+		GetChannelsCategory1FictionGreaterThanScienceFiction,
+		GetChannelsCategory1Government,
+		GetChannelsCategory1HealthAndFitness,
+		GetChannelsCategory1HealthAndFitnessGreaterThanAlternativeHealth,
+		GetChannelsCategory1HealthAndFitnessGreaterThanFitness,
+		GetChannelsCategory1HealthAndFitnessGreaterThanMedicine,
+		GetChannelsCategory1HealthAndFitnessGreaterThanMentalHealth,
+		GetChannelsCategory1HealthAndFitnessGreaterThanNutrition,
+		GetChannelsCategory1HealthAndFitnessGreaterThanSexuality,
+		GetChannelsCategory1History,
+		GetChannelsCategory1KidsAndFamily,
+		GetChannelsCategory1KidsAndFamilyGreaterThanEducationForKids,
+		GetChannelsCategory1KidsAndFamilyGreaterThanParenting,
+		GetChannelsCategory1KidsAndFamilyGreaterThanPetsAndAnimals,
+		GetChannelsCategory1KidsAndFamilyGreaterThanStoriesForKids,
+		GetChannelsCategory1Leisure,
+		GetChannelsCategory1LeisureGreaterThanAnimationAndManga,
+		GetChannelsCategory1LeisureGreaterThanAutomotive,
+		GetChannelsCategory1LeisureGreaterThanAviation,
+		GetChannelsCategory1LeisureGreaterThanCrafts,
+		GetChannelsCategory1LeisureGreaterThanGames,
+		GetChannelsCategory1LeisureGreaterThanHobbies,
+		GetChannelsCategory1LeisureGreaterThanHomeAndGarden,
+		GetChannelsCategory1LeisureGreaterThanVideoGames,
+		GetChannelsCategory1Music,
+		GetChannelsCategory1MusicGreaterThanMusicCommentary,
+		GetChannelsCategory1MusicGreaterThanMusicHistory,
+		GetChannelsCategory1MusicGreaterThanMusicInterviews,
+		GetChannelsCategory1News,
+		GetChannelsCategory1NewsGreaterThanBusinessNews,
+		GetChannelsCategory1NewsGreaterThanDailyNews,
+		GetChannelsCategory1NewsGreaterThanEntertainmentNews,
+		GetChannelsCategory1NewsGreaterThanNewsCommentary,
+		GetChannelsCategory1NewsGreaterThanPolitics,
+		GetChannelsCategory1NewsGreaterThanSportsNews,
+		GetChannelsCategory1NewsGreaterThanTechNews,
+		GetChannelsCategory1ReligionAndSpirituality,
+		GetChannelsCategory1ReligionAndSpiritualityGreaterThanBuddhism,
+		GetChannelsCategory1ReligionAndSpiritualityGreaterThanChristianity,
+		GetChannelsCategory1ReligionAndSpiritualityGreaterThanHinduism,
+		GetChannelsCategory1ReligionAndSpiritualityGreaterThanIslam,
+		GetChannelsCategory1ReligionAndSpiritualityGreaterThanJudaism,
+		GetChannelsCategory1ReligionAndSpiritualityGreaterThanReligion,
+		GetChannelsCategory1ReligionAndSpiritualityGreaterThanSpirituality,
+		GetChannelsCategory1Science,
+		GetChannelsCategory1ScienceGreaterThanAstronomy,
+		GetChannelsCategory1ScienceGreaterThanChemistry,
+		GetChannelsCategory1ScienceGreaterThanEarthSciences,
+		GetChannelsCategory1ScienceGreaterThanLifeSciences,
+		GetChannelsCategory1ScienceGreaterThanMathematics,
+		GetChannelsCategory1ScienceGreaterThanNaturalSciences,
+		GetChannelsCategory1ScienceGreaterThanNature,
+		GetChannelsCategory1ScienceGreaterThanPhysics,
+		GetChannelsCategory1ScienceGreaterThanSocialSciences,
+		GetChannelsCategory1SocietyAndCulture,
+		GetChannelsCategory1SocietyAndCultureGreaterThanDocumentary,
+		GetChannelsCategory1SocietyAndCultureGreaterThanPersonalJournals,
+		GetChannelsCategory1SocietyAndCultureGreaterThanPhilosophy,
+		GetChannelsCategory1SocietyAndCultureGreaterThanPlacesAndTravel,
+		GetChannelsCategory1SocietyAndCultureGreaterThanRelationships,
+		GetChannelsCategory1Sports,
+		GetChannelsCategory1SportsGreaterThanBaseball,
+		GetChannelsCategory1SportsGreaterThanBasketball,
+		GetChannelsCategory1SportsGreaterThanCricket,
+		GetChannelsCategory1SportsGreaterThanFantasySports,
+		GetChannelsCategory1SportsGreaterThanFootball,
+		GetChannelsCategory1SportsGreaterThanGolf,
+		GetChannelsCategory1SportsGreaterThanHockey,
+		GetChannelsCategory1SportsGreaterThanRugby,
+		GetChannelsCategory1SportsGreaterThanRunning,
+		GetChannelsCategory1SportsGreaterThanSoccer,
+		GetChannelsCategory1SportsGreaterThanSwimming,
+		GetChannelsCategory1SportsGreaterThanTennis,
+		GetChannelsCategory1SportsGreaterThanVolleyball,
+		GetChannelsCategory1SportsGreaterThanWilderness,
+		GetChannelsCategory1SportsGreaterThanWrestling,
+		GetChannelsCategory1Technology,
+		GetChannelsCategory1TrueCrime,
+		GetChannelsCategory1TvAndFilm,
+		GetChannelsCategory1TvAndFilmGreaterThanAfterShows,
+		GetChannelsCategory1TvAndFilmGreaterThanFilmHistory,
+		GetChannelsCategory1TvAndFilmGreaterThanFilmInterviews,
+		GetChannelsCategory1TvAndFilmGreaterThanFilmReviews,
+		GetChannelsCategory1TvAndFilmGreaterThanTvReviews,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *GetChannelsCategory1) IsExact() bool {
 	if e != nil {
@@ -516,6 +677,122 @@ const (
 
 func (e GetChannelsCategory2) ToPointer() *GetChannelsCategory2 {
 	return &e
+}
+
+// GetChannelsCategory2Values returns every known GetChannelsCategory2 value in schema order.
+func GetChannelsCategory2Values() []GetChannelsCategory2 {
+	return []GetChannelsCategory2{
+		GetChannelsCategory2Arts,
+		GetChannelsCategory2ArtsGreaterThanBooks,
+		GetChannelsCategory2ArtsGreaterThanDesign,
+		GetChannelsCategory2ArtsGreaterThanFashionAndBeauty,
+		GetChannelsCategory2ArtsGreaterThanFood,
+		GetChannelsCategory2ArtsGreaterThanPerformingArts,
+		GetChannelsCategory2ArtsGreaterThanVisualArts,
+		GetChannelsCategory2Business,
+		GetChannelsCategory2BusinessGreaterThanCareers,
+		GetChannelsCategory2BusinessGreaterThanEntrepreneurship,
+		GetChannelsCategory2BusinessGreaterThanInvesting,
+		GetChannelsCategory2BusinessGreaterThanManagement,
+		GetChannelsCategory2BusinessGreaterThanMarketing,
+		GetChannelsCategory2BusinessGreaterThanNonProfit,
+		GetChannelsCategory2Comedy,
+		GetChannelsCategory2ComedyGreaterThanComedyInterviews,
+		GetChannelsCategory2ComedyGreaterThanImprov,
+		GetChannelsCategory2ComedyGreaterThanStandUp,
+		GetChannelsCategory2Education,
+		GetChannelsCategory2EducationGreaterThanCourses,
+		GetChannelsCategory2EducationGreaterThanHowTo,
+		GetChannelsCategory2EducationGreaterThanLanguageLearning,
+		GetChannelsCategory2EducationGreaterThanSelfImprovement,
+		GetChannelsCategory2Fiction,
+		GetChannelsCategory2FictionGreaterThanComedyFiction,
+		GetChannelsCategory2FictionGreaterThanDrama,
+		GetChannelsCategory2FictionGreaterThanScienceFiction,
+		GetChannelsCategory2Government,
+		GetChannelsCategory2HealthAndFitness,
+		GetChannelsCategory2HealthAndFitnessGreaterThanAlternativeHealth,
+		GetChannelsCategory2HealthAndFitnessGreaterThanFitness,
+		GetChannelsCategory2HealthAndFitnessGreaterThanMedicine,
+		GetChannelsCategory2HealthAndFitnessGreaterThanMentalHealth,
+		GetChannelsCategory2HealthAndFitnessGreaterThanNutrition,
+		GetChannelsCategory2HealthAndFitnessGreaterThanSexuality,
+		GetChannelsCategory2History,
+		GetChannelsCategory2KidsAndFamily,
+		GetChannelsCategory2KidsAndFamilyGreaterThanEducationForKids,
+		GetChannelsCategory2KidsAndFamilyGreaterThanParenting,
+		GetChannelsCategory2KidsAndFamilyGreaterThanPetsAndAnimals,
+		GetChannelsCategory2KidsAndFamilyGreaterThanStoriesForKids,
+		GetChannelsCategory2Leisure,
+		GetChannelsCategory2LeisureGreaterThanAnimationAndManga,
+		GetChannelsCategory2LeisureGreaterThanAutomotive,
+		GetChannelsCategory2LeisureGreaterThanAviation,
+		GetChannelsCategory2LeisureGreaterThanCrafts,
+		GetChannelsCategory2LeisureGreaterThanGames,
+		GetChannelsCategory2LeisureGreaterThanHobbies,
+		GetChannelsCategory2LeisureGreaterThanHomeAndGarden,
+		GetChannelsCategory2LeisureGreaterThanVideoGames,
+		GetChannelsCategory2Music,
+		GetChannelsCategory2MusicGreaterThanMusicCommentary,
+		GetChannelsCategory2MusicGreaterThanMusicHistory,
+		GetChannelsCategory2MusicGreaterThanMusicInterviews,
+		GetChannelsCategory2News,
+		GetChannelsCategory2NewsGreaterThanBusinessNews,
+		GetChannelsCategory2NewsGreaterThanDailyNews,
+		GetChannelsCategory2NewsGreaterThanEntertainmentNews,
+		GetChannelsCategory2NewsGreaterThanNewsCommentary,
+		GetChannelsCategory2NewsGreaterThanPolitics,
+		GetChannelsCategory2NewsGreaterThanSportsNews,
+		GetChannelsCategory2NewsGreaterThanTechNews,
+		GetChannelsCategory2ReligionAndSpirituality,
+		GetChannelsCategory2ReligionAndSpiritualityGreaterThanBuddhism,
+		GetChannelsCategory2ReligionAndSpiritualityGreaterThanChristianity,
+		GetChannelsCategory2ReligionAndSpiritualityGreaterThanHinduism,
+		GetChannelsCategory2ReligionAndSpiritualityGreaterThanIslam,
+		GetChannelsCategory2ReligionAndSpiritualityGreaterThanJudaism,
+		GetChannelsCategory2ReligionAndSpiritualityGreaterThanReligion,
+		GetChannelsCategory2ReligionAndSpiritualityGreaterThanSpirituality,
+		GetChannelsCategory2Science,
+		GetChannelsCategory2ScienceGreaterThanAstronomy,
+		GetChannelsCategory2ScienceGreaterThanChemistry,
+		GetChannelsCategory2ScienceGreaterThanEarthSciences,
+		GetChannelsCategory2ScienceGreaterThanLifeSciences,
+		GetChannelsCategory2ScienceGreaterThanMathematics,
+		GetChannelsCategory2ScienceGreaterThanNaturalSciences,
+		GetChannelsCategory2ScienceGreaterThanNature,
+		GetChannelsCategory2ScienceGreaterThanPhysics,
+		GetChannelsCategory2ScienceGreaterThanSocialSciences,
+		GetChannelsCategory2SocietyAndCulture,
+		GetChannelsCategory2SocietyAndCultureGreaterThanDocumentary,
+		GetChannelsCategory2SocietyAndCultureGreaterThanPersonalJournals,
+		GetChannelsCategory2SocietyAndCultureGreaterThanPhilosophy,
+		GetChannelsCategory2SocietyAndCultureGreaterThanPlacesAndTravel,
+		GetChannelsCategory2SocietyAndCultureGreaterThanRelationships,
+		GetChannelsCategory2Sports,
+		GetChannelsCategory2SportsGreaterThanBaseball,
+		GetChannelsCategory2SportsGreaterThanBasketball,
+		GetChannelsCategory2SportsGreaterThanCricket,
+		GetChannelsCategory2SportsGreaterThanFantasySports,
+		GetChannelsCategory2SportsGreaterThanFootball,
+		GetChannelsCategory2SportsGreaterThanGolf,
+		GetChannelsCategory2SportsGreaterThanHockey,
+		GetChannelsCategory2SportsGreaterThanRugby,
+		GetChannelsCategory2SportsGreaterThanRunning,
+		GetChannelsCategory2SportsGreaterThanSoccer,
+		GetChannelsCategory2SportsGreaterThanSwimming,
+		GetChannelsCategory2SportsGreaterThanTennis,
+		GetChannelsCategory2SportsGreaterThanVolleyball,
+		GetChannelsCategory2SportsGreaterThanWilderness,
+		GetChannelsCategory2SportsGreaterThanWrestling,
+		GetChannelsCategory2Technology,
+		GetChannelsCategory2TrueCrime,
+		GetChannelsCategory2TvAndFilm,
+		GetChannelsCategory2TvAndFilmGreaterThanAfterShows,
+		GetChannelsCategory2TvAndFilmGreaterThanFilmHistory,
+		GetChannelsCategory2TvAndFilmGreaterThanFilmInterviews,
+		GetChannelsCategory2TvAndFilmGreaterThanFilmReviews,
+		GetChannelsCategory2TvAndFilmGreaterThanTvReviews,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
@@ -648,6 +925,122 @@ func (e GetChannelsCategory3) ToPointer() *GetChannelsCategory3 {
 	return &e
 }
 
+// GetChannelsCategory3Values returns every known GetChannelsCategory3 value in schema order.
+func GetChannelsCategory3Values() []GetChannelsCategory3 {
+	return []GetChannelsCategory3{
+		GetChannelsCategory3Arts,
+		GetChannelsCategory3ArtsGreaterThanBooks,
+		GetChannelsCategory3ArtsGreaterThanDesign,
+		GetChannelsCategory3ArtsGreaterThanFashionAndBeauty,
+		GetChannelsCategory3ArtsGreaterThanFood,
+		GetChannelsCategory3ArtsGreaterThanPerformingArts,
+		GetChannelsCategory3ArtsGreaterThanVisualArts,
+		GetChannelsCategory3Business,
+		GetChannelsCategory3BusinessGreaterThanCareers,
+		GetChannelsCategory3BusinessGreaterThanEntrepreneurship,
+		GetChannelsCategory3BusinessGreaterThanInvesting,
+		GetChannelsCategory3BusinessGreaterThanManagement,
+		GetChannelsCategory3BusinessGreaterThanMarketing,
+		GetChannelsCategory3BusinessGreaterThanNonProfit,
+		GetChannelsCategory3Comedy,
+		GetChannelsCategory3ComedyGreaterThanComedyInterviews,
+		GetChannelsCategory3ComedyGreaterThanImprov,
+		GetChannelsCategory3ComedyGreaterThanStandUp,
+		GetChannelsCategory3Education,
+		GetChannelsCategory3EducationGreaterThanCourses,
+		GetChannelsCategory3EducationGreaterThanHowTo,
+		GetChannelsCategory3EducationGreaterThanLanguageLearning,
+		GetChannelsCategory3EducationGreaterThanSelfImprovement,
+		GetChannelsCategory3Fiction,
+		GetChannelsCategory3FictionGreaterThanComedyFiction,
+		GetChannelsCategory3FictionGreaterThanDrama,
+		GetChannelsCategory3FictionGreaterThanScienceFiction,
+		GetChannelsCategory3Government,
+		GetChannelsCategory3HealthAndFitness,
+		GetChannelsCategory3HealthAndFitnessGreaterThanAlternativeHealth,
+		GetChannelsCategory3HealthAndFitnessGreaterThanFitness,
+		GetChannelsCategory3HealthAndFitnessGreaterThanMedicine,
+		GetChannelsCategory3HealthAndFitnessGreaterThanMentalHealth,
+		GetChannelsCategory3HealthAndFitnessGreaterThanNutrition,
+		GetChannelsCategory3HealthAndFitnessGreaterThanSexuality,
+		GetChannelsCategory3History,
+		GetChannelsCategory3KidsAndFamily,
+		GetChannelsCategory3KidsAndFamilyGreaterThanEducationForKids,
+		GetChannelsCategory3KidsAndFamilyGreaterThanParenting,
+		GetChannelsCategory3KidsAndFamilyGreaterThanPetsAndAnimals,
+		GetChannelsCategory3KidsAndFamilyGreaterThanStoriesForKids,
+		GetChannelsCategory3Leisure,
+		GetChannelsCategory3LeisureGreaterThanAnimationAndManga,
+		GetChannelsCategory3LeisureGreaterThanAutomotive,
+		GetChannelsCategory3LeisureGreaterThanAviation,
+		GetChannelsCategory3LeisureGreaterThanCrafts,
+		GetChannelsCategory3LeisureGreaterThanGames,
+		GetChannelsCategory3LeisureGreaterThanHobbies,
+		GetChannelsCategory3LeisureGreaterThanHomeAndGarden,
+		GetChannelsCategory3LeisureGreaterThanVideoGames,
+		GetChannelsCategory3Music,
+		GetChannelsCategory3MusicGreaterThanMusicCommentary,
+		GetChannelsCategory3MusicGreaterThanMusicHistory,
+		GetChannelsCategory3MusicGreaterThanMusicInterviews,
+		GetChannelsCategory3News,
+		GetChannelsCategory3NewsGreaterThanBusinessNews,
+		GetChannelsCategory3NewsGreaterThanDailyNews,
+		GetChannelsCategory3NewsGreaterThanEntertainmentNews,
+		GetChannelsCategory3NewsGreaterThanNewsCommentary,
+		GetChannelsCategory3NewsGreaterThanPolitics,
+		GetChannelsCategory3NewsGreaterThanSportsNews,
+		GetChannelsCategory3NewsGreaterThanTechNews,
+		GetChannelsCategory3ReligionAndSpirituality,
+		GetChannelsCategory3ReligionAndSpiritualityGreaterThanBuddhism,
+		GetChannelsCategory3ReligionAndSpiritualityGreaterThanChristianity,
+		GetChannelsCategory3ReligionAndSpiritualityGreaterThanHinduism,
+		GetChannelsCategory3ReligionAndSpiritualityGreaterThanIslam,
+		GetChannelsCategory3ReligionAndSpiritualityGreaterThanJudaism,
+		GetChannelsCategory3ReligionAndSpiritualityGreaterThanReligion,
+		GetChannelsCategory3ReligionAndSpiritualityGreaterThanSpirituality,
+		GetChannelsCategory3Science,
+		GetChannelsCategory3ScienceGreaterThanAstronomy,
+		GetChannelsCategory3ScienceGreaterThanChemistry,
+		GetChannelsCategory3ScienceGreaterThanEarthSciences,
+		GetChannelsCategory3ScienceGreaterThanLifeSciences,
+		GetChannelsCategory3ScienceGreaterThanMathematics,
+		GetChannelsCategory3ScienceGreaterThanNaturalSciences,
+		GetChannelsCategory3ScienceGreaterThanNature,
+		GetChannelsCategory3ScienceGreaterThanPhysics,
+		GetChannelsCategory3ScienceGreaterThanSocialSciences,
+		GetChannelsCategory3SocietyAndCulture,
+		GetChannelsCategory3SocietyAndCultureGreaterThanDocumentary,
+		GetChannelsCategory3SocietyAndCultureGreaterThanPersonalJournals,
+		GetChannelsCategory3SocietyAndCultureGreaterThanPhilosophy,
+		GetChannelsCategory3SocietyAndCultureGreaterThanPlacesAndTravel,
+		GetChannelsCategory3SocietyAndCultureGreaterThanRelationships,
+		GetChannelsCategory3Sports,
+		GetChannelsCategory3SportsGreaterThanBaseball,
+		GetChannelsCategory3SportsGreaterThanBasketball,
+		GetChannelsCategory3SportsGreaterThanCricket,
+		GetChannelsCategory3SportsGreaterThanFantasySports,
+		GetChannelsCategory3SportsGreaterThanFootball,
+		GetChannelsCategory3SportsGreaterThanGolf,
+		GetChannelsCategory3SportsGreaterThanHockey,
+		GetChannelsCategory3SportsGreaterThanRugby,
+		GetChannelsCategory3SportsGreaterThanRunning,
+		GetChannelsCategory3SportsGreaterThanSoccer,
+		GetChannelsCategory3SportsGreaterThanSwimming,
+		GetChannelsCategory3SportsGreaterThanTennis,
+		GetChannelsCategory3SportsGreaterThanVolleyball,
+		GetChannelsCategory3SportsGreaterThanWilderness,
+		GetChannelsCategory3SportsGreaterThanWrestling,
+		GetChannelsCategory3Technology,
+		GetChannelsCategory3TrueCrime,
+		GetChannelsCategory3TvAndFilm,
+		GetChannelsCategory3TvAndFilmGreaterThanAfterShows,
+		GetChannelsCategory3TvAndFilmGreaterThanFilmHistory,
+		GetChannelsCategory3TvAndFilmGreaterThanFilmInterviews,
+		GetChannelsCategory3TvAndFilmGreaterThanFilmReviews,
+		GetChannelsCategory3TvAndFilmGreaterThanTvReviews,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *GetChannelsCategory3) IsExact() bool {
 	if e != nil {
@@ -763,6 +1156,108 @@ const (
 
 func (e GetChannelsLanguage) ToPointer() *GetChannelsLanguage {
 	return &e
+}
+
+// GetChannelsLanguageValues returns every known GetChannelsLanguage value in schema order.
+func GetChannelsLanguageValues() []GetChannelsLanguage {
+	return []GetChannelsLanguage{
+		GetChannelsLanguageAf,
+		GetChannelsLanguageBe,
+		GetChannelsLanguageBg,
+		GetChannelsLanguageCa,
+		GetChannelsLanguageCs,
+		GetChannelsLanguageDa,
+		GetChannelsLanguageDeAt,
+		GetChannelsLanguageDeCh,
+		GetChannelsLanguageDeDe,
+		GetChannelsLanguageDeLi,
+		GetChannelsLanguageDeLu,
+		GetChannelsLanguageDe,
+		GetChannelsLanguageEl,
+		GetChannelsLanguageEnAu,
+		GetChannelsLanguageEnBz,
+		GetChannelsLanguageEnCa,
+		GetChannelsLanguageEnGb,
+		GetChannelsLanguageEnIe,
+		GetChannelsLanguageEnJm,
+		GetChannelsLanguageEnNz,
+		GetChannelsLanguageEnPh,
+		GetChannelsLanguageEnTt,
+		GetChannelsLanguageEnUs,
+		GetChannelsLanguageEnZa,
+		GetChannelsLanguageEnZw,
+		GetChannelsLanguageEn,
+		GetChannelsLanguageEsAr,
+		GetChannelsLanguageEsBo,
+		GetChannelsLanguageEsCl,
+		GetChannelsLanguageEsCo,
+		GetChannelsLanguageEsCr,
+		GetChannelsLanguageEsDo,
+		GetChannelsLanguageEsEc,
+		GetChannelsLanguageEsEs,
+		GetChannelsLanguageEsGt,
+		GetChannelsLanguageEsHn,
+		GetChannelsLanguageEsMx,
+		GetChannelsLanguageEsNi,
+		GetChannelsLanguageEsPa,
+		GetChannelsLanguageEsPe,
+		GetChannelsLanguageEsPr,
+		GetChannelsLanguageEsPy,
+		GetChannelsLanguageEsSv,
+		GetChannelsLanguageEsUy,
+		GetChannelsLanguageEsVe,
+		GetChannelsLanguageEs,
+		GetChannelsLanguageEt,
+		GetChannelsLanguageEu,
+		GetChannelsLanguageFi,
+		GetChannelsLanguageFo,
+		GetChannelsLanguageFrBe,
+		GetChannelsLanguageFrCa,
+		GetChannelsLanguageFrCh,
+		GetChannelsLanguageFrFr,
+		GetChannelsLanguageFrLu,
+		GetChannelsLanguageFrMc,
+		GetChannelsLanguageFr,
+		GetChannelsLanguageGa,
+		GetChannelsLanguageGd,
+		GetChannelsLanguageGl,
+		GetChannelsLanguageHaw,
+		GetChannelsLanguageHr,
+		GetChannelsLanguageHu,
+		GetChannelsLanguageIn,
+		GetChannelsLanguageIs,
+		GetChannelsLanguageItCh,
+		GetChannelsLanguageItIt,
+		GetChannelsLanguageIt,
+		GetChannelsLanguageJa,
+		GetChannelsLanguageKo,
+		GetChannelsLanguageMk,
+		GetChannelsLanguageNlBe,
+		GetChannelsLanguageNlNl,
+		GetChannelsLanguageNl,
+		GetChannelsLanguageNo,
+		GetChannelsLanguagePl,
+		GetChannelsLanguagePtBr,
+		GetChannelsLanguagePtPt,
+		GetChannelsLanguagePt,
+		GetChannelsLanguageRoMo,
+		GetChannelsLanguageRoRo,
+		GetChannelsLanguageRo,
+		GetChannelsLanguageRuMo,
+		GetChannelsLanguageRuRu,
+		GetChannelsLanguageRu,
+		GetChannelsLanguageSk,
+		GetChannelsLanguageSl,
+		GetChannelsLanguageSq,
+		GetChannelsLanguageSr,
+		GetChannelsLanguageSvFi,
+		GetChannelsLanguageSvSe,
+		GetChannelsLanguageSv,
+		GetChannelsLanguageTr,
+		GetChannelsLanguageUk,
+		GetChannelsLanguageZhCn,
+		GetChannelsLanguageZhTw,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
@@ -890,10 +1385,9 @@ type GetChannelsResponseBody struct {
 	Name string `json:"name"`
 	// The link viewers use to watch the channel: the channel's active custom
 	// domain when one is attached, otherwise the Wistia-hosted channel page.
-	// This is the link to share with an audience.
 	//
 	PublicURL string `json:"public_url"`
-	// Whether the channel is locked. Only invited users logged into Wistia will be able to view this channel.
+	// Whether viewing the channel requires signing in to Wistia with channel access. Password protection is a separate setting.
 	Locked bool `json:"locked"`
 	// The date when the channel was last updated.
 	Updated time.Time `json:"updated"`

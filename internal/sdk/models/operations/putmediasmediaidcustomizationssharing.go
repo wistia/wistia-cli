@@ -24,6 +24,18 @@ const (
 func (e Channel) ToPointer() *Channel {
 	return &e
 }
+
+// ChannelValues returns every known Channel value in schema order.
+func ChannelValues() []Channel {
+	return []Channel{
+		ChannelEmbed,
+		ChannelEmail,
+		ChannelDownload,
+		ChannelFacebook,
+		ChannelTwitter,
+		ChannelLinkedIn,
+	}
+}
 func (e *Channel) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -60,6 +72,16 @@ const (
 
 func (e DownloadType) ToPointer() *DownloadType {
 	return &e
+}
+
+// DownloadTypeValues returns every known DownloadType value in schema order.
+func DownloadTypeValues() []DownloadType {
+	return []DownloadType{
+		DownloadTypeSdMp4,
+		DownloadTypeHdMp4,
+		DownloadTypeOriginal,
+		DownloadTypeAllQualities,
+	}
 }
 func (e *DownloadType) UnmarshalJSON(data []byte) error {
 	var v string
@@ -249,6 +271,16 @@ const (
 
 func (e PutMediasMediaIDCustomizationsSharingCode) ToPointer() *PutMediasMediaIDCustomizationsSharingCode {
 	return &e
+}
+
+// PutMediasMediaIDCustomizationsSharingCodeValues returns every known PutMediasMediaIDCustomizationsSharingCode value in schema order.
+func PutMediasMediaIDCustomizationsSharingCodeValues() []PutMediasMediaIDCustomizationsSharingCode {
+	return []PutMediasMediaIDCustomizationsSharingCode{
+		PutMediasMediaIDCustomizationsSharingCodeUnauthorizedCredentials,
+		PutMediasMediaIDCustomizationsSharingCodeAccountInactive,
+		PutMediasMediaIDCustomizationsSharingCodeUnauthorizedScope,
+		PutMediasMediaIDCustomizationsSharingCodeUnauthorizedParams,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

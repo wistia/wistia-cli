@@ -48,6 +48,16 @@ func (e DeleteBrandsBrandIDCode) ToPointer() *DeleteBrandsBrandIDCode {
 	return &e
 }
 
+// DeleteBrandsBrandIDCodeValues returns every known DeleteBrandsBrandIDCode value in schema order.
+func DeleteBrandsBrandIDCodeValues() []DeleteBrandsBrandIDCode {
+	return []DeleteBrandsBrandIDCode{
+		DeleteBrandsBrandIDCodeUnauthorizedCredentials,
+		DeleteBrandsBrandIDCodeAccountInactive,
+		DeleteBrandsBrandIDCodeUnauthorizedScope,
+		DeleteBrandsBrandIDCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *DeleteBrandsBrandIDCode) IsExact() bool {
 	if e != nil {
@@ -318,6 +328,15 @@ func (e DeleteBrandsBrandIDContrastIcons) ToPointer() *DeleteBrandsBrandIDContra
 	return &e
 }
 
+// DeleteBrandsBrandIDContrastIconsValues returns every known DeleteBrandsBrandIDContrastIcons value in schema order.
+func DeleteBrandsBrandIDContrastIconsValues() []DeleteBrandsBrandIDContrastIcons {
+	return []DeleteBrandsBrandIDContrastIcons{
+		DeleteBrandsBrandIDContrastIconsEnabled,
+		DeleteBrandsBrandIDContrastIconsDisabled,
+		DeleteBrandsBrandIDContrastIconsUnset,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *DeleteBrandsBrandIDContrastIcons) IsExact() bool {
 	if e != nil {
@@ -340,6 +359,15 @@ const (
 
 func (e DeleteBrandsBrandIDOpaqueControls) ToPointer() *DeleteBrandsBrandIDOpaqueControls {
 	return &e
+}
+
+// DeleteBrandsBrandIDOpaqueControlsValues returns every known DeleteBrandsBrandIDOpaqueControls value in schema order.
+func DeleteBrandsBrandIDOpaqueControlsValues() []DeleteBrandsBrandIDOpaqueControls {
+	return []DeleteBrandsBrandIDOpaqueControls{
+		DeleteBrandsBrandIDOpaqueControlsEnabled,
+		DeleteBrandsBrandIDOpaqueControlsDisabled,
+		DeleteBrandsBrandIDOpaqueControlsUnset,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

@@ -66,6 +66,16 @@ func (e PutSpeakersSpeakerProfileIDCode) ToPointer() *PutSpeakersSpeakerProfileI
 	return &e
 }
 
+// PutSpeakersSpeakerProfileIDCodeValues returns every known PutSpeakersSpeakerProfileIDCode value in schema order.
+func PutSpeakersSpeakerProfileIDCodeValues() []PutSpeakersSpeakerProfileIDCode {
+	return []PutSpeakersSpeakerProfileIDCode{
+		PutSpeakersSpeakerProfileIDCodeUnauthorizedCredentials,
+		PutSpeakersSpeakerProfileIDCodeAccountInactive,
+		PutSpeakersSpeakerProfileIDCodeUnauthorizedScope,
+		PutSpeakersSpeakerProfileIDCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *PutSpeakersSpeakerProfileIDCode) IsExact() bool {
 	if e != nil {

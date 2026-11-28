@@ -22,9 +22,9 @@ func (e *PostMediasMediaHashedIDCaptionsPurchaseInternalServerError) Error() str
 	return string(data)
 }
 
-// PostMediasMediaHashedIDCaptionsPurchaseUnprocessableEntityError - Unprocessable entity. Account not eligible, captions already purchased, or other validation error.
+// PostMediasMediaHashedIDCaptionsPurchaseUnprocessableEntityError - Unprocessable entity. Account not eligible, captions already requested, or other validation error.
 type PostMediasMediaHashedIDCaptionsPurchaseUnprocessableEntityError struct {
-	// Error message explaining why the purchase cannot be completed
+	// Error message explaining why captions cannot be generated
 	Message  *string                 `json:"message,omitzero"`
 	HTTPMeta components.HTTPMetadata `json:"-"`
 }
@@ -32,6 +32,12 @@ type PostMediasMediaHashedIDCaptionsPurchaseUnprocessableEntityError struct {
 var _ error = &PostMediasMediaHashedIDCaptionsPurchaseUnprocessableEntityError{}
 
 func (e *PostMediasMediaHashedIDCaptionsPurchaseUnprocessableEntityError) Error() string {
+	if e != nil {
+		if e.Message != nil && *e.Message != "" {
+			return *e.Message
+		}
+	}
+
 	data, _ := json.Marshal(e)
 	return string(data)
 }

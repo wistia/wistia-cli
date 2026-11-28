@@ -35,6 +35,16 @@ func (e GetMediasMediaHashedIDCaptionsCode) ToPointer() *GetMediasMediaHashedIDC
 	return &e
 }
 
+// GetMediasMediaHashedIDCaptionsCodeValues returns every known GetMediasMediaHashedIDCaptionsCode value in schema order.
+func GetMediasMediaHashedIDCaptionsCodeValues() []GetMediasMediaHashedIDCaptionsCode {
+	return []GetMediasMediaHashedIDCaptionsCode{
+		GetMediasMediaHashedIDCaptionsCodeUnauthorizedCredentials,
+		GetMediasMediaHashedIDCaptionsCodeAccountInactive,
+		GetMediasMediaHashedIDCaptionsCodeUnauthorizedScope,
+		GetMediasMediaHashedIDCaptionsCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *GetMediasMediaHashedIDCaptionsCode) IsExact() bool {
 	if e != nil {
@@ -177,6 +187,16 @@ const (
 
 func (e GetMediasMediaHashedIDCaptionsDiarizationStatus) ToPointer() *GetMediasMediaHashedIDCaptionsDiarizationStatus {
 	return &e
+}
+
+// GetMediasMediaHashedIDCaptionsDiarizationStatusValues returns every known GetMediasMediaHashedIDCaptionsDiarizationStatus value in schema order.
+func GetMediasMediaHashedIDCaptionsDiarizationStatusValues() []GetMediasMediaHashedIDCaptionsDiarizationStatus {
+	return []GetMediasMediaHashedIDCaptionsDiarizationStatus{
+		GetMediasMediaHashedIDCaptionsDiarizationStatusReady,
+		GetMediasMediaHashedIDCaptionsDiarizationStatusProcessing,
+		GetMediasMediaHashedIDCaptionsDiarizationStatusUnavailable,
+		GetMediasMediaHashedIDCaptionsDiarizationStatusDisabled,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

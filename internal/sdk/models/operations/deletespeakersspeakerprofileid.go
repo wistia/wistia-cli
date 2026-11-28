@@ -32,6 +32,13 @@ const (
 func (e DeleteSpeakersSpeakerProfileIDReason) ToPointer() *DeleteSpeakersSpeakerProfileIDReason {
 	return &e
 }
+
+// DeleteSpeakersSpeakerProfileIDReasonValues returns every known DeleteSpeakersSpeakerProfileIDReason value in schema order.
+func DeleteSpeakersSpeakerProfileIDReasonValues() []DeleteSpeakersSpeakerProfileIDReason {
+	return []DeleteSpeakersSpeakerProfileIDReason{
+		DeleteSpeakersSpeakerProfileIDReasonInUse,
+	}
+}
 func (e *DeleteSpeakersSpeakerProfileIDReason) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -86,6 +93,16 @@ const (
 
 func (e DeleteSpeakersSpeakerProfileIDCode) ToPointer() *DeleteSpeakersSpeakerProfileIDCode {
 	return &e
+}
+
+// DeleteSpeakersSpeakerProfileIDCodeValues returns every known DeleteSpeakersSpeakerProfileIDCode value in schema order.
+func DeleteSpeakersSpeakerProfileIDCodeValues() []DeleteSpeakersSpeakerProfileIDCode {
+	return []DeleteSpeakersSpeakerProfileIDCode{
+		DeleteSpeakersSpeakerProfileIDCodeUnauthorizedCredentials,
+		DeleteSpeakersSpeakerProfileIDCodeAccountInactive,
+		DeleteSpeakersSpeakerProfileIDCodeUnauthorizedScope,
+		DeleteSpeakersSpeakerProfileIDCodeUnauthorizedParams,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

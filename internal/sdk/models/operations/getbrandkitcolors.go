@@ -22,6 +22,16 @@ func (e GetBrandKitColorsCode) ToPointer() *GetBrandKitColorsCode {
 	return &e
 }
 
+// GetBrandKitColorsCodeValues returns every known GetBrandKitColorsCode value in schema order.
+func GetBrandKitColorsCodeValues() []GetBrandKitColorsCode {
+	return []GetBrandKitColorsCode{
+		GetBrandKitColorsCodeUnauthorizedCredentials,
+		GetBrandKitColorsCodeAccountInactive,
+		GetBrandKitColorsCodeUnauthorizedScope,
+		GetBrandKitColorsCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *GetBrandKitColorsCode) IsExact() bool {
 	if e != nil {

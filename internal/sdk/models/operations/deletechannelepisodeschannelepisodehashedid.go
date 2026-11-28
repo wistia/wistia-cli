@@ -36,6 +36,16 @@ func (e DeleteChannelEpisodesChannelEpisodeHashedIDCode) ToPointer() *DeleteChan
 	return &e
 }
 
+// DeleteChannelEpisodesChannelEpisodeHashedIDCodeValues returns every known DeleteChannelEpisodesChannelEpisodeHashedIDCode value in schema order.
+func DeleteChannelEpisodesChannelEpisodeHashedIDCodeValues() []DeleteChannelEpisodesChannelEpisodeHashedIDCode {
+	return []DeleteChannelEpisodesChannelEpisodeHashedIDCode{
+		DeleteChannelEpisodesChannelEpisodeHashedIDCodeUnauthorizedCredentials,
+		DeleteChannelEpisodesChannelEpisodeHashedIDCodeAccountInactive,
+		DeleteChannelEpisodesChannelEpisodeHashedIDCodeUnauthorizedScope,
+		DeleteChannelEpisodesChannelEpisodeHashedIDCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *DeleteChannelEpisodesChannelEpisodeHashedIDCode) IsExact() bool {
 	if e != nil {
@@ -57,6 +67,15 @@ const (
 
 func (e DeleteChannelEpisodesChannelEpisodeHashedIDEpisodeType) ToPointer() *DeleteChannelEpisodesChannelEpisodeHashedIDEpisodeType {
 	return &e
+}
+
+// DeleteChannelEpisodesChannelEpisodeHashedIDEpisodeTypeValues returns every known DeleteChannelEpisodesChannelEpisodeHashedIDEpisodeType value in schema order.
+func DeleteChannelEpisodesChannelEpisodeHashedIDEpisodeTypeValues() []DeleteChannelEpisodesChannelEpisodeHashedIDEpisodeType {
+	return []DeleteChannelEpisodesChannelEpisodeHashedIDEpisodeType{
+		DeleteChannelEpisodesChannelEpisodeHashedIDEpisodeTypeFull,
+		DeleteChannelEpisodesChannelEpisodeHashedIDEpisodeTypeTrailer,
+		DeleteChannelEpisodesChannelEpisodeHashedIDEpisodeTypeBonus,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

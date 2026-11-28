@@ -29,6 +29,18 @@ const (
 func (e GetChannelEpisodesSortBy) ToPointer() *GetChannelEpisodesSortBy {
 	return &e
 }
+
+// GetChannelEpisodesSortByValues returns every known GetChannelEpisodesSortBy value in schema order.
+func GetChannelEpisodesSortByValues() []GetChannelEpisodesSortBy {
+	return []GetChannelEpisodesSortBy{
+		GetChannelEpisodesSortByPosition,
+		GetChannelEpisodesSortByTitle,
+		GetChannelEpisodesSortByCreated,
+		GetChannelEpisodesSortByUpdated,
+		GetChannelEpisodesSortByPublishedAt,
+		GetChannelEpisodesSortByID,
+	}
+}
 func (e *GetChannelEpisodesSortBy) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -64,6 +76,14 @@ const (
 func (e GetChannelEpisodesSortDirection) ToPointer() *GetChannelEpisodesSortDirection {
 	return &e
 }
+
+// GetChannelEpisodesSortDirectionValues returns every known GetChannelEpisodesSortDirection value in schema order.
+func GetChannelEpisodesSortDirectionValues() []GetChannelEpisodesSortDirection {
+	return []GetChannelEpisodesSortDirection{
+		GetChannelEpisodesSortDirectionZero,
+		GetChannelEpisodesSortDirectionOne,
+	}
+}
 func (e *GetChannelEpisodesSortDirection) UnmarshalJSON(data []byte) error {
 	var v int64
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -90,6 +110,14 @@ const (
 
 func (e GetChannelEpisodesEnabled) ToPointer() *GetChannelEpisodesEnabled {
 	return &e
+}
+
+// GetChannelEpisodesEnabledValues returns every known GetChannelEpisodesEnabled value in schema order.
+func GetChannelEpisodesEnabledValues() []GetChannelEpisodesEnabled {
+	return []GetChannelEpisodesEnabled{
+		GetChannelEpisodesEnabledZero,
+		GetChannelEpisodesEnabledOne,
+	}
 }
 func (e *GetChannelEpisodesEnabled) UnmarshalJSON(data []byte) error {
 	var v int64
@@ -281,6 +309,16 @@ func (e GetChannelEpisodesCode) ToPointer() *GetChannelEpisodesCode {
 	return &e
 }
 
+// GetChannelEpisodesCodeValues returns every known GetChannelEpisodesCode value in schema order.
+func GetChannelEpisodesCodeValues() []GetChannelEpisodesCode {
+	return []GetChannelEpisodesCode{
+		GetChannelEpisodesCodeUnauthorizedCredentials,
+		GetChannelEpisodesCodeAccountInactive,
+		GetChannelEpisodesCodeUnauthorizedScope,
+		GetChannelEpisodesCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *GetChannelEpisodesCode) IsExact() bool {
 	if e != nil {
@@ -302,6 +340,15 @@ const (
 
 func (e GetChannelEpisodesEpisodeType) ToPointer() *GetChannelEpisodesEpisodeType {
 	return &e
+}
+
+// GetChannelEpisodesEpisodeTypeValues returns every known GetChannelEpisodesEpisodeType value in schema order.
+func GetChannelEpisodesEpisodeTypeValues() []GetChannelEpisodesEpisodeType {
+	return []GetChannelEpisodesEpisodeType{
+		GetChannelEpisodesEpisodeTypeFull,
+		GetChannelEpisodesEpisodeTypeTrailer,
+		GetChannelEpisodesEpisodeTypeBonus,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

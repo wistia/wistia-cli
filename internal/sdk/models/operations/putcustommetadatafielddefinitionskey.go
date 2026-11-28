@@ -158,6 +158,16 @@ func (e PutCustomMetadataFieldDefinitionsKeyCode) ToPointer() *PutCustomMetadata
 	return &e
 }
 
+// PutCustomMetadataFieldDefinitionsKeyCodeValues returns every known PutCustomMetadataFieldDefinitionsKeyCode value in schema order.
+func PutCustomMetadataFieldDefinitionsKeyCodeValues() []PutCustomMetadataFieldDefinitionsKeyCode {
+	return []PutCustomMetadataFieldDefinitionsKeyCode{
+		PutCustomMetadataFieldDefinitionsKeyCodeUnauthorizedCredentials,
+		PutCustomMetadataFieldDefinitionsKeyCodeAccountInactive,
+		PutCustomMetadataFieldDefinitionsKeyCodeUnauthorizedScope,
+		PutCustomMetadataFieldDefinitionsKeyCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *PutCustomMetadataFieldDefinitionsKeyCode) IsExact() bool {
 	if e != nil {
@@ -191,6 +201,26 @@ const (
 
 func (e PutCustomMetadataFieldDefinitionsKeyFieldType) ToPointer() *PutCustomMetadataFieldDefinitionsKeyFieldType {
 	return &e
+}
+
+// PutCustomMetadataFieldDefinitionsKeyFieldTypeValues returns every known PutCustomMetadataFieldDefinitionsKeyFieldType value in schema order.
+func PutCustomMetadataFieldDefinitionsKeyFieldTypeValues() []PutCustomMetadataFieldDefinitionsKeyFieldType {
+	return []PutCustomMetadataFieldDefinitionsKeyFieldType{
+		PutCustomMetadataFieldDefinitionsKeyFieldTypeText,
+		PutCustomMetadataFieldDefinitionsKeyFieldTypeNumber,
+		PutCustomMetadataFieldDefinitionsKeyFieldTypeDate,
+		PutCustomMetadataFieldDefinitionsKeyFieldTypeBoolean,
+		PutCustomMetadataFieldDefinitionsKeyFieldTypeSingleSelect,
+		PutCustomMetadataFieldDefinitionsKeyFieldTypeShortText,
+		PutCustomMetadataFieldDefinitionsKeyFieldTypeURL,
+		PutCustomMetadataFieldDefinitionsKeyFieldTypeEmail,
+		PutCustomMetadataFieldDefinitionsKeyFieldTypeMoney,
+		PutCustomMetadataFieldDefinitionsKeyFieldTypeTime,
+		PutCustomMetadataFieldDefinitionsKeyFieldTypeDatetime,
+		PutCustomMetadataFieldDefinitionsKeyFieldTypeMultiSelect,
+		PutCustomMetadataFieldDefinitionsKeyFieldTypeContactRef,
+		PutCustomMetadataFieldDefinitionsKeyFieldTypeContactMultiRef,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
@@ -485,6 +515,15 @@ func (e PutCustomMetadataFieldDefinitionsKeySource) ToPointer() *PutCustomMetada
 	return &e
 }
 
+// PutCustomMetadataFieldDefinitionsKeySourceValues returns every known PutCustomMetadataFieldDefinitionsKeySource value in schema order.
+func PutCustomMetadataFieldDefinitionsKeySourceValues() []PutCustomMetadataFieldDefinitionsKeySource {
+	return []PutCustomMetadataFieldDefinitionsKeySource{
+		PutCustomMetadataFieldDefinitionsKeySourceUI,
+		PutCustomMetadataFieldDefinitionsKeySourceAPI,
+		PutCustomMetadataFieldDefinitionsKeySourceMcp,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *PutCustomMetadataFieldDefinitionsKeySource) IsExact() bool {
 	if e != nil {
@@ -504,6 +543,13 @@ const (
 
 func (e PutCustomMetadataFieldDefinitionsKeyType) ToPointer() *PutCustomMetadataFieldDefinitionsKeyType {
 	return &e
+}
+
+// PutCustomMetadataFieldDefinitionsKeyTypeValues returns every known PutCustomMetadataFieldDefinitionsKeyType value in schema order.
+func PutCustomMetadataFieldDefinitionsKeyTypeValues() []PutCustomMetadataFieldDefinitionsKeyType {
+	return []PutCustomMetadataFieldDefinitionsKeyType{
+		PutCustomMetadataFieldDefinitionsKeyTypeContact,
+	}
 }
 func (e *PutCustomMetadataFieldDefinitionsKeyType) UnmarshalJSON(data []byte) error {
 	var v string

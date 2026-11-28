@@ -23,6 +23,14 @@ const (
 func (e GetWebinarsWebinarIDRegistrationsSortDirection) ToPointer() *GetWebinarsWebinarIDRegistrationsSortDirection {
 	return &e
 }
+
+// GetWebinarsWebinarIDRegistrationsSortDirectionValues returns every known GetWebinarsWebinarIDRegistrationsSortDirection value in schema order.
+func GetWebinarsWebinarIDRegistrationsSortDirectionValues() []GetWebinarsWebinarIDRegistrationsSortDirection {
+	return []GetWebinarsWebinarIDRegistrationsSortDirection{
+		GetWebinarsWebinarIDRegistrationsSortDirectionZero,
+		GetWebinarsWebinarIDRegistrationsSortDirectionOne,
+	}
+}
 func (e *GetWebinarsWebinarIDRegistrationsSortDirection) UnmarshalJSON(data []byte) error {
 	var v int64
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -50,6 +58,15 @@ const (
 
 func (e Attendance) ToPointer() *Attendance {
 	return &e
+}
+
+// AttendanceValues returns every known Attendance value in schema order.
+func AttendanceValues() []Attendance {
+	return []Attendance{
+		AttendanceAll,
+		AttendanceAttendees,
+		AttendanceNonAttendees,
+	}
 }
 func (e *Attendance) UnmarshalJSON(data []byte) error {
 	var v string
@@ -80,6 +97,15 @@ const (
 
 func (e Restriction) ToPointer() *Restriction {
 	return &e
+}
+
+// RestrictionValues returns every known Restriction value in schema order.
+func RestrictionValues() []Restriction {
+	return []Restriction{
+		RestrictionAll,
+		RestrictionRestricted,
+		RestrictionAllowed,
+	}
 }
 func (e *Restriction) UnmarshalJSON(data []byte) error {
 	var v string
@@ -190,6 +216,16 @@ func (e GetWebinarsWebinarIDRegistrationsCode) ToPointer() *GetWebinarsWebinarID
 	return &e
 }
 
+// GetWebinarsWebinarIDRegistrationsCodeValues returns every known GetWebinarsWebinarIDRegistrationsCode value in schema order.
+func GetWebinarsWebinarIDRegistrationsCodeValues() []GetWebinarsWebinarIDRegistrationsCode {
+	return []GetWebinarsWebinarIDRegistrationsCode{
+		GetWebinarsWebinarIDRegistrationsCodeUnauthorizedCredentials,
+		GetWebinarsWebinarIDRegistrationsCodeAccountInactive,
+		GetWebinarsWebinarIDRegistrationsCodeUnauthorizedScope,
+		GetWebinarsWebinarIDRegistrationsCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *GetWebinarsWebinarIDRegistrationsCode) IsExact() bool {
 	if e != nil {
@@ -211,6 +247,14 @@ const (
 
 func (e RestrictionStatus) ToPointer() *RestrictionStatus {
 	return &e
+}
+
+// RestrictionStatusValues returns every known RestrictionStatus value in schema order.
+func RestrictionStatusValues() []RestrictionStatus {
+	return []RestrictionStatus{
+		RestrictionStatusRestricted,
+		RestrictionStatusAllowed,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

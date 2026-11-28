@@ -39,6 +39,16 @@ func (e GetBrandsBrandIDCode) ToPointer() *GetBrandsBrandIDCode {
 	return &e
 }
 
+// GetBrandsBrandIDCodeValues returns every known GetBrandsBrandIDCode value in schema order.
+func GetBrandsBrandIDCodeValues() []GetBrandsBrandIDCode {
+	return []GetBrandsBrandIDCode{
+		GetBrandsBrandIDCodeUnauthorizedCredentials,
+		GetBrandsBrandIDCodeAccountInactive,
+		GetBrandsBrandIDCodeUnauthorizedScope,
+		GetBrandsBrandIDCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *GetBrandsBrandIDCode) IsExact() bool {
 	if e != nil {
@@ -309,6 +319,15 @@ func (e GetBrandsBrandIDContrastIcons) ToPointer() *GetBrandsBrandIDContrastIcon
 	return &e
 }
 
+// GetBrandsBrandIDContrastIconsValues returns every known GetBrandsBrandIDContrastIcons value in schema order.
+func GetBrandsBrandIDContrastIconsValues() []GetBrandsBrandIDContrastIcons {
+	return []GetBrandsBrandIDContrastIcons{
+		GetBrandsBrandIDContrastIconsEnabled,
+		GetBrandsBrandIDContrastIconsDisabled,
+		GetBrandsBrandIDContrastIconsUnset,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *GetBrandsBrandIDContrastIcons) IsExact() bool {
 	if e != nil {
@@ -331,6 +350,15 @@ const (
 
 func (e GetBrandsBrandIDOpaqueControls) ToPointer() *GetBrandsBrandIDOpaqueControls {
 	return &e
+}
+
+// GetBrandsBrandIDOpaqueControlsValues returns every known GetBrandsBrandIDOpaqueControls value in schema order.
+func GetBrandsBrandIDOpaqueControlsValues() []GetBrandsBrandIDOpaqueControls {
+	return []GetBrandsBrandIDOpaqueControls{
+		GetBrandsBrandIDOpaqueControlsEnabled,
+		GetBrandsBrandIDOpaqueControlsDisabled,
+		GetBrandsBrandIDOpaqueControlsUnset,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

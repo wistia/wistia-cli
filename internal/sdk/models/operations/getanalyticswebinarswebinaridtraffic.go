@@ -24,6 +24,16 @@ const (
 func (e GetAnalyticsWebinarsWebinarIDTrafficGroupBy) ToPointer() *GetAnalyticsWebinarsWebinarIDTrafficGroupBy {
 	return &e
 }
+
+// GetAnalyticsWebinarsWebinarIDTrafficGroupByValues returns every known GetAnalyticsWebinarsWebinarIDTrafficGroupBy value in schema order.
+func GetAnalyticsWebinarsWebinarIDTrafficGroupByValues() []GetAnalyticsWebinarsWebinarIDTrafficGroupBy {
+	return []GetAnalyticsWebinarsWebinarIDTrafficGroupBy{
+		GetAnalyticsWebinarsWebinarIDTrafficGroupByUtmCampaign,
+		GetAnalyticsWebinarsWebinarIDTrafficGroupByUtmSource,
+		GetAnalyticsWebinarsWebinarIDTrafficGroupByUtmMedium,
+		GetAnalyticsWebinarsWebinarIDTrafficGroupByReferrerDomain,
+	}
+}
 func (e *GetAnalyticsWebinarsWebinarIDTrafficGroupBy) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -56,6 +66,15 @@ const (
 func (e GetAnalyticsWebinarsWebinarIDTrafficSortBy) ToPointer() *GetAnalyticsWebinarsWebinarIDTrafficSortBy {
 	return &e
 }
+
+// GetAnalyticsWebinarsWebinarIDTrafficSortByValues returns every known GetAnalyticsWebinarsWebinarIDTrafficSortBy value in schema order.
+func GetAnalyticsWebinarsWebinarIDTrafficSortByValues() []GetAnalyticsWebinarsWebinarIDTrafficSortBy {
+	return []GetAnalyticsWebinarsWebinarIDTrafficSortBy{
+		GetAnalyticsWebinarsWebinarIDTrafficSortByRegistrations,
+		GetAnalyticsWebinarsWebinarIDTrafficSortByAttendees,
+		GetAnalyticsWebinarsWebinarIDTrafficSortByImpressions,
+	}
+}
 func (e *GetAnalyticsWebinarsWebinarIDTrafficSortBy) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -84,6 +103,14 @@ const (
 
 func (e GetAnalyticsWebinarsWebinarIDTrafficSortDirection) ToPointer() *GetAnalyticsWebinarsWebinarIDTrafficSortDirection {
 	return &e
+}
+
+// GetAnalyticsWebinarsWebinarIDTrafficSortDirectionValues returns every known GetAnalyticsWebinarsWebinarIDTrafficSortDirection value in schema order.
+func GetAnalyticsWebinarsWebinarIDTrafficSortDirectionValues() []GetAnalyticsWebinarsWebinarIDTrafficSortDirection {
+	return []GetAnalyticsWebinarsWebinarIDTrafficSortDirection{
+		GetAnalyticsWebinarsWebinarIDTrafficSortDirectionAsc,
+		GetAnalyticsWebinarsWebinarIDTrafficSortDirectionDesc,
+	}
 }
 func (e *GetAnalyticsWebinarsWebinarIDTrafficSortDirection) UnmarshalJSON(data []byte) error {
 	var v string
@@ -163,6 +190,16 @@ const (
 
 func (e GetAnalyticsWebinarsWebinarIDTrafficCode) ToPointer() *GetAnalyticsWebinarsWebinarIDTrafficCode {
 	return &e
+}
+
+// GetAnalyticsWebinarsWebinarIDTrafficCodeValues returns every known GetAnalyticsWebinarsWebinarIDTrafficCode value in schema order.
+func GetAnalyticsWebinarsWebinarIDTrafficCodeValues() []GetAnalyticsWebinarsWebinarIDTrafficCode {
+	return []GetAnalyticsWebinarsWebinarIDTrafficCode{
+		GetAnalyticsWebinarsWebinarIDTrafficCodeUnauthorizedCredentials,
+		GetAnalyticsWebinarsWebinarIDTrafficCodeAccountInactive,
+		GetAnalyticsWebinarsWebinarIDTrafficCodeUnauthorizedScope,
+		GetAnalyticsWebinarsWebinarIDTrafficCodeUnauthorizedParams,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

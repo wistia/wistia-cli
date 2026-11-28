@@ -134,6 +134,16 @@ func (e PutWebinarsIDCode) ToPointer() *PutWebinarsIDCode {
 	return &e
 }
 
+// PutWebinarsIDCodeValues returns every known PutWebinarsIDCode value in schema order.
+func PutWebinarsIDCodeValues() []PutWebinarsIDCode {
+	return []PutWebinarsIDCode{
+		PutWebinarsIDCodeUnauthorizedCredentials,
+		PutWebinarsIDCodeAccountInactive,
+		PutWebinarsIDCodeUnauthorizedScope,
+		PutWebinarsIDCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *PutWebinarsIDCode) IsExact() bool {
 	if e != nil {
@@ -160,6 +170,19 @@ const (
 
 func (e PutWebinarsIDLifecycleStatus) ToPointer() *PutWebinarsIDLifecycleStatus {
 	return &e
+}
+
+// PutWebinarsIDLifecycleStatusValues returns every known PutWebinarsIDLifecycleStatus value in schema order.
+func PutWebinarsIDLifecycleStatusValues() []PutWebinarsIDLifecycleStatus {
+	return []PutWebinarsIDLifecycleStatus{
+		PutWebinarsIDLifecycleStatusPending,
+		PutWebinarsIDLifecycleStatusReady,
+		PutWebinarsIDLifecycleStatusStarting,
+		PutWebinarsIDLifecycleStatusStarted,
+		PutWebinarsIDLifecycleStatusEnded,
+		PutWebinarsIDLifecycleStatusVodReady,
+		PutWebinarsIDLifecycleStatusFailed,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

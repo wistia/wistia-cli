@@ -24,6 +24,15 @@ const (
 func (e Filter) ToPointer() *Filter {
 	return &e
 }
+
+// FilterValues returns every known Filter value in schema order.
+func FilterValues() []Filter {
+	return []Filter{
+		FilterHasName,
+		FilterHasEmail,
+		FilterIdentifiedByEmailGate,
+	}
+}
 func (e *Filter) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -93,6 +102,16 @@ const (
 
 func (e GetStatsVisitorsCode) ToPointer() *GetStatsVisitorsCode {
 	return &e
+}
+
+// GetStatsVisitorsCodeValues returns every known GetStatsVisitorsCode value in schema order.
+func GetStatsVisitorsCodeValues() []GetStatsVisitorsCode {
+	return []GetStatsVisitorsCode{
+		GetStatsVisitorsCodeUnauthorizedCredentials,
+		GetStatsVisitorsCodeAccountInactive,
+		GetStatsVisitorsCodeUnauthorizedScope,
+		GetStatsVisitorsCodeUnauthorizedParams,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

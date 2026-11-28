@@ -47,6 +47,16 @@ func (e DeleteWebinarsWebinarIDCollaboratorsIDCode) ToPointer() *DeleteWebinarsW
 	return &e
 }
 
+// DeleteWebinarsWebinarIDCollaboratorsIDCodeValues returns every known DeleteWebinarsWebinarIDCollaboratorsIDCode value in schema order.
+func DeleteWebinarsWebinarIDCollaboratorsIDCodeValues() []DeleteWebinarsWebinarIDCollaboratorsIDCode {
+	return []DeleteWebinarsWebinarIDCollaboratorsIDCode{
+		DeleteWebinarsWebinarIDCollaboratorsIDCodeUnauthorizedCredentials,
+		DeleteWebinarsWebinarIDCollaboratorsIDCodeAccountInactive,
+		DeleteWebinarsWebinarIDCollaboratorsIDCodeUnauthorizedScope,
+		DeleteWebinarsWebinarIDCollaboratorsIDCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *DeleteWebinarsWebinarIDCollaboratorsIDCode) IsExact() bool {
 	if e != nil {
@@ -67,6 +77,13 @@ const (
 
 func (e DeleteWebinarsWebinarIDCollaboratorsIDRole) ToPointer() *DeleteWebinarsWebinarIDCollaboratorsIDRole {
 	return &e
+}
+
+// DeleteWebinarsWebinarIDCollaboratorsIDRoleValues returns every known DeleteWebinarsWebinarIDCollaboratorsIDRole value in schema order.
+func DeleteWebinarsWebinarIDCollaboratorsIDRoleValues() []DeleteWebinarsWebinarIDCollaboratorsIDRole {
+	return []DeleteWebinarsWebinarIDCollaboratorsIDRole{
+		DeleteWebinarsWebinarIDCollaboratorsIDRoleAdmin,
+	}
 }
 func (e *DeleteWebinarsWebinarIDCollaboratorsIDRole) UnmarshalJSON(data []byte) error {
 	var v string
