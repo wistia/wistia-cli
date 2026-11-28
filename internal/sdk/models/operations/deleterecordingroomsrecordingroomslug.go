@@ -33,6 +33,13 @@ const (
 func (e DeleteRecordingRoomsRecordingRoomSlugReason) ToPointer() *DeleteRecordingRoomsRecordingRoomSlugReason {
 	return &e
 }
+
+// DeleteRecordingRoomsRecordingRoomSlugReasonValues returns every known DeleteRecordingRoomsRecordingRoomSlugReason value in schema order.
+func DeleteRecordingRoomsRecordingRoomSlugReasonValues() []DeleteRecordingRoomsRecordingRoomSlugReason {
+	return []DeleteRecordingRoomsRecordingRoomSlugReason{
+		DeleteRecordingRoomsRecordingRoomSlugReasonSessionInProgress,
+	}
+}
 func (e *DeleteRecordingRoomsRecordingRoomSlugReason) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -59,6 +66,16 @@ const (
 
 func (e DeleteRecordingRoomsRecordingRoomSlugCode) ToPointer() *DeleteRecordingRoomsRecordingRoomSlugCode {
 	return &e
+}
+
+// DeleteRecordingRoomsRecordingRoomSlugCodeValues returns every known DeleteRecordingRoomsRecordingRoomSlugCode value in schema order.
+func DeleteRecordingRoomsRecordingRoomSlugCodeValues() []DeleteRecordingRoomsRecordingRoomSlugCode {
+	return []DeleteRecordingRoomsRecordingRoomSlugCode{
+		DeleteRecordingRoomsRecordingRoomSlugCodeUnauthorizedCredentials,
+		DeleteRecordingRoomsRecordingRoomSlugCodeAccountInactive,
+		DeleteRecordingRoomsRecordingRoomSlugCodeUnauthorizedScope,
+		DeleteRecordingRoomsRecordingRoomSlugCodeUnauthorizedParams,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

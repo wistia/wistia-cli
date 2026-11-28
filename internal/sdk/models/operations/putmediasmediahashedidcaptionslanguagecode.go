@@ -22,7 +22,7 @@ func (p *PutMediasMediaHashedIDCaptionsLanguageCodeRequestBody) GetCaptionFile()
 type PutMediasMediaHashedIDCaptionsLanguageCodeRequest struct {
 	// Unique identifier for the media.
 	MediaHashedID string `pathParam:"style=simple,explode=false,name=mediaHashedId"`
-	// Language code conforming to ISO-639-2 for which the captions should be updated.
+	// Language code conforming to ISO-639-2 for which the captions should be updated. Must be the track's stored code (e.g., `fre`).
 	LanguageCode string                                                `pathParam:"style=simple,explode=false,name=languageCode"`
 	Body         PutMediasMediaHashedIDCaptionsLanguageCodeRequestBody `request:"mediaType=application/json"`
 }
@@ -60,6 +60,16 @@ const (
 
 func (e PutMediasMediaHashedIDCaptionsLanguageCodeCode) ToPointer() *PutMediasMediaHashedIDCaptionsLanguageCodeCode {
 	return &e
+}
+
+// PutMediasMediaHashedIDCaptionsLanguageCodeCodeValues returns every known PutMediasMediaHashedIDCaptionsLanguageCodeCode value in schema order.
+func PutMediasMediaHashedIDCaptionsLanguageCodeCodeValues() []PutMediasMediaHashedIDCaptionsLanguageCodeCode {
+	return []PutMediasMediaHashedIDCaptionsLanguageCodeCode{
+		PutMediasMediaHashedIDCaptionsLanguageCodeCodeUnauthorizedCredentials,
+		PutMediasMediaHashedIDCaptionsLanguageCodeCodeAccountInactive,
+		PutMediasMediaHashedIDCaptionsLanguageCodeCodeUnauthorizedScope,
+		PutMediasMediaHashedIDCaptionsLanguageCodeCodeUnauthorizedParams,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

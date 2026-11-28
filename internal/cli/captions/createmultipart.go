@@ -32,7 +32,8 @@ func initCreateMultipartCmd(parent *cobra.Command) error {
 		RunE:    runCreateMultipartCmd,
 		Aliases: []string{"cm"},
 		Annotations: map[string]string{
-			"speakeasy_operation": "post_/medias/{mediaHashedId}/captions",
+			"speakeasy_operation":     "post_/medias/{mediaHashedId}/captions",
+			"speakeasy_sdk_operation": "post_/medias/{mediaHashedId}/captions_multipart",
 		},
 	}
 	flagutil.RegisterFlags(cmd, createMultipartCmdMeta)

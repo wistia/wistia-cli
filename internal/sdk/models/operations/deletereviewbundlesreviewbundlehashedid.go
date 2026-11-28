@@ -35,6 +35,16 @@ func (e DeleteReviewBundlesReviewBundleHashedIDCode) ToPointer() *DeleteReviewBu
 	return &e
 }
 
+// DeleteReviewBundlesReviewBundleHashedIDCodeValues returns every known DeleteReviewBundlesReviewBundleHashedIDCode value in schema order.
+func DeleteReviewBundlesReviewBundleHashedIDCodeValues() []DeleteReviewBundlesReviewBundleHashedIDCode {
+	return []DeleteReviewBundlesReviewBundleHashedIDCode{
+		DeleteReviewBundlesReviewBundleHashedIDCodeUnauthorizedCredentials,
+		DeleteReviewBundlesReviewBundleHashedIDCodeAccountInactive,
+		DeleteReviewBundlesReviewBundleHashedIDCodeUnauthorizedScope,
+		DeleteReviewBundlesReviewBundleHashedIDCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *DeleteReviewBundlesReviewBundleHashedIDCode) IsExact() bool {
 	if e != nil {

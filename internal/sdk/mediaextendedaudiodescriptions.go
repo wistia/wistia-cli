@@ -1071,7 +1071,7 @@ func (s *MediaExtendedAudioDescriptions) PostMediaExtendedAudioDescriptionsOrder
 // created with the `all:delegate_to_contact_permissions` scope and an
 // authorization naming the order's media (any permission) can also be
 // used.
-func (s *MediaExtendedAudioDescriptions) GetMediaExtendedAudioDescriptionsOrderStatusID(ctx context.Context, request operations.GetMediaExtendedAudioDescriptionsOrderStatusIDRequest, opts ...operations.Option) (*operations.GetMediaExtendedAudioDescriptionsOrderStatusIDResponse, error) {
+func (s *MediaExtendedAudioDescriptions) GetMediaExtendedAudioDescriptionsOrderStatusID(ctx context.Context, request operations.GetMediaExtendedAudioDescriptionsOrderStatusIDRequestRequest, opts ...operations.Option) (*operations.GetMediaExtendedAudioDescriptionsOrderStatusIDResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,

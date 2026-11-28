@@ -219,6 +219,15 @@ const (
 func (e PutBrandsBrandIDContrastIconsRequest) ToPointer() *PutBrandsBrandIDContrastIconsRequest {
 	return &e
 }
+
+// PutBrandsBrandIDContrastIconsRequestValues returns every known PutBrandsBrandIDContrastIconsRequest value in schema order.
+func PutBrandsBrandIDContrastIconsRequestValues() []PutBrandsBrandIDContrastIconsRequest {
+	return []PutBrandsBrandIDContrastIconsRequest{
+		PutBrandsBrandIDContrastIconsRequestEnabled,
+		PutBrandsBrandIDContrastIconsRequestDisabled,
+		PutBrandsBrandIDContrastIconsRequestUnset,
+	}
+}
 func (e *PutBrandsBrandIDContrastIconsRequest) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -248,6 +257,15 @@ const (
 
 func (e PutBrandsBrandIDOpaqueControlsRequest) ToPointer() *PutBrandsBrandIDOpaqueControlsRequest {
 	return &e
+}
+
+// PutBrandsBrandIDOpaqueControlsRequestValues returns every known PutBrandsBrandIDOpaqueControlsRequest value in schema order.
+func PutBrandsBrandIDOpaqueControlsRequestValues() []PutBrandsBrandIDOpaqueControlsRequest {
+	return []PutBrandsBrandIDOpaqueControlsRequest{
+		PutBrandsBrandIDOpaqueControlsRequestEnabled,
+		PutBrandsBrandIDOpaqueControlsRequestDisabled,
+		PutBrandsBrandIDOpaqueControlsRequestUnset,
+	}
 }
 func (e *PutBrandsBrandIDOpaqueControlsRequest) UnmarshalJSON(data []byte) error {
 	var v string
@@ -561,6 +579,16 @@ func (e PutBrandsBrandIDCode) ToPointer() *PutBrandsBrandIDCode {
 	return &e
 }
 
+// PutBrandsBrandIDCodeValues returns every known PutBrandsBrandIDCode value in schema order.
+func PutBrandsBrandIDCodeValues() []PutBrandsBrandIDCode {
+	return []PutBrandsBrandIDCode{
+		PutBrandsBrandIDCodeUnauthorizedCredentials,
+		PutBrandsBrandIDCodeAccountInactive,
+		PutBrandsBrandIDCodeUnauthorizedScope,
+		PutBrandsBrandIDCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *PutBrandsBrandIDCode) IsExact() bool {
 	if e != nil {
@@ -831,6 +859,15 @@ func (e PutBrandsBrandIDContrastIconsResponse) ToPointer() *PutBrandsBrandIDCont
 	return &e
 }
 
+// PutBrandsBrandIDContrastIconsResponseValues returns every known PutBrandsBrandIDContrastIconsResponse value in schema order.
+func PutBrandsBrandIDContrastIconsResponseValues() []PutBrandsBrandIDContrastIconsResponse {
+	return []PutBrandsBrandIDContrastIconsResponse{
+		PutBrandsBrandIDContrastIconsResponseEnabled,
+		PutBrandsBrandIDContrastIconsResponseDisabled,
+		PutBrandsBrandIDContrastIconsResponseUnset,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *PutBrandsBrandIDContrastIconsResponse) IsExact() bool {
 	if e != nil {
@@ -853,6 +890,15 @@ const (
 
 func (e PutBrandsBrandIDOpaqueControlsResponse) ToPointer() *PutBrandsBrandIDOpaqueControlsResponse {
 	return &e
+}
+
+// PutBrandsBrandIDOpaqueControlsResponseValues returns every known PutBrandsBrandIDOpaqueControlsResponse value in schema order.
+func PutBrandsBrandIDOpaqueControlsResponseValues() []PutBrandsBrandIDOpaqueControlsResponse {
+	return []PutBrandsBrandIDOpaqueControlsResponse{
+		PutBrandsBrandIDOpaqueControlsResponseEnabled,
+		PutBrandsBrandIDOpaqueControlsResponseDisabled,
+		PutBrandsBrandIDOpaqueControlsResponseUnset,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

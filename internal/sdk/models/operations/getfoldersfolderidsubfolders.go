@@ -23,6 +23,14 @@ const (
 func (e GetFoldersFolderIDSubfoldersEnabled) ToPointer() *GetFoldersFolderIDSubfoldersEnabled {
 	return &e
 }
+
+// GetFoldersFolderIDSubfoldersEnabledValues returns every known GetFoldersFolderIDSubfoldersEnabled value in schema order.
+func GetFoldersFolderIDSubfoldersEnabledValues() []GetFoldersFolderIDSubfoldersEnabled {
+	return []GetFoldersFolderIDSubfoldersEnabled{
+		GetFoldersFolderIDSubfoldersEnabledZero,
+		GetFoldersFolderIDSubfoldersEnabledOne,
+	}
+}
 func (e *GetFoldersFolderIDSubfoldersEnabled) UnmarshalJSON(data []byte) error {
 	var v int64
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -96,6 +104,17 @@ const (
 func (e GetFoldersFolderIDSubfoldersSortBy) ToPointer() *GetFoldersFolderIDSubfoldersSortBy {
 	return &e
 }
+
+// GetFoldersFolderIDSubfoldersSortByValues returns every known GetFoldersFolderIDSubfoldersSortBy value in schema order.
+func GetFoldersFolderIDSubfoldersSortByValues() []GetFoldersFolderIDSubfoldersSortBy {
+	return []GetFoldersFolderIDSubfoldersSortBy{
+		GetFoldersFolderIDSubfoldersSortByName,
+		GetFoldersFolderIDSubfoldersSortByCreated,
+		GetFoldersFolderIDSubfoldersSortByUpdated,
+		GetFoldersFolderIDSubfoldersSortByPosition,
+		GetFoldersFolderIDSubfoldersSortByID,
+	}
+}
 func (e *GetFoldersFolderIDSubfoldersSortBy) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -128,6 +147,14 @@ const (
 
 func (e GetFoldersFolderIDSubfoldersSortDirection) ToPointer() *GetFoldersFolderIDSubfoldersSortDirection {
 	return &e
+}
+
+// GetFoldersFolderIDSubfoldersSortDirectionValues returns every known GetFoldersFolderIDSubfoldersSortDirection value in schema order.
+func GetFoldersFolderIDSubfoldersSortDirectionValues() []GetFoldersFolderIDSubfoldersSortDirection {
+	return []GetFoldersFolderIDSubfoldersSortDirection{
+		GetFoldersFolderIDSubfoldersSortDirectionZero,
+		GetFoldersFolderIDSubfoldersSortDirectionOne,
+	}
 }
 func (e *GetFoldersFolderIDSubfoldersSortDirection) UnmarshalJSON(data []byte) error {
 	var v int64
@@ -247,6 +274,16 @@ const (
 
 func (e GetFoldersFolderIDSubfoldersCode) ToPointer() *GetFoldersFolderIDSubfoldersCode {
 	return &e
+}
+
+// GetFoldersFolderIDSubfoldersCodeValues returns every known GetFoldersFolderIDSubfoldersCode value in schema order.
+func GetFoldersFolderIDSubfoldersCodeValues() []GetFoldersFolderIDSubfoldersCode {
+	return []GetFoldersFolderIDSubfoldersCode{
+		GetFoldersFolderIDSubfoldersCodeUnauthorizedCredentials,
+		GetFoldersFolderIDSubfoldersCodeAccountInactive,
+		GetFoldersFolderIDSubfoldersCodeUnauthorizedScope,
+		GetFoldersFolderIDSubfoldersCodeUnauthorizedParams,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

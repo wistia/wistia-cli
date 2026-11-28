@@ -1,54 +1,44 @@
-## wistia remix post-remixes
+## wistia pronunciation-words post
 
-Create Remix
+Create Pronunciation Word
 
 ### Synopsis
 
-DEPRECATED: This will be removed in a future release, please migrate away from it as soon as possible
+Adds a word to the account's pronunciation dictionary. AI-generated
+narration created afterwards reads `word` as `alias`; narration that
+already exists is not regenerated.
 
-Deprecated: use `POST /mochine/edits` instead, which also accepts a motion
-kit and narration and slide options.
-
-Start a new video remix job. The remix is processed asynchronously — poll
-the show endpoint to check status and get preview URLs when ready.
-
-Remix uses AI to analyze video transcripts and create edited versions
-(highlight reels, trailers, cut-downs, etc.) based on your instructions.
-
-The remix is automatically exported (rendered) upon completion. When the
-status reaches "completed", the output media is available in the
-destination folder. If no `folder_id` is provided, the remix is exported
-to the source media's folder.
+Each word can be in the dictionary once, ignoring case, and an account
+holds at most 50 words. Either limit fails with `400`.
 
 
 ## Requires api token with one of the following permissions
 ```
-Read, update & delete anything
+All data
 ```
 
-Tokens with the "Act with a team member's permissions" permission
-(`all:delegate_to_contact_permissions` scope) can also be used. Requests
-made with such a token are authorized using the permissions of the
-contact assigned to the token.
+Only the account owner can manage pronunciation words. A token with the
+"Act with a team member's permissions" permission
+(`all:delegate_to_contact_permissions` scope) works only when that team
+member is the account owner.
 
 ```
-wistia remix post-remixes [flags]
+wistia pronunciation-words post [flags]
 ```
 
 ### Examples
 
 ```
-  wistia remix post-remixes --media-hashed-ids abc123 --media-hashed-ids def456 --instructions 'Create a 60-second highlight reel focusing on the product demo section'
+  wistia pronunciation-words post --word Wistia --alias Wiss-tee-uh
 ```
 
 ### Options
 
 ```
-      --body string                    Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.
-  -f, --folder-id string               Hashed ID of the destination folder for the exported media. Defaults to the source media's folder if not specified.
-  -h, --help                           help for post-remixes
-  -i, --instructions string            Natural language instructions describing the desired Mochine video (e.g., "create a 60-second highlight reel"). [required]
-  -m, --media-hashed-ids stringArray   Array of source media hashed IDs to make the Mochine video from. [required]
+  -a, --alias string   How narration should say the word, spelled the way it sounds. Leading and trailing whitespace is removed. [required]
+      --body string    Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.
+  -h, --help           help for post
+  -w, --word string    The word as it is written in a script. Leading and trailing whitespace is removed. Each word can be in the dictionary once, ignoring case. [required]
 ```
 
 ### Options inherited from parent commands
@@ -75,12 +65,12 @@ wistia remix post-remixes [flags]
 
 ### SEE ALSO
 
-* [wistia remix](wistia_remix.md)	 - Operations for remix
+* [wistia pronunciation-words](wistia_pronunciation-words.md)	 - Operations for pronunciation-words
 
 ### Machine interface
 
-* `wistia remix post-remixes --usage` — this command's flags, defaults and env vars as machine-readable KDL
-* `wistia remix post-remixes --dry-run` — preview the request without OS-keychain access or a network call (human preview on stderr)
+* `wistia pronunciation-words post --usage` — this command's flags, defaults and env vars as machine-readable KDL
+* `wistia pronunciation-words post --dry-run` — preview the request without OS-keychain access or a network call (human preview on stderr)
 * `--dry-run --output-format json` (or a caller-explicit `--jq`) writes one preview object per request as NDJSON on stdout; jq is not applied to previews
 * `--output-format json` or `--jq <expr>` for machine-readable live output; in agent mode errors are a JSON envelope on stderr
 

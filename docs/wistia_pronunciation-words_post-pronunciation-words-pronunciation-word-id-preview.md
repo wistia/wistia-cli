@@ -1,42 +1,45 @@
-## wistia remix get-remix-account-status
+## wistia pronunciation-words post-pronunciation-words-pronunciation-word-id-preview
 
-Get Remix Account Status
+Preview Pronunciation Word
 
 ### Synopsis
 
-DEPRECATED: This will be removed in a future release, please migrate away from it as soon as possible
+Generates a short spoken sample of a word in the account's pronunciation
+dictionary, read with the default narration voice and the account's
+dictionary. The playable MP3 link is returned as `audio.url` and expires
+after 15 minutes. Anyone with the link can play it until it expires.
+At most 10 previews per account are allowed per hour. Each preview spends
+Credits, so the account needs Credits enabled.
 
-Deprecated: use Get Credit Balance (`GET /credits/balance`) instead. Edit
-With Mochine reports the balance and a summary when it refuses an edit
-for lack of Credits or allowance.
-
-Check the current account's Remix billing mode and ability to create a Remix.
+Fails with `502` and code `speech_failed` when the voice service can't
+generate the sample.
 
 
 ## Requires api token with one of the following permissions
 ```
-Read all folder and media data
+All data
 ```
 
-Tokens with the "Act with a team member's permissions" permission
-(`all:delegate_to_contact_permissions` scope) can also be used. Requests
-made with such a token are authorized using the permissions of the
-contact assigned to the token.
+Only the account owner can manage pronunciation words. A token with the
+"Act with a team member's permissions" permission
+(`all:delegate_to_contact_permissions` scope) works only when that team
+member is the account owner.
 
 ```
-wistia remix get-remix-account-status [flags]
+wistia pronunciation-words post-pronunciation-words-pronunciation-word-id-preview [pronunciation-word-id] [flags]
 ```
 
 ### Examples
 
 ```
-  wistia remix get-remix-account-status
+  wistia pronunciation-words post-pronunciation-words-pronunciation-word-id-preview --pronunciation-word-id 369229
 ```
 
 ### Options
 
 ```
-  -h, --help   help for get-remix-account-status
+  -h, --help                        help for post-pronunciation-words-pronunciation-word-id-preview
+  -p, --pronunciation-word-id int   The word's 'id', from get-pronunciation-words. (or pass it as the [pronunciation-word-id] argument)
 ```
 
 ### Options inherited from parent commands
@@ -63,12 +66,12 @@ wistia remix get-remix-account-status [flags]
 
 ### SEE ALSO
 
-* [wistia remix](wistia_remix.md)	 - Operations for remix
+* [wistia pronunciation-words](wistia_pronunciation-words.md)	 - Operations for pronunciation-words
 
 ### Machine interface
 
-* `wistia remix get-remix-account-status --usage` — this command's flags, defaults and env vars as machine-readable KDL
-* `wistia remix get-remix-account-status --dry-run` — preview the request without OS-keychain access or a network call (human preview on stderr)
+* `wistia pronunciation-words post-pronunciation-words-pronunciation-word-id-preview --usage` — this command's flags, defaults and env vars as machine-readable KDL
+* `wistia pronunciation-words post-pronunciation-words-pronunciation-word-id-preview --dry-run` — preview the request without OS-keychain access or a network call (human preview on stderr)
 * `--dry-run --output-format json` (or a caller-explicit `--jq`) writes one preview object per request as NDJSON on stdout; jq is not applied to previews
 * `--output-format json` or `--jq <expr>` for machine-readable live output; in agent mode errors are a JSON envelope on stderr
 

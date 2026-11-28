@@ -23,6 +23,14 @@ const (
 func (e GetSeriesEnabled) ToPointer() *GetSeriesEnabled {
 	return &e
 }
+
+// GetSeriesEnabledValues returns every known GetSeriesEnabled value in schema order.
+func GetSeriesEnabledValues() []GetSeriesEnabled {
+	return []GetSeriesEnabled{
+		GetSeriesEnabledZero,
+		GetSeriesEnabledOne,
+	}
+}
 func (e *GetSeriesEnabled) UnmarshalJSON(data []byte) error {
 	var v int64
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -96,6 +104,16 @@ const (
 func (e GetSeriesSortBy) ToPointer() *GetSeriesSortBy {
 	return &e
 }
+
+// GetSeriesSortByValues returns every known GetSeriesSortBy value in schema order.
+func GetSeriesSortByValues() []GetSeriesSortBy {
+	return []GetSeriesSortBy{
+		GetSeriesSortByCreated,
+		GetSeriesSortByUpdated,
+		GetSeriesSortByTitle,
+		GetSeriesSortByID,
+	}
+}
 func (e *GetSeriesSortBy) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -126,6 +144,14 @@ const (
 
 func (e GetSeriesSortDirection) ToPointer() *GetSeriesSortDirection {
 	return &e
+}
+
+// GetSeriesSortDirectionValues returns every known GetSeriesSortDirection value in schema order.
+func GetSeriesSortDirectionValues() []GetSeriesSortDirection {
+	return []GetSeriesSortDirection{
+		GetSeriesSortDirectionZero,
+		GetSeriesSortDirectionOne,
+	}
 }
 func (e *GetSeriesSortDirection) UnmarshalJSON(data []byte) error {
 	var v int64
@@ -237,6 +263,16 @@ const (
 
 func (e GetSeriesCode) ToPointer() *GetSeriesCode {
 	return &e
+}
+
+// GetSeriesCodeValues returns every known GetSeriesCode value in schema order.
+func GetSeriesCodeValues() []GetSeriesCode {
+	return []GetSeriesCode{
+		GetSeriesCodeUnauthorizedCredentials,
+		GetSeriesCodeAccountInactive,
+		GetSeriesCodeUnauthorizedScope,
+		GetSeriesCodeUnauthorizedParams,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

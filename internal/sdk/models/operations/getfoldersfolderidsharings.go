@@ -22,6 +22,14 @@ const (
 func (e GetFoldersFolderIDSharingsEnabled) ToPointer() *GetFoldersFolderIDSharingsEnabled {
 	return &e
 }
+
+// GetFoldersFolderIDSharingsEnabledValues returns every known GetFoldersFolderIDSharingsEnabled value in schema order.
+func GetFoldersFolderIDSharingsEnabledValues() []GetFoldersFolderIDSharingsEnabled {
+	return []GetFoldersFolderIDSharingsEnabled{
+		GetFoldersFolderIDSharingsEnabledZero,
+		GetFoldersFolderIDSharingsEnabledOne,
+	}
+}
 func (e *GetFoldersFolderIDSharingsEnabled) UnmarshalJSON(data []byte) error {
 	var v int64
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -93,6 +101,15 @@ const (
 func (e GetFoldersFolderIDSharingsSortBy) ToPointer() *GetFoldersFolderIDSharingsSortBy {
 	return &e
 }
+
+// GetFoldersFolderIDSharingsSortByValues returns every known GetFoldersFolderIDSharingsSortBy value in schema order.
+func GetFoldersFolderIDSharingsSortByValues() []GetFoldersFolderIDSharingsSortBy {
+	return []GetFoldersFolderIDSharingsSortBy{
+		GetFoldersFolderIDSharingsSortByCreated,
+		GetFoldersFolderIDSharingsSortByUpdated,
+		GetFoldersFolderIDSharingsSortByID,
+	}
+}
 func (e *GetFoldersFolderIDSharingsSortBy) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -121,6 +138,14 @@ const (
 
 func (e GetFoldersFolderIDSharingsSortDirection) ToPointer() *GetFoldersFolderIDSharingsSortDirection {
 	return &e
+}
+
+// GetFoldersFolderIDSharingsSortDirectionValues returns every known GetFoldersFolderIDSharingsSortDirection value in schema order.
+func GetFoldersFolderIDSharingsSortDirectionValues() []GetFoldersFolderIDSharingsSortDirection {
+	return []GetFoldersFolderIDSharingsSortDirection{
+		GetFoldersFolderIDSharingsSortDirectionZero,
+		GetFoldersFolderIDSharingsSortDirectionOne,
+	}
 }
 func (e *GetFoldersFolderIDSharingsSortDirection) UnmarshalJSON(data []byte) error {
 	var v int64
@@ -240,6 +265,16 @@ const (
 
 func (e GetFoldersFolderIDSharingsCode) ToPointer() *GetFoldersFolderIDSharingsCode {
 	return &e
+}
+
+// GetFoldersFolderIDSharingsCodeValues returns every known GetFoldersFolderIDSharingsCode value in schema order.
+func GetFoldersFolderIDSharingsCodeValues() []GetFoldersFolderIDSharingsCode {
+	return []GetFoldersFolderIDSharingsCode{
+		GetFoldersFolderIDSharingsCodeUnauthorizedCredentials,
+		GetFoldersFolderIDSharingsCodeAccountInactive,
+		GetFoldersFolderIDSharingsCodeUnauthorizedScope,
+		GetFoldersFolderIDSharingsCodeUnauthorizedParams,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

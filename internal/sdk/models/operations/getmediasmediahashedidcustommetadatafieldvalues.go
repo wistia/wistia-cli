@@ -39,6 +39,16 @@ func (e GetMediasMediaHashedIDCustomMetadataFieldValuesCode) ToPointer() *GetMed
 	return &e
 }
 
+// GetMediasMediaHashedIDCustomMetadataFieldValuesCodeValues returns every known GetMediasMediaHashedIDCustomMetadataFieldValuesCode value in schema order.
+func GetMediasMediaHashedIDCustomMetadataFieldValuesCodeValues() []GetMediasMediaHashedIDCustomMetadataFieldValuesCode {
+	return []GetMediasMediaHashedIDCustomMetadataFieldValuesCode{
+		GetMediasMediaHashedIDCustomMetadataFieldValuesCodeUnauthorizedCredentials,
+		GetMediasMediaHashedIDCustomMetadataFieldValuesCodeAccountInactive,
+		GetMediasMediaHashedIDCustomMetadataFieldValuesCodeUnauthorizedScope,
+		GetMediasMediaHashedIDCustomMetadataFieldValuesCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *GetMediasMediaHashedIDCustomMetadataFieldValuesCode) IsExact() bool {
 	if e != nil {
@@ -74,6 +84,26 @@ func (e GetMediasMediaHashedIDCustomMetadataFieldValuesFieldType) ToPointer() *G
 	return &e
 }
 
+// GetMediasMediaHashedIDCustomMetadataFieldValuesFieldTypeValues returns every known GetMediasMediaHashedIDCustomMetadataFieldValuesFieldType value in schema order.
+func GetMediasMediaHashedIDCustomMetadataFieldValuesFieldTypeValues() []GetMediasMediaHashedIDCustomMetadataFieldValuesFieldType {
+	return []GetMediasMediaHashedIDCustomMetadataFieldValuesFieldType{
+		GetMediasMediaHashedIDCustomMetadataFieldValuesFieldTypeText,
+		GetMediasMediaHashedIDCustomMetadataFieldValuesFieldTypeNumber,
+		GetMediasMediaHashedIDCustomMetadataFieldValuesFieldTypeDate,
+		GetMediasMediaHashedIDCustomMetadataFieldValuesFieldTypeBoolean,
+		GetMediasMediaHashedIDCustomMetadataFieldValuesFieldTypeSingleSelect,
+		GetMediasMediaHashedIDCustomMetadataFieldValuesFieldTypeShortText,
+		GetMediasMediaHashedIDCustomMetadataFieldValuesFieldTypeURL,
+		GetMediasMediaHashedIDCustomMetadataFieldValuesFieldTypeEmail,
+		GetMediasMediaHashedIDCustomMetadataFieldValuesFieldTypeMoney,
+		GetMediasMediaHashedIDCustomMetadataFieldValuesFieldTypeTime,
+		GetMediasMediaHashedIDCustomMetadataFieldValuesFieldTypeDatetime,
+		GetMediasMediaHashedIDCustomMetadataFieldValuesFieldTypeMultiSelect,
+		GetMediasMediaHashedIDCustomMetadataFieldValuesFieldTypeContactRef,
+		GetMediasMediaHashedIDCustomMetadataFieldValuesFieldTypeContactMultiRef,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *GetMediasMediaHashedIDCustomMetadataFieldValuesFieldType) IsExact() bool {
 	if e != nil {
@@ -94,6 +124,14 @@ const (
 
 func (e GetMediasMediaHashedIDCustomMetadataFieldValuesValueType) ToPointer() *GetMediasMediaHashedIDCustomMetadataFieldValuesValueType {
 	return &e
+}
+
+// GetMediasMediaHashedIDCustomMetadataFieldValuesValueTypeValues returns every known GetMediasMediaHashedIDCustomMetadataFieldValuesValueType value in schema order.
+func GetMediasMediaHashedIDCustomMetadataFieldValuesValueTypeValues() []GetMediasMediaHashedIDCustomMetadataFieldValuesValueType {
+	return []GetMediasMediaHashedIDCustomMetadataFieldValuesValueType{
+		GetMediasMediaHashedIDCustomMetadataFieldValuesValueTypeContact,
+		GetMediasMediaHashedIDCustomMetadataFieldValuesValueTypeContactGroup,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
@@ -358,6 +396,15 @@ func (e GetMediasMediaHashedIDCustomMetadataFieldValuesSource) ToPointer() *GetM
 	return &e
 }
 
+// GetMediasMediaHashedIDCustomMetadataFieldValuesSourceValues returns every known GetMediasMediaHashedIDCustomMetadataFieldValuesSource value in schema order.
+func GetMediasMediaHashedIDCustomMetadataFieldValuesSourceValues() []GetMediasMediaHashedIDCustomMetadataFieldValuesSource {
+	return []GetMediasMediaHashedIDCustomMetadataFieldValuesSource{
+		GetMediasMediaHashedIDCustomMetadataFieldValuesSourceUI,
+		GetMediasMediaHashedIDCustomMetadataFieldValuesSourceAPI,
+		GetMediasMediaHashedIDCustomMetadataFieldValuesSourceMcp,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *GetMediasMediaHashedIDCustomMetadataFieldValuesSource) IsExact() bool {
 	if e != nil {
@@ -377,6 +424,13 @@ const (
 
 func (e GetMediasMediaHashedIDCustomMetadataFieldValuesLastWriteType) ToPointer() *GetMediasMediaHashedIDCustomMetadataFieldValuesLastWriteType {
 	return &e
+}
+
+// GetMediasMediaHashedIDCustomMetadataFieldValuesLastWriteTypeValues returns every known GetMediasMediaHashedIDCustomMetadataFieldValuesLastWriteType value in schema order.
+func GetMediasMediaHashedIDCustomMetadataFieldValuesLastWriteTypeValues() []GetMediasMediaHashedIDCustomMetadataFieldValuesLastWriteType {
+	return []GetMediasMediaHashedIDCustomMetadataFieldValuesLastWriteType{
+		GetMediasMediaHashedIDCustomMetadataFieldValuesLastWriteTypeContact,
+	}
 }
 func (e *GetMediasMediaHashedIDCustomMetadataFieldValuesLastWriteType) UnmarshalJSON(data []byte) error {
 	var v string

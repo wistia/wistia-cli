@@ -56,6 +56,16 @@ func (e GetAnalyticsAccountCode) ToPointer() *GetAnalyticsAccountCode {
 	return &e
 }
 
+// GetAnalyticsAccountCodeValues returns every known GetAnalyticsAccountCode value in schema order.
+func GetAnalyticsAccountCodeValues() []GetAnalyticsAccountCode {
+	return []GetAnalyticsAccountCode{
+		GetAnalyticsAccountCodeUnauthorizedCredentials,
+		GetAnalyticsAccountCodeAccountInactive,
+		GetAnalyticsAccountCodeUnauthorizedScope,
+		GetAnalyticsAccountCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *GetAnalyticsAccountCode) IsExact() bool {
 	if e != nil {

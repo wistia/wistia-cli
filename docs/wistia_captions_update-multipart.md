@@ -36,7 +36,7 @@ wistia captions update-multipart [flags]
 ```
   -c, --caption-file string      Either an attached SRT file or a string parameter with the contents of an SRT file. [required]
   -h, --help                     help for update-multipart
-  -l, --language-code string     Language code conforming to ISO-639-2 for which the captions should be updated. [required]
+  -l, --language-code string     Language code conforming to ISO-639-2 for which the captions should be updated. Must be the track's stored code (e.g., 'fre'). [required]
   -m, --media-hashed-id string   Unique identifier for the media. [required]
 ```
 

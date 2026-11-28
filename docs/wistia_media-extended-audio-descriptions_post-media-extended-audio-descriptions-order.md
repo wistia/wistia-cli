@@ -26,21 +26,21 @@ wistia media-extended-audio-descriptions post-media-extended-audio-descriptions-
 ### Options
 
 ```
-  -a, --ai-enabled                  Whether to use AI-generated audio descriptions (cheaper) or human-generated (higher quality). AI is only available for English orders. (default true)
-      --body string                 Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.
-  -e, --enabled                     Whether the extended audio description should be automatically enabled once the order is complete. (default true)
-  -h, --help                        help for post-media-extended-audio-descriptions-order
-  -i, --ietf-language-tag string    IETF language tag for the audio description. Defaults to 'eng' (English).
-                                    Non-English orders must set 'ai_enabled: false' — AI-generated audio
-                                    descriptions are only available in English.
-                                    
-                                    Spanish ('es-419') orders are only accepted when the source media is
-                                    tagged as a Spanish-language variant or has no detected language
-                                    (e.g. silent videos). Spanish orders against a media in another
-                                    language return '400'.
-                                    (options: eng, es-419) (default "eng")
-  -m, --media-id string             The hashed id of the media to order the extended audio description for. [required]
-      --order-instructions string   Optional instructions for the audio description provider.
+  -a, --ai-enabled                 Whether to use AI-generated audio descriptions or human-generated ones (higher quality, metered at a higher rate). AI is only available in English. (default true)
+      --body string                Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.
+  -e, --enabled                    Whether the extended audio description should be automatically enabled once it is ready. (default true)
+  -h, --help                       help for post-media-extended-audio-descriptions-order
+      --ietf-language-tag string   IETF language tag for the audio description. Defaults to 'eng' (English).
+                                   Non-English requests must set 'ai_enabled: false' — AI-generated audio
+                                   descriptions are only available in English.
+                                   
+                                   Spanish ('es-419') requests are only accepted when the source media is
+                                   tagged as a Spanish-language variant or has no detected language
+                                   (e.g. silent videos). Spanish requests against a media in another
+                                   language return '400'.
+                                   (options: eng, es-419) (default "eng")
+      --instructions string        Optional instructions for the audio description provider.
+  -m, --media-id string            The hashed id of the media to generate the extended audio description for. [required]
 ```
 
 ### Options inherited from parent commands

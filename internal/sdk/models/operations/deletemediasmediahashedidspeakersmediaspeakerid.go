@@ -49,6 +49,13 @@ const (
 func (e DeleteMediasMediaHashedIDSpeakersMediaSpeakerIDReason) ToPointer() *DeleteMediasMediaHashedIDSpeakersMediaSpeakerIDReason {
 	return &e
 }
+
+// DeleteMediasMediaHashedIDSpeakersMediaSpeakerIDReasonValues returns every known DeleteMediasMediaHashedIDSpeakersMediaSpeakerIDReason value in schema order.
+func DeleteMediasMediaHashedIDSpeakersMediaSpeakerIDReasonValues() []DeleteMediasMediaHashedIDSpeakersMediaSpeakerIDReason {
+	return []DeleteMediasMediaHashedIDSpeakersMediaSpeakerIDReason{
+		DeleteMediasMediaHashedIDSpeakersMediaSpeakerIDReasonStaleVersion,
+	}
+}
 func (e *DeleteMediasMediaHashedIDSpeakersMediaSpeakerIDReason) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -77,6 +84,16 @@ func (e DeleteMediasMediaHashedIDSpeakersMediaSpeakerIDCode) ToPointer() *Delete
 	return &e
 }
 
+// DeleteMediasMediaHashedIDSpeakersMediaSpeakerIDCodeValues returns every known DeleteMediasMediaHashedIDSpeakersMediaSpeakerIDCode value in schema order.
+func DeleteMediasMediaHashedIDSpeakersMediaSpeakerIDCodeValues() []DeleteMediasMediaHashedIDSpeakersMediaSpeakerIDCode {
+	return []DeleteMediasMediaHashedIDSpeakersMediaSpeakerIDCode{
+		DeleteMediasMediaHashedIDSpeakersMediaSpeakerIDCodeUnauthorizedCredentials,
+		DeleteMediasMediaHashedIDSpeakersMediaSpeakerIDCodeAccountInactive,
+		DeleteMediasMediaHashedIDSpeakersMediaSpeakerIDCodeUnauthorizedScope,
+		DeleteMediasMediaHashedIDSpeakersMediaSpeakerIDCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *DeleteMediasMediaHashedIDSpeakersMediaSpeakerIDCode) IsExact() bool {
 	if e != nil {
@@ -97,6 +114,13 @@ const (
 
 func (e DeleteMediasMediaHashedIDSpeakersMediaSpeakerIDStatus) ToPointer() *DeleteMediasMediaHashedIDSpeakersMediaSpeakerIDStatus {
 	return &e
+}
+
+// DeleteMediasMediaHashedIDSpeakersMediaSpeakerIDStatusValues returns every known DeleteMediasMediaHashedIDSpeakersMediaSpeakerIDStatus value in schema order.
+func DeleteMediasMediaHashedIDSpeakersMediaSpeakerIDStatusValues() []DeleteMediasMediaHashedIDSpeakersMediaSpeakerIDStatus {
+	return []DeleteMediasMediaHashedIDSpeakersMediaSpeakerIDStatus{
+		DeleteMediasMediaHashedIDSpeakersMediaSpeakerIDStatusRemoved,
+	}
 }
 func (e *DeleteMediasMediaHashedIDSpeakersMediaSpeakerIDStatus) UnmarshalJSON(data []byte) error {
 	var v string

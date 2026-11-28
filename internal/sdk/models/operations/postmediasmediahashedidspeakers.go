@@ -71,6 +71,13 @@ const (
 func (e PostMediasMediaHashedIDSpeakersReason) ToPointer() *PostMediasMediaHashedIDSpeakersReason {
 	return &e
 }
+
+// PostMediasMediaHashedIDSpeakersReasonValues returns every known PostMediasMediaHashedIDSpeakersReason value in schema order.
+func PostMediasMediaHashedIDSpeakersReasonValues() []PostMediasMediaHashedIDSpeakersReason {
+	return []PostMediasMediaHashedIDSpeakersReason{
+		PostMediasMediaHashedIDSpeakersReasonStaleVersion,
+	}
+}
 func (e *PostMediasMediaHashedIDSpeakersReason) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -99,6 +106,16 @@ func (e PostMediasMediaHashedIDSpeakersCode) ToPointer() *PostMediasMediaHashedI
 	return &e
 }
 
+// PostMediasMediaHashedIDSpeakersCodeValues returns every known PostMediasMediaHashedIDSpeakersCode value in schema order.
+func PostMediasMediaHashedIDSpeakersCodeValues() []PostMediasMediaHashedIDSpeakersCode {
+	return []PostMediasMediaHashedIDSpeakersCode{
+		PostMediasMediaHashedIDSpeakersCodeUnauthorizedCredentials,
+		PostMediasMediaHashedIDSpeakersCodeAccountInactive,
+		PostMediasMediaHashedIDSpeakersCodeUnauthorizedScope,
+		PostMediasMediaHashedIDSpeakersCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *PostMediasMediaHashedIDSpeakersCode) IsExact() bool {
 	if e != nil {
@@ -121,6 +138,15 @@ const (
 
 func (e PostMediasMediaHashedIDSpeakersStatus2) ToPointer() *PostMediasMediaHashedIDSpeakersStatus2 {
 	return &e
+}
+
+// PostMediasMediaHashedIDSpeakersStatus2Values returns every known PostMediasMediaHashedIDSpeakersStatus2 value in schema order.
+func PostMediasMediaHashedIDSpeakersStatus2Values() []PostMediasMediaHashedIDSpeakersStatus2 {
+	return []PostMediasMediaHashedIDSpeakersStatus2{
+		PostMediasMediaHashedIDSpeakersStatus2Created,
+		PostMediasMediaHashedIDSpeakersStatus2Reused,
+		PostMediasMediaHashedIDSpeakersStatus2NoOp,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
@@ -220,6 +246,15 @@ const (
 
 func (e PostMediasMediaHashedIDSpeakersStatus1) ToPointer() *PostMediasMediaHashedIDSpeakersStatus1 {
 	return &e
+}
+
+// PostMediasMediaHashedIDSpeakersStatus1Values returns every known PostMediasMediaHashedIDSpeakersStatus1 value in schema order.
+func PostMediasMediaHashedIDSpeakersStatus1Values() []PostMediasMediaHashedIDSpeakersStatus1 {
+	return []PostMediasMediaHashedIDSpeakersStatus1{
+		PostMediasMediaHashedIDSpeakersStatus1Created,
+		PostMediasMediaHashedIDSpeakersStatus1Reused,
+		PostMediasMediaHashedIDSpeakersStatus1NoOp,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

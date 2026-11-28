@@ -23,6 +23,16 @@ func (e GetTokenDetailsCode) ToPointer() *GetTokenDetailsCode {
 	return &e
 }
 
+// GetTokenDetailsCodeValues returns every known GetTokenDetailsCode value in schema order.
+func GetTokenDetailsCodeValues() []GetTokenDetailsCode {
+	return []GetTokenDetailsCode{
+		GetTokenDetailsCodeUnauthorizedCredentials,
+		GetTokenDetailsCodeAccountInactive,
+		GetTokenDetailsCodeUnauthorizedScope,
+		GetTokenDetailsCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *GetTokenDetailsCode) IsExact() bool {
 	if e != nil {
@@ -45,6 +55,15 @@ const (
 
 func (e GetTokenDetailsType) ToPointer() *GetTokenDetailsType {
 	return &e
+}
+
+// GetTokenDetailsTypeValues returns every known GetTokenDetailsType value in schema order.
+func GetTokenDetailsTypeValues() []GetTokenDetailsType {
+	return []GetTokenDetailsType{
+		GetTokenDetailsTypePermanent,
+		GetTokenDetailsTypeExpiring,
+		GetTokenDetailsTypeOauth,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

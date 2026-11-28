@@ -36,6 +36,16 @@ func (e DeleteSeriesIDCode) ToPointer() *DeleteSeriesIDCode {
 	return &e
 }
 
+// DeleteSeriesIDCodeValues returns every known DeleteSeriesIDCode value in schema order.
+func DeleteSeriesIDCodeValues() []DeleteSeriesIDCode {
+	return []DeleteSeriesIDCode{
+		DeleteSeriesIDCodeUnauthorizedCredentials,
+		DeleteSeriesIDCodeAccountInactive,
+		DeleteSeriesIDCodeUnauthorizedScope,
+		DeleteSeriesIDCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *DeleteSeriesIDCode) IsExact() bool {
 	if e != nil {

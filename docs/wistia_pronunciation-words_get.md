@@ -1,43 +1,51 @@
-## wistia remix get-remixes-remix-hashed-id
+## wistia pronunciation-words get
 
-Get Remix
+List Pronunciation Words
 
 ### Synopsis
 
-DEPRECATED: This will be removed in a future release, please migrate away from it as soon as possible
-
-Deprecated: use `GET /mochine/edits/{editHashedId}` instead, which also
-returns the output media ID.
-
-Get the current status of a remix job. When the status reaches
-"edit_tree_generated", preview URLs are included in the response.
+Lists the words in the account's pronunciation dictionary. AI-generated
+narration reads each `word` as its `alias`.
 
 
 ## Requires api token with one of the following permissions
 ```
-Read all folder and media data
+Read all data
 ```
 
-Tokens with the "Act with a team member's permissions" permission
-(`all:delegate_to_contact_permissions` scope) can also be used. Requests
-made with such a token are authorized using the permissions of the
-contact assigned to the token.
+Only the account owner can manage pronunciation words. A token with the
+"Act with a team member's permissions" permission
+(`all:delegate_to_contact_permissions` scope) works only when that team
+member is the account owner.
 
 ```
-wistia remix get-remixes-remix-hashed-id [remix-hashed-id] [flags]
+wistia pronunciation-words get [flags]
 ```
 
 ### Examples
 
 ```
-  wistia remix get-remixes-remix-hashed-id --remix-hashed-id <id>
+  wistia pronunciation-words get
 ```
 
 ### Options
 
 ```
-  -h, --help                     help for get-remixes-remix-hashed-id
-  -r, --remix-hashed-id string   The remix_id of the Mochine video. (or pass it as the [remix-hashed-id] argument)
+  -c, --cursor string           Cursor pagination. When cursor pagination is enabled, each record returned
+                                has a 'cursor': pass the last one as 'cursor[after]' for the next page, or
+                                the first one as 'cursor[before]' for the previous page. A cursor only works with the 'sort_by' it was fetched with.
+                                For example, you cannot fetch using 'sort_by' id and then pass that cursor
+                                value to a 'sort_by' name.
+                                
+                                Setting 'cursor[enabled]' to 1 fetches the first page with cursor pagination
+                                on, up to 'per_page' records. Setting 'cursor[before]' or 'cursor[after]' turns
+                                it on too.
+  -h, --help                    help for get
+      --page int                The page number to retrieve. This cannot be combined with 'cursor',
+                                pagination.
+      --per-page int            The number of medias per page. Use this for both offset pagination and cursor pagination.
+      --sort-by string          Field to order by. The default is id, which is the order the words were added. (options: id, word, created, updated)
+      --sort-direction string   Direction to order by. (0 = desc, 1 = asc; default is 1) (options: 0, 1)
 ```
 
 ### Options inherited from parent commands
@@ -64,12 +72,12 @@ wistia remix get-remixes-remix-hashed-id [remix-hashed-id] [flags]
 
 ### SEE ALSO
 
-* [wistia remix](wistia_remix.md)	 - Operations for remix
+* [wistia pronunciation-words](wistia_pronunciation-words.md)	 - Operations for pronunciation-words
 
 ### Machine interface
 
-* `wistia remix get-remixes-remix-hashed-id --usage` — this command's flags, defaults and env vars as machine-readable KDL
-* `wistia remix get-remixes-remix-hashed-id --dry-run` — preview the request without OS-keychain access or a network call (human preview on stderr)
+* `wistia pronunciation-words get --usage` — this command's flags, defaults and env vars as machine-readable KDL
+* `wistia pronunciation-words get --dry-run` — preview the request without OS-keychain access or a network call (human preview on stderr)
 * `--dry-run --output-format json` (or a caller-explicit `--jq`) writes one preview object per request as NDJSON on stdout; jq is not applied to previews
 * `--output-format json` or `--jq <expr>` for machine-readable live output; in agent mode errors are a JSON envelope on stderr
 

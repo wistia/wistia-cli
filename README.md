@@ -281,6 +281,8 @@ Configuration is stored in `~/.config/wistia/config.yaml`.
   * [`put-custom-metadata-field-definitions-key`](docs/wistia_custom-metadata-field-definitions_put-custom-metadata-field-definitions-key.md) - Update Custom Metadata Field Definition
   * [`delete-custom-metadata-field-definitions-key`](docs/wistia_custom-metadata-field-definitions_delete-custom-metadata-field-definitions-key.md) - Archive Custom Metadata Field Definition
   * [`post-custom-metadata-field-definitions-key-restore`](docs/wistia_custom-metadata-field-definitions_post-custom-metadata-field-definitions-key-restore.md) - Restore Custom Metadata Field Definition
+* [`account-activity`](docs/wistia_account-activity.md) - Operations for account-activity
+  * [`get`](docs/wistia_account-activity_get.md) - List Account Activity
 * [`deleted-media`](docs/wistia_deleted-media.md) - Operations for deleted-media
   * [`list`](docs/wistia_deleted-media_list.md) - List Deleted Media
   * [`restore`](docs/wistia_deleted-media_restore.md) - Restore Deleted Media
@@ -413,6 +415,7 @@ Configuration is stored in `~/.config/wistia/config.yaml`.
   * [`get`](docs/wistia_channels_get.md) - Show Channel
   * [`update`](docs/wistia_channels_update.md) - Update Channel
   * [`delete`](docs/wistia_channels_delete.md) - Delete Channel
+  * [`get-customizations`](docs/wistia_channels_get-customizations.md) - Show Channel Customizations
   * [`channel-episodes`](docs/wistia_channels_channel-episodes.md) - Operations for channel-episodes
     * [`list`](docs/wistia_channels_channel-episodes_list.md) - List Channel Episodes by Channel
 * [`channel-episodes`](docs/wistia_channel-episodes.md) - Operations for channel-episodes
@@ -453,6 +456,7 @@ Configuration is stored in `~/.config/wistia/config.yaml`.
   * [`get-usage`](docs/wistia_account_get-usage.md) - Get Account Usage
   * [`get-credit-balance`](docs/wistia_account_get-credit-balance.md) - Get Credit Balance
   * [`get-transcript-settings`](docs/wistia_account_get-transcript-settings.md) - Get Transcript Settings
+  * [`update-transcript-settings`](docs/wistia_account_update-transcript-settings.md) - Update Transcript Settings
   * [`get-brand-preload`](docs/wistia_account_get-brand-preload.md) - Get Brand Preload
   * [`update-brand-preload`](docs/wistia_account_update-brand-preload.md) - Update Brand Preload
   * [`get-brand-kit-colors`](docs/wistia_account_get-brand-kit-colors.md) - Get Brand Kit Colors
@@ -476,12 +480,12 @@ Configuration is stored in `~/.config/wistia/config.yaml`.
   * [`create`](docs/wistia_allowed-domains_create.md) - Create Allowed Domain
   * [`get`](docs/wistia_allowed-domains_get.md) - Show Allowed Domain
   * [`delete`](docs/wistia_allowed-domains_delete.md) - Delete Allowed Domain
-* [`remix`](docs/wistia_remix.md) - Operations for remix
-  * [`~~post-remixes~~`](docs/wistia_remix_post-remixes.md) - Create Remix :warning: **Deprecated**
-  * [`~~get-remixes-remix-hashed-id~~`](docs/wistia_remix_get-remixes-remix-hashed-id.md) - Get Remix :warning: **Deprecated**
-  * [`~~post-remixes-remix-hashed-id-continue~~`](docs/wistia_remix_post-remixes-remix-hashed-id-continue.md) - Continue Remix :warning: **Deprecated**
-  * [`~~post-remixes-remix-hashed-id-export~~`](docs/wistia_remix_post-remixes-remix-hashed-id-export.md) - Export Remix :warning: **Deprecated**
-  * [`~~get-remix-account-status~~`](docs/wistia_remix_get-remix-account-status.md) - Get Remix Account Status :warning: **Deprecated**
+* [`pronunciation-words`](docs/wistia_pronunciation-words.md) - Operations for pronunciation-words
+  * [`get`](docs/wistia_pronunciation-words_get.md) - List Pronunciation Words
+  * [`post`](docs/wistia_pronunciation-words_post.md) - Create Pronunciation Word
+  * [`put-pronunciation-words-pronunciation-word-id`](docs/wistia_pronunciation-words_put-pronunciation-words-pronunciation-word-id.md) - Update Pronunciation Word
+  * [`delete-pronunciation-words-pronunciation-word-id`](docs/wistia_pronunciation-words_delete-pronunciation-words-pronunciation-word-id.md) - Delete Pronunciation Word
+  * [`post-pronunciation-words-pronunciation-word-id-preview`](docs/wistia_pronunciation-words_post-pronunciation-words-pronunciation-word-id-preview.md) - Preview Pronunciation Word
 * [`stats-account`](docs/wistia_stats-account.md) - Operations for stats-account
   * [`get`](docs/wistia_stats-account_get.md) - Show Current Account Stats
   * [`get-stats-account-by-date`](docs/wistia_stats-account_get-stats-account-by-date.md) - Show Account Stats by Date

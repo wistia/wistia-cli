@@ -112,6 +112,16 @@ func (e PostSeriesSeriesIDWebinarsCode) ToPointer() *PostSeriesSeriesIDWebinarsC
 	return &e
 }
 
+// PostSeriesSeriesIDWebinarsCodeValues returns every known PostSeriesSeriesIDWebinarsCode value in schema order.
+func PostSeriesSeriesIDWebinarsCodeValues() []PostSeriesSeriesIDWebinarsCode {
+	return []PostSeriesSeriesIDWebinarsCode{
+		PostSeriesSeriesIDWebinarsCodeUnauthorizedCredentials,
+		PostSeriesSeriesIDWebinarsCodeAccountInactive,
+		PostSeriesSeriesIDWebinarsCodeUnauthorizedScope,
+		PostSeriesSeriesIDWebinarsCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *PostSeriesSeriesIDWebinarsCode) IsExact() bool {
 	if e != nil {
@@ -138,6 +148,19 @@ const (
 
 func (e PostSeriesSeriesIDWebinarsLifecycleStatus) ToPointer() *PostSeriesSeriesIDWebinarsLifecycleStatus {
 	return &e
+}
+
+// PostSeriesSeriesIDWebinarsLifecycleStatusValues returns every known PostSeriesSeriesIDWebinarsLifecycleStatus value in schema order.
+func PostSeriesSeriesIDWebinarsLifecycleStatusValues() []PostSeriesSeriesIDWebinarsLifecycleStatus {
+	return []PostSeriesSeriesIDWebinarsLifecycleStatus{
+		PostSeriesSeriesIDWebinarsLifecycleStatusPending,
+		PostSeriesSeriesIDWebinarsLifecycleStatusReady,
+		PostSeriesSeriesIDWebinarsLifecycleStatusStarting,
+		PostSeriesSeriesIDWebinarsLifecycleStatusStarted,
+		PostSeriesSeriesIDWebinarsLifecycleStatusEnded,
+		PostSeriesSeriesIDWebinarsLifecycleStatusVodReady,
+		PostSeriesSeriesIDWebinarsLifecycleStatusFailed,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

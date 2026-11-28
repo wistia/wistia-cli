@@ -25,6 +25,15 @@ const (
 func (e PostBrandsBrandIDApplyResourceType) ToPointer() *PostBrandsBrandIDApplyResourceType {
 	return &e
 }
+
+// PostBrandsBrandIDApplyResourceTypeValues returns every known PostBrandsBrandIDApplyResourceType value in schema order.
+func PostBrandsBrandIDApplyResourceTypeValues() []PostBrandsBrandIDApplyResourceType {
+	return []PostBrandsBrandIDApplyResourceType{
+		PostBrandsBrandIDApplyResourceTypeMedia,
+		PostBrandsBrandIDApplyResourceTypeFolder,
+		PostBrandsBrandIDApplyResourceTypeChannel,
+	}
+}
 func (e *PostBrandsBrandIDApplyResourceType) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -128,6 +137,16 @@ const (
 
 func (e PostBrandsBrandIDApplyCode) ToPointer() *PostBrandsBrandIDApplyCode {
 	return &e
+}
+
+// PostBrandsBrandIDApplyCodeValues returns every known PostBrandsBrandIDApplyCode value in schema order.
+func PostBrandsBrandIDApplyCodeValues() []PostBrandsBrandIDApplyCode {
+	return []PostBrandsBrandIDApplyCode{
+		PostBrandsBrandIDApplyCodeUnauthorizedCredentials,
+		PostBrandsBrandIDApplyCodeAccountInactive,
+		PostBrandsBrandIDApplyCodeUnauthorizedScope,
+		PostBrandsBrandIDApplyCodeUnauthorizedParams,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
@@ -400,6 +419,15 @@ func (e PostBrandsBrandIDApplyContrastIcons) ToPointer() *PostBrandsBrandIDApply
 	return &e
 }
 
+// PostBrandsBrandIDApplyContrastIconsValues returns every known PostBrandsBrandIDApplyContrastIcons value in schema order.
+func PostBrandsBrandIDApplyContrastIconsValues() []PostBrandsBrandIDApplyContrastIcons {
+	return []PostBrandsBrandIDApplyContrastIcons{
+		PostBrandsBrandIDApplyContrastIconsEnabled,
+		PostBrandsBrandIDApplyContrastIconsDisabled,
+		PostBrandsBrandIDApplyContrastIconsUnset,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *PostBrandsBrandIDApplyContrastIcons) IsExact() bool {
 	if e != nil {
@@ -422,6 +450,15 @@ const (
 
 func (e PostBrandsBrandIDApplyOpaqueControls) ToPointer() *PostBrandsBrandIDApplyOpaqueControls {
 	return &e
+}
+
+// PostBrandsBrandIDApplyOpaqueControlsValues returns every known PostBrandsBrandIDApplyOpaqueControls value in schema order.
+func PostBrandsBrandIDApplyOpaqueControlsValues() []PostBrandsBrandIDApplyOpaqueControls {
+	return []PostBrandsBrandIDApplyOpaqueControls{
+		PostBrandsBrandIDApplyOpaqueControlsEnabled,
+		PostBrandsBrandIDApplyOpaqueControlsDisabled,
+		PostBrandsBrandIDApplyOpaqueControlsUnset,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

@@ -53,6 +53,16 @@ func (e PostReviewBundlesCode) ToPointer() *PostReviewBundlesCode {
 	return &e
 }
 
+// PostReviewBundlesCodeValues returns every known PostReviewBundlesCode value in schema order.
+func PostReviewBundlesCodeValues() []PostReviewBundlesCode {
+	return []PostReviewBundlesCode{
+		PostReviewBundlesCodeUnauthorizedCredentials,
+		PostReviewBundlesCodeAccountInactive,
+		PostReviewBundlesCodeUnauthorizedScope,
+		PostReviewBundlesCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *PostReviewBundlesCode) IsExact() bool {
 	if e != nil {

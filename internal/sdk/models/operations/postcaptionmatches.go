@@ -18,9 +18,9 @@ type PostCaptionMatchesRequest struct {
 	LanguageCode *string `json:"language_code,omitzero"`
 	// One-based exact occurrence to start the page of matches at, including occurrences after the first 10.
 	Occurrence *int64 `json:"occurrence,omitzero"`
-	// Optional start of a time range used to disambiguate the match.
+	// Optional start of a time range used to disambiguate the match. Omit to start at the beginning.
 	StartMs *int64 `json:"start_ms,omitzero"`
-	// Optional end of a time range used to disambiguate the match.
+	// Optional end of a time range used to disambiguate the match. Omit to run to the end.
 	EndMs *int64 `json:"end_ms,omitzero"`
 }
 
@@ -80,6 +80,16 @@ func (e PostCaptionMatchesCode) ToPointer() *PostCaptionMatchesCode {
 	return &e
 }
 
+// PostCaptionMatchesCodeValues returns every known PostCaptionMatchesCode value in schema order.
+func PostCaptionMatchesCodeValues() []PostCaptionMatchesCode {
+	return []PostCaptionMatchesCode{
+		PostCaptionMatchesCodeUnauthorizedCredentials,
+		PostCaptionMatchesCodeAccountInactive,
+		PostCaptionMatchesCodeUnauthorizedScope,
+		PostCaptionMatchesCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *PostCaptionMatchesCode) IsExact() bool {
 	if e != nil {
@@ -106,6 +116,20 @@ const (
 
 func (e PostCaptionMatchesStatus) ToPointer() *PostCaptionMatchesStatus {
 	return &e
+}
+
+// PostCaptionMatchesStatusValues returns every known PostCaptionMatchesStatus value in schema order.
+func PostCaptionMatchesStatusValues() []PostCaptionMatchesStatus {
+	return []PostCaptionMatchesStatus{
+		PostCaptionMatchesStatusOk,
+		PostCaptionMatchesStatusMediaNotFound,
+		PostCaptionMatchesStatusInvalidMedia,
+		PostCaptionMatchesStatusNoTracks,
+		PostCaptionMatchesStatusLanguageRequired,
+		PostCaptionMatchesStatusTrackNotFound,
+		PostCaptionMatchesStatusNoActivePayload,
+		PostCaptionMatchesStatusResponseTooLarge,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
@@ -181,6 +205,16 @@ const (
 
 func (e MatchStatus) ToPointer() *MatchStatus {
 	return &e
+}
+
+// MatchStatusValues returns every known MatchStatus value in schema order.
+func MatchStatusValues() []MatchStatus {
+	return []MatchStatus{
+		MatchStatusResolved,
+		MatchStatusAmbiguous,
+		MatchStatusNotFound,
+		MatchStatusOccurrenceNotFound,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

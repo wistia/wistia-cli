@@ -145,7 +145,7 @@ func runConfigureCmd(cmd *cobra.Command, args []string) error {
 			pages = append(pages, forms.NewPage("Preferences", preferenceFields...))
 		}
 
-		form := forms.New(pages...).Accessible(accessible).IO(cmd.InOrStdin(), cmd.OutOrStdout())
+		form := forms.New(pages...).Accessible(accessible).IO(cmd.InOrStdin(), cmd.ErrOrStderr())
 
 		if err := form.Run(); err != nil {
 			return fmt.Errorf("configure: %w", err)

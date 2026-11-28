@@ -74,6 +74,16 @@ func (e GetAnalyticsWebinarsWebinarIDCode) ToPointer() *GetAnalyticsWebinarsWebi
 	return &e
 }
 
+// GetAnalyticsWebinarsWebinarIDCodeValues returns every known GetAnalyticsWebinarsWebinarIDCode value in schema order.
+func GetAnalyticsWebinarsWebinarIDCodeValues() []GetAnalyticsWebinarsWebinarIDCode {
+	return []GetAnalyticsWebinarsWebinarIDCode{
+		GetAnalyticsWebinarsWebinarIDCodeUnauthorizedCredentials,
+		GetAnalyticsWebinarsWebinarIDCodeAccountInactive,
+		GetAnalyticsWebinarsWebinarIDCodeUnauthorizedScope,
+		GetAnalyticsWebinarsWebinarIDCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *GetAnalyticsWebinarsWebinarIDCode) IsExact() bool {
 	if e != nil {

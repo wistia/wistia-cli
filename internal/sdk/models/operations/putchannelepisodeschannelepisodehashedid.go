@@ -23,6 +23,15 @@ const (
 func (e PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeRequest) ToPointer() *PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeRequest {
 	return &e
 }
+
+// PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeRequestValues returns every known PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeRequest value in schema order.
+func PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeRequestValues() []PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeRequest {
+	return []PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeRequest{
+		PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeRequestFull,
+		PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeRequestTrailer,
+		PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeRequestBonus,
+	}
+}
 func (e *PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeRequest) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -188,6 +197,16 @@ func (e PutChannelEpisodesChannelEpisodeHashedIDCode) ToPointer() *PutChannelEpi
 	return &e
 }
 
+// PutChannelEpisodesChannelEpisodeHashedIDCodeValues returns every known PutChannelEpisodesChannelEpisodeHashedIDCode value in schema order.
+func PutChannelEpisodesChannelEpisodeHashedIDCodeValues() []PutChannelEpisodesChannelEpisodeHashedIDCode {
+	return []PutChannelEpisodesChannelEpisodeHashedIDCode{
+		PutChannelEpisodesChannelEpisodeHashedIDCodeUnauthorizedCredentials,
+		PutChannelEpisodesChannelEpisodeHashedIDCodeAccountInactive,
+		PutChannelEpisodesChannelEpisodeHashedIDCodeUnauthorizedScope,
+		PutChannelEpisodesChannelEpisodeHashedIDCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *PutChannelEpisodesChannelEpisodeHashedIDCode) IsExact() bool {
 	if e != nil {
@@ -209,6 +228,15 @@ const (
 
 func (e PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeResponse) ToPointer() *PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeResponse {
 	return &e
+}
+
+// PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeResponseValues returns every known PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeResponse value in schema order.
+func PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeResponseValues() []PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeResponse {
+	return []PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeResponse{
+		PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeResponseFull,
+		PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeResponseTrailer,
+		PutChannelEpisodesChannelEpisodeHashedIDEpisodeTypeResponseBonus,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

@@ -42,6 +42,16 @@ func (e DeleteMediasMediaHashedIDCustomMetadataFieldValuesKeyCode) ToPointer() *
 	return &e
 }
 
+// DeleteMediasMediaHashedIDCustomMetadataFieldValuesKeyCodeValues returns every known DeleteMediasMediaHashedIDCustomMetadataFieldValuesKeyCode value in schema order.
+func DeleteMediasMediaHashedIDCustomMetadataFieldValuesKeyCodeValues() []DeleteMediasMediaHashedIDCustomMetadataFieldValuesKeyCode {
+	return []DeleteMediasMediaHashedIDCustomMetadataFieldValuesKeyCode{
+		DeleteMediasMediaHashedIDCustomMetadataFieldValuesKeyCodeUnauthorizedCredentials,
+		DeleteMediasMediaHashedIDCustomMetadataFieldValuesKeyCodeAccountInactive,
+		DeleteMediasMediaHashedIDCustomMetadataFieldValuesKeyCodeUnauthorizedScope,
+		DeleteMediasMediaHashedIDCustomMetadataFieldValuesKeyCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *DeleteMediasMediaHashedIDCustomMetadataFieldValuesKeyCode) IsExact() bool {
 	if e != nil {

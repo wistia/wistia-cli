@@ -36,6 +36,16 @@ func (e DeleteMediasMediaHashedIDCode) ToPointer() *DeleteMediasMediaHashedIDCod
 	return &e
 }
 
+// DeleteMediasMediaHashedIDCodeValues returns every known DeleteMediasMediaHashedIDCode value in schema order.
+func DeleteMediasMediaHashedIDCodeValues() []DeleteMediasMediaHashedIDCode {
+	return []DeleteMediasMediaHashedIDCode{
+		DeleteMediasMediaHashedIDCodeUnauthorizedCredentials,
+		DeleteMediasMediaHashedIDCodeAccountInactive,
+		DeleteMediasMediaHashedIDCodeUnauthorizedScope,
+		DeleteMediasMediaHashedIDCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *DeleteMediasMediaHashedIDCode) IsExact() bool {
 	if e != nil {
@@ -64,6 +74,19 @@ func (e DeleteMediasMediaHashedIDType) ToPointer() *DeleteMediasMediaHashedIDTyp
 	return &e
 }
 
+// DeleteMediasMediaHashedIDTypeValues returns every known DeleteMediasMediaHashedIDType value in schema order.
+func DeleteMediasMediaHashedIDTypeValues() []DeleteMediasMediaHashedIDType {
+	return []DeleteMediasMediaHashedIDType{
+		DeleteMediasMediaHashedIDTypeVideo,
+		DeleteMediasMediaHashedIDTypeAudio,
+		DeleteMediasMediaHashedIDTypeImage,
+		DeleteMediasMediaHashedIDTypePdfDocument,
+		DeleteMediasMediaHashedIDTypeMicrosoftOfficeDocument,
+		DeleteMediasMediaHashedIDTypeSwf,
+		DeleteMediasMediaHashedIDTypeUnknownType,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *DeleteMediasMediaHashedIDType) IsExact() bool {
 	if e != nil {
@@ -87,6 +110,16 @@ const (
 
 func (e DeleteMediasMediaHashedIDStatus) ToPointer() *DeleteMediasMediaHashedIDStatus {
 	return &e
+}
+
+// DeleteMediasMediaHashedIDStatusValues returns every known DeleteMediasMediaHashedIDStatus value in schema order.
+func DeleteMediasMediaHashedIDStatusValues() []DeleteMediasMediaHashedIDStatus {
+	return []DeleteMediasMediaHashedIDStatus{
+		DeleteMediasMediaHashedIDStatusQueued,
+		DeleteMediasMediaHashedIDStatusProcessing,
+		DeleteMediasMediaHashedIDStatusReady,
+		DeleteMediasMediaHashedIDStatusFailed,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

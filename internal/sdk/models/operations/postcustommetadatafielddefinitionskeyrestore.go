@@ -39,6 +39,16 @@ func (e PostCustomMetadataFieldDefinitionsKeyRestoreCode) ToPointer() *PostCusto
 	return &e
 }
 
+// PostCustomMetadataFieldDefinitionsKeyRestoreCodeValues returns every known PostCustomMetadataFieldDefinitionsKeyRestoreCode value in schema order.
+func PostCustomMetadataFieldDefinitionsKeyRestoreCodeValues() []PostCustomMetadataFieldDefinitionsKeyRestoreCode {
+	return []PostCustomMetadataFieldDefinitionsKeyRestoreCode{
+		PostCustomMetadataFieldDefinitionsKeyRestoreCodeUnauthorizedCredentials,
+		PostCustomMetadataFieldDefinitionsKeyRestoreCodeAccountInactive,
+		PostCustomMetadataFieldDefinitionsKeyRestoreCodeUnauthorizedScope,
+		PostCustomMetadataFieldDefinitionsKeyRestoreCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *PostCustomMetadataFieldDefinitionsKeyRestoreCode) IsExact() bool {
 	if e != nil {
@@ -72,6 +82,26 @@ const (
 
 func (e PostCustomMetadataFieldDefinitionsKeyRestoreFieldType) ToPointer() *PostCustomMetadataFieldDefinitionsKeyRestoreFieldType {
 	return &e
+}
+
+// PostCustomMetadataFieldDefinitionsKeyRestoreFieldTypeValues returns every known PostCustomMetadataFieldDefinitionsKeyRestoreFieldType value in schema order.
+func PostCustomMetadataFieldDefinitionsKeyRestoreFieldTypeValues() []PostCustomMetadataFieldDefinitionsKeyRestoreFieldType {
+	return []PostCustomMetadataFieldDefinitionsKeyRestoreFieldType{
+		PostCustomMetadataFieldDefinitionsKeyRestoreFieldTypeText,
+		PostCustomMetadataFieldDefinitionsKeyRestoreFieldTypeNumber,
+		PostCustomMetadataFieldDefinitionsKeyRestoreFieldTypeDate,
+		PostCustomMetadataFieldDefinitionsKeyRestoreFieldTypeBoolean,
+		PostCustomMetadataFieldDefinitionsKeyRestoreFieldTypeSingleSelect,
+		PostCustomMetadataFieldDefinitionsKeyRestoreFieldTypeShortText,
+		PostCustomMetadataFieldDefinitionsKeyRestoreFieldTypeURL,
+		PostCustomMetadataFieldDefinitionsKeyRestoreFieldTypeEmail,
+		PostCustomMetadataFieldDefinitionsKeyRestoreFieldTypeMoney,
+		PostCustomMetadataFieldDefinitionsKeyRestoreFieldTypeTime,
+		PostCustomMetadataFieldDefinitionsKeyRestoreFieldTypeDatetime,
+		PostCustomMetadataFieldDefinitionsKeyRestoreFieldTypeMultiSelect,
+		PostCustomMetadataFieldDefinitionsKeyRestoreFieldTypeContactRef,
+		PostCustomMetadataFieldDefinitionsKeyRestoreFieldTypeContactMultiRef,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
@@ -366,6 +396,15 @@ func (e PostCustomMetadataFieldDefinitionsKeyRestoreSource) ToPointer() *PostCus
 	return &e
 }
 
+// PostCustomMetadataFieldDefinitionsKeyRestoreSourceValues returns every known PostCustomMetadataFieldDefinitionsKeyRestoreSource value in schema order.
+func PostCustomMetadataFieldDefinitionsKeyRestoreSourceValues() []PostCustomMetadataFieldDefinitionsKeyRestoreSource {
+	return []PostCustomMetadataFieldDefinitionsKeyRestoreSource{
+		PostCustomMetadataFieldDefinitionsKeyRestoreSourceUI,
+		PostCustomMetadataFieldDefinitionsKeyRestoreSourceAPI,
+		PostCustomMetadataFieldDefinitionsKeyRestoreSourceMcp,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *PostCustomMetadataFieldDefinitionsKeyRestoreSource) IsExact() bool {
 	if e != nil {
@@ -385,6 +424,13 @@ const (
 
 func (e PostCustomMetadataFieldDefinitionsKeyRestoreType) ToPointer() *PostCustomMetadataFieldDefinitionsKeyRestoreType {
 	return &e
+}
+
+// PostCustomMetadataFieldDefinitionsKeyRestoreTypeValues returns every known PostCustomMetadataFieldDefinitionsKeyRestoreType value in schema order.
+func PostCustomMetadataFieldDefinitionsKeyRestoreTypeValues() []PostCustomMetadataFieldDefinitionsKeyRestoreType {
+	return []PostCustomMetadataFieldDefinitionsKeyRestoreType{
+		PostCustomMetadataFieldDefinitionsKeyRestoreTypeContact,
+	}
 }
 func (e *PostCustomMetadataFieldDefinitionsKeyRestoreType) UnmarshalJSON(data []byte) error {
 	var v string

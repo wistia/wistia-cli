@@ -33,6 +33,16 @@ func (e DeleteCustomMetadataFieldDefinitionsKeyCode) ToPointer() *DeleteCustomMe
 	return &e
 }
 
+// DeleteCustomMetadataFieldDefinitionsKeyCodeValues returns every known DeleteCustomMetadataFieldDefinitionsKeyCode value in schema order.
+func DeleteCustomMetadataFieldDefinitionsKeyCodeValues() []DeleteCustomMetadataFieldDefinitionsKeyCode {
+	return []DeleteCustomMetadataFieldDefinitionsKeyCode{
+		DeleteCustomMetadataFieldDefinitionsKeyCodeUnauthorizedCredentials,
+		DeleteCustomMetadataFieldDefinitionsKeyCodeAccountInactive,
+		DeleteCustomMetadataFieldDefinitionsKeyCodeUnauthorizedScope,
+		DeleteCustomMetadataFieldDefinitionsKeyCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *DeleteCustomMetadataFieldDefinitionsKeyCode) IsExact() bool {
 	if e != nil {

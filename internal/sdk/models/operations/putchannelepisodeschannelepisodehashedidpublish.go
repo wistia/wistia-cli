@@ -78,6 +78,16 @@ func (e PutChannelEpisodesChannelEpisodeHashedIDPublishCode) ToPointer() *PutCha
 	return &e
 }
 
+// PutChannelEpisodesChannelEpisodeHashedIDPublishCodeValues returns every known PutChannelEpisodesChannelEpisodeHashedIDPublishCode value in schema order.
+func PutChannelEpisodesChannelEpisodeHashedIDPublishCodeValues() []PutChannelEpisodesChannelEpisodeHashedIDPublishCode {
+	return []PutChannelEpisodesChannelEpisodeHashedIDPublishCode{
+		PutChannelEpisodesChannelEpisodeHashedIDPublishCodeUnauthorizedCredentials,
+		PutChannelEpisodesChannelEpisodeHashedIDPublishCodeAccountInactive,
+		PutChannelEpisodesChannelEpisodeHashedIDPublishCodeUnauthorizedScope,
+		PutChannelEpisodesChannelEpisodeHashedIDPublishCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *PutChannelEpisodesChannelEpisodeHashedIDPublishCode) IsExact() bool {
 	if e != nil {
@@ -99,6 +109,15 @@ const (
 
 func (e PutChannelEpisodesChannelEpisodeHashedIDPublishEpisodeType) ToPointer() *PutChannelEpisodesChannelEpisodeHashedIDPublishEpisodeType {
 	return &e
+}
+
+// PutChannelEpisodesChannelEpisodeHashedIDPublishEpisodeTypeValues returns every known PutChannelEpisodesChannelEpisodeHashedIDPublishEpisodeType value in schema order.
+func PutChannelEpisodesChannelEpisodeHashedIDPublishEpisodeTypeValues() []PutChannelEpisodesChannelEpisodeHashedIDPublishEpisodeType {
+	return []PutChannelEpisodesChannelEpisodeHashedIDPublishEpisodeType{
+		PutChannelEpisodesChannelEpisodeHashedIDPublishEpisodeTypeFull,
+		PutChannelEpisodesChannelEpisodeHashedIDPublishEpisodeTypeTrailer,
+		PutChannelEpisodesChannelEpisodeHashedIDPublishEpisodeTypeBonus,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

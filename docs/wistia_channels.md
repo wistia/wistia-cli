@@ -45,6 +45,7 @@ wistia channels [flags]
 * [wistia channels create](wistia_channels_create.md)	 - Create Channel
 * [wistia channels delete](wistia_channels_delete.md)	 - Delete Channel
 * [wistia channels get](wistia_channels_get.md)	 - Show Channel
+* [wistia channels get-customizations](wistia_channels_get-customizations.md)	 - Show Channel Customizations
 * [wistia channels list](wistia_channels_list.md)	 - List Channels
 * [wistia channels update](wistia_channels_update.md)	 - Update Channel
 

@@ -30,19 +30,41 @@ import (
 // Soapbox recordings, My Library media, and media that isn't in a folder
 // cannot be archived, so their actions fail with the reason. Once the
 // account reaches its archived media limit, further actions fail.
+//
+// `generate` applies to `captions` and `text_translation` only. It
+// generates Wistia captions for a media, or translates the media's
+// transcript into another language, and its `id` is the media's hashed
+// ID. It can be metered against the account exactly as the Generate
+// Captions and Translate Media endpoints are. The same `generate`
+// action cannot appear twice in one request. Localizations and extended
+// audio descriptions cannot be generated here.
 type ActionOperation string
 
 const (
-	ActionOperationCreate  ActionOperation = "create"
-	ActionOperationUpdate  ActionOperation = "update"
-	ActionOperationDelete  ActionOperation = "delete"
-	ActionOperationMove    ActionOperation = "move"
-	ActionOperationAddTags ActionOperation = "add_tags"
-	ActionOperationArchive ActionOperation = "archive"
+	ActionOperationCreate   ActionOperation = "create"
+	ActionOperationUpdate   ActionOperation = "update"
+	ActionOperationDelete   ActionOperation = "delete"
+	ActionOperationMove     ActionOperation = "move"
+	ActionOperationAddTags  ActionOperation = "add_tags"
+	ActionOperationArchive  ActionOperation = "archive"
+	ActionOperationGenerate ActionOperation = "generate"
 )
 
 func (e ActionOperation) ToPointer() *ActionOperation {
 	return &e
+}
+
+// ActionOperationValues returns every known ActionOperation value in schema order.
+func ActionOperationValues() []ActionOperation {
+	return []ActionOperation{
+		ActionOperationCreate,
+		ActionOperationUpdate,
+		ActionOperationDelete,
+		ActionOperationMove,
+		ActionOperationAddTags,
+		ActionOperationArchive,
+		ActionOperationGenerate,
+	}
 }
 func (e *ActionOperation) UnmarshalJSON(data []byte) error {
 	var v string
@@ -61,6 +83,8 @@ func (e *ActionOperation) UnmarshalJSON(data []byte) error {
 	case "add_tags":
 		fallthrough
 	case "archive":
+		fallthrough
+	case "generate":
 		*e = ActionOperation(v)
 		return nil
 	default:
@@ -72,7 +96,10 @@ func (e *ActionOperation) UnmarshalJSON(data []byte) error {
 // (previously called a project); use `subfolder` for a folder nested
 // inside one. `captions` operates on a single caption track -- one media
 // in one language. `media_speaker` assigns speaker profiles to a media
-// (`create`) or removes one assignment (`delete`).
+// (`create`) or removes one assignment (`delete`). `text_translation`
+// accepts `generate` only: it translates a media's existing transcript
+// into another language and leaves the audio alone. `tag` accepts `delete` only and removes the tag
+// from every media it is on.
 //
 // The `customization_*` types each write one concern of a media's player
 // customizations and accept `update` only. Their `id` is the media's
@@ -90,7 +117,9 @@ const (
 	ActionResourceTypeChannel                    ActionResourceType = "channel"
 	ActionResourceTypeChannelEpisode             ActionResourceType = "channel_episode"
 	ActionResourceTypeCaptions                   ActionResourceType = "captions"
+	ActionResourceTypeTextTranslation            ActionResourceType = "text_translation"
 	ActionResourceTypeMediaSpeaker               ActionResourceType = "media_speaker"
+	ActionResourceTypeTag                        ActionResourceType = "tag"
 	ActionResourceTypeCustomizationAccess        ActionResourceType = "customization_access"
 	ActionResourceTypeCustomizationAccessibility ActionResourceType = "customization_accessibility"
 	ActionResourceTypeCustomizationAppearance    ActionResourceType = "customization_appearance"
@@ -105,6 +134,31 @@ const (
 
 func (e ActionResourceType) ToPointer() *ActionResourceType {
 	return &e
+}
+
+// ActionResourceTypeValues returns every known ActionResourceType value in schema order.
+func ActionResourceTypeValues() []ActionResourceType {
+	return []ActionResourceType{
+		ActionResourceTypeMedia,
+		ActionResourceTypeFolder,
+		ActionResourceTypeSubfolder,
+		ActionResourceTypeChannel,
+		ActionResourceTypeChannelEpisode,
+		ActionResourceTypeCaptions,
+		ActionResourceTypeTextTranslation,
+		ActionResourceTypeMediaSpeaker,
+		ActionResourceTypeTag,
+		ActionResourceTypeCustomizationAccess,
+		ActionResourceTypeCustomizationAccessibility,
+		ActionResourceTypeCustomizationAppearance,
+		ActionResourceTypeCustomizationChapters,
+		ActionResourceTypeCustomizationEngagement,
+		ActionResourceTypeCustomizationLeadCapture,
+		ActionResourceTypeCustomizationPlayback,
+		ActionResourceTypeCustomizationRelatedMedia,
+		ActionResourceTypeCustomizationSharing,
+		ActionResourceTypeCustomizationThumbnail,
+	}
 }
 func (e *ActionResourceType) UnmarshalJSON(data []byte) error {
 	var v string
@@ -124,7 +178,11 @@ func (e *ActionResourceType) UnmarshalJSON(data []byte) error {
 		fallthrough
 	case "captions":
 		fallthrough
+	case "text_translation":
+		fallthrough
 	case "media_speaker":
+		fallthrough
+	case "tag":
 		fallthrough
 	case "customization_access":
 		fallthrough
@@ -182,12 +240,19 @@ func (e *ActionResourceType) UnmarshalJSON(data []byte) error {
 // name matches an existing tag but is spelled differently (accents,
 // symbols); reuse the exact spelling from get-tags.
 //
+// A `captions` `generate` requires `automated`: `true` for
+// computer-generated captions or `false` for human-reviewed ones. It also
+// accepts `rush` (human-reviewed only) and `automatically_enable`, each
+// treated as `false` when omitted. A `text_translation` `generate`
+// requires `target_language` and accepts `source_language`, each in the
+// bibliographic ISO 639-2 form or a supported regional or script IETF tag.
+//
 // A `media_speaker` create takes the Assign Speaker body, or, for several
 // people on one media, `speakers`, a list of 1 to 20 objects each with a
 // `speaker_profile_id` and an optional `detected_speaker_id`, plus
 // `expected_version` (the media's `speaker_data_version`), which is
 // required when any entry names a detected speaker. The list is assigned
-// in order as one change, so every speaker on a media goes in one action.
+// in sequence as one change, so every speaker on a media goes in one action.
 // A `media_speaker` delete takes an optional `expected_version`.
 //
 // A `customization_*` payload is a partial update of that concern only:
@@ -226,12 +291,23 @@ type PostBulkAction struct {
 	// cannot be archived, so their actions fail with the reason. Once the
 	// account reaches its archived media limit, further actions fail.
 	//
+	// `generate` applies to `captions` and `text_translation` only. It
+	// generates Wistia captions for a media, or translates the media's
+	// transcript into another language, and its `id` is the media's hashed
+	// ID. It can be metered against the account exactly as the Generate
+	// Captions and Translate Media endpoints are. The same `generate`
+	// action cannot appear twice in one request. Localizations and extended
+	// audio descriptions cannot be generated here.
+	//
 	Operation ActionOperation `json:"operation"`
 	// The type of resource to operate on. `folder` means a top-level folder
 	// (previously called a project); use `subfolder` for a folder nested
 	// inside one. `captions` operates on a single caption track -- one media
 	// in one language. `media_speaker` assigns speaker profiles to a media
-	// (`create`) or removes one assignment (`delete`).
+	// (`create`) or removes one assignment (`delete`). `text_translation`
+	// accepts `generate` only: it translates a media's existing transcript
+	// into another language and leaves the audio alone. `tag` accepts `delete` only and removes the tag
+	// from every media it is on.
 	//
 	// The `customization_*` types each write one concern of a media's player
 	// customizations and accept `update` only. Their `id` is the media's
@@ -251,6 +327,11 @@ type PostBulkAction struct {
 	//
 	// For `media_speaker`, a `create` takes the media's hashed ID and a
 	// `delete` takes the `media_speaker_id`; both require it.
+	//
+	// For `tag` this is the tag's name, as returned by List Tags.
+	//
+	// For a `generate` this is the media's hashed ID: what it generates does
+	// not exist yet.
 	//
 	ID *string `json:"id,omitzero"`
 	// The data for the operation. Required for create, update, move, and
@@ -283,12 +364,19 @@ type PostBulkAction struct {
 	// name matches an existing tag but is spelled differently (accents,
 	// symbols); reuse the exact spelling from get-tags.
 	//
+	// A `captions` `generate` requires `automated`: `true` for
+	// computer-generated captions or `false` for human-reviewed ones. It also
+	// accepts `rush` (human-reviewed only) and `automatically_enable`, each
+	// treated as `false` when omitted. A `text_translation` `generate`
+	// requires `target_language` and accepts `source_language`, each in the
+	// bibliographic ISO 639-2 form or a supported regional or script IETF tag.
+	//
 	// A `media_speaker` create takes the Assign Speaker body, or, for several
 	// people on one media, `speakers`, a list of 1 to 20 objects each with a
 	// `speaker_profile_id` and an optional `detected_speaker_id`, plus
 	// `expected_version` (the media's `speaker_data_version`), which is
 	// required when any entry names a detected speaker. The list is assigned
-	// in order as one change, so every speaker on a media goes in one action.
+	// in sequence as one change, so every speaker on a media goes in one action.
 	// A `media_speaker` delete takes an optional `expected_version`.
 	//
 	// A `customization_*` payload is a partial update of that concern only:
@@ -345,19 +433,34 @@ func (p *PostBulkAction) GetPayload() *ActionPayload {
 }
 
 // JobOperation - The operation to apply to every matching record. `create` is not
-// accepted here.
+// accepted here. `generate` applies to `captions` and `text_translation`
+// only, and addresses media: its `scope` or `ids` name the media to
+// generate for.
 type JobOperation string
 
 const (
-	JobOperationUpdate  JobOperation = "update"
-	JobOperationDelete  JobOperation = "delete"
-	JobOperationMove    JobOperation = "move"
-	JobOperationAddTags JobOperation = "add_tags"
-	JobOperationArchive JobOperation = "archive"
+	JobOperationUpdate   JobOperation = "update"
+	JobOperationDelete   JobOperation = "delete"
+	JobOperationMove     JobOperation = "move"
+	JobOperationAddTags  JobOperation = "add_tags"
+	JobOperationArchive  JobOperation = "archive"
+	JobOperationGenerate JobOperation = "generate"
 )
 
 func (e JobOperation) ToPointer() *JobOperation {
 	return &e
+}
+
+// JobOperationValues returns every known JobOperation value in schema order.
+func JobOperationValues() []JobOperation {
+	return []JobOperation{
+		JobOperationUpdate,
+		JobOperationDelete,
+		JobOperationMove,
+		JobOperationAddTags,
+		JobOperationArchive,
+		JobOperationGenerate,
+	}
 }
 func (e *JobOperation) UnmarshalJSON(data []byte) error {
 	var v string
@@ -374,6 +477,8 @@ func (e *JobOperation) UnmarshalJSON(data []byte) error {
 	case "add_tags":
 		fallthrough
 	case "archive":
+		fallthrough
+	case "generate":
 		*e = JobOperation(v)
 		return nil
 	default:
@@ -392,6 +497,7 @@ const (
 	JobResourceTypeChannel                    JobResourceType = "channel"
 	JobResourceTypeChannelEpisode             JobResourceType = "channel_episode"
 	JobResourceTypeCaptions                   JobResourceType = "captions"
+	JobResourceTypeTextTranslation            JobResourceType = "text_translation"
 	JobResourceTypeCustomizationAccess        JobResourceType = "customization_access"
 	JobResourceTypeCustomizationAccessibility JobResourceType = "customization_accessibility"
 	JobResourceTypeCustomizationAppearance    JobResourceType = "customization_appearance"
@@ -406,6 +512,29 @@ const (
 
 func (e JobResourceType) ToPointer() *JobResourceType {
 	return &e
+}
+
+// JobResourceTypeValues returns every known JobResourceType value in schema order.
+func JobResourceTypeValues() []JobResourceType {
+	return []JobResourceType{
+		JobResourceTypeMedia,
+		JobResourceTypeFolder,
+		JobResourceTypeSubfolder,
+		JobResourceTypeChannel,
+		JobResourceTypeChannelEpisode,
+		JobResourceTypeCaptions,
+		JobResourceTypeTextTranslation,
+		JobResourceTypeCustomizationAccess,
+		JobResourceTypeCustomizationAccessibility,
+		JobResourceTypeCustomizationAppearance,
+		JobResourceTypeCustomizationChapters,
+		JobResourceTypeCustomizationEngagement,
+		JobResourceTypeCustomizationLeadCapture,
+		JobResourceTypeCustomizationPlayback,
+		JobResourceTypeCustomizationRelatedMedia,
+		JobResourceTypeCustomizationSharing,
+		JobResourceTypeCustomizationThumbnail,
+	}
 }
 func (e *JobResourceType) UnmarshalJSON(data []byte) error {
 	var v string
@@ -424,6 +553,8 @@ func (e *JobResourceType) UnmarshalJSON(data []byte) error {
 	case "channel_episode":
 		fallthrough
 	case "captions":
+		fallthrough
+	case "text_translation":
 		fallthrough
 	case "customization_access":
 		fallthrough
@@ -466,6 +597,17 @@ const (
 
 func (e PostBulkType) ToPointer() *PostBulkType {
 	return &e
+}
+
+// PostBulkTypeValues returns every known PostBulkType value in schema order.
+func PostBulkTypeValues() []PostBulkType {
+	return []PostBulkType{
+		PostBulkTypeAccount,
+		PostBulkTypeFolder,
+		PostBulkTypeSubfolder,
+		PostBulkTypeChannel,
+		PostBulkTypeMedia,
+	}
 }
 func (e *PostBulkType) UnmarshalJSON(data []byte) error {
 	var v string
@@ -530,7 +672,8 @@ func (p *PostBulkScope) GetID() *string {
 
 // JobPayload - The data applied to every matching record, in the same shape a single
 // action's payload takes for this resource type. Required for `update`,
-// `move`, and `add_tags`.
+// `move`, and `add_tags`, and for a `generate`, which needs `automated`
+// for `captions` and `target_language` for `text_translation`.
 type JobPayload struct {
 }
 
@@ -552,7 +695,9 @@ type JobPayload struct {
 // available to external contacts.
 type PostBulkJob struct {
 	// The operation to apply to every matching record. `create` is not
-	// accepted here.
+	// accepted here. `generate` applies to `captions` and `text_translation`
+	// only, and addresses media: its `scope` or `ids` name the media to
+	// generate for.
 	//
 	Operation JobOperation `json:"operation"`
 	// The type of record to operate on, using the same vocabulary as a single
@@ -576,7 +721,7 @@ type PostBulkJob struct {
 	//
 	Scope *PostBulkScope `json:"scope,omitzero"`
 	// The records to apply the change to, named explicitly. Use this instead of
-	// `scope` when the records do not share a parent -- it is still far cheaper
+	// `scope` when the records do not share a parent -- it is still far smaller
 	// than one action each, since only the ids repeat and the payload is stated
 	// once.
 	//
@@ -585,7 +730,8 @@ type PostBulkJob struct {
 	Ids []string `json:"ids,omitzero"`
 	// The data applied to every matching record, in the same shape a single
 	// action's payload takes for this resource type. Required for `update`,
-	// `move`, and `add_tags`.
+	// `move`, and `add_tags`, and for a `generate`, which needs `automated`
+	// for `captions` and `target_language` for `text_translation`.
 	//
 	Payload *JobPayload `json:"payload,omitzero"`
 }
@@ -714,6 +860,16 @@ func (e PostBulkCode) ToPointer() *PostBulkCode {
 	return &e
 }
 
+// PostBulkCodeValues returns every known PostBulkCode value in schema order.
+func PostBulkCodeValues() []PostBulkCode {
+	return []PostBulkCode{
+		PostBulkCodeUnauthorizedCredentials,
+		PostBulkCodeAccountInactive,
+		PostBulkCodeUnauthorizedScope,
+		PostBulkCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *PostBulkCode) IsExact() bool {
 	if e != nil {
@@ -737,6 +893,16 @@ const (
 
 func (e PostBulkStatus) ToPointer() *PostBulkStatus {
 	return &e
+}
+
+// PostBulkStatusValues returns every known PostBulkStatus value in schema order.
+func PostBulkStatusValues() []PostBulkStatus {
+	return []PostBulkStatus{
+		PostBulkStatusQueued,
+		PostBulkStatusStarted,
+		PostBulkStatusFinished,
+		PostBulkStatusFailed,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

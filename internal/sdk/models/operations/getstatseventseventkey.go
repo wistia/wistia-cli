@@ -39,6 +39,16 @@ func (e GetStatsEventsEventKeyCode) ToPointer() *GetStatsEventsEventKeyCode {
 	return &e
 }
 
+// GetStatsEventsEventKeyCodeValues returns every known GetStatsEventsEventKeyCode value in schema order.
+func GetStatsEventsEventKeyCodeValues() []GetStatsEventsEventKeyCode {
+	return []GetStatsEventsEventKeyCode{
+		GetStatsEventsEventKeyCodeUnauthorizedCredentials,
+		GetStatsEventsEventKeyCodeAccountInactive,
+		GetStatsEventsEventKeyCodeUnauthorizedScope,
+		GetStatsEventsEventKeyCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *GetStatsEventsEventKeyCode) IsExact() bool {
 	if e != nil {

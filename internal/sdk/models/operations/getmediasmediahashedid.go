@@ -23,6 +23,13 @@ const (
 func (e GetMediasMediaHashedIDInclude) ToPointer() *GetMediasMediaHashedIDInclude {
 	return &e
 }
+
+// GetMediasMediaHashedIDIncludeValues returns every known GetMediasMediaHashedIDInclude value in schema order.
+func GetMediasMediaHashedIDIncludeValues() []GetMediasMediaHashedIDInclude {
+	return []GetMediasMediaHashedIDInclude{
+		GetMediasMediaHashedIDIncludeSpeakers,
+	}
+}
 func (e *GetMediasMediaHashedIDInclude) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -90,6 +97,16 @@ func (e GetMediasMediaHashedIDCode) ToPointer() *GetMediasMediaHashedIDCode {
 	return &e
 }
 
+// GetMediasMediaHashedIDCodeValues returns every known GetMediasMediaHashedIDCode value in schema order.
+func GetMediasMediaHashedIDCodeValues() []GetMediasMediaHashedIDCode {
+	return []GetMediasMediaHashedIDCode{
+		GetMediasMediaHashedIDCodeUnauthorizedCredentials,
+		GetMediasMediaHashedIDCodeAccountInactive,
+		GetMediasMediaHashedIDCodeUnauthorizedScope,
+		GetMediasMediaHashedIDCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *GetMediasMediaHashedIDCode) IsExact() bool {
 	if e != nil {
@@ -118,6 +135,19 @@ func (e GetMediasMediaHashedIDType) ToPointer() *GetMediasMediaHashedIDType {
 	return &e
 }
 
+// GetMediasMediaHashedIDTypeValues returns every known GetMediasMediaHashedIDType value in schema order.
+func GetMediasMediaHashedIDTypeValues() []GetMediasMediaHashedIDType {
+	return []GetMediasMediaHashedIDType{
+		GetMediasMediaHashedIDTypeVideo,
+		GetMediasMediaHashedIDTypeAudio,
+		GetMediasMediaHashedIDTypeImage,
+		GetMediasMediaHashedIDTypePdfDocument,
+		GetMediasMediaHashedIDTypeMicrosoftOfficeDocument,
+		GetMediasMediaHashedIDTypeSwf,
+		GetMediasMediaHashedIDTypeUnknownType,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *GetMediasMediaHashedIDType) IsExact() bool {
 	if e != nil {
@@ -141,6 +171,16 @@ const (
 
 func (e GetMediasMediaHashedIDStatus) ToPointer() *GetMediasMediaHashedIDStatus {
 	return &e
+}
+
+// GetMediasMediaHashedIDStatusValues returns every known GetMediasMediaHashedIDStatus value in schema order.
+func GetMediasMediaHashedIDStatusValues() []GetMediasMediaHashedIDStatus {
+	return []GetMediasMediaHashedIDStatus{
+		GetMediasMediaHashedIDStatusQueued,
+		GetMediasMediaHashedIDStatusProcessing,
+		GetMediasMediaHashedIDStatusReady,
+		GetMediasMediaHashedIDStatusFailed,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
@@ -179,6 +219,41 @@ func (g *GetMediasMediaHashedIDThumbnail) GetHeight() *int64 {
 		return nil
 	}
 	return g.Height
+}
+
+// GetMediasMediaHashedIDTranscriptStatus - Whether the media has a transcript to read. - `ready`: a transcript can be read now in at least one language. - `generating`: none can be read yet, but one is being generated. - `failed`: an English transcript was ordered but none can be read or is being generated, and another order would be refused. - `none`: none can be read and none is being generated. Media without audio, such as images and PDFs, are always `none`.
+type GetMediasMediaHashedIDTranscriptStatus string
+
+const (
+	GetMediasMediaHashedIDTranscriptStatusReady      GetMediasMediaHashedIDTranscriptStatus = "ready"
+	GetMediasMediaHashedIDTranscriptStatusGenerating GetMediasMediaHashedIDTranscriptStatus = "generating"
+	GetMediasMediaHashedIDTranscriptStatusFailed     GetMediasMediaHashedIDTranscriptStatus = "failed"
+	GetMediasMediaHashedIDTranscriptStatusNone       GetMediasMediaHashedIDTranscriptStatus = "none"
+)
+
+func (e GetMediasMediaHashedIDTranscriptStatus) ToPointer() *GetMediasMediaHashedIDTranscriptStatus {
+	return &e
+}
+
+// GetMediasMediaHashedIDTranscriptStatusValues returns every known GetMediasMediaHashedIDTranscriptStatus value in schema order.
+func GetMediasMediaHashedIDTranscriptStatusValues() []GetMediasMediaHashedIDTranscriptStatus {
+	return []GetMediasMediaHashedIDTranscriptStatus{
+		GetMediasMediaHashedIDTranscriptStatusReady,
+		GetMediasMediaHashedIDTranscriptStatusGenerating,
+		GetMediasMediaHashedIDTranscriptStatusFailed,
+		GetMediasMediaHashedIDTranscriptStatusNone,
+	}
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetMediasMediaHashedIDTranscriptStatus) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "ready", "generating", "failed", "none":
+			return true
+		}
+	}
+	return false
 }
 
 type GetMediasMediaHashedIDFolder struct {
@@ -389,6 +464,72 @@ func (g *GetMediasMediaHashedIDSpeaker) GetName() string {
 	return g.Name
 }
 
+type GetMediasMediaHashedIDCompositeType string
+
+const (
+	GetMediasMediaHashedIDCompositeTypeRecording GetMediasMediaHashedIDCompositeType = "recording"
+	GetMediasMediaHashedIDCompositeTypeLiveVod   GetMediasMediaHashedIDCompositeType = "live_vod"
+)
+
+func (e GetMediasMediaHashedIDCompositeType) ToPointer() *GetMediasMediaHashedIDCompositeType {
+	return &e
+}
+
+// GetMediasMediaHashedIDCompositeTypeValues returns every known GetMediasMediaHashedIDCompositeType value in schema order.
+func GetMediasMediaHashedIDCompositeTypeValues() []GetMediasMediaHashedIDCompositeType {
+	return []GetMediasMediaHashedIDCompositeType{
+		GetMediasMediaHashedIDCompositeTypeRecording,
+		GetMediasMediaHashedIDCompositeTypeLiveVod,
+	}
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetMediasMediaHashedIDCompositeType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "recording", "live_vod":
+			return true
+		}
+	}
+	return false
+}
+
+type GetMediasMediaHashedIDRecorder string
+
+const (
+	GetMediasMediaHashedIDRecorderGroupRecord     GetMediasMediaHashedIDRecorder = "group_record"
+	GetMediasMediaHashedIDRecorderQuickRecord     GetMediasMediaHashedIDRecorder = "quick_record"
+	GetMediasMediaHashedIDRecorderDesktop         GetMediasMediaHashedIDRecorder = "desktop"
+	GetMediasMediaHashedIDRecorderAnonymousRecord GetMediasMediaHashedIDRecorder = "anonymous_record"
+	GetMediasMediaHashedIDRecorderLegacyRecord    GetMediasMediaHashedIDRecorder = "legacy_record"
+)
+
+func (e GetMediasMediaHashedIDRecorder) ToPointer() *GetMediasMediaHashedIDRecorder {
+	return &e
+}
+
+// GetMediasMediaHashedIDRecorderValues returns every known GetMediasMediaHashedIDRecorder value in schema order.
+func GetMediasMediaHashedIDRecorderValues() []GetMediasMediaHashedIDRecorder {
+	return []GetMediasMediaHashedIDRecorder{
+		GetMediasMediaHashedIDRecorderGroupRecord,
+		GetMediasMediaHashedIDRecorderQuickRecord,
+		GetMediasMediaHashedIDRecorderDesktop,
+		GetMediasMediaHashedIDRecorderAnonymousRecord,
+		GetMediasMediaHashedIDRecorderLegacyRecord,
+	}
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *GetMediasMediaHashedIDRecorder) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "group_record", "quick_record", "desktop", "anonymous_record", "legacy_record":
+			return true
+		}
+	}
+	return false
+}
+
 // GetMediasMediaHashedIDResponseBody - A media generally represents a video or an audio which can be embedded into your website.
 //
 // CDN-backed medias are accessible using this url structure: https://fast.wistia.com/embed/medias/{hashed_id}.m3u8.
@@ -427,7 +568,10 @@ type GetMediasMediaHashedIDResponseBody struct {
 	Thumbnail *GetMediasMediaHashedIDThumbnail          `json:"thumbnail,omitzero"`
 	// Whether the media is protected by Private Video, which keeps its video files off the public delivery path. Null if the media is not protected.
 	Protected optionalnullable.OptionalNullable[bool] `json:"protected,omitzero"`
-	Folder    *GetMediasMediaHashedIDFolder           `json:"folder"`
+	// Whether the media has a transcript to read. - `ready`: a transcript can be read now in at least one language. - `generating`: none can be read yet, but one is being generated. - `failed`: an English transcript was ordered but none can be read or is being generated, and another order would be refused. - `none`: none can be read and none is being generated. Media without audio, such as images and PDFs, are always `none`.
+	//
+	TranscriptStatus GetMediasMediaHashedIDTranscriptStatus `json:"transcript_status"`
+	Folder           *GetMediasMediaHashedIDFolder          `json:"folder"`
 	// An array of the assets available for this media.
 	Assets []GetMediasMediaHashedIDAsset `json:"assets,omitzero"`
 	// The subfolder (media group) in which the media appears. Null if the media is not in a subfolder.
@@ -436,6 +580,12 @@ type GetMediasMediaHashedIDResponseBody struct {
 	Tags []GetMediasMediaHashedIDTag `json:"tags,omitzero"`
 	// Active transcript speaker assignments used for diarization. Webinar hosts and panelists are not included. Present when `include=speakers` is requested.
 	Speakers []GetMediasMediaHashedIDSpeaker `json:"speakers,omitzero"`
+	// For a media a Mochine edit produced, the hashed ID of the edit revision that produced it. Get the edit with it (`GET /modern/mochine/edits/{id}`, the `get-mochine-edit` tool) to read the `source_media_ids` it was cut from; the edit's own `id` may differ. Null for other medias.
+	MochineEditID *string `json:"mochine_edit_id"`
+	// Set when the media is assembled from separate feeds: `recording` for a Wistia Record take, `live_vod` for the recording of a live event. Null for other medias, including a single feed of a take and Mochine edit outputs (see `mochine_edit_id`).
+	CompositeType *GetMediasMediaHashedIDCompositeType `json:"composite_type"`
+	// Set when `composite_type` is `recording`: the recorder that made the take. `group_record` for Group Record, `quick_record` for Quick Record in the browser, `desktop` for the desktop app, `anonymous_record` for a recording made without signing in and imported into the account, and `legacy_record` for the original single-person web recorder. Null for other medias.
+	Recorder *GetMediasMediaHashedIDRecorder `json:"recorder"`
 }
 
 func (g GetMediasMediaHashedIDResponseBody) MarshalJSON() ([]byte, error) {
@@ -554,6 +704,13 @@ func (g *GetMediasMediaHashedIDResponseBody) GetProtected() optionalnullable.Opt
 	return g.Protected
 }
 
+func (g *GetMediasMediaHashedIDResponseBody) GetTranscriptStatus() GetMediasMediaHashedIDTranscriptStatus {
+	if g == nil {
+		return GetMediasMediaHashedIDTranscriptStatus("")
+	}
+	return g.TranscriptStatus
+}
+
 func (g *GetMediasMediaHashedIDResponseBody) GetFolder() *GetMediasMediaHashedIDFolder {
 	if g == nil {
 		return nil
@@ -587,6 +744,27 @@ func (g *GetMediasMediaHashedIDResponseBody) GetSpeakers() []GetMediasMediaHashe
 		return nil
 	}
 	return g.Speakers
+}
+
+func (g *GetMediasMediaHashedIDResponseBody) GetMochineEditID() *string {
+	if g == nil {
+		return nil
+	}
+	return g.MochineEditID
+}
+
+func (g *GetMediasMediaHashedIDResponseBody) GetCompositeType() *GetMediasMediaHashedIDCompositeType {
+	if g == nil {
+		return nil
+	}
+	return g.CompositeType
+}
+
+func (g *GetMediasMediaHashedIDResponseBody) GetRecorder() *GetMediasMediaHashedIDRecorder {
+	if g == nil {
+		return nil
+	}
+	return g.Recorder
 }
 
 type GetMediasMediaHashedIDResponse struct {

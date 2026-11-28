@@ -48,6 +48,10 @@ func InitChannelsRoot(parent *cobra.Command) error {
 		return err
 	}
 
+	if err := initGetCustomizationsCmd(ChannelsCmd); err != nil {
+		return err
+	}
+
 	parent.AddCommand(ChannelsCmd)
 	return nil
 }

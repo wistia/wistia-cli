@@ -22,6 +22,14 @@ const (
 func (e PathMatch) ToPointer() *PathMatch {
 	return &e
 }
+
+// PathMatchValues returns every known PathMatch value in schema order.
+func PathMatchValues() []PathMatch {
+	return []PathMatch{
+		PathMatchExact,
+		PathMatchPrefix,
+	}
+}
 func (e *PathMatch) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -109,6 +117,16 @@ const (
 
 func (e GetAnalyticsAccountMediaByEmbedLocationCode) ToPointer() *GetAnalyticsAccountMediaByEmbedLocationCode {
 	return &e
+}
+
+// GetAnalyticsAccountMediaByEmbedLocationCodeValues returns every known GetAnalyticsAccountMediaByEmbedLocationCode value in schema order.
+func GetAnalyticsAccountMediaByEmbedLocationCodeValues() []GetAnalyticsAccountMediaByEmbedLocationCode {
+	return []GetAnalyticsAccountMediaByEmbedLocationCode{
+		GetAnalyticsAccountMediaByEmbedLocationCodeUnauthorizedCredentials,
+		GetAnalyticsAccountMediaByEmbedLocationCodeAccountInactive,
+		GetAnalyticsAccountMediaByEmbedLocationCodeUnauthorizedScope,
+		GetAnalyticsAccountMediaByEmbedLocationCodeUnauthorizedParams,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

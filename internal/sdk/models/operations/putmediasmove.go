@@ -52,6 +52,16 @@ func (e PutMediasMoveCode) ToPointer() *PutMediasMoveCode {
 	return &e
 }
 
+// PutMediasMoveCodeValues returns every known PutMediasMoveCode value in schema order.
+func PutMediasMoveCodeValues() []PutMediasMoveCode {
+	return []PutMediasMoveCode{
+		PutMediasMoveCodeUnauthorizedCredentials,
+		PutMediasMoveCodeAccountInactive,
+		PutMediasMoveCodeUnauthorizedScope,
+		PutMediasMoveCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *PutMediasMoveCode) IsExact() bool {
 	if e != nil {
@@ -75,6 +85,16 @@ const (
 
 func (e PutMediasMoveStatus2) ToPointer() *PutMediasMoveStatus2 {
 	return &e
+}
+
+// PutMediasMoveStatus2Values returns every known PutMediasMoveStatus2 value in schema order.
+func PutMediasMoveStatus2Values() []PutMediasMoveStatus2 {
+	return []PutMediasMoveStatus2{
+		PutMediasMoveStatus2Queued,
+		PutMediasMoveStatus2Started,
+		PutMediasMoveStatus2Finished,
+		PutMediasMoveStatus2Failed,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
@@ -197,6 +217,16 @@ const (
 
 func (e PutMediasMoveStatus1) ToPointer() *PutMediasMoveStatus1 {
 	return &e
+}
+
+// PutMediasMoveStatus1Values returns every known PutMediasMoveStatus1 value in schema order.
+func PutMediasMoveStatus1Values() []PutMediasMoveStatus1 {
+	return []PutMediasMoveStatus1{
+		PutMediasMoveStatus1Queued,
+		PutMediasMoveStatus1Started,
+		PutMediasMoveStatus1Finished,
+		PutMediasMoveStatus1Failed,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

@@ -43,6 +43,16 @@ func (e PostDeletedMediaRestoreCode) ToPointer() *PostDeletedMediaRestoreCode {
 	return &e
 }
 
+// PostDeletedMediaRestoreCodeValues returns every known PostDeletedMediaRestoreCode value in schema order.
+func PostDeletedMediaRestoreCodeValues() []PostDeletedMediaRestoreCode {
+	return []PostDeletedMediaRestoreCode{
+		PostDeletedMediaRestoreCodeUnauthorizedCredentials,
+		PostDeletedMediaRestoreCodeAccountInactive,
+		PostDeletedMediaRestoreCodeUnauthorizedScope,
+		PostDeletedMediaRestoreCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *PostDeletedMediaRestoreCode) IsExact() bool {
 	if e != nil {

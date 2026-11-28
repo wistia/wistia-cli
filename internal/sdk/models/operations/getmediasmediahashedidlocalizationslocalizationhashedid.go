@@ -65,6 +65,16 @@ func (e GetMediasMediaHashedIDLocalizationsLocalizationHashedIDCode) ToPointer()
 	return &e
 }
 
+// GetMediasMediaHashedIDLocalizationsLocalizationHashedIDCodeValues returns every known GetMediasMediaHashedIDLocalizationsLocalizationHashedIDCode value in schema order.
+func GetMediasMediaHashedIDLocalizationsLocalizationHashedIDCodeValues() []GetMediasMediaHashedIDLocalizationsLocalizationHashedIDCode {
+	return []GetMediasMediaHashedIDLocalizationsLocalizationHashedIDCode{
+		GetMediasMediaHashedIDLocalizationsLocalizationHashedIDCodeUnauthorizedCredentials,
+		GetMediasMediaHashedIDLocalizationsLocalizationHashedIDCodeAccountInactive,
+		GetMediasMediaHashedIDLocalizationsLocalizationHashedIDCodeUnauthorizedScope,
+		GetMediasMediaHashedIDLocalizationsLocalizationHashedIDCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *GetMediasMediaHashedIDLocalizationsLocalizationHashedIDCode) IsExact() bool {
 	if e != nil {
@@ -221,8 +231,8 @@ type GetMediasMediaHashedIDLocalizationsLocalizationHashedIDResponseBody struct 
 	CreatedAt time.Time `json:"created_at"`
 	// The date when the localization was last updated.
 	UpdatedAt time.Time `json:"updated_at"`
-	// The date when the localization was ordered.
-	OrderedAt *time.Time `json:"ordered_at"`
+	// The date when the localization was requested.
+	RequestedAt *time.Time `json:"requested_at"`
 	// The date when the localization was enabled.
 	EnabledAt *time.Time `json:"enabled_at"`
 	// Whether or not the localization is enabled.
@@ -293,11 +303,11 @@ func (g *GetMediasMediaHashedIDLocalizationsLocalizationHashedIDResponseBody) Ge
 	return g.UpdatedAt
 }
 
-func (g *GetMediasMediaHashedIDLocalizationsLocalizationHashedIDResponseBody) GetOrderedAt() *time.Time {
+func (g *GetMediasMediaHashedIDLocalizationsLocalizationHashedIDResponseBody) GetRequestedAt() *time.Time {
 	if g == nil {
 		return nil
 	}
-	return g.OrderedAt
+	return g.RequestedAt
 }
 
 func (g *GetMediasMediaHashedIDLocalizationsLocalizationHashedIDResponseBody) GetEnabledAt() *time.Time {

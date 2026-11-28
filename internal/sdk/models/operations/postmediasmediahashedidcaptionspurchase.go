@@ -9,12 +9,12 @@ import (
 )
 
 type PostMediasMediaHashedIDCaptionsPurchaseRequestBody struct {
-	// Order computer-generated captions or human-reviewed ones. What each costs depends on the account's plan and billing settings; computer-generated captions are included at no cost on some plans and billed per minute on others.
-	Automated *bool `default:"false" json:"automated"`
-	// Enable rush order for one business day turnaround instead of the standard four, for human-reviewed captions only. Rush bills at the account's higher per-minute rate.
-	Rush *bool `default:"true" json:"rush"`
-	// Automatically enable captions for the media once the order is ready or hold the captions for review before manually enabling.
-	AutomaticallyEnable *bool `default:"true" json:"automatically_enable"`
+	// Generate computer-generated captions (true) or human-reviewed ones (false). How each is metered depends on the account's plan and settings; computer-generated captions are included on some plans and metered per minute on others.
+	Automated bool `json:"automated"`
+	// Enable rush for one business day turnaround instead of the standard four, for human-reviewed captions only. Rush is metered at the account's higher per-minute rate.
+	Rush *bool `default:"false" json:"rush"`
+	// Automatically enable captions for the media once they are ready or hold the captions for review before manually enabling.
+	AutomaticallyEnable *bool `default:"false" json:"automatically_enable"`
 }
 
 func (p PostMediasMediaHashedIDCaptionsPurchaseRequestBody) MarshalJSON() ([]byte, error) {
@@ -28,9 +28,9 @@ func (p *PostMediasMediaHashedIDCaptionsPurchaseRequestBody) UnmarshalJSON(data 
 	return nil
 }
 
-func (p *PostMediasMediaHashedIDCaptionsPurchaseRequestBody) GetAutomated() *bool {
+func (p *PostMediasMediaHashedIDCaptionsPurchaseRequestBody) GetAutomated() bool {
 	if p == nil {
-		return nil
+		return false
 	}
 	return p.Automated
 }
@@ -83,6 +83,16 @@ func (e PostMediasMediaHashedIDCaptionsPurchaseCode) ToPointer() *PostMediasMedi
 	return &e
 }
 
+// PostMediasMediaHashedIDCaptionsPurchaseCodeValues returns every known PostMediasMediaHashedIDCaptionsPurchaseCode value in schema order.
+func PostMediasMediaHashedIDCaptionsPurchaseCodeValues() []PostMediasMediaHashedIDCaptionsPurchaseCode {
+	return []PostMediasMediaHashedIDCaptionsPurchaseCode{
+		PostMediasMediaHashedIDCaptionsPurchaseCodeUnauthorizedCredentials,
+		PostMediasMediaHashedIDCaptionsPurchaseCodeAccountInactive,
+		PostMediasMediaHashedIDCaptionsPurchaseCodeUnauthorizedScope,
+		PostMediasMediaHashedIDCaptionsPurchaseCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *PostMediasMediaHashedIDCaptionsPurchaseCode) IsExact() bool {
 	if e != nil {
@@ -94,9 +104,9 @@ func (e *PostMediasMediaHashedIDCaptionsPurchaseCode) IsExact() bool {
 	return false
 }
 
-// PostMediasMediaHashedIDCaptionsPurchaseResponseBody - Successful operation. Captions purchased.
+// PostMediasMediaHashedIDCaptionsPurchaseResponseBody - Successful operation. Caption generation started.
 type PostMediasMediaHashedIDCaptionsPurchaseResponseBody struct {
-	// Success message indicating the captions have been purchased
+	// Message confirming that caption generation has started
 	Message string `json:"message"`
 	// The unique hashed identifier of the time-coded transcript that was created
 	ID string `json:"id"`
@@ -118,7 +128,7 @@ func (p *PostMediasMediaHashedIDCaptionsPurchaseResponseBody) GetID() string {
 
 type PostMediasMediaHashedIDCaptionsPurchaseResponse struct {
 	HTTPMeta components.HTTPMetadata `json:"-"`
-	// Successful operation. Captions purchased.
+	// Successful operation. Caption generation started.
 	Object *PostMediasMediaHashedIDCaptionsPurchaseResponseBody
 }
 

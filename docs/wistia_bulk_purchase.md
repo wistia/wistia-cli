@@ -28,10 +28,13 @@ actual rates.
 Orders are priced and placed individually: failures -- an ineligible media,
 a language that already has a localization, an account not entitled to buy
 -- are reported per order and do not stop the rest of the batch. Pricing and
-eligibility match the equivalent single-media endpoints exactly.
+eligibility match the equivalent single-media endpoints exactly. A `captions`
+request must set `automated` in its payload, and the whole request is
+refused with a 400 without it.
 
 Use the Create Bulk Actions endpoint for create, update, and delete work; it
-does not accept `purchase`, and this endpoint accepts nothing else.
+also accepts `generate` for `captions` and `text_translation`, and this
+endpoint accepts nothing else.
 
 
 ## Requires api token with one of the following permissions
@@ -63,31 +66,30 @@ wistia bulk purchase [flags]
 ### Options
 
 ```
-  -a, --actions string   The orders to place, one per media. Maximum 1000 per request, and the
+  -a, --actions string   The requests to start, one per media. Maximum 1000 per request, and the
                          request body must stay under 2 MB -- whichever limit is reached first. An
-                         oversized body is rejected with a '413' and no order in it is placed.
+                         oversized body is rejected with a '413' and nothing in it is started.
                          
-                         Every order is priced and placed independently: one failing (an
-                         ineligible media, an account without a saved card, a language that
+                         Every request is metered and started independently: one failing (an
+                         ineligible media, an account that cannot cover it, a language that
                          already has a localization) does not stop the rest of the batch.
                          
-                         Use 'job' instead to order for a whole folder, channel, or account.
+                         Use 'job' instead to generate for a whole folder, channel, or account.
                          (JSON array)
       --body string      Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.
   -h, --help             help for purchase
-  -j, --job string       One order placed for many media, named by a parent ('scope') or listed
-                         explicitly ('ids'), so ordering captions for a folder of 47 videos takes one
-                         job rather than 47 orders.
+  -j, --job string       One request applied to many media, named by a parent ('scope') or listed
+                         explicitly ('ids'), so generating captions for a folder of 47 videos takes
+                         one job rather than 47 actions.
                          
                          A 'scope' resolves to exactly what List Media returns for that parent,
                          including media in the folder's subfolders and **archived** media, and to at
                          most 5000 media -- beyond that the job is rejected rather than truncated.
                          
-                         The job attempts one order for every media it resolves to. Ineligible media
-                         fail individually without placing an order; successful orders are metered
-                         and may incur charges according to the account's plan. Confirm the scope and
-                         potential cost with the customer before submitting. Not available to external
-                         contacts.
+                         The job attempts one request for every media it resolves to. Ineligible
+                         media fail individually without starting anything; successful requests are
+                         metered according to the account's plan. Confirm the scope and applicable
+                         rates with the customer before submitting. Not available to external contacts.
 ```
 
 ### Options inherited from parent commands

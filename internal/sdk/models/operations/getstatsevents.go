@@ -96,6 +96,16 @@ func (e GetStatsEventsCode) ToPointer() *GetStatsEventsCode {
 	return &e
 }
 
+// GetStatsEventsCodeValues returns every known GetStatsEventsCode value in schema order.
+func GetStatsEventsCodeValues() []GetStatsEventsCode {
+	return []GetStatsEventsCode{
+		GetStatsEventsCodeUnauthorizedCredentials,
+		GetStatsEventsCodeAccountInactive,
+		GetStatsEventsCodeUnauthorizedScope,
+		GetStatsEventsCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *GetStatsEventsCode) IsExact() bool {
 	if e != nil {

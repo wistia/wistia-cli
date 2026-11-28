@@ -44,6 +44,16 @@ func (e DeleteFoldersFolderIDSharingsSharingIDCode) ToPointer() *DeleteFoldersFo
 	return &e
 }
 
+// DeleteFoldersFolderIDSharingsSharingIDCodeValues returns every known DeleteFoldersFolderIDSharingsSharingIDCode value in schema order.
+func DeleteFoldersFolderIDSharingsSharingIDCodeValues() []DeleteFoldersFolderIDSharingsSharingIDCode {
+	return []DeleteFoldersFolderIDSharingsSharingIDCode{
+		DeleteFoldersFolderIDSharingsSharingIDCodeUnauthorizedCredentials,
+		DeleteFoldersFolderIDSharingsSharingIDCodeAccountInactive,
+		DeleteFoldersFolderIDSharingsSharingIDCodeUnauthorizedScope,
+		DeleteFoldersFolderIDSharingsSharingIDCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *DeleteFoldersFolderIDSharingsSharingIDCode) IsExact() bool {
 	if e != nil {

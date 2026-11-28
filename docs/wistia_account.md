@@ -49,5 +49,6 @@ wistia account [flags]
 * [wistia account get-transcript-settings](wistia_account_get-transcript-settings.md)	 - Get Transcript Settings
 * [wistia account get-usage](wistia_account_get-usage.md)	 - Get Account Usage
 * [wistia account update-brand-preload](wistia_account_update-brand-preload.md)	 - Update Brand Preload
+* [wistia account update-transcript-settings](wistia_account_update-transcript-settings.md)	 - Update Transcript Settings
 
 Exit codes: 0 ok · 1 runtime · 2 usage · 3 authentication/authorization

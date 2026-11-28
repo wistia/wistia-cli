@@ -36,6 +36,16 @@ func (e PostTagsCode) ToPointer() *PostTagsCode {
 	return &e
 }
 
+// PostTagsCodeValues returns every known PostTagsCode value in schema order.
+func PostTagsCodeValues() []PostTagsCode {
+	return []PostTagsCode{
+		PostTagsCodeUnauthorizedCredentials,
+		PostTagsCodeAccountInactive,
+		PostTagsCodeUnauthorizedScope,
+		PostTagsCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *PostTagsCode) IsExact() bool {
 	if e != nil {

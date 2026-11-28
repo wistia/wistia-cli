@@ -24,6 +24,14 @@ const (
 func (e GetBrandsEnabled) ToPointer() *GetBrandsEnabled {
 	return &e
 }
+
+// GetBrandsEnabledValues returns every known GetBrandsEnabled value in schema order.
+func GetBrandsEnabledValues() []GetBrandsEnabled {
+	return []GetBrandsEnabled{
+		GetBrandsEnabledZero,
+		GetBrandsEnabledOne,
+	}
+}
 func (e *GetBrandsEnabled) UnmarshalJSON(data []byte) error {
 	var v int64
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -97,6 +105,16 @@ const (
 func (e GetBrandsSortBy) ToPointer() *GetBrandsSortBy {
 	return &e
 }
+
+// GetBrandsSortByValues returns every known GetBrandsSortBy value in schema order.
+func GetBrandsSortByValues() []GetBrandsSortBy {
+	return []GetBrandsSortBy{
+		GetBrandsSortByName,
+		GetBrandsSortByCreated,
+		GetBrandsSortByUpdated,
+		GetBrandsSortByID,
+	}
+}
 func (e *GetBrandsSortBy) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -127,6 +145,14 @@ const (
 
 func (e GetBrandsSortDirection) ToPointer() *GetBrandsSortDirection {
 	return &e
+}
+
+// GetBrandsSortDirectionValues returns every known GetBrandsSortDirection value in schema order.
+func GetBrandsSortDirectionValues() []GetBrandsSortDirection {
+	return []GetBrandsSortDirection{
+		GetBrandsSortDirectionZero,
+		GetBrandsSortDirectionOne,
+	}
 }
 func (e *GetBrandsSortDirection) UnmarshalJSON(data []byte) error {
 	var v int64
@@ -229,6 +255,16 @@ const (
 
 func (e GetBrandsCode) ToPointer() *GetBrandsCode {
 	return &e
+}
+
+// GetBrandsCodeValues returns every known GetBrandsCode value in schema order.
+func GetBrandsCodeValues() []GetBrandsCode {
+	return []GetBrandsCode{
+		GetBrandsCodeUnauthorizedCredentials,
+		GetBrandsCodeAccountInactive,
+		GetBrandsCodeUnauthorizedScope,
+		GetBrandsCodeUnauthorizedParams,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
@@ -501,6 +537,15 @@ func (e GetBrandsContrastIcons) ToPointer() *GetBrandsContrastIcons {
 	return &e
 }
 
+// GetBrandsContrastIconsValues returns every known GetBrandsContrastIcons value in schema order.
+func GetBrandsContrastIconsValues() []GetBrandsContrastIcons {
+	return []GetBrandsContrastIcons{
+		GetBrandsContrastIconsEnabled,
+		GetBrandsContrastIconsDisabled,
+		GetBrandsContrastIconsUnset,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *GetBrandsContrastIcons) IsExact() bool {
 	if e != nil {
@@ -523,6 +568,15 @@ const (
 
 func (e GetBrandsOpaqueControls) ToPointer() *GetBrandsOpaqueControls {
 	return &e
+}
+
+// GetBrandsOpaqueControlsValues returns every known GetBrandsOpaqueControls value in schema order.
+func GetBrandsOpaqueControlsValues() []GetBrandsOpaqueControls {
+	return []GetBrandsOpaqueControls{
+		GetBrandsOpaqueControlsEnabled,
+		GetBrandsOpaqueControlsDisabled,
+		GetBrandsOpaqueControlsUnset,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

@@ -27,6 +27,18 @@ const (
 func (e GetAnalyticsMediasMediaIDEmbedLocationsSortBy) ToPointer() *GetAnalyticsMediasMediaIDEmbedLocationsSortBy {
 	return &e
 }
+
+// GetAnalyticsMediasMediaIDEmbedLocationsSortByValues returns every known GetAnalyticsMediasMediaIDEmbedLocationsSortBy value in schema order.
+func GetAnalyticsMediasMediaIDEmbedLocationsSortByValues() []GetAnalyticsMediasMediaIDEmbedLocationsSortBy {
+	return []GetAnalyticsMediasMediaIDEmbedLocationsSortBy{
+		GetAnalyticsMediasMediaIDEmbedLocationsSortByPlays,
+		GetAnalyticsMediasMediaIDEmbedLocationsSortByLoads,
+		GetAnalyticsMediasMediaIDEmbedLocationsSortByEngagementRate,
+		GetAnalyticsMediasMediaIDEmbedLocationsSortByPlayRate,
+		GetAnalyticsMediasMediaIDEmbedLocationsSortByPlayedTime,
+		GetAnalyticsMediasMediaIDEmbedLocationsSortByUniqueVisitors,
+	}
+}
 func (e *GetAnalyticsMediasMediaIDEmbedLocationsSortBy) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -61,6 +73,14 @@ const (
 
 func (e GetAnalyticsMediasMediaIDEmbedLocationsSortDirection) ToPointer() *GetAnalyticsMediasMediaIDEmbedLocationsSortDirection {
 	return &e
+}
+
+// GetAnalyticsMediasMediaIDEmbedLocationsSortDirectionValues returns every known GetAnalyticsMediasMediaIDEmbedLocationsSortDirection value in schema order.
+func GetAnalyticsMediasMediaIDEmbedLocationsSortDirectionValues() []GetAnalyticsMediasMediaIDEmbedLocationsSortDirection {
+	return []GetAnalyticsMediasMediaIDEmbedLocationsSortDirection{
+		GetAnalyticsMediasMediaIDEmbedLocationsSortDirectionAsc,
+		GetAnalyticsMediasMediaIDEmbedLocationsSortDirectionDesc,
+	}
 }
 func (e *GetAnalyticsMediasMediaIDEmbedLocationsSortDirection) UnmarshalJSON(data []byte) error {
 	var v string
@@ -169,6 +189,16 @@ const (
 
 func (e GetAnalyticsMediasMediaIDEmbedLocationsCode) ToPointer() *GetAnalyticsMediasMediaIDEmbedLocationsCode {
 	return &e
+}
+
+// GetAnalyticsMediasMediaIDEmbedLocationsCodeValues returns every known GetAnalyticsMediasMediaIDEmbedLocationsCode value in schema order.
+func GetAnalyticsMediasMediaIDEmbedLocationsCodeValues() []GetAnalyticsMediasMediaIDEmbedLocationsCode {
+	return []GetAnalyticsMediasMediaIDEmbedLocationsCode{
+		GetAnalyticsMediasMediaIDEmbedLocationsCodeUnauthorizedCredentials,
+		GetAnalyticsMediasMediaIDEmbedLocationsCodeAccountInactive,
+		GetAnalyticsMediasMediaIDEmbedLocationsCodeUnauthorizedScope,
+		GetAnalyticsMediasMediaIDEmbedLocationsCodeUnauthorizedParams,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

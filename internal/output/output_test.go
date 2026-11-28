@@ -6,6 +6,8 @@ package output
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
+	"fmt"
 	"reflect"
 	"strings"
 	"testing"
@@ -13,8 +15,52 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"github.com/wistia/wistia-cli/internal/clierrors"
 	"github.com/wistia/wistia-cli/internal/config"
+	"github.com/wistia/wistia-cli/internal/sdk/sdkinternal/utils"
 )
+
+func TestPathParameterErrorsAreUsageErrors(t *testing.T) {
+	for _, format := range []string{"pretty", "json"} {
+		for _, wrapped := range []bool{false, true} {
+			t.Run(fmt.Sprintf("%s/wrapped=%t", format, wrapped), func(t *testing.T) {
+				ResetAgentMode()
+				ResetPreparsedRendering()
+				var stderr bytes.Buffer
+				cmd := &cobra.Command{}
+				cmd.SetErr(&stderr)
+				cmd.Flags().String("output-format", "", "")
+				if err := cmd.Flags().Set("output-format", format); err != nil {
+					t.Fatal(err)
+				}
+				var err error = &utils.InvalidPathParameterError{Name: "resource"}
+				if wrapped {
+					err = fmt.Errorf("construct request: %w", err)
+				}
+				classification := Classify(cmd, err)
+				if classification.Type != ErrorTypeValidation || classification.Reason != ReasonCLIValidation || classification.Origin != ErrorOriginCLI || classification.StatusCode != 0 {
+					t.Fatalf("unexpected classification: %+v", classification)
+				}
+				rendered := Error(cmd, err)
+				if clierrors.ExitCode(rendered) != clierrors.ExitUsage {
+					t.Fatalf("expected exit 2, got %v", rendered)
+				}
+				var invalidPath *utils.InvalidPathParameterError
+				if !errors.As(rendered, &invalidPath) || invalidPath.Name != "resource" {
+					t.Fatalf("typed path error lost during rendering: %v", rendered)
+				}
+				if got := json.Valid(stderr.Bytes()); got != (format == "json") {
+					t.Fatalf("wrong error format: %s", stderr.String())
+				}
+				stderr.Reset()
+				untyped := Classify(cmd, errors.New(err.Error()))
+				if untyped.Reason == ReasonCLIValidation {
+					t.Fatal("an untyped error must not be classified by matching its text")
+				}
+			})
+		}
+	}
+}
 
 type tableTestRow struct {
 	ID   int64  `json:"id"`
@@ -486,6 +532,60 @@ func TestPrintTableSingleRootScalarArrays(t *testing.T) {
 	}
 }
 
+func TestRedactedMessageDropsMaskedValues(t *testing.T) {
+	raw := `{"name":"n","value":"secret-value"}`
+	redacted := `{"name":"n","value":"(sensitive)"}`
+	for name, tc := range map[string]struct {
+		message, redacted, want string
+	}{
+		"embedded raw body":       {message: "API error occurred: Status 400\n" + raw, redacted: redacted, want: "API error occurred: Status 400\n" + redacted},
+		"typed model JSON":        {message: `{"value":"secret-value","name":"n"}`, redacted: redacted, want: redacted},
+		"message from body field": {message: "request rejected", redacted: redacted, want: "request rejected"},
+		"nothing masked":          {message: raw, redacted: raw, want: raw},
+	} {
+		t.Run(name, func(t *testing.T) {
+			if got := newMessageRedaction(raw, tc.redacted).apply(tc.message); got != tc.want {
+				t.Fatalf("got %q; want %q", got, tc.want)
+			}
+		})
+	}
+	if got := newMessageRedaction("", redacted).apply("request failed"); got != "request failed" {
+		t.Fatalf("a message with no source body must be kept, got %q", got)
+	}
+	if got := newMessageRedaction(raw, redacted).apply("secret-value"); got != "(sensitive)" {
+		t.Fatalf("a message that is a masked field must be masked, got %q", got)
+	}
+	if got := newMessageRedaction(raw, "(sensitive)").apply("secret-value"); got != "(sensitive)" {
+		t.Fatalf("a message from a wholly masked body must be the mask, got %q", got)
+	}
+	nested := `{"outer":{"token":"abc-secret","codes":[123456]}}`
+	nestedRedacted := `{"outer":"(sensitive)"}`
+	if got := newMessageRedaction(nested, nestedRedacted).apply("rejected abc-secret with 123456"); got != "rejected (sensitive) with (sensitive)" {
+		t.Fatalf("values under a masked subtree must be masked, got %q", got)
+	}
+	numbers := `{"id":9007199254740993,"rate":1.50,"name":"n"}`
+	numbersRedacted := `{"id":"(sensitive)","rate":"(sensitive)","name":"n"}`
+
+	if got := newMessageRedaction(numbers, numbersRedacted).apply("id 9007199254740993 at 1.50"); got != "id (sensitive) at (sensitive)" {
+		t.Fatalf("masked numbers must keep their original spelling, got %q", got)
+	}
+	repeated := `{"message":"rejected s","secrets":["s","s","s","s","s","s","s","s","s","s","s","s","s","s","s","s"]}`
+	repeatedRedacted := `{"message":"rejected s","secrets":["(sensitive)","(sensitive)","(sensitive)","(sensitive)","(sensitive)","(sensitive)","(sensitive)","(sensitive)","(sensitive)","(sensitive)","(sensitive)","(sensitive)","(sensitive)","(sensitive)","(sensitive)","(sensitive)"]}`
+	if got := newMessageRedaction(repeated, repeatedRedacted).apply("rejected s"); got != "rejected (sensitive)" {
+		t.Fatalf("each masked value must be replaced in a single pass, got %q", got)
+	}
+}
+
+func TestStructuredErrorEnvelopeRedactsNonObjectBodyErrorText(t *testing.T) {
+	raw := `["secret-value"]`
+	classification := Classification{RawBody: `["(sensitive)"]`, Body: []interface{}{"(sensitive)"}}
+	envelope := classifiedErrorEnvelope(errors.New(raw), classification)
+	text, _ := envelope["error"].(string)
+	if strings.Contains(text, "secret-value") || text != classification.RawBody {
+		t.Fatalf("error text = %q; want the redacted body", text)
+	}
+}
+
 func TestScrubJSONDocumentMasksDecodedValues(t *testing.T) {
 	t.Cleanup(config.Reset)
 	config.RegisterSecret(`example"secret`)
@@ -820,6 +920,33 @@ func TestUnknownSubcommandKeepsHelpAndCompletionWorking(t *testing.T) {
 	}
 }
 
+func TestOutcomeStreamStatePointerOrder(t *testing.T) {
+	cmd := &cobra.Command{Use: "compose"}
+	cfg := &outcomeConfig{
+		StreamStatePointers: []string{"/data/status", "/data/widget/status"},
+		States:              map[string]string{"done": "success", "failed": "failure"},
+	}
+	for _, tc := range []struct {
+		name        string
+		status      interface{}
+		wantFailure bool
+	}{
+		{"first wins", "done", false},
+		{"empty falls through", "", true},
+		{"non-string falls through", false, true},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			frame := map[string]interface{}{"data": map[string]interface{}{
+				"status": tc.status,
+				"widget": map[string]interface{}{"status": "failed"},
+			}}
+			if got := outcomeStreamFailure(cmd, cfg, nil, frame); (got != nil) != tc.wantFailure {
+				t.Fatalf("failure = %v, want failure %v", got, tc.wantFailure)
+			}
+		})
+	}
+}
+
 func TestUnknownSubcommandHonoursDisableSuggestions(t *testing.T) {
 	root, _ := unknownCommandTestTree()
 	group, _, _ := root.Find([]string{"errors"})
@@ -833,5 +960,28 @@ func TestUnknownSubcommandHonoursDisableSuggestions(t *testing.T) {
 		if strings.Contains(hint, "Did you mean") {
 			t.Fatalf("suggestions are disabled on the group, got %q", hint)
 		}
+	}
+}
+
+type failingTableWriter struct{}
+
+func (failingTableWriter) Write([]byte) (int, error) { return 0, errors.New("write failed") }
+
+func TestPrintTableRendersEmptyValues(t *testing.T) {
+	var nilPointer *struct{ Name string }
+	for name, content := range map[string]any{
+		"untyped nil":  nil,
+		"nil pointer":  nilPointer,
+		"empty struct": struct{}{},
+	} {
+		t.Run(name, func(t *testing.T) {
+			var buf bytes.Buffer
+			if err := printTable(&buf, content); err != nil || buf.String() != "(empty)\n" {
+				t.Fatalf("got %q, error %v; want (empty)", buf.String(), err)
+			}
+			if err := printTable(failingTableWriter{}, content); err == nil {
+				t.Fatal("expected the write error to be returned")
+			}
+		})
 	}
 }
