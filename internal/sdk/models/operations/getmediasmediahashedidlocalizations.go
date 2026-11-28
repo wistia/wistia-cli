@@ -56,6 +56,16 @@ func (e GetMediasMediaHashedIDLocalizationsCode) ToPointer() *GetMediasMediaHash
 	return &e
 }
 
+// GetMediasMediaHashedIDLocalizationsCodeValues returns every known GetMediasMediaHashedIDLocalizationsCode value in schema order.
+func GetMediasMediaHashedIDLocalizationsCodeValues() []GetMediasMediaHashedIDLocalizationsCode {
+	return []GetMediasMediaHashedIDLocalizationsCode{
+		GetMediasMediaHashedIDLocalizationsCodeUnauthorizedCredentials,
+		GetMediasMediaHashedIDLocalizationsCodeAccountInactive,
+		GetMediasMediaHashedIDLocalizationsCodeUnauthorizedScope,
+		GetMediasMediaHashedIDLocalizationsCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *GetMediasMediaHashedIDLocalizationsCode) IsExact() bool {
 	if e != nil {
@@ -212,8 +222,8 @@ type GetMediasMediaHashedIDLocalizationsResponseBody struct {
 	CreatedAt time.Time `json:"created_at"`
 	// The date when the localization was last updated.
 	UpdatedAt time.Time `json:"updated_at"`
-	// The date when the localization was ordered.
-	OrderedAt *time.Time `json:"ordered_at"`
+	// The date when the localization was requested.
+	RequestedAt *time.Time `json:"requested_at"`
 	// The date when the localization was enabled.
 	EnabledAt *time.Time `json:"enabled_at"`
 	// Whether or not the localization is enabled.
@@ -284,11 +294,11 @@ func (g *GetMediasMediaHashedIDLocalizationsResponseBody) GetUpdatedAt() time.Ti
 	return g.UpdatedAt
 }
 
-func (g *GetMediasMediaHashedIDLocalizationsResponseBody) GetOrderedAt() *time.Time {
+func (g *GetMediasMediaHashedIDLocalizationsResponseBody) GetRequestedAt() *time.Time {
 	if g == nil {
 		return nil
 	}
-	return g.OrderedAt
+	return g.RequestedAt
 }
 
 func (g *GetMediasMediaHashedIDLocalizationsResponseBody) GetEnabledAt() *time.Time {

@@ -81,6 +81,16 @@ func (e PostMediasMediaHashedIDCaptionsMultipartCode) ToPointer() *PostMediasMed
 	return &e
 }
 
+// PostMediasMediaHashedIDCaptionsMultipartCodeValues returns every known PostMediasMediaHashedIDCaptionsMultipartCode value in schema order.
+func PostMediasMediaHashedIDCaptionsMultipartCodeValues() []PostMediasMediaHashedIDCaptionsMultipartCode {
+	return []PostMediasMediaHashedIDCaptionsMultipartCode{
+		PostMediasMediaHashedIDCaptionsMultipartCodeUnauthorizedCredentials,
+		PostMediasMediaHashedIDCaptionsMultipartCodeAccountInactive,
+		PostMediasMediaHashedIDCaptionsMultipartCodeUnauthorizedScope,
+		PostMediasMediaHashedIDCaptionsMultipartCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *PostMediasMediaHashedIDCaptionsMultipartCode) IsExact() bool {
 	if e != nil {

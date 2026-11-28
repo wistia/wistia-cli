@@ -35,6 +35,16 @@ func (e GetShareLinksIdentifierCode) ToPointer() *GetShareLinksIdentifierCode {
 	return &e
 }
 
+// GetShareLinksIdentifierCodeValues returns every known GetShareLinksIdentifierCode value in schema order.
+func GetShareLinksIdentifierCodeValues() []GetShareLinksIdentifierCode {
+	return []GetShareLinksIdentifierCode{
+		GetShareLinksIdentifierCodeUnauthorizedCredentials,
+		GetShareLinksIdentifierCodeAccountInactive,
+		GetShareLinksIdentifierCodeUnauthorizedScope,
+		GetShareLinksIdentifierCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *GetShareLinksIdentifierCode) IsExact() bool {
 	if e != nil {
@@ -66,6 +76,16 @@ const (
 
 func (e GetShareLinksIdentifierVisibility) ToPointer() *GetShareLinksIdentifierVisibility {
 	return &e
+}
+
+// GetShareLinksIdentifierVisibilityValues returns every known GetShareLinksIdentifierVisibility value in schema order.
+func GetShareLinksIdentifierVisibilityValues() []GetShareLinksIdentifierVisibility {
+	return []GetShareLinksIdentifierVisibility{
+		GetShareLinksIdentifierVisibilityUnlocked,
+		GetShareLinksIdentifierVisibilityAccount,
+		GetShareLinksIdentifierVisibilityLocked,
+		GetShareLinksIdentifierVisibilityDomainVerified,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

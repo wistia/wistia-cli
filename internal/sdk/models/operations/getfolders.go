@@ -23,6 +23,14 @@ const (
 func (e GetFoldersEnabled) ToPointer() *GetFoldersEnabled {
 	return &e
 }
+
+// GetFoldersEnabledValues returns every known GetFoldersEnabled value in schema order.
+func GetFoldersEnabledValues() []GetFoldersEnabled {
+	return []GetFoldersEnabled{
+		GetFoldersEnabledZero,
+		GetFoldersEnabledOne,
+	}
+}
 func (e *GetFoldersEnabled) UnmarshalJSON(data []byte) error {
 	var v int64
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -97,6 +105,17 @@ const (
 func (e GetFoldersSortBy) ToPointer() *GetFoldersSortBy {
 	return &e
 }
+
+// GetFoldersSortByValues returns every known GetFoldersSortBy value in schema order.
+func GetFoldersSortByValues() []GetFoldersSortBy {
+	return []GetFoldersSortBy{
+		GetFoldersSortByName,
+		GetFoldersSortByCreated,
+		GetFoldersSortByUpdated,
+		GetFoldersSortByMediaCount,
+		GetFoldersSortByID,
+	}
+}
 func (e *GetFoldersSortBy) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -129,6 +148,14 @@ const (
 
 func (e GetFoldersSortDirection) ToPointer() *GetFoldersSortDirection {
 	return &e
+}
+
+// GetFoldersSortDirectionValues returns every known GetFoldersSortDirection value in schema order.
+func GetFoldersSortDirectionValues() []GetFoldersSortDirection {
+	return []GetFoldersSortDirection{
+		GetFoldersSortDirectionZero,
+		GetFoldersSortDirectionOne,
+	}
 }
 func (e *GetFoldersSortDirection) UnmarshalJSON(data []byte) error {
 	var v int64
@@ -254,6 +281,16 @@ func (e GetFoldersCode) ToPointer() *GetFoldersCode {
 	return &e
 }
 
+// GetFoldersCodeValues returns every known GetFoldersCode value in schema order.
+func GetFoldersCodeValues() []GetFoldersCode {
+	return []GetFoldersCode{
+		GetFoldersCodeUnauthorizedCredentials,
+		GetFoldersCodeAccountInactive,
+		GetFoldersCodeUnauthorizedScope,
+		GetFoldersCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *GetFoldersCode) IsExact() bool {
 	if e != nil {
@@ -292,6 +329,15 @@ const (
 
 func (e GetFoldersKind) ToPointer() *GetFoldersKind {
 	return &e
+}
+
+// GetFoldersKindValues returns every known GetFoldersKind value in schema order.
+func GetFoldersKindValues() []GetFoldersKind {
+	return []GetFoldersKind{
+		GetFoldersKindLibrary,
+		GetFoldersKindShared,
+		GetFoldersKindAccount,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

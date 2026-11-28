@@ -26,7 +26,7 @@ wistia media-extended-audio-descriptions get-media-extended-audio-descriptions-o
 
 ```
   -h, --help        help for get-media-extended-audio-descriptions-order-status-id
-  -i, --id string   The hashed ID of the order returned from the order endpoint. (or pass it as the [id] argument)
+  -i, --id string   The hashed ID returned when the extended audio description was requested. (or pass it as the [id] argument)
 ```
 
 ### Options inherited from parent commands

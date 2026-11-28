@@ -29,6 +29,18 @@ const (
 func (e GetChannelsChannelHashedIDChannelEpisodesSortBy) ToPointer() *GetChannelsChannelHashedIDChannelEpisodesSortBy {
 	return &e
 }
+
+// GetChannelsChannelHashedIDChannelEpisodesSortByValues returns every known GetChannelsChannelHashedIDChannelEpisodesSortBy value in schema order.
+func GetChannelsChannelHashedIDChannelEpisodesSortByValues() []GetChannelsChannelHashedIDChannelEpisodesSortBy {
+	return []GetChannelsChannelHashedIDChannelEpisodesSortBy{
+		GetChannelsChannelHashedIDChannelEpisodesSortByPosition,
+		GetChannelsChannelHashedIDChannelEpisodesSortByTitle,
+		GetChannelsChannelHashedIDChannelEpisodesSortByCreated,
+		GetChannelsChannelHashedIDChannelEpisodesSortByUpdated,
+		GetChannelsChannelHashedIDChannelEpisodesSortByPublishedAt,
+		GetChannelsChannelHashedIDChannelEpisodesSortByID,
+	}
+}
 func (e *GetChannelsChannelHashedIDChannelEpisodesSortBy) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -64,6 +76,14 @@ const (
 func (e GetChannelsChannelHashedIDChannelEpisodesSortDirection) ToPointer() *GetChannelsChannelHashedIDChannelEpisodesSortDirection {
 	return &e
 }
+
+// GetChannelsChannelHashedIDChannelEpisodesSortDirectionValues returns every known GetChannelsChannelHashedIDChannelEpisodesSortDirection value in schema order.
+func GetChannelsChannelHashedIDChannelEpisodesSortDirectionValues() []GetChannelsChannelHashedIDChannelEpisodesSortDirection {
+	return []GetChannelsChannelHashedIDChannelEpisodesSortDirection{
+		GetChannelsChannelHashedIDChannelEpisodesSortDirectionZero,
+		GetChannelsChannelHashedIDChannelEpisodesSortDirectionOne,
+	}
+}
 func (e *GetChannelsChannelHashedIDChannelEpisodesSortDirection) UnmarshalJSON(data []byte) error {
 	var v int64
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -90,6 +110,14 @@ const (
 
 func (e GetChannelsChannelHashedIDChannelEpisodesEnabled) ToPointer() *GetChannelsChannelHashedIDChannelEpisodesEnabled {
 	return &e
+}
+
+// GetChannelsChannelHashedIDChannelEpisodesEnabledValues returns every known GetChannelsChannelHashedIDChannelEpisodesEnabled value in schema order.
+func GetChannelsChannelHashedIDChannelEpisodesEnabledValues() []GetChannelsChannelHashedIDChannelEpisodesEnabled {
+	return []GetChannelsChannelHashedIDChannelEpisodesEnabled{
+		GetChannelsChannelHashedIDChannelEpisodesEnabledZero,
+		GetChannelsChannelHashedIDChannelEpisodesEnabledOne,
+	}
 }
 func (e *GetChannelsChannelHashedIDChannelEpisodesEnabled) UnmarshalJSON(data []byte) error {
 	var v int64
@@ -281,6 +309,16 @@ func (e GetChannelsChannelHashedIDChannelEpisodesCode) ToPointer() *GetChannelsC
 	return &e
 }
 
+// GetChannelsChannelHashedIDChannelEpisodesCodeValues returns every known GetChannelsChannelHashedIDChannelEpisodesCode value in schema order.
+func GetChannelsChannelHashedIDChannelEpisodesCodeValues() []GetChannelsChannelHashedIDChannelEpisodesCode {
+	return []GetChannelsChannelHashedIDChannelEpisodesCode{
+		GetChannelsChannelHashedIDChannelEpisodesCodeUnauthorizedCredentials,
+		GetChannelsChannelHashedIDChannelEpisodesCodeAccountInactive,
+		GetChannelsChannelHashedIDChannelEpisodesCodeUnauthorizedScope,
+		GetChannelsChannelHashedIDChannelEpisodesCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *GetChannelsChannelHashedIDChannelEpisodesCode) IsExact() bool {
 	if e != nil {
@@ -302,6 +340,15 @@ const (
 
 func (e GetChannelsChannelHashedIDChannelEpisodesEpisodeType) ToPointer() *GetChannelsChannelHashedIDChannelEpisodesEpisodeType {
 	return &e
+}
+
+// GetChannelsChannelHashedIDChannelEpisodesEpisodeTypeValues returns every known GetChannelsChannelHashedIDChannelEpisodesEpisodeType value in schema order.
+func GetChannelsChannelHashedIDChannelEpisodesEpisodeTypeValues() []GetChannelsChannelHashedIDChannelEpisodesEpisodeType {
+	return []GetChannelsChannelHashedIDChannelEpisodesEpisodeType{
+		GetChannelsChannelHashedIDChannelEpisodesEpisodeTypeFull,
+		GetChannelsChannelHashedIDChannelEpisodesEpisodeTypeTrailer,
+		GetChannelsChannelHashedIDChannelEpisodesEpisodeTypeBonus,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

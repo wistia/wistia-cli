@@ -74,6 +74,16 @@ func (e PostMediasMediaHashedIDTranslateCode) ToPointer() *PostMediasMediaHashed
 	return &e
 }
 
+// PostMediasMediaHashedIDTranslateCodeValues returns every known PostMediasMediaHashedIDTranslateCode value in schema order.
+func PostMediasMediaHashedIDTranslateCodeValues() []PostMediasMediaHashedIDTranslateCode {
+	return []PostMediasMediaHashedIDTranslateCode{
+		PostMediasMediaHashedIDTranslateCodeUnauthorizedCredentials,
+		PostMediasMediaHashedIDTranslateCodeAccountInactive,
+		PostMediasMediaHashedIDTranslateCodeUnauthorizedScope,
+		PostMediasMediaHashedIDTranslateCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *PostMediasMediaHashedIDTranslateCode) IsExact() bool {
 	if e != nil {
@@ -97,6 +107,16 @@ const (
 
 func (e PostMediasMediaHashedIDTranslateStatus) ToPointer() *PostMediasMediaHashedIDTranslateStatus {
 	return &e
+}
+
+// PostMediasMediaHashedIDTranslateStatusValues returns every known PostMediasMediaHashedIDTranslateStatus value in schema order.
+func PostMediasMediaHashedIDTranslateStatusValues() []PostMediasMediaHashedIDTranslateStatus {
+	return []PostMediasMediaHashedIDTranslateStatus{
+		PostMediasMediaHashedIDTranslateStatusQueued,
+		PostMediasMediaHashedIDTranslateStatusStarted,
+		PostMediasMediaHashedIDTranslateStatusFinished,
+		PostMediasMediaHashedIDTranslateStatusFailed,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

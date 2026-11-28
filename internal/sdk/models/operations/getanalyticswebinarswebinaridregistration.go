@@ -25,6 +25,15 @@ const (
 func (e GetAnalyticsWebinarsWebinarIDRegistrationGranularity) ToPointer() *GetAnalyticsWebinarsWebinarIDRegistrationGranularity {
 	return &e
 }
+
+// GetAnalyticsWebinarsWebinarIDRegistrationGranularityValues returns every known GetAnalyticsWebinarsWebinarIDRegistrationGranularity value in schema order.
+func GetAnalyticsWebinarsWebinarIDRegistrationGranularityValues() []GetAnalyticsWebinarsWebinarIDRegistrationGranularity {
+	return []GetAnalyticsWebinarsWebinarIDRegistrationGranularity{
+		GetAnalyticsWebinarsWebinarIDRegistrationGranularityDaily,
+		GetAnalyticsWebinarsWebinarIDRegistrationGranularityWeekly,
+		GetAnalyticsWebinarsWebinarIDRegistrationGranularityMonthly,
+	}
+}
 func (e *GetAnalyticsWebinarsWebinarIDRegistrationGranularity) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -114,6 +123,16 @@ const (
 
 func (e GetAnalyticsWebinarsWebinarIDRegistrationCode) ToPointer() *GetAnalyticsWebinarsWebinarIDRegistrationCode {
 	return &e
+}
+
+// GetAnalyticsWebinarsWebinarIDRegistrationCodeValues returns every known GetAnalyticsWebinarsWebinarIDRegistrationCode value in schema order.
+func GetAnalyticsWebinarsWebinarIDRegistrationCodeValues() []GetAnalyticsWebinarsWebinarIDRegistrationCode {
+	return []GetAnalyticsWebinarsWebinarIDRegistrationCode{
+		GetAnalyticsWebinarsWebinarIDRegistrationCodeUnauthorizedCredentials,
+		GetAnalyticsWebinarsWebinarIDRegistrationCodeAccountInactive,
+		GetAnalyticsWebinarsWebinarIDRegistrationCodeUnauthorizedScope,
+		GetAnalyticsWebinarsWebinarIDRegistrationCodeUnauthorizedParams,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

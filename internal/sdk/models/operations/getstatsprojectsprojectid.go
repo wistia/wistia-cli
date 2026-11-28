@@ -34,6 +34,16 @@ func (e GetStatsProjectsProjectIDCode) ToPointer() *GetStatsProjectsProjectIDCod
 	return &e
 }
 
+// GetStatsProjectsProjectIDCodeValues returns every known GetStatsProjectsProjectIDCode value in schema order.
+func GetStatsProjectsProjectIDCodeValues() []GetStatsProjectsProjectIDCode {
+	return []GetStatsProjectsProjectIDCode{
+		GetStatsProjectsProjectIDCodeUnauthorizedCredentials,
+		GetStatsProjectsProjectIDCodeAccountInactive,
+		GetStatsProjectsProjectIDCodeUnauthorizedScope,
+		GetStatsProjectsProjectIDCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *GetStatsProjectsProjectIDCode) IsExact() bool {
 	if e != nil {

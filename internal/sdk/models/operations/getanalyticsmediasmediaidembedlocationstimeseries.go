@@ -25,6 +25,15 @@ const (
 func (e GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesGranularity) ToPointer() *GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesGranularity {
 	return &e
 }
+
+// GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesGranularityValues returns every known GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesGranularity value in schema order.
+func GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesGranularityValues() []GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesGranularity {
+	return []GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesGranularity{
+		GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesGranularityDaily,
+		GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesGranularityWeekly,
+		GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesGranularityMonthly,
+	}
+}
 func (e *GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesGranularity) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -57,6 +66,18 @@ const (
 
 func (e GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesSortBy) ToPointer() *GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesSortBy {
 	return &e
+}
+
+// GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesSortByValues returns every known GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesSortBy value in schema order.
+func GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesSortByValues() []GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesSortBy {
+	return []GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesSortBy{
+		GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesSortByPlays,
+		GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesSortByLoads,
+		GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesSortByEngagementRate,
+		GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesSortByPlayRate,
+		GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesSortByPlayedTime,
+		GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesSortByUniqueVisitors,
+	}
 }
 func (e *GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesSortBy) UnmarshalJSON(data []byte) error {
 	var v string
@@ -173,6 +194,16 @@ const (
 
 func (e GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesCode) ToPointer() *GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesCode {
 	return &e
+}
+
+// GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesCodeValues returns every known GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesCode value in schema order.
+func GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesCodeValues() []GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesCode {
+	return []GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesCode{
+		GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesCodeUnauthorizedCredentials,
+		GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesCodeAccountInactive,
+		GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesCodeUnauthorizedScope,
+		GetAnalyticsMediasMediaIDEmbedLocationsTimeseriesCodeUnauthorizedParams,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

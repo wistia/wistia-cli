@@ -12,12 +12,15 @@ import (
 	"io"
 	"net"
 	"net/url"
+	"reflect"
+	"sort"
 	"strings"
 
 	"github.com/spf13/cobra"
 
 	"github.com/wistia/wistia-cli/internal/clierrors"
 	"github.com/wistia/wistia-cli/internal/flagutil"
+	"github.com/wistia/wistia-cli/internal/sdk/sdkinternal/utils"
 )
 
 type ErrorType string
@@ -72,6 +75,7 @@ type Classification struct {
 	// because the request carried no credential; hints declared for the
 	// permission reason do not apply to that caller.
 	credentialsMissing bool
+	redaction          messageRedaction
 }
 
 type errorRule struct {
@@ -161,10 +165,15 @@ func Classify(cmd *cobra.Command, err error) Classification {
 	if classification, ok := ClassificationFrom(err); ok {
 		return classification
 	}
+	var invalidPath *utils.InvalidPathParameterError
+	if errors.As(err, &invalidPath) {
+		err = flagutil.WithCLIValidation(err)
+	}
 
+	rawBody := extractErrorBody(err)
 	c := Classification{
 		StatusCode: extractErrorStatusCode(err),
-		RawBody:    extractErrorBody(err),
+		RawBody:    redactErrorBody(cmd, err, rawBody),
 		Origin:     ErrorOriginAPI,
 	}
 	var origin interface{ ErrorOrigin() ErrorOrigin }
@@ -250,9 +259,188 @@ func Classify(cmd *cobra.Command, err error) Classification {
 		}
 	}
 
-	c.Message = classificationMessage(bodyMap, errorObject, err, c.RawBody)
+	c.redaction = newMessageRedaction(rawBody, c.RawBody)
+	if rawBody == "" {
+		if model := errorModelJSON(err); model != "" {
+			c.redaction = newMessageRedaction(model, redactErrorBody(cmd, err, model))
+		}
+	}
+	c.Message = c.redaction.apply(classificationMessage(bodyMap, errorObject, err, c.RawBody))
 	c.Hints = assembleHints(cmd, err, c, bodyMap, errorObject, ruleHints, useReasonRule)
 	return c
+}
+
+// redactErrorBody masks the values the operation's schema marks sensitive in
+// an error response body, as --debug does when logging it. The operation comes
+// from the response's request, or from the command when the error carries no
+// response.
+func redactErrorBody(cmd *cobra.Command, err error, body string) string {
+	return body
+}
+
+// messageRedaction keeps a message taken from the error's own text from
+// re-exposing what body redaction masked: typed error models render their
+// fields as JSON or as a single field, and fallback errors embed the raw body.
+type messageRedaction struct {
+	raw, redacted string
+	scrubber      *strings.Replacer
+}
+
+func newMessageRedaction(rawBody, redactedBody string) messageRedaction {
+	r := messageRedaction{raw: rawBody, redacted: redactedBody}
+	if rawBody == "" || rawBody == redactedBody {
+		return r
+	}
+	seen := map[string]bool{}
+	var pairs []string
+	for _, value := range maskedBodyValues(rawBody, redactedBody) {
+		if !seen[value.raw] {
+			seen[value.raw] = true
+			pairs = append(pairs, value.raw, value.redacted)
+		}
+	}
+	if len(pairs) > 0 {
+		r.scrubber = strings.NewReplacer(pairs...)
+	}
+	return r
+}
+
+// apply must run once per message: a masked value can occur inside the mask
+// text that replaces it.
+func (r messageRedaction) apply(message string) string {
+	if r.raw == "" || r.raw == r.redacted {
+		return message
+	}
+	if !isValidJSON(r.redacted) {
+		return r.redacted
+	}
+	if strings.Contains(message, r.raw) {
+		parts := strings.Split(message, r.raw)
+		for i, part := range parts {
+			parts[i] = r.scrub(part)
+		}
+		return strings.Join(parts, r.redacted)
+	}
+	if isValidJSON(message) {
+		return r.redacted
+	}
+	return r.scrub(message)
+}
+
+func (r messageRedaction) scrub(text string) string {
+	if r.scrubber == nil {
+		return text
+	}
+	return r.scrubber.Replace(text)
+}
+
+// errorModelJSON encodes a generated error model that carries no response
+// body, so its fields can still be checked against the operation's sensitive
+// fields.
+func errorModelJSON(err error) string {
+	for current := err; current != nil; current = errors.Unwrap(current) {
+		v := reflect.ValueOf(current)
+		if v.Kind() != reflect.Ptr || v.IsNil() || v.Elem().Kind() != reflect.Struct {
+			continue
+		}
+		if !strings.HasPrefix(v.Elem().Type().PkgPath(), "github.com/wistia/wistia-cli/internal/sdk/models/") {
+			continue
+		}
+		if data, marshalErr := json.Marshal(current); marshalErr == nil {
+			return string(data)
+		}
+	}
+	return ""
+}
+
+type maskedBodyValue struct{ raw, redacted string }
+
+// maskedBodyValues lists the scalar values of rawBody that redaction replaced,
+// longest first so a value never shadows a longer one containing it.
+func maskedBodyValues(rawBody, redactedBody string) []maskedBodyValue {
+	raw, rawOK := decodeJSONKeepingNumbers(rawBody)
+	redacted, redactedOK := decodeJSONKeepingNumbers(redactedBody)
+	if !rawOK || !redactedOK {
+		return nil
+	}
+	var out []maskedBodyValue
+	var walk func(raw, redacted any)
+	walk = func(raw, redacted any) {
+		if mask, ok := redacted.(string); ok {
+			if _, rawIsString := raw.(string); !rawIsString || raw != mask {
+				for _, leaf := range jsonScalarTexts(raw) {
+					if leaf != "" && leaf != mask {
+						out = append(out, maskedBodyValue{raw: leaf, redacted: mask})
+					}
+				}
+			}
+			return
+		}
+		switch rawValue := raw.(type) {
+		case map[string]any:
+			redactedMap, _ := redacted.(map[string]any)
+			for key, value := range rawValue {
+				walk(value, redactedMap[key])
+			}
+		case []any:
+			redactedList, _ := redacted.([]any)
+			for i, value := range rawValue {
+				if i < len(redactedList) {
+					walk(value, redactedList[i])
+				}
+			}
+		}
+	}
+	walk(raw, redacted)
+	sort.SliceStable(out, func(i, j int) bool { return len(out[i].raw) > len(out[j].raw) })
+	return out
+}
+
+// decodeJSONKeepingNumbers keeps each number's original spelling, which is how
+// it appears in an error's text.
+func decodeJSONKeepingNumbers(body string) (any, bool) {
+	decoder := json.NewDecoder(strings.NewReader(body))
+	decoder.UseNumber()
+	var value any
+	if err := decoder.Decode(&value); err != nil {
+		return nil, false
+	}
+	return value, true
+}
+
+func jsonScalarTexts(value any) []string {
+	switch typed := value.(type) {
+	case nil:
+		return nil
+	case string:
+		return []string{typed}
+	case json.Number:
+		return []string{typed.String()}
+	case map[string]any:
+		var out []string
+		for _, member := range typed {
+			out = append(out, jsonScalarTexts(member)...)
+		}
+		return out
+	case []any:
+		var out []string
+		for _, item := range typed {
+			out = append(out, jsonScalarTexts(item)...)
+		}
+		return out
+	default:
+		return []string{fmt.Sprint(typed)}
+	}
+}
+
+// redactedErrorText is err's own text with any response body it embeds
+// replaced by the classification's redacted copy.
+func redactedErrorText(err error, classification Classification) string {
+	redaction := classification.redaction
+	if redaction.raw == "" {
+		redaction = newMessageRedaction(extractErrorBody(err), classification.RawBody)
+	}
+	return redaction.apply(err.Error())
 }
 
 func parseClassificationBody(raw string, c *Classification) (map[string]any, map[string]any) {
@@ -659,6 +847,7 @@ const (
 	ReasonCLIAsyncTimeout      = "CLI_ASYNC_TIMEOUT"
 	ReasonCLIAsyncUnknownState = "CLI_ASYNC_UNKNOWN_STATE"
 	ReasonCLIOutcomeFailed     = "CLI_OUTCOME_FAILED"
+	ReasonCLIContinuationLimit = "CLI_CONTINUATION_LIMIT"
 )
 
 type cliReasonError struct {
@@ -681,7 +870,7 @@ func normalizeCLIReason(reason string) string {
 	case ReasonCLIValidation, ReasonCLIConnection, ReasonCLIProtocol,
 		ReasonCLIRuntime, ReasonCLIUnavailable, ReasonCLIAuthentication,
 		ReasonCLIAsyncFailed, ReasonCLIAsyncTimeout, ReasonCLIAsyncUnknownState,
-		ReasonCLIOutcomeFailed:
+		ReasonCLIOutcomeFailed, ReasonCLIContinuationLimit:
 		return reason
 	}
 	return ReasonCLIRuntime

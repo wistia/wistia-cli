@@ -36,6 +36,16 @@ func (e PostAllowedDomainsCode) ToPointer() *PostAllowedDomainsCode {
 	return &e
 }
 
+// PostAllowedDomainsCodeValues returns every known PostAllowedDomainsCode value in schema order.
+func PostAllowedDomainsCodeValues() []PostAllowedDomainsCode {
+	return []PostAllowedDomainsCode{
+		PostAllowedDomainsCodeUnauthorizedCredentials,
+		PostAllowedDomainsCodeAccountInactive,
+		PostAllowedDomainsCodeUnauthorizedScope,
+		PostAllowedDomainsCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *PostAllowedDomainsCode) IsExact() bool {
 	if e != nil {

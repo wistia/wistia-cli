@@ -34,6 +34,16 @@ func (e GetMediasMediaIDCustomizationsEngagementCode) ToPointer() *GetMediasMedi
 	return &e
 }
 
+// GetMediasMediaIDCustomizationsEngagementCodeValues returns every known GetMediasMediaIDCustomizationsEngagementCode value in schema order.
+func GetMediasMediaIDCustomizationsEngagementCodeValues() []GetMediasMediaIDCustomizationsEngagementCode {
+	return []GetMediasMediaIDCustomizationsEngagementCode{
+		GetMediasMediaIDCustomizationsEngagementCodeUnauthorizedCredentials,
+		GetMediasMediaIDCustomizationsEngagementCodeAccountInactive,
+		GetMediasMediaIDCustomizationsEngagementCodeUnauthorizedScope,
+		GetMediasMediaIDCustomizationsEngagementCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *GetMediasMediaIDCustomizationsEngagementCode) IsExact() bool {
 	if e != nil {

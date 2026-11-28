@@ -74,6 +74,16 @@ func (e PostMediasMediaHashedIDTrimsCode) ToPointer() *PostMediasMediaHashedIDTr
 	return &e
 }
 
+// PostMediasMediaHashedIDTrimsCodeValues returns every known PostMediasMediaHashedIDTrimsCode value in schema order.
+func PostMediasMediaHashedIDTrimsCodeValues() []PostMediasMediaHashedIDTrimsCode {
+	return []PostMediasMediaHashedIDTrimsCode{
+		PostMediasMediaHashedIDTrimsCodeUnauthorizedCredentials,
+		PostMediasMediaHashedIDTrimsCodeAccountInactive,
+		PostMediasMediaHashedIDTrimsCodeUnauthorizedScope,
+		PostMediasMediaHashedIDTrimsCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *PostMediasMediaHashedIDTrimsCode) IsExact() bool {
 	if e != nil {
@@ -97,6 +107,16 @@ const (
 
 func (e PostMediasMediaHashedIDTrimsStatus) ToPointer() *PostMediasMediaHashedIDTrimsStatus {
 	return &e
+}
+
+// PostMediasMediaHashedIDTrimsStatusValues returns every known PostMediasMediaHashedIDTrimsStatus value in schema order.
+func PostMediasMediaHashedIDTrimsStatusValues() []PostMediasMediaHashedIDTrimsStatus {
+	return []PostMediasMediaHashedIDTrimsStatus{
+		PostMediasMediaHashedIDTrimsStatusQueued,
+		PostMediasMediaHashedIDTrimsStatusStarted,
+		PostMediasMediaHashedIDTrimsStatusFinished,
+		PostMediasMediaHashedIDTrimsStatusFailed,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

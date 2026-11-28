@@ -36,6 +36,16 @@ func (e GetAllowedDomainsDomainCode) ToPointer() *GetAllowedDomainsDomainCode {
 	return &e
 }
 
+// GetAllowedDomainsDomainCodeValues returns every known GetAllowedDomainsDomainCode value in schema order.
+func GetAllowedDomainsDomainCodeValues() []GetAllowedDomainsDomainCode {
+	return []GetAllowedDomainsDomainCode{
+		GetAllowedDomainsDomainCodeUnauthorizedCredentials,
+		GetAllowedDomainsDomainCodeAccountInactive,
+		GetAllowedDomainsDomainCodeUnauthorizedScope,
+		GetAllowedDomainsDomainCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *GetAllowedDomainsDomainCode) IsExact() bool {
 	if e != nil {

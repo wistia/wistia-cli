@@ -36,6 +36,16 @@ func (e GetFoldersIDCode) ToPointer() *GetFoldersIDCode {
 	return &e
 }
 
+// GetFoldersIDCodeValues returns every known GetFoldersIDCode value in schema order.
+func GetFoldersIDCodeValues() []GetFoldersIDCode {
+	return []GetFoldersIDCode{
+		GetFoldersIDCodeUnauthorizedCredentials,
+		GetFoldersIDCodeAccountInactive,
+		GetFoldersIDCodeUnauthorizedScope,
+		GetFoldersIDCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *GetFoldersIDCode) IsExact() bool {
 	if e != nil {
@@ -74,6 +84,15 @@ const (
 
 func (e GetFoldersIDKind) ToPointer() *GetFoldersIDKind {
 	return &e
+}
+
+// GetFoldersIDKindValues returns every known GetFoldersIDKind value in schema order.
+func GetFoldersIDKindValues() []GetFoldersIDKind {
+	return []GetFoldersIDKind{
+		GetFoldersIDKindLibrary,
+		GetFoldersIDKindShared,
+		GetFoldersIDKindAccount,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

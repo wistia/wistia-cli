@@ -15,7 +15,7 @@ import (
 // which propagates the value here (see cmd/wistia/main.go):
 //
 //	go build -ldflags "-X main.version=x.y.z" ./cmd/wistia
-var Version = "0.3.0"
+var Version = "0.3.1"
 
 // BuildTime is optionally set at build time via ldflags targeting the main package.
 var BuildTime string
@@ -31,7 +31,8 @@ The version defaults to the SDK version set during generation, but can be
 overridden at build time using Go linker flags:
 
   go build -ldflags "-X main.version=x.y.z -X main.buildTime=$(date -u +%Y-%m-%dT%H:%M:%SZ)" ./cmd/wistia`,
-		Args: cobra.NoArgs,
+		Annotations: map[string]string{"speakeasy_config_optional": "true"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if usage.UsageRequested(cmd) {
 				return usage.EmitSchema(cmd, cmd.OutOrStdout())

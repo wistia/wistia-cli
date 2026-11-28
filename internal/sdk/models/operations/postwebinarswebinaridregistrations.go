@@ -72,6 +72,16 @@ func (e PostWebinarsWebinarIDRegistrationsCode) ToPointer() *PostWebinarsWebinar
 	return &e
 }
 
+// PostWebinarsWebinarIDRegistrationsCodeValues returns every known PostWebinarsWebinarIDRegistrationsCode value in schema order.
+func PostWebinarsWebinarIDRegistrationsCodeValues() []PostWebinarsWebinarIDRegistrationsCode {
+	return []PostWebinarsWebinarIDRegistrationsCode{
+		PostWebinarsWebinarIDRegistrationsCodeUnauthorizedCredentials,
+		PostWebinarsWebinarIDRegistrationsCodeAccountInactive,
+		PostWebinarsWebinarIDRegistrationsCodeUnauthorizedScope,
+		PostWebinarsWebinarIDRegistrationsCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *PostWebinarsWebinarIDRegistrationsCode) IsExact() bool {
 	if e != nil {

@@ -23,6 +23,16 @@ func (e GetBrandPreloadCode) ToPointer() *GetBrandPreloadCode {
 	return &e
 }
 
+// GetBrandPreloadCodeValues returns every known GetBrandPreloadCode value in schema order.
+func GetBrandPreloadCodeValues() []GetBrandPreloadCode {
+	return []GetBrandPreloadCode{
+		GetBrandPreloadCodeUnauthorizedCredentials,
+		GetBrandPreloadCodeAccountInactive,
+		GetBrandPreloadCodeUnauthorizedScope,
+		GetBrandPreloadCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *GetBrandPreloadCode) IsExact() bool {
 	if e != nil {

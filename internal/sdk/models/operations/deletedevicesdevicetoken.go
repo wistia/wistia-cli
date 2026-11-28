@@ -36,6 +36,16 @@ func (e DeleteDevicesDeviceTokenCode) ToPointer() *DeleteDevicesDeviceTokenCode 
 	return &e
 }
 
+// DeleteDevicesDeviceTokenCodeValues returns every known DeleteDevicesDeviceTokenCode value in schema order.
+func DeleteDevicesDeviceTokenCodeValues() []DeleteDevicesDeviceTokenCode {
+	return []DeleteDevicesDeviceTokenCode{
+		DeleteDevicesDeviceTokenCodeUnauthorizedCredentials,
+		DeleteDevicesDeviceTokenCodeAccountInactive,
+		DeleteDevicesDeviceTokenCodeUnauthorizedScope,
+		DeleteDevicesDeviceTokenCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *DeleteDevicesDeviceTokenCode) IsExact() bool {
 	if e != nil {
@@ -57,6 +67,14 @@ const (
 
 func (e DeleteDevicesDeviceTokenEnvironment) ToPointer() *DeleteDevicesDeviceTokenEnvironment {
 	return &e
+}
+
+// DeleteDevicesDeviceTokenEnvironmentValues returns every known DeleteDevicesDeviceTokenEnvironment value in schema order.
+func DeleteDevicesDeviceTokenEnvironmentValues() []DeleteDevicesDeviceTokenEnvironment {
+	return []DeleteDevicesDeviceTokenEnvironment{
+		DeleteDevicesDeviceTokenEnvironmentSandbox,
+		DeleteDevicesDeviceTokenEnvironmentProduction,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

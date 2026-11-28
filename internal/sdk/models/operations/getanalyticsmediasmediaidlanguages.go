@@ -73,6 +73,16 @@ func (e GetAnalyticsMediasMediaIDLanguagesCode) ToPointer() *GetAnalyticsMediasM
 	return &e
 }
 
+// GetAnalyticsMediasMediaIDLanguagesCodeValues returns every known GetAnalyticsMediasMediaIDLanguagesCode value in schema order.
+func GetAnalyticsMediasMediaIDLanguagesCodeValues() []GetAnalyticsMediasMediaIDLanguagesCode {
+	return []GetAnalyticsMediasMediaIDLanguagesCode{
+		GetAnalyticsMediasMediaIDLanguagesCodeUnauthorizedCredentials,
+		GetAnalyticsMediasMediaIDLanguagesCodeAccountInactive,
+		GetAnalyticsMediasMediaIDLanguagesCodeUnauthorizedScope,
+		GetAnalyticsMediasMediaIDLanguagesCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *GetAnalyticsMediasMediaIDLanguagesCode) IsExact() bool {
 	if e != nil {

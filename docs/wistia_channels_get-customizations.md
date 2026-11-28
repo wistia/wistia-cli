@@ -1,27 +1,20 @@
-## wistia remix post-remixes-remix-hashed-id-export
+## wistia channels get-customizations
 
-Export Remix
+Show Channel Customizations
 
 ### Synopsis
 
-DEPRECATED: This will be removed in a future release, please migrate away from it as soon as possible
+Returns the customizations that shape a channel's viewer page: layout and
+playback controls, colors and fonts, the header, hero and logo, the
+featured episode, the email subscription form, the footer, and the social
+image. The response includes defaults where specified in the field descriptions.
 
-Deprecated: use `POST /mochine/edits/{editHashedId}/export` instead.
-
-Export a remix to a folder in your account, triggering the full render pipeline.
-
-Remixes created through this API export automatically, so a remix is usually
-already exported by the time you can call this. Exporting one again does not
-re-render it — it moves and renames the media the first export produced, so you
-can use this to place a finished remix in a different folder or under a
-different name.
-
-If no folder_id is provided, the remix is exported to the source media's folder.
-
+Password protection and tracking scripts are not included. `locked` on the
+channel itself says whether viewers need to be invited.
 
 ## Requires api token with one of the following permissions
 ```
-Read, update & delete anything
+Read all folder and media data
 ```
 
 Tokens with the "Act with a team member's permissions" permission
@@ -29,24 +22,25 @@ Tokens with the "Act with a team member's permissions" permission
 made with such a token are authorized using the permissions of the
 contact assigned to the token.
 
+An [expiring access token](https://docs.wistia.com/reference/post_expiring-token)
+created with the `all:delegate_to_contact_permissions` scope and an
+authorization naming this channel (any permission) can also be used.
+
 ```
-wistia remix post-remixes-remix-hashed-id-export [remix-hashed-id] [flags]
+wistia channels get-customizations [channel-hashed-id] [flags]
 ```
 
 ### Examples
 
 ```
-  wistia remix post-remixes-remix-hashed-id-export --remix-hashed-id <id>
+  wistia channels get-customizations --channel-hashed-id <id>
 ```
 
 ### Options
 
 ```
-      --body string              Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.
-  -f, --folder-id string         Hashed ID of the destination folder. Defaults to the source media's folder.
-  -h, --help                     help for post-remixes-remix-hashed-id-export
-  -n, --name string              Custom name for the exported media.
-  -r, --remix-hashed-id string   The remix_id of the Mochine video to export. (or pass it as the [remix-hashed-id] argument)
+  -c, --channel-hashed-id string   Channel Hashed ID (or pass it as the [channel-hashed-id] argument)
+  -h, --help                       help for get-customizations
 ```
 
 ### Options inherited from parent commands
@@ -73,12 +67,12 @@ wistia remix post-remixes-remix-hashed-id-export [remix-hashed-id] [flags]
 
 ### SEE ALSO
 
-* [wistia remix](wistia_remix.md)	 - Operations for remix
+* [wistia channels](wistia_channels.md)	 - Operations for channels
 
 ### Machine interface
 
-* `wistia remix post-remixes-remix-hashed-id-export --usage` — this command's flags, defaults and env vars as machine-readable KDL
-* `wistia remix post-remixes-remix-hashed-id-export --dry-run` — preview the request without OS-keychain access or a network call (human preview on stderr)
+* `wistia channels get-customizations --usage` — this command's flags, defaults and env vars as machine-readable KDL
+* `wistia channels get-customizations --dry-run` — preview the request without OS-keychain access or a network call (human preview on stderr)
 * `--dry-run --output-format json` (or a caller-explicit `--jq`) writes one preview object per request as NDJSON on stdout; jq is not applied to previews
 * `--output-format json` or `--jq <expr>` for machine-readable live output; in agent mode errors are a JSON envelope on stderr
 

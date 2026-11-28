@@ -10,6 +10,9 @@ The response includes plan tier, upload eligibility, and links to billing pages.
 Usage and limit details (media counts, storage, seats, bandwidth) are only visible
 to account owners and managers — other contacts receive `null` for the `limits` field.
 
+`rates` holds what the account pays for captions, a dub and a text translation,
+in Credits or US dollars. Every contact except a viewer receives it.
+
 ## Requires api token with one of the following permissions
 ```
 (any scope allowed)

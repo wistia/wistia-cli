@@ -33,6 +33,16 @@ func (e DeleteMediasMediaIDCustomizationsCode) ToPointer() *DeleteMediasMediaIDC
 	return &e
 }
 
+// DeleteMediasMediaIDCustomizationsCodeValues returns every known DeleteMediasMediaIDCustomizationsCode value in schema order.
+func DeleteMediasMediaIDCustomizationsCodeValues() []DeleteMediasMediaIDCustomizationsCode {
+	return []DeleteMediasMediaIDCustomizationsCode{
+		DeleteMediasMediaIDCustomizationsCodeUnauthorizedCredentials,
+		DeleteMediasMediaIDCustomizationsCodeAccountInactive,
+		DeleteMediasMediaIDCustomizationsCodeUnauthorizedScope,
+		DeleteMediasMediaIDCustomizationsCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *DeleteMediasMediaIDCustomizationsCode) IsExact() bool {
 	if e != nil {

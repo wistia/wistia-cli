@@ -4,14 +4,14 @@ Create Bulk Actions
 
 ### Synopsis
 
-Submits a batch of up to 1000 create, update, delete, move, add_tags, and
-archive actions to be processed asynchronously. Returns a background job status whose Show
+Submits a batch of up to 1000 create, update, delete, move, add_tags,
+archive, and generate actions to be processed asynchronously. Returns a background job status whose Show
 endpoint reports aggregate progress and per-action results, including the
 hashed IDs of created records.
 
 Supported resource types are `media`, `folder`, `subfolder`, `channel`,
-`channel_episode`, `captions`, `media_speaker`, and the ten
-`customization_*` concerns. A
+`channel_episode`, `captions`, `text_translation`, `media_speaker`, `tag`,
+and the ten `customization_*` concerns. A
 `folder` is a top-level folder (previously called a project); a `subfolder`
 is nested inside one and requires `folder_id` and `name` when created. A
 `captions` action operates on one caption track -- one media in one
@@ -19,7 +19,16 @@ language.
 
 Because caption actions carry SRT contents inline, they are the resource
 type most likely to reach the request body limit before the action cap.
-Purchasing captions is not available here -- it has its own endpoint.
+
+A `generate` action generates Wistia captions for a media (`captions`) or
+translates its existing transcript into another language
+(`text_translation`). Its `id` is the media's hashed ID, and it is
+metered and checked for eligibility exactly as the Generate Captions and
+Translate Media endpoints are. A `captions` `generate` must set `automated`
+in its payload, and the request is refused with a 400 without it.
+Localizations and extended audio
+descriptions are generated through the Create Bulk Purchase endpoint, which
+accepts these two as well.
 
 A `move` action targets one media and accepts a destination `folder_id` and
 optional `subfolder_id`. Bulk moves can use different destinations and are
@@ -45,6 +54,10 @@ media's `expected_version`. A media's speakers are assigned together, so a
 failure leaves that media unchanged; put all of one media's speakers in one
 action, since each named speaker changes the media's version. A `delete` takes a `media_speaker_id`
 as its `id` and an optional `expected_version`. Neither can be used in a
+`job`.
+
+A `tag` action deletes one tag, removing it from every media it is on. It
+takes the tag's name as its `id` and no payload, and cannot be used in a
 `job`.
 
 Player customizations are addressed one concern at a time

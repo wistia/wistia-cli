@@ -27,6 +27,18 @@ const (
 func (e ContentTypes) ToPointer() *ContentTypes {
 	return &e
 }
+
+// ContentTypesValues returns every known ContentTypes value in schema order.
+func ContentTypesValues() []ContentTypes {
+	return []ContentTypes{
+		ContentTypesMedia,
+		ContentTypesFolder,
+		ContentTypesSubfolder,
+		ContentTypesChannel,
+		ContentTypesChannelEpisode,
+		ContentTypesWebinar,
+	}
+}
 func (e *ContentTypes) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -62,6 +74,15 @@ const (
 func (e MediaTypes) ToPointer() *MediaTypes {
 	return &e
 }
+
+// MediaTypesValues returns every known MediaTypes value in schema order.
+func MediaTypesValues() []MediaTypes {
+	return []MediaTypes{
+		MediaTypesVideo,
+		MediaTypesAudio,
+		MediaTypesOther,
+	}
+}
 func (e *MediaTypes) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -89,6 +110,14 @@ const (
 
 func (e Exists) ToPointer() *Exists {
 	return &e
+}
+
+// ExistsValues returns every known Exists value in schema order.
+func ExistsValues() []Exists {
+	return []Exists{
+		ExistsTrue,
+		ExistsFalse,
+	}
 }
 func (e *Exists) UnmarshalJSON(data []byte) error {
 	var v string
@@ -296,6 +325,18 @@ const (
 func (e DurationGroup) ToPointer() *DurationGroup {
 	return &e
 }
+
+// DurationGroupValues returns every known DurationGroup value in schema order.
+func DurationGroupValues() []DurationGroup {
+	return []DurationGroup{
+		DurationGroupZeroMinus59,
+		DurationGroupSixtyMinus179,
+		DurationGroupOneHundredAndEightyMinus299,
+		DurationGroupThreeHundredMinus1799,
+		DurationGroupOneThousandEightHundredMinus3599,
+		DurationGroupThreeThousandSixHundredPlus,
+	}
+}
 func (e *DurationGroup) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -335,6 +376,19 @@ const (
 func (e PlayCountGroup) ToPointer() *PlayCountGroup {
 	return &e
 }
+
+// PlayCountGroupValues returns every known PlayCountGroup value in schema order.
+func PlayCountGroupValues() []PlayCountGroup {
+	return []PlayCountGroup{
+		PlayCountGroupZero,
+		PlayCountGroupOneMinus100,
+		PlayCountGroupOneHundredAndOneMinus1000,
+		PlayCountGroupOneThousandAndOneMinus10000,
+		PlayCountGroupTenThousandAndOneMinus50000,
+		PlayCountGroupFiftyThousandAndOneMinus500000,
+		PlayCountGroupFiveHundredThousandAndOnePlus,
+	}
+}
 func (e *PlayCountGroup) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -372,6 +426,15 @@ const (
 func (e Origin) ToPointer() *Origin {
 	return &e
 }
+
+// OriginValues returns every known Origin value in schema order.
+func OriginValues() []Origin {
+	return []Origin{
+		OriginEditor,
+		OriginLive,
+		OriginRecord,
+	}
+}
 func (e *Origin) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -401,6 +464,16 @@ const (
 
 func (e ShareLinkVisibility) ToPointer() *ShareLinkVisibility {
 	return &e
+}
+
+// ShareLinkVisibilityValues returns every known ShareLinkVisibility value in schema order.
+func ShareLinkVisibilityValues() []ShareLinkVisibility {
+	return []ShareLinkVisibility{
+		ShareLinkVisibilityLocked,
+		ShareLinkVisibilityAccount,
+		ShareLinkVisibilityUnlocked,
+		ShareLinkVisibilityDomainVerified,
+	}
 }
 func (e *ShareLinkVisibility) UnmarshalJSON(data []byte) error {
 	var v string
@@ -435,6 +508,16 @@ const (
 func (e Sort) ToPointer() *Sort {
 	return &e
 }
+
+// SortValues returns every known Sort value in schema order.
+func SortValues() []Sort {
+	return []Sort{
+		SortNewest,
+		SortOldest,
+		SortRecentlyUpdated,
+		SortName,
+	}
+}
 func (e *Sort) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -464,6 +547,13 @@ const (
 
 func (e GetSearchInclude) ToPointer() *GetSearchInclude {
 	return &e
+}
+
+// GetSearchIncludeValues returns every known GetSearchInclude value in schema order.
+func GetSearchIncludeValues() []GetSearchInclude {
+	return []GetSearchInclude{
+		GetSearchIncludeCustomMetadata,
+	}
 }
 func (e *GetSearchInclude) UnmarshalJSON(data []byte) error {
 	var v string
@@ -534,6 +624,12 @@ type GetSearchRequest struct {
 	CreatedAfter *string `queryParam:"style=form,explode=true,name=created_after"`
 	// Only content created at or before this time, in the same forms as `created_after`. A truncated value runs to the end of its year, month, or day, so `created_after=2026-08` with `created_before=2026-08` covers all of August 2026. Both bounds are inclusive, so "before 2026" is `created_before=2025`, and "before March 2026" is `created_before=2026-02`.
 	CreatedBefore *string `queryParam:"style=form,explode=true,name=created_before"`
+	// Only media last played at or after this time, in the same forms as `created_after`. Excludes media that have never been played. Play data is current as of the last day or so.
+	LastPlayedAfter *string `queryParam:"style=form,explode=true,name=last_played_after"`
+	// Only media last played at or before this time, in the same forms and end-of-period rules as `created_before`, so "not played since June 2026" is `last_played_before=2026-05`. Also matches media that have never been played; for those alone, use `play_count_group[]=0`.
+	LastPlayedBefore *string `queryParam:"style=form,explode=true,name=last_played_before"`
+	// `true` for media with at least one tracked view outside the Wistia app, `false` for media with none. A view on the media's public Wistia share page counts, so this is not strictly "embedded on a website".
+	Embedded *bool `queryParam:"style=form,explode=true,name=embedded"`
 	// Ordering. Omit for relevance ranking, which is what you want alongside a `query`; set it for content by recency or name ("the latest video" is `sort=newest` with `per_page=1`, not `per_page=1` alone).
 	Sort *Sort `queryParam:"style=form,explode=true,name=sort"`
 	// The page of results to return (default 1). Pages reach only the first 10,000 matches, so `page` × `per_page` can't pass 10,000. To reach later records, change the filters or sort and start again at page 1.
@@ -746,6 +842,27 @@ func (g *GetSearchRequest) GetCreatedBefore() *string {
 	return g.CreatedBefore
 }
 
+func (g *GetSearchRequest) GetLastPlayedAfter() *string {
+	if g == nil {
+		return nil
+	}
+	return g.LastPlayedAfter
+}
+
+func (g *GetSearchRequest) GetLastPlayedBefore() *string {
+	if g == nil {
+		return nil
+	}
+	return g.LastPlayedBefore
+}
+
+func (g *GetSearchRequest) GetEmbedded() *bool {
+	if g == nil {
+		return nil
+	}
+	return g.Embedded
+}
+
 func (g *GetSearchRequest) GetSort() *Sort {
 	if g == nil {
 		return nil
@@ -795,6 +912,16 @@ func (e GetSearchCode) ToPointer() *GetSearchCode {
 	return &e
 }
 
+// GetSearchCodeValues returns every known GetSearchCode value in schema order.
+func GetSearchCodeValues() []GetSearchCode {
+	return []GetSearchCode{
+		GetSearchCodeUnauthorizedCredentials,
+		GetSearchCodeAccountInactive,
+		GetSearchCodeUnauthorizedScope,
+		GetSearchCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *GetSearchCode) IsExact() bool {
 	if e != nil {
@@ -820,6 +947,18 @@ const (
 
 func (e GetSearchType) ToPointer() *GetSearchType {
 	return &e
+}
+
+// GetSearchTypeValues returns every known GetSearchType value in schema order.
+func GetSearchTypeValues() []GetSearchType {
+	return []GetSearchType{
+		GetSearchTypeMedia,
+		GetSearchTypeFolder,
+		GetSearchTypeSubfolder,
+		GetSearchTypeChannel,
+		GetSearchTypeChannelEpisode,
+		GetSearchTypeWebinar,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
@@ -857,6 +996,26 @@ func (e GetSearchFieldType) ToPointer() *GetSearchFieldType {
 	return &e
 }
 
+// GetSearchFieldTypeValues returns every known GetSearchFieldType value in schema order.
+func GetSearchFieldTypeValues() []GetSearchFieldType {
+	return []GetSearchFieldType{
+		GetSearchFieldTypeText,
+		GetSearchFieldTypeNumber,
+		GetSearchFieldTypeDate,
+		GetSearchFieldTypeBoolean,
+		GetSearchFieldTypeSingleSelect,
+		GetSearchFieldTypeShortText,
+		GetSearchFieldTypeURL,
+		GetSearchFieldTypeEmail,
+		GetSearchFieldTypeMoney,
+		GetSearchFieldTypeTime,
+		GetSearchFieldTypeDatetime,
+		GetSearchFieldTypeMultiSelect,
+		GetSearchFieldTypeContactRef,
+		GetSearchFieldTypeContactMultiRef,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *GetSearchFieldType) IsExact() bool {
 	if e != nil {
@@ -877,6 +1036,14 @@ const (
 
 func (e ValueCustomMetadataFieldValueType) ToPointer() *ValueCustomMetadataFieldValueType {
 	return &e
+}
+
+// ValueCustomMetadataFieldValueTypeValues returns every known ValueCustomMetadataFieldValueType value in schema order.
+func ValueCustomMetadataFieldValueTypeValues() []ValueCustomMetadataFieldValueType {
+	return []ValueCustomMetadataFieldValueType{
+		ValueCustomMetadataFieldValueTypeContact,
+		ValueCustomMetadataFieldValueTypeContactGroup,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
@@ -1141,6 +1308,15 @@ func (e GetSearchSource) ToPointer() *GetSearchSource {
 	return &e
 }
 
+// GetSearchSourceValues returns every known GetSearchSource value in schema order.
+func GetSearchSourceValues() []GetSearchSource {
+	return []GetSearchSource{
+		GetSearchSourceUI,
+		GetSearchSourceAPI,
+		GetSearchSourceMcp,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *GetSearchSource) IsExact() bool {
 	if e != nil {
@@ -1160,6 +1336,13 @@ const (
 
 func (e CustomMetadataFieldValueLastWriteType) ToPointer() *CustomMetadataFieldValueLastWriteType {
 	return &e
+}
+
+// CustomMetadataFieldValueLastWriteTypeValues returns every known CustomMetadataFieldValueLastWriteType value in schema order.
+func CustomMetadataFieldValueLastWriteTypeValues() []CustomMetadataFieldValueLastWriteType {
+	return []CustomMetadataFieldValueLastWriteType{
+		CustomMetadataFieldValueLastWriteTypeContact,
+	}
 }
 func (e *CustomMetadataFieldValueLastWriteType) UnmarshalJSON(data []byte) error {
 	var v string
@@ -1371,6 +1554,8 @@ type Content struct {
 	// Length in seconds.
 	Duration  *float64 `json:"duration,omitzero"`
 	PlayCount *int64   `json:"play_count,omitzero"`
+	// When the media was last played, current as of the last day or so. Absent if it has never been played.
+	LastPlayedAt *time.Time `json:"last_played_at,omitzero"`
 	// How the media was created, such as Editor, Live, or Record.
 	Origin *string `json:"origin,omitzero"`
 	// Tag names.
@@ -1388,6 +1573,8 @@ type Content struct {
 	FolderHashedID *string `json:"folder_hashed_id,omitzero"`
 	// Media in a folder or subfolder, or episodes in a channel.
 	MediaCount *int64 `json:"media_count,omitzero"`
+	// Whether a folder or subfolder belongs to someone's personal library ("My Library"), whoever is asking.
+	PersonalLibrary *bool `json:"personal_library,omitzero"`
 	// A webinar's lifecycle status.
 	LifecycleStatus *string `json:"lifecycle_status,omitzero"`
 	// ISO 8601 start time of a webinar.
@@ -1402,6 +1589,8 @@ type Content struct {
 	IsPublished *bool `json:"is_published,omitzero"`
 	// With `include=custom_metadata`, a media's custom metadata field values, in the same shape as the Get Custom Metadata Field Values endpoint.
 	CustomMetadataFieldValues []CustomMetadataFieldValue `json:"custom_metadata_field_values,omitzero"`
+	// For a media, the hashed ID of the Mochine edit revision that produced it, or null. Get the edit with it (`get-mochine-edit`) to read the `source_media_ids` it was cut from.
+	MochineEditID optionalnullable.OptionalNullable[string] `json:"mochine_edit_id,omitzero"`
 	// With `include_highlights` or `transcript_only`, up to 3 places the query matched spoken words.
 	TranscriptMatches []TranscriptMatch `json:"transcript_matches,omitzero"`
 }
@@ -1494,6 +1683,13 @@ func (c *Content) GetPlayCount() *int64 {
 	return c.PlayCount
 }
 
+func (c *Content) GetLastPlayedAt() *time.Time {
+	if c == nil {
+		return nil
+	}
+	return c.LastPlayedAt
+}
+
 func (c *Content) GetOrigin() *string {
 	if c == nil {
 		return nil
@@ -1557,6 +1753,13 @@ func (c *Content) GetMediaCount() *int64 {
 	return c.MediaCount
 }
 
+func (c *Content) GetPersonalLibrary() *bool {
+	if c == nil {
+		return nil
+	}
+	return c.PersonalLibrary
+}
+
 func (c *Content) GetLifecycleStatus() *string {
 	if c == nil {
 		return nil
@@ -1604,6 +1807,13 @@ func (c *Content) GetCustomMetadataFieldValues() []CustomMetadataFieldValue {
 		return nil
 	}
 	return c.CustomMetadataFieldValues
+}
+
+func (c *Content) GetMochineEditID() optionalnullable.OptionalNullable[string] {
+	if c == nil {
+		return nil
+	}
+	return c.MochineEditID
 }
 
 func (c *Content) GetTranscriptMatches() []TranscriptMatch {

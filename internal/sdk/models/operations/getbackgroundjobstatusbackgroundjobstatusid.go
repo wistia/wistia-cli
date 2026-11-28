@@ -37,6 +37,16 @@ func (e GetBackgroundJobStatusBackgroundJobStatusIDCode) ToPointer() *GetBackgro
 	return &e
 }
 
+// GetBackgroundJobStatusBackgroundJobStatusIDCodeValues returns every known GetBackgroundJobStatusBackgroundJobStatusIDCode value in schema order.
+func GetBackgroundJobStatusBackgroundJobStatusIDCodeValues() []GetBackgroundJobStatusBackgroundJobStatusIDCode {
+	return []GetBackgroundJobStatusBackgroundJobStatusIDCode{
+		GetBackgroundJobStatusBackgroundJobStatusIDCodeUnauthorizedCredentials,
+		GetBackgroundJobStatusBackgroundJobStatusIDCodeAccountInactive,
+		GetBackgroundJobStatusBackgroundJobStatusIDCodeUnauthorizedScope,
+		GetBackgroundJobStatusBackgroundJobStatusIDCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *GetBackgroundJobStatusBackgroundJobStatusIDCode) IsExact() bool {
 	if e != nil {
@@ -62,6 +72,16 @@ func (e GetBackgroundJobStatusBackgroundJobStatusIDStatus) ToPointer() *GetBackg
 	return &e
 }
 
+// GetBackgroundJobStatusBackgroundJobStatusIDStatusValues returns every known GetBackgroundJobStatusBackgroundJobStatusIDStatus value in schema order.
+func GetBackgroundJobStatusBackgroundJobStatusIDStatusValues() []GetBackgroundJobStatusBackgroundJobStatusIDStatus {
+	return []GetBackgroundJobStatusBackgroundJobStatusIDStatus{
+		GetBackgroundJobStatusBackgroundJobStatusIDStatusQueued,
+		GetBackgroundJobStatusBackgroundJobStatusIDStatusStarted,
+		GetBackgroundJobStatusBackgroundJobStatusIDStatusFinished,
+		GetBackgroundJobStatusBackgroundJobStatusIDStatusFailed,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *GetBackgroundJobStatusBackgroundJobStatusIDStatus) IsExact() bool {
 	if e != nil {
@@ -82,6 +102,13 @@ const (
 
 func (e GetBackgroundJobStatusBackgroundJobStatusIDType) ToPointer() *GetBackgroundJobStatusBackgroundJobStatusIDType {
 	return &e
+}
+
+// GetBackgroundJobStatusBackgroundJobStatusIDTypeValues returns every known GetBackgroundJobStatusBackgroundJobStatusIDType value in schema order.
+func GetBackgroundJobStatusBackgroundJobStatusIDTypeValues() []GetBackgroundJobStatusBackgroundJobStatusIDType {
+	return []GetBackgroundJobStatusBackgroundJobStatusIDType{
+		GetBackgroundJobStatusBackgroundJobStatusIDTypeBulkOperation,
+	}
 }
 func (e *GetBackgroundJobStatusBackgroundJobStatusIDType) UnmarshalJSON(data []byte) error {
 	var v string
@@ -141,7 +168,8 @@ func (s *Summary) GetFailed() int64 {
 }
 
 // GetBackgroundJobStatusBackgroundJobStatusIDOperation - The operation that was performed. `purchase` appears only for
-// operations submitted through the Create Bulk Purchase endpoint.
+// operations submitted through the Create Bulk Purchase endpoint
+// before it was renamed to `generate`.
 type GetBackgroundJobStatusBackgroundJobStatusIDOperation string
 
 const (
@@ -151,6 +179,7 @@ const (
 	GetBackgroundJobStatusBackgroundJobStatusIDOperationMove     GetBackgroundJobStatusBackgroundJobStatusIDOperation = "move"
 	GetBackgroundJobStatusBackgroundJobStatusIDOperationAddTags  GetBackgroundJobStatusBackgroundJobStatusIDOperation = "add_tags"
 	GetBackgroundJobStatusBackgroundJobStatusIDOperationArchive  GetBackgroundJobStatusBackgroundJobStatusIDOperation = "archive"
+	GetBackgroundJobStatusBackgroundJobStatusIDOperationGenerate GetBackgroundJobStatusBackgroundJobStatusIDOperation = "generate"
 	GetBackgroundJobStatusBackgroundJobStatusIDOperationPurchase GetBackgroundJobStatusBackgroundJobStatusIDOperation = "purchase"
 )
 
@@ -158,11 +187,25 @@ func (e GetBackgroundJobStatusBackgroundJobStatusIDOperation) ToPointer() *GetBa
 	return &e
 }
 
+// GetBackgroundJobStatusBackgroundJobStatusIDOperationValues returns every known GetBackgroundJobStatusBackgroundJobStatusIDOperation value in schema order.
+func GetBackgroundJobStatusBackgroundJobStatusIDOperationValues() []GetBackgroundJobStatusBackgroundJobStatusIDOperation {
+	return []GetBackgroundJobStatusBackgroundJobStatusIDOperation{
+		GetBackgroundJobStatusBackgroundJobStatusIDOperationCreate,
+		GetBackgroundJobStatusBackgroundJobStatusIDOperationUpdate,
+		GetBackgroundJobStatusBackgroundJobStatusIDOperationDelete,
+		GetBackgroundJobStatusBackgroundJobStatusIDOperationMove,
+		GetBackgroundJobStatusBackgroundJobStatusIDOperationAddTags,
+		GetBackgroundJobStatusBackgroundJobStatusIDOperationArchive,
+		GetBackgroundJobStatusBackgroundJobStatusIDOperationGenerate,
+		GetBackgroundJobStatusBackgroundJobStatusIDOperationPurchase,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *GetBackgroundJobStatusBackgroundJobStatusIDOperation) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "create", "update", "delete", "move", "add_tags", "archive", "purchase":
+		case "create", "update", "delete", "move", "add_tags", "archive", "generate", "purchase":
 			return true
 		}
 	}
@@ -181,6 +224,14 @@ func (e ObjectStatus) ToPointer() *ObjectStatus {
 	return &e
 }
 
+// ObjectStatusValues returns every known ObjectStatus value in schema order.
+func ObjectStatusValues() []ObjectStatus {
+	return []ObjectStatus{
+		ObjectStatusSucceeded,
+		ObjectStatusFailed,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *ObjectStatus) IsExact() bool {
 	if e != nil {
@@ -196,7 +247,8 @@ type GetBackgroundJobStatusBackgroundJobStatusIDResult struct {
 	// The zero-based index of the action within the submitted batch.
 	Position int64 `json:"position"`
 	// The operation that was performed. `purchase` appears only for
-	// operations submitted through the Create Bulk Purchase endpoint.
+	// operations submitted through the Create Bulk Purchase endpoint
+	// before it was renamed to `generate`.
 	//
 	Operation *GetBackgroundJobStatusBackgroundJobStatusIDOperation `json:"operation,omitzero"`
 	// The type of resource the action operated on.
@@ -423,6 +475,8 @@ type GetBackgroundJobStatusBackgroundJobStatusIDBackgroundJobStatus struct {
 	// poll content. Use `type` to discriminate which shape this is.
 	//
 	Object *Object `json:"object,omitzero"`
+	// Human-readable detail about the job's status, present only when the job type sets one.
+	Message *string `json:"message,omitzero"`
 }
 
 func (g *GetBackgroundJobStatusBackgroundJobStatusIDBackgroundJobStatus) GetID() int64 {
@@ -451,6 +505,13 @@ func (g *GetBackgroundJobStatusBackgroundJobStatusIDBackgroundJobStatus) GetObje
 		return nil
 	}
 	return g.Object
+}
+
+func (g *GetBackgroundJobStatusBackgroundJobStatusIDBackgroundJobStatus) GetMessage() *string {
+	if g == nil {
+		return nil
+	}
+	return g.Message
 }
 
 // GetBackgroundJobStatusBackgroundJobStatusIDResponseBody - OK

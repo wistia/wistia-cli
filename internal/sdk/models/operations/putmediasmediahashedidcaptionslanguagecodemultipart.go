@@ -41,7 +41,7 @@ func (p *PutMediasMediaHashedIDCaptionsLanguageCodeMultipartRequestBody) GetCapt
 type PutMediasMediaHashedIDCaptionsLanguageCodeMultipartRequest struct {
 	// Unique identifier for the media.
 	MediaHashedID string `pathParam:"style=simple,explode=false,name=mediaHashedId"`
-	// Language code conforming to ISO-639-2 for which the captions should be updated.
+	// Language code conforming to ISO-639-2 for which the captions should be updated. Must be the track's stored code (e.g., `fre`).
 	LanguageCode string                                                         `pathParam:"style=simple,explode=false,name=languageCode"`
 	Body         PutMediasMediaHashedIDCaptionsLanguageCodeMultipartRequestBody `request:"mediaType=multipart/form-data"`
 }
@@ -79,6 +79,16 @@ const (
 
 func (e PutMediasMediaHashedIDCaptionsLanguageCodeMultipartCode) ToPointer() *PutMediasMediaHashedIDCaptionsLanguageCodeMultipartCode {
 	return &e
+}
+
+// PutMediasMediaHashedIDCaptionsLanguageCodeMultipartCodeValues returns every known PutMediasMediaHashedIDCaptionsLanguageCodeMultipartCode value in schema order.
+func PutMediasMediaHashedIDCaptionsLanguageCodeMultipartCodeValues() []PutMediasMediaHashedIDCaptionsLanguageCodeMultipartCode {
+	return []PutMediasMediaHashedIDCaptionsLanguageCodeMultipartCode{
+		PutMediasMediaHashedIDCaptionsLanguageCodeMultipartCodeUnauthorizedCredentials,
+		PutMediasMediaHashedIDCaptionsLanguageCodeMultipartCodeAccountInactive,
+		PutMediasMediaHashedIDCaptionsLanguageCodeMultipartCodeUnauthorizedScope,
+		PutMediasMediaHashedIDCaptionsLanguageCodeMultipartCodeUnauthorizedParams,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

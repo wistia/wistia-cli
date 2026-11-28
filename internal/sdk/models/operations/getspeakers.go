@@ -24,6 +24,16 @@ const (
 func (e GetSpeakersSortBy) ToPointer() *GetSpeakersSortBy {
 	return &e
 }
+
+// GetSpeakersSortByValues returns every known GetSpeakersSortBy value in schema order.
+func GetSpeakersSortByValues() []GetSpeakersSortBy {
+	return []GetSpeakersSortBy{
+		GetSpeakersSortByID,
+		GetSpeakersSortByName,
+		GetSpeakersSortByCreated,
+		GetSpeakersSortByUpdated,
+	}
+}
 func (e *GetSpeakersSortBy) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -55,6 +65,14 @@ const (
 func (e GetSpeakersSortDirection) ToPointer() *GetSpeakersSortDirection {
 	return &e
 }
+
+// GetSpeakersSortDirectionValues returns every known GetSpeakersSortDirection value in schema order.
+func GetSpeakersSortDirectionValues() []GetSpeakersSortDirection {
+	return []GetSpeakersSortDirection{
+		GetSpeakersSortDirectionZero,
+		GetSpeakersSortDirectionOne,
+	}
+}
 func (e *GetSpeakersSortDirection) UnmarshalJSON(data []byte) error {
 	var v int64
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -81,6 +99,14 @@ const (
 
 func (e GetSpeakersEnabled) ToPointer() *GetSpeakersEnabled {
 	return &e
+}
+
+// GetSpeakersEnabledValues returns every known GetSpeakersEnabled value in schema order.
+func GetSpeakersEnabledValues() []GetSpeakersEnabled {
+	return []GetSpeakersEnabled{
+		GetSpeakersEnabledZero,
+		GetSpeakersEnabledOne,
+	}
 }
 func (e *GetSpeakersEnabled) UnmarshalJSON(data []byte) error {
 	var v int64
@@ -231,6 +257,16 @@ const (
 
 func (e GetSpeakersCode) ToPointer() *GetSpeakersCode {
 	return &e
+}
+
+// GetSpeakersCodeValues returns every known GetSpeakersCode value in schema order.
+func GetSpeakersCodeValues() []GetSpeakersCode {
+	return []GetSpeakersCode{
+		GetSpeakersCodeUnauthorizedCredentials,
+		GetSpeakersCodeAccountInactive,
+		GetSpeakersCodeUnauthorizedScope,
+		GetSpeakersCodeUnauthorizedParams,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

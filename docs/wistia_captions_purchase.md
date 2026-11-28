@@ -28,18 +28,18 @@ wistia captions purchase [media-hashed-id] [flags]
 ### Examples
 
 ```
-  wistia captions purchase --media-hashed-id <id>
+  wistia captions purchase --media-hashed-id <id> --automated=false
 ```
 
 ### Options
 
 ```
-      --automated                Order computer-generated captions or human-reviewed ones. What each costs depends on the account's plan and billing settings; computer-generated captions are included at no cost on some plans and billed per minute on others.
-      --automatically-enable     Automatically enable captions for the media once the order is ready or hold the captions for review before manually enabling. (default true)
+      --automated                Generate computer-generated captions (true) or human-reviewed ones (false). How each is metered depends on the account's plan and settings; computer-generated captions are included on some plans and metered per minute on others. [required]
+      --automatically-enable     Automatically enable captions for the media once they are ready or hold the captions for review before manually enabling.
       --body string              Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF.
   -h, --help                     help for purchase
   -m, --media-hashed-id string   Unique identifier for the media. (or pass it as the [media-hashed-id] argument)
-  -r, --rush                     Enable rush order for one business day turnaround instead of the standard four, for human-reviewed captions only. Rush bills at the account's higher per-minute rate. (default true)
+  -r, --rush                     Enable rush for one business day turnaround instead of the standard four, for human-reviewed captions only. Rush is metered at the account's higher per-minute rate.
 ```
 
 ### Options inherited from parent commands

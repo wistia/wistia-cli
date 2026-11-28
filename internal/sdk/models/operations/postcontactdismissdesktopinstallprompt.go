@@ -22,6 +22,16 @@ func (e PostContactDismissDesktopInstallPromptCode) ToPointer() *PostContactDism
 	return &e
 }
 
+// PostContactDismissDesktopInstallPromptCodeValues returns every known PostContactDismissDesktopInstallPromptCode value in schema order.
+func PostContactDismissDesktopInstallPromptCodeValues() []PostContactDismissDesktopInstallPromptCode {
+	return []PostContactDismissDesktopInstallPromptCode{
+		PostContactDismissDesktopInstallPromptCodeUnauthorizedCredentials,
+		PostContactDismissDesktopInstallPromptCodeAccountInactive,
+		PostContactDismissDesktopInstallPromptCodeUnauthorizedScope,
+		PostContactDismissDesktopInstallPromptCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *PostContactDismissDesktopInstallPromptCode) IsExact() bool {
 	if e != nil {

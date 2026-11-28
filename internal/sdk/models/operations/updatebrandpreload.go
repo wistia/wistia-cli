@@ -58,6 +58,16 @@ func (e UpdateBrandPreloadCode) ToPointer() *UpdateBrandPreloadCode {
 	return &e
 }
 
+// UpdateBrandPreloadCodeValues returns every known UpdateBrandPreloadCode value in schema order.
+func UpdateBrandPreloadCodeValues() []UpdateBrandPreloadCode {
+	return []UpdateBrandPreloadCode{
+		UpdateBrandPreloadCodeUnauthorizedCredentials,
+		UpdateBrandPreloadCodeAccountInactive,
+		UpdateBrandPreloadCodeUnauthorizedScope,
+		UpdateBrandPreloadCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *UpdateBrandPreloadCode) IsExact() bool {
 	if e != nil {

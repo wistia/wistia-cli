@@ -23,6 +23,14 @@ const (
 func (e GetWebinarsEnabled) ToPointer() *GetWebinarsEnabled {
 	return &e
 }
+
+// GetWebinarsEnabledValues returns every known GetWebinarsEnabled value in schema order.
+func GetWebinarsEnabledValues() []GetWebinarsEnabled {
+	return []GetWebinarsEnabled{
+		GetWebinarsEnabledZero,
+		GetWebinarsEnabledOne,
+	}
+}
 func (e *GetWebinarsEnabled) UnmarshalJSON(data []byte) error {
 	var v int64
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -97,6 +105,17 @@ const (
 func (e GetWebinarsSortBy) ToPointer() *GetWebinarsSortBy {
 	return &e
 }
+
+// GetWebinarsSortByValues returns every known GetWebinarsSortBy value in schema order.
+func GetWebinarsSortByValues() []GetWebinarsSortBy {
+	return []GetWebinarsSortBy{
+		GetWebinarsSortByScheduledFor,
+		GetWebinarsSortByTitle,
+		GetWebinarsSortByCreated,
+		GetWebinarsSortByUpdated,
+		GetWebinarsSortByID,
+	}
+}
 func (e *GetWebinarsSortBy) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -130,6 +149,14 @@ const (
 func (e GetWebinarsSortDirection) ToPointer() *GetWebinarsSortDirection {
 	return &e
 }
+
+// GetWebinarsSortDirectionValues returns every known GetWebinarsSortDirection value in schema order.
+func GetWebinarsSortDirectionValues() []GetWebinarsSortDirection {
+	return []GetWebinarsSortDirection{
+		GetWebinarsSortDirectionZero,
+		GetWebinarsSortDirectionOne,
+	}
+}
 func (e *GetWebinarsSortDirection) UnmarshalJSON(data []byte) error {
 	var v int64
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -156,6 +183,14 @@ const (
 
 func (e Started) ToPointer() *Started {
 	return &e
+}
+
+// StartedValues returns every known Started value in schema order.
+func StartedValues() []Started {
+	return []Started{
+		StartedTrue,
+		StartedFalse,
+	}
 }
 func (e *Started) UnmarshalJSON(data []byte) error {
 	var v string
@@ -287,6 +322,16 @@ func (e GetWebinarsCode) ToPointer() *GetWebinarsCode {
 	return &e
 }
 
+// GetWebinarsCodeValues returns every known GetWebinarsCode value in schema order.
+func GetWebinarsCodeValues() []GetWebinarsCode {
+	return []GetWebinarsCode{
+		GetWebinarsCodeUnauthorizedCredentials,
+		GetWebinarsCodeAccountInactive,
+		GetWebinarsCodeUnauthorizedScope,
+		GetWebinarsCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *GetWebinarsCode) IsExact() bool {
 	if e != nil {
@@ -313,6 +358,19 @@ const (
 
 func (e GetWebinarsLifecycleStatus) ToPointer() *GetWebinarsLifecycleStatus {
 	return &e
+}
+
+// GetWebinarsLifecycleStatusValues returns every known GetWebinarsLifecycleStatus value in schema order.
+func GetWebinarsLifecycleStatusValues() []GetWebinarsLifecycleStatus {
+	return []GetWebinarsLifecycleStatus{
+		GetWebinarsLifecycleStatusPending,
+		GetWebinarsLifecycleStatusReady,
+		GetWebinarsLifecycleStatusStarting,
+		GetWebinarsLifecycleStatusStarted,
+		GetWebinarsLifecycleStatusEnded,
+		GetWebinarsLifecycleStatusVodReady,
+		GetWebinarsLifecycleStatusFailed,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

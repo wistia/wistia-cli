@@ -23,6 +23,16 @@ const (
 func (e Provider) ToPointer() *Provider {
 	return &e
 }
+
+// ProviderValues returns every known Provider value in schema order.
+func ProviderValues() []Provider {
+	return []Provider{
+		ProviderWistiaForm,
+		ProviderHubspot,
+		ProviderMarketo,
+		ProviderPardot,
+	}
+}
 func (e *Provider) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -196,6 +206,16 @@ const (
 
 func (e PutMediasMediaIDCustomizationsLeadCaptureCode) ToPointer() *PutMediasMediaIDCustomizationsLeadCaptureCode {
 	return &e
+}
+
+// PutMediasMediaIDCustomizationsLeadCaptureCodeValues returns every known PutMediasMediaIDCustomizationsLeadCaptureCode value in schema order.
+func PutMediasMediaIDCustomizationsLeadCaptureCodeValues() []PutMediasMediaIDCustomizationsLeadCaptureCode {
+	return []PutMediasMediaIDCustomizationsLeadCaptureCode{
+		PutMediasMediaIDCustomizationsLeadCaptureCodeUnauthorizedCredentials,
+		PutMediasMediaIDCustomizationsLeadCaptureCodeAccountInactive,
+		PutMediasMediaIDCustomizationsLeadCaptureCodeUnauthorizedScope,
+		PutMediasMediaIDCustomizationsLeadCaptureCodeUnauthorizedParams,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

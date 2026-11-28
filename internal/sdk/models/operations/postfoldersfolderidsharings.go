@@ -24,6 +24,14 @@ const (
 func (e SendEmailNotification) ToPointer() *SendEmailNotification {
 	return &e
 }
+
+// SendEmailNotificationValues returns every known SendEmailNotification value in schema order.
+func SendEmailNotificationValues() []SendEmailNotification {
+	return []SendEmailNotification{
+		SendEmailNotificationZero,
+		SendEmailNotificationOne,
+	}
+}
 func (e *SendEmailNotification) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -142,6 +150,16 @@ const (
 
 func (e PostFoldersFolderIDSharingsCode) ToPointer() *PostFoldersFolderIDSharingsCode {
 	return &e
+}
+
+// PostFoldersFolderIDSharingsCodeValues returns every known PostFoldersFolderIDSharingsCode value in schema order.
+func PostFoldersFolderIDSharingsCodeValues() []PostFoldersFolderIDSharingsCode {
+	return []PostFoldersFolderIDSharingsCode{
+		PostFoldersFolderIDSharingsCodeUnauthorizedCredentials,
+		PostFoldersFolderIDSharingsCodeAccountInactive,
+		PostFoldersFolderIDSharingsCodeUnauthorizedScope,
+		PostFoldersFolderIDSharingsCodeUnauthorizedParams,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

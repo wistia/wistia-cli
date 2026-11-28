@@ -36,6 +36,7 @@ wistia [flags]
 ### SEE ALSO
 
 * [wistia account](wistia_account.md)	 - Operations for account
+* [wistia account-activity](wistia_account-activity.md)	 - Operations for account-activity
 * [wistia account-trials](wistia_account-trials.md)	 - Operations for account-trials
 * [wistia allowed-domains](wistia_allowed-domains.md)	 - Operations for allowed-domains
 * [wistia analytics-account](wistia_analytics-account.md)	 - Operations for analytics-account
@@ -64,9 +65,9 @@ wistia [flags]
 * [wistia localizations](wistia_localizations.md)	 - Operations for localizations
 * [wistia media](wistia_media.md)	 - Operations for media
 * [wistia media-extended-audio-descriptions](wistia_media-extended-audio-descriptions.md)	 - Operations for media-extended-audio-descriptions
+* [wistia pronunciation-words](wistia_pronunciation-words.md)	 - Operations for pronunciation-words
 * [wistia push-devices](wistia_push-devices.md)	 - Operations for push-devices
 * [wistia recording-rooms](wistia_recording-rooms.md)	 - Operations for recording-rooms
-* [wistia remix](wistia_remix.md)	 - Operations for remix
 * [wistia resource-urls](wistia_resource-urls.md)	 - Operations for resource-urls
 * [wistia review-bundles](wistia_review-bundles.md)	 - Operations for review-bundles
 * [wistia search](wistia_search.md)	 - Operations for search

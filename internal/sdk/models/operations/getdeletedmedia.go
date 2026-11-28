@@ -26,6 +26,17 @@ const (
 func (e GetDeletedMediaSortBy) ToPointer() *GetDeletedMediaSortBy {
 	return &e
 }
+
+// GetDeletedMediaSortByValues returns every known GetDeletedMediaSortBy value in schema order.
+func GetDeletedMediaSortByValues() []GetDeletedMediaSortBy {
+	return []GetDeletedMediaSortBy{
+		GetDeletedMediaSortByID,
+		GetDeletedMediaSortByDeleted,
+		GetDeletedMediaSortByName,
+		GetDeletedMediaSortByType,
+		GetDeletedMediaSortByCreated,
+	}
+}
 func (e *GetDeletedMediaSortBy) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -59,6 +70,14 @@ const (
 func (e GetDeletedMediaSortDirection) ToPointer() *GetDeletedMediaSortDirection {
 	return &e
 }
+
+// GetDeletedMediaSortDirectionValues returns every known GetDeletedMediaSortDirection value in schema order.
+func GetDeletedMediaSortDirectionValues() []GetDeletedMediaSortDirection {
+	return []GetDeletedMediaSortDirection{
+		GetDeletedMediaSortDirectionZero,
+		GetDeletedMediaSortDirectionOne,
+	}
+}
 func (e *GetDeletedMediaSortDirection) UnmarshalJSON(data []byte) error {
 	var v int64
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -85,6 +104,14 @@ const (
 
 func (e GetDeletedMediaEnabled) ToPointer() *GetDeletedMediaEnabled {
 	return &e
+}
+
+// GetDeletedMediaEnabledValues returns every known GetDeletedMediaEnabled value in schema order.
+func GetDeletedMediaEnabledValues() []GetDeletedMediaEnabled {
+	return []GetDeletedMediaEnabled{
+		GetDeletedMediaEnabledZero,
+		GetDeletedMediaEnabledOne,
+	}
 }
 func (e *GetDeletedMediaEnabled) UnmarshalJSON(data []byte) error {
 	var v int64
@@ -235,6 +262,16 @@ const (
 
 func (e GetDeletedMediaCode) ToPointer() *GetDeletedMediaCode {
 	return &e
+}
+
+// GetDeletedMediaCodeValues returns every known GetDeletedMediaCode value in schema order.
+func GetDeletedMediaCodeValues() []GetDeletedMediaCode {
+	return []GetDeletedMediaCode{
+		GetDeletedMediaCodeUnauthorizedCredentials,
+		GetDeletedMediaCodeAccountInactive,
+		GetDeletedMediaCodeUnauthorizedScope,
+		GetDeletedMediaCodeUnauthorizedParams,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

@@ -21,7 +21,7 @@ func InitAnalyticsAccountRoot(parent *cobra.Command) error {
 			}
 			return cmd.Help()
 		},
-		Aliases: []string{"aa"},
+		Aliases: []string{"aac"},
 	}
 
 	if err := initGetCmd(AnalyticsAccountCmd); err != nil {

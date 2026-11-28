@@ -32,6 +32,16 @@ const (
 func (e VisibilityRequest) ToPointer() *VisibilityRequest {
 	return &e
 }
+
+// VisibilityRequestValues returns every known VisibilityRequest value in schema order.
+func VisibilityRequestValues() []VisibilityRequest {
+	return []VisibilityRequest{
+		VisibilityRequestUnlocked,
+		VisibilityRequestAccount,
+		VisibilityRequestLocked,
+		VisibilityRequestDomainVerified,
+	}
+}
 func (e *VisibilityRequest) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -108,6 +118,16 @@ func (e PutMediasMediaIDShareLinkCode) ToPointer() *PutMediasMediaIDShareLinkCod
 	return &e
 }
 
+// PutMediasMediaIDShareLinkCodeValues returns every known PutMediasMediaIDShareLinkCode value in schema order.
+func PutMediasMediaIDShareLinkCodeValues() []PutMediasMediaIDShareLinkCode {
+	return []PutMediasMediaIDShareLinkCode{
+		PutMediasMediaIDShareLinkCodeUnauthorizedCredentials,
+		PutMediasMediaIDShareLinkCodeAccountInactive,
+		PutMediasMediaIDShareLinkCodeUnauthorizedScope,
+		PutMediasMediaIDShareLinkCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *PutMediasMediaIDShareLinkCode) IsExact() bool {
 	if e != nil {
@@ -139,6 +159,16 @@ const (
 
 func (e PutMediasMediaIDShareLinkVisibilityResponse) ToPointer() *PutMediasMediaIDShareLinkVisibilityResponse {
 	return &e
+}
+
+// PutMediasMediaIDShareLinkVisibilityResponseValues returns every known PutMediasMediaIDShareLinkVisibilityResponse value in schema order.
+func PutMediasMediaIDShareLinkVisibilityResponseValues() []PutMediasMediaIDShareLinkVisibilityResponse {
+	return []PutMediasMediaIDShareLinkVisibilityResponse{
+		PutMediasMediaIDShareLinkVisibilityResponseUnlocked,
+		PutMediasMediaIDShareLinkVisibilityResponseAccount,
+		PutMediasMediaIDShareLinkVisibilityResponseLocked,
+		PutMediasMediaIDShareLinkVisibilityResponseDomainVerified,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

@@ -3,7 +3,7 @@
 
 package sdk
 
-// Generated from OpenAPI doc version edge-version and generator version 2.956.1
+// Generated from OpenAPI doc version edge-version and generator version 2.969.4
 
 import (
 	"context"
@@ -55,6 +55,7 @@ type Wistia struct {
 	PushDevices                    *PushDevices
 	ReviewBundles                  *ReviewBundles
 	CustomMetadataFieldDefinitions *CustomMetadataFieldDefinitions
+	AccountActivity                *AccountActivity
 	DeletedMedia                   *DeletedMedia
 	Media                          *Media
 	Customizations                 *Customizations
@@ -90,7 +91,7 @@ type Wistia struct {
 	ExpiringAccessTokens           *ExpiringAccessTokens
 	BackgroundJobStatus            *BackgroundJobStatus
 	AllowedDomains                 *AllowedDomains
-	Remix                          *Remix
+	PronunciationWords             *PronunciationWords
 	StatsAccount                   *StatsAccount
 	StatsProjects                  *StatsProjects
 	StatsMedia                     *StatsMedia
@@ -174,11 +175,11 @@ func WithTimeout(timeout time.Duration) SDKOption {
 // New creates a new instance of the SDK with the provided options
 func New(opts ...SDKOption) *Wistia {
 	sdk := &Wistia{
-		SDKVersion: "0.3.0",
+		SDKVersion: "0.3.1",
 		sdkConfiguration: config.SDKConfiguration{
-			UserAgent:         "speakeasy-sdk/go 0.3.0 2.956.1 edge-version github.com/wistia/wistia-cli/internal/sdk",
-			SDKVersion:        "0.3.0",
-			GenVersion:        "2.956.1",
+			UserAgent:         "speakeasy-sdk/go 0.3.1 2.969.4 edge-version github.com/wistia/wistia-cli/internal/sdk",
+			SDKVersion:        "0.3.1",
+			GenVersion:        "2.969.4",
 			OpenAPIDocVersion: "edge-version",
 			ServerList:        ServerList,
 		},
@@ -199,6 +200,7 @@ func New(opts ...SDKOption) *Wistia {
 	sdk.PushDevices = newPushDevices(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.ReviewBundles = newReviewBundles(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.CustomMetadataFieldDefinitions = newCustomMetadataFieldDefinitions(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.AccountActivity = newAccountActivity(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.DeletedMedia = newDeletedMedia(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Media = newMedia(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Customizations = newCustomizations(sdk, sdk.sdkConfiguration, sdk.hooks)
@@ -234,7 +236,7 @@ func New(opts ...SDKOption) *Wistia {
 	sdk.ExpiringAccessTokens = newExpiringAccessTokens(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.BackgroundJobStatus = newBackgroundJobStatus(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.AllowedDomains = newAllowedDomains(sdk, sdk.sdkConfiguration, sdk.hooks)
-	sdk.Remix = newRemix(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.PronunciationWords = newPronunciationWords(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.StatsAccount = newStatsAccount(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.StatsProjects = newStatsProjects(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.StatsMedia = newStatsMedia(sdk, sdk.sdkConfiguration, sdk.hooks)

@@ -43,6 +43,16 @@ func (e PostTaggingsBulkCreateCode) ToPointer() *PostTaggingsBulkCreateCode {
 	return &e
 }
 
+// PostTaggingsBulkCreateCodeValues returns every known PostTaggingsBulkCreateCode value in schema order.
+func PostTaggingsBulkCreateCodeValues() []PostTaggingsBulkCreateCode {
+	return []PostTaggingsBulkCreateCode{
+		PostTaggingsBulkCreateCodeUnauthorizedCredentials,
+		PostTaggingsBulkCreateCodeAccountInactive,
+		PostTaggingsBulkCreateCodeUnauthorizedScope,
+		PostTaggingsBulkCreateCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *PostTaggingsBulkCreateCode) IsExact() bool {
 	if e != nil {
@@ -66,6 +76,16 @@ const (
 
 func (e PostTaggingsBulkCreateStatus) ToPointer() *PostTaggingsBulkCreateStatus {
 	return &e
+}
+
+// PostTaggingsBulkCreateStatusValues returns every known PostTaggingsBulkCreateStatus value in schema order.
+func PostTaggingsBulkCreateStatusValues() []PostTaggingsBulkCreateStatus {
+	return []PostTaggingsBulkCreateStatus{
+		PostTaggingsBulkCreateStatusQueued,
+		PostTaggingsBulkCreateStatusStarted,
+		PostTaggingsBulkCreateStatusFinished,
+		PostTaggingsBulkCreateStatusFailed,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

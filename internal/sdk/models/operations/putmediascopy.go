@@ -43,6 +43,16 @@ func (e PutMediasCopyCode) ToPointer() *PutMediasCopyCode {
 	return &e
 }
 
+// PutMediasCopyCodeValues returns every known PutMediasCopyCode value in schema order.
+func PutMediasCopyCodeValues() []PutMediasCopyCode {
+	return []PutMediasCopyCode{
+		PutMediasCopyCodeUnauthorizedCredentials,
+		PutMediasCopyCodeAccountInactive,
+		PutMediasCopyCodeUnauthorizedScope,
+		PutMediasCopyCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *PutMediasCopyCode) IsExact() bool {
 	if e != nil {
@@ -66,6 +76,16 @@ const (
 
 func (e PutMediasCopyStatus) ToPointer() *PutMediasCopyStatus {
 	return &e
+}
+
+// PutMediasCopyStatusValues returns every known PutMediasCopyStatus value in schema order.
+func PutMediasCopyStatusValues() []PutMediasCopyStatus {
+	return []PutMediasCopyStatus{
+		PutMediasCopyStatusQueued,
+		PutMediasCopyStatusStarted,
+		PutMediasCopyStatusFinished,
+		PutMediasCopyStatusFailed,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

@@ -23,6 +23,16 @@ func (e GetCreditBalanceCode) ToPointer() *GetCreditBalanceCode {
 	return &e
 }
 
+// GetCreditBalanceCodeValues returns every known GetCreditBalanceCode value in schema order.
+func GetCreditBalanceCodeValues() []GetCreditBalanceCode {
+	return []GetCreditBalanceCode{
+		GetCreditBalanceCodeUnauthorizedCredentials,
+		GetCreditBalanceCodeAccountInactive,
+		GetCreditBalanceCodeUnauthorizedScope,
+		GetCreditBalanceCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *GetCreditBalanceCode) IsExact() bool {
 	if e != nil {

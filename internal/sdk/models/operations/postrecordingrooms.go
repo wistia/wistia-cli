@@ -57,6 +57,16 @@ func (e PostRecordingRoomsCode) ToPointer() *PostRecordingRoomsCode {
 	return &e
 }
 
+// PostRecordingRoomsCodeValues returns every known PostRecordingRoomsCode value in schema order.
+func PostRecordingRoomsCodeValues() []PostRecordingRoomsCode {
+	return []PostRecordingRoomsCode{
+		PostRecordingRoomsCodeUnauthorizedCredentials,
+		PostRecordingRoomsCodeAccountInactive,
+		PostRecordingRoomsCodeUnauthorizedScope,
+		PostRecordingRoomsCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *PostRecordingRoomsCode) IsExact() bool {
 	if e != nil {

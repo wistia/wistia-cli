@@ -75,7 +75,7 @@ Sources are shown as:
   [unset]   - Not configured
 
 Credential values are masked for security.`,
-		Annotations: map[string]string{"speakeasy_settings_command": "true"},
+		Annotations: map[string]string{"speakeasy_settings_command": "true", "speakeasy_config_optional": "true"},
 		Args:        cobra.NoArgs,
 		RunE:        runWhoamiCmd,
 	})
@@ -86,7 +86,7 @@ Credential values are masked for security.`,
 		Long: `Clear all stored authentication credentials from both the OS keychain and config file.
 
 This removes all credentials previously set via auth login or configure.`,
-		Annotations: map[string]string{"speakeasy_settings_command": "true"},
+		Annotations: map[string]string{"speakeasy_settings_command": "true", "speakeasy_config_optional": "true"},
 		Args:        cobra.NoArgs,
 		RunE:        runAuthLogoutCmd,
 	})
@@ -135,7 +135,7 @@ func runAuthLoginCmd(cmd *cobra.Command, args []string) error {
 				Placeholder(maskSecret(config.GetStoredSecret("bearer-auth", cfg.Security.BearerAuth))),
 		}
 
-		form := forms.New(forms.NewPage("", fields...)).Accessible(accessible).IO(cmd.InOrStdin(), cmd.OutOrStdout())
+		form := forms.New(forms.NewPage("", fields...)).Accessible(accessible).IO(cmd.InOrStdin(), cmd.ErrOrStderr())
 
 		if err := form.Run(); err != nil {
 			return fmt.Errorf("auth login: %w", err)
@@ -171,6 +171,9 @@ func runAuthLoginCmd(cmd *cobra.Command, args []string) error {
 func runAuthLogoutCmd(cmd *cobra.Command, args []string) error {
 	if dryRunLocalNoop(cmd, "auth logout removes local credentials only (no API request); nothing was changed.") {
 		return nil
+	}
+	if err := config.LoadError(); err != nil {
+		return fmt.Errorf("%w; fix or remove the file before logging out", err)
 	}
 	cfg := config.GetConfig()
 	if cfg == nil {

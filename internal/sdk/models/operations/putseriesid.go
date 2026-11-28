@@ -83,6 +83,16 @@ func (e PutSeriesIDCode) ToPointer() *PutSeriesIDCode {
 	return &e
 }
 
+// PutSeriesIDCodeValues returns every known PutSeriesIDCode value in schema order.
+func PutSeriesIDCodeValues() []PutSeriesIDCode {
+	return []PutSeriesIDCode{
+		PutSeriesIDCodeUnauthorizedCredentials,
+		PutSeriesIDCodeAccountInactive,
+		PutSeriesIDCodeUnauthorizedScope,
+		PutSeriesIDCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *PutSeriesIDCode) IsExact() bool {
 	if e != nil {

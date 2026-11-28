@@ -27,7 +27,7 @@ Sources are shown as:
   [unset]   - Not configured
 
 Credential values are masked for security.`,
-		Annotations: map[string]string{"speakeasy_settings_command": "true"},
+		Annotations: map[string]string{"speakeasy_settings_command": "true", "speakeasy_config_optional": "true"},
 		Args:        cobra.NoArgs,
 		RunE:        runWhoamiCmd,
 	}

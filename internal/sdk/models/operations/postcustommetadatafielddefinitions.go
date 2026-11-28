@@ -31,6 +31,21 @@ const (
 func (e FieldTypeRequest) ToPointer() *FieldTypeRequest {
 	return &e
 }
+
+// FieldTypeRequestValues returns every known FieldTypeRequest value in schema order.
+func FieldTypeRequestValues() []FieldTypeRequest {
+	return []FieldTypeRequest{
+		FieldTypeRequestText,
+		FieldTypeRequestNumber,
+		FieldTypeRequestDate,
+		FieldTypeRequestBoolean,
+		FieldTypeRequestSingleSelect,
+		FieldTypeRequestShortText,
+		FieldTypeRequestTime,
+		FieldTypeRequestDatetime,
+		FieldTypeRequestMultiSelect,
+	}
+}
 func (e *FieldTypeRequest) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -186,6 +201,16 @@ func (e PostCustomMetadataFieldDefinitionsCode) ToPointer() *PostCustomMetadataF
 	return &e
 }
 
+// PostCustomMetadataFieldDefinitionsCodeValues returns every known PostCustomMetadataFieldDefinitionsCode value in schema order.
+func PostCustomMetadataFieldDefinitionsCodeValues() []PostCustomMetadataFieldDefinitionsCode {
+	return []PostCustomMetadataFieldDefinitionsCode{
+		PostCustomMetadataFieldDefinitionsCodeUnauthorizedCredentials,
+		PostCustomMetadataFieldDefinitionsCodeAccountInactive,
+		PostCustomMetadataFieldDefinitionsCodeUnauthorizedScope,
+		PostCustomMetadataFieldDefinitionsCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *PostCustomMetadataFieldDefinitionsCode) IsExact() bool {
 	if e != nil {
@@ -219,6 +244,26 @@ const (
 
 func (e PostCustomMetadataFieldDefinitionsFieldTypeResponse) ToPointer() *PostCustomMetadataFieldDefinitionsFieldTypeResponse {
 	return &e
+}
+
+// PostCustomMetadataFieldDefinitionsFieldTypeResponseValues returns every known PostCustomMetadataFieldDefinitionsFieldTypeResponse value in schema order.
+func PostCustomMetadataFieldDefinitionsFieldTypeResponseValues() []PostCustomMetadataFieldDefinitionsFieldTypeResponse {
+	return []PostCustomMetadataFieldDefinitionsFieldTypeResponse{
+		PostCustomMetadataFieldDefinitionsFieldTypeResponseText,
+		PostCustomMetadataFieldDefinitionsFieldTypeResponseNumber,
+		PostCustomMetadataFieldDefinitionsFieldTypeResponseDate,
+		PostCustomMetadataFieldDefinitionsFieldTypeResponseBoolean,
+		PostCustomMetadataFieldDefinitionsFieldTypeResponseSingleSelect,
+		PostCustomMetadataFieldDefinitionsFieldTypeResponseShortText,
+		PostCustomMetadataFieldDefinitionsFieldTypeResponseURL,
+		PostCustomMetadataFieldDefinitionsFieldTypeResponseEmail,
+		PostCustomMetadataFieldDefinitionsFieldTypeResponseMoney,
+		PostCustomMetadataFieldDefinitionsFieldTypeResponseTime,
+		PostCustomMetadataFieldDefinitionsFieldTypeResponseDatetime,
+		PostCustomMetadataFieldDefinitionsFieldTypeResponseMultiSelect,
+		PostCustomMetadataFieldDefinitionsFieldTypeResponseContactRef,
+		PostCustomMetadataFieldDefinitionsFieldTypeResponseContactMultiRef,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
@@ -513,6 +558,15 @@ func (e PostCustomMetadataFieldDefinitionsSource) ToPointer() *PostCustomMetadat
 	return &e
 }
 
+// PostCustomMetadataFieldDefinitionsSourceValues returns every known PostCustomMetadataFieldDefinitionsSource value in schema order.
+func PostCustomMetadataFieldDefinitionsSourceValues() []PostCustomMetadataFieldDefinitionsSource {
+	return []PostCustomMetadataFieldDefinitionsSource{
+		PostCustomMetadataFieldDefinitionsSourceUI,
+		PostCustomMetadataFieldDefinitionsSourceAPI,
+		PostCustomMetadataFieldDefinitionsSourceMcp,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *PostCustomMetadataFieldDefinitionsSource) IsExact() bool {
 	if e != nil {
@@ -532,6 +586,13 @@ const (
 
 func (e PostCustomMetadataFieldDefinitionsType) ToPointer() *PostCustomMetadataFieldDefinitionsType {
 	return &e
+}
+
+// PostCustomMetadataFieldDefinitionsTypeValues returns every known PostCustomMetadataFieldDefinitionsType value in schema order.
+func PostCustomMetadataFieldDefinitionsTypeValues() []PostCustomMetadataFieldDefinitionsType {
+	return []PostCustomMetadataFieldDefinitionsType{
+		PostCustomMetadataFieldDefinitionsTypeContact,
+	}
 }
 func (e *PostCustomMetadataFieldDefinitionsType) UnmarshalJSON(data []byte) error {
 	var v string

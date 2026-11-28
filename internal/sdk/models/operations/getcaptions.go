@@ -22,6 +22,13 @@ const (
 func (e GetCaptionsInclude) ToPointer() *GetCaptionsInclude {
 	return &e
 }
+
+// GetCaptionsIncludeValues returns every known GetCaptionsInclude value in schema order.
+func GetCaptionsIncludeValues() []GetCaptionsInclude {
+	return []GetCaptionsInclude{
+		GetCaptionsIncludeMetadata,
+	}
+}
 func (e *GetCaptionsInclude) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -46,6 +53,14 @@ const (
 
 func (e GetCaptionsEnabled) ToPointer() *GetCaptionsEnabled {
 	return &e
+}
+
+// GetCaptionsEnabledValues returns every known GetCaptionsEnabled value in schema order.
+func GetCaptionsEnabledValues() []GetCaptionsEnabled {
+	return []GetCaptionsEnabled{
+		GetCaptionsEnabledZero,
+		GetCaptionsEnabledOne,
+	}
 }
 func (e *GetCaptionsEnabled) UnmarshalJSON(data []byte) error {
 	var v int64
@@ -119,6 +134,16 @@ const (
 func (e GetCaptionsSortBy) ToPointer() *GetCaptionsSortBy {
 	return &e
 }
+
+// GetCaptionsSortByValues returns every known GetCaptionsSortBy value in schema order.
+func GetCaptionsSortByValues() []GetCaptionsSortBy {
+	return []GetCaptionsSortBy{
+		GetCaptionsSortByID,
+		GetCaptionsSortByCreated,
+		GetCaptionsSortByUpdated,
+		GetCaptionsSortByLanguage,
+	}
+}
 func (e *GetCaptionsSortBy) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -149,6 +174,14 @@ const (
 
 func (e GetCaptionsSortDirection) ToPointer() *GetCaptionsSortDirection {
 	return &e
+}
+
+// GetCaptionsSortDirectionValues returns every known GetCaptionsSortDirection value in schema order.
+func GetCaptionsSortDirectionValues() []GetCaptionsSortDirection {
+	return []GetCaptionsSortDirection{
+		GetCaptionsSortDirectionZero,
+		GetCaptionsSortDirectionOne,
+	}
 }
 func (e *GetCaptionsSortDirection) UnmarshalJSON(data []byte) error {
 	var v int64
@@ -295,6 +328,16 @@ func (e GetCaptionsCode) ToPointer() *GetCaptionsCode {
 	return &e
 }
 
+// GetCaptionsCodeValues returns every known GetCaptionsCode value in schema order.
+func GetCaptionsCodeValues() []GetCaptionsCode {
+	return []GetCaptionsCode{
+		GetCaptionsCodeUnauthorizedCredentials,
+		GetCaptionsCodeAccountInactive,
+		GetCaptionsCodeUnauthorizedScope,
+		GetCaptionsCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *GetCaptionsCode) IsExact() bool {
 	if e != nil {
@@ -437,6 +480,16 @@ const (
 
 func (e GetCaptionsDiarizationStatus) ToPointer() *GetCaptionsDiarizationStatus {
 	return &e
+}
+
+// GetCaptionsDiarizationStatusValues returns every known GetCaptionsDiarizationStatus value in schema order.
+func GetCaptionsDiarizationStatusValues() []GetCaptionsDiarizationStatus {
+	return []GetCaptionsDiarizationStatus{
+		GetCaptionsDiarizationStatusReady,
+		GetCaptionsDiarizationStatusProcessing,
+		GetCaptionsDiarizationStatusUnavailable,
+		GetCaptionsDiarizationStatusDisabled,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

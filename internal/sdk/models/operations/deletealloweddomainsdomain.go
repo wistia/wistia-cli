@@ -36,6 +36,16 @@ func (e DeleteAllowedDomainsDomainCode) ToPointer() *DeleteAllowedDomainsDomainC
 	return &e
 }
 
+// DeleteAllowedDomainsDomainCodeValues returns every known DeleteAllowedDomainsDomainCode value in schema order.
+func DeleteAllowedDomainsDomainCodeValues() []DeleteAllowedDomainsDomainCode {
+	return []DeleteAllowedDomainsDomainCode{
+		DeleteAllowedDomainsDomainCodeUnauthorizedCredentials,
+		DeleteAllowedDomainsDomainCodeAccountInactive,
+		DeleteAllowedDomainsDomainCodeUnauthorizedScope,
+		DeleteAllowedDomainsDomainCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *DeleteAllowedDomainsDomainCode) IsExact() bool {
 	if e != nil {

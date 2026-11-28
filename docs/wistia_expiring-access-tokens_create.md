@@ -14,6 +14,12 @@ token's scopes, or the subset named in `scopes`, and `authorizations` narrow it 
 objects and permissions they name. Use it as a bearer token for API requests, or pass it
 to iframe embeds such as the transcript editor.
 
+To upload from a browser, create a token from an API token that can upload, with a single
+authorization: `upload` on one folder
+(`{"type": "folder", "id": "<folder hashed id>", "permissions": ["upload"]}`). Pass it to
+the Uploader, or to the Upload API as a Bearer token with that folder's `project_id`. It
+can upload into that folder and nowhere else.
+
 Any API token can create one. A copy of a token with the "Act with a team member's
 permissions" permission (`all:delegate_to_contact_permissions` scope) acts with the
 permissions of the contact assigned to that token.

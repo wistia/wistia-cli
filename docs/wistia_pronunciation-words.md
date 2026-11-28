@@ -1,19 +1,19 @@
-## wistia remix
+## wistia pronunciation-words
 
-Operations for remix
+Operations for pronunciation-words
 
 ### Synopsis
 
-Operations for remix
+Operations for pronunciation-words
 
 ```
-wistia remix [flags]
+wistia pronunciation-words [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for remix
+  -h, --help   help for pronunciation-words
 ```
 
 ### Options inherited from parent commands
@@ -41,10 +41,10 @@ wistia remix [flags]
 ### SEE ALSO
 
 * [wistia](wistia.md)	 - Data API: Wistia Data API
-* [wistia remix get-remix-account-status](wistia_remix_get-remix-account-status.md)	 - Get Remix Account Status
-* [wistia remix get-remixes-remix-hashed-id](wistia_remix_get-remixes-remix-hashed-id.md)	 - Get Remix
-* [wistia remix post-remixes](wistia_remix_post-remixes.md)	 - Create Remix
-* [wistia remix post-remixes-remix-hashed-id-continue](wistia_remix_post-remixes-remix-hashed-id-continue.md)	 - Continue Remix
-* [wistia remix post-remixes-remix-hashed-id-export](wistia_remix_post-remixes-remix-hashed-id-export.md)	 - Export Remix
+* [wistia pronunciation-words delete-pronunciation-words-pronunciation-word-id](wistia_pronunciation-words_delete-pronunciation-words-pronunciation-word-id.md)	 - Delete Pronunciation Word
+* [wistia pronunciation-words get](wistia_pronunciation-words_get.md)	 - List Pronunciation Words
+* [wistia pronunciation-words post](wistia_pronunciation-words_post.md)	 - Create Pronunciation Word
+* [wistia pronunciation-words post-pronunciation-words-pronunciation-word-id-preview](wistia_pronunciation-words_post-pronunciation-words-pronunciation-word-id-preview.md)	 - Preview Pronunciation Word
+* [wistia pronunciation-words put-pronunciation-words-pronunciation-word-id](wistia_pronunciation-words_put-pronunciation-words-pronunciation-word-id.md)	 - Update Pronunciation Word
 
 Exit codes: 0 ok · 1 runtime · 2 usage · 3 authentication/authorization

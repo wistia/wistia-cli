@@ -43,6 +43,16 @@ func (e PostMediasImportURLCode) ToPointer() *PostMediasImportURLCode {
 	return &e
 }
 
+// PostMediasImportURLCodeValues returns every known PostMediasImportURLCode value in schema order.
+func PostMediasImportURLCodeValues() []PostMediasImportURLCode {
+	return []PostMediasImportURLCode{
+		PostMediasImportURLCodeUnauthorizedCredentials,
+		PostMediasImportURLCodeAccountInactive,
+		PostMediasImportURLCodeUnauthorizedScope,
+		PostMediasImportURLCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *PostMediasImportURLCode) IsExact() bool {
 	if e != nil {
@@ -66,6 +76,16 @@ const (
 
 func (e PostMediasImportURLStatus) ToPointer() *PostMediasImportURLStatus {
 	return &e
+}
+
+// PostMediasImportURLStatusValues returns every known PostMediasImportURLStatus value in schema order.
+func PostMediasImportURLStatusValues() []PostMediasImportURLStatus {
+	return []PostMediasImportURLStatus{
+		PostMediasImportURLStatusQueued,
+		PostMediasImportURLStatusStarted,
+		PostMediasImportURLStatusFinished,
+		PostMediasImportURLStatusFailed,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.

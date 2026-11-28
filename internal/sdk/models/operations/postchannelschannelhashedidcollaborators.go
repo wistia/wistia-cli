@@ -23,6 +23,14 @@ const (
 func (e RoleRequest) ToPointer() *RoleRequest {
 	return &e
 }
+
+// RoleRequestValues returns every known RoleRequest value in schema order.
+func RoleRequestValues() []RoleRequest {
+	return []RoleRequest{
+		RoleRequestAdmin,
+		RoleRequestViewer,
+	}
+}
 func (e *RoleRequest) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -95,6 +103,16 @@ func (e PostChannelsChannelHashedIDCollaboratorsCode) ToPointer() *PostChannelsC
 	return &e
 }
 
+// PostChannelsChannelHashedIDCollaboratorsCodeValues returns every known PostChannelsChannelHashedIDCollaboratorsCode value in schema order.
+func PostChannelsChannelHashedIDCollaboratorsCodeValues() []PostChannelsChannelHashedIDCollaboratorsCode {
+	return []PostChannelsChannelHashedIDCollaboratorsCode{
+		PostChannelsChannelHashedIDCollaboratorsCodeUnauthorizedCredentials,
+		PostChannelsChannelHashedIDCollaboratorsCodeAccountInactive,
+		PostChannelsChannelHashedIDCollaboratorsCodeUnauthorizedScope,
+		PostChannelsChannelHashedIDCollaboratorsCodeUnauthorizedParams,
+	}
+}
+
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *PostChannelsChannelHashedIDCollaboratorsCode) IsExact() bool {
 	if e != nil {
@@ -116,6 +134,14 @@ const (
 
 func (e PostChannelsChannelHashedIDCollaboratorsRoleResponseBody) ToPointer() *PostChannelsChannelHashedIDCollaboratorsRoleResponseBody {
 	return &e
+}
+
+// PostChannelsChannelHashedIDCollaboratorsRoleResponseBodyValues returns every known PostChannelsChannelHashedIDCollaboratorsRoleResponseBody value in schema order.
+func PostChannelsChannelHashedIDCollaboratorsRoleResponseBodyValues() []PostChannelsChannelHashedIDCollaboratorsRoleResponseBody {
+	return []PostChannelsChannelHashedIDCollaboratorsRoleResponseBody{
+		PostChannelsChannelHashedIDCollaboratorsRoleResponseBodyAdmin,
+		PostChannelsChannelHashedIDCollaboratorsRoleResponseBodyViewer,
+	}
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
